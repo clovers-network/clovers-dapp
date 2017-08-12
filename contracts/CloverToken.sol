@@ -1,4 +1,4 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.11;
 import 'zeppelin-solidity/contracts/token/StandardToken.sol';
 
 library StringAsKey {
@@ -7,16 +7,59 @@ library StringAsKey {
 
 contract CloverToken is StandardToken {
   string public name = 'CloverToken';
-  string public symbol = '♣︎';
+  string public symbol = '♧';
   uint public decimals = 4;
-  uint public INITIAL_SUPPLY = 10000;
+  uint public INITIAL_SUPPLY = 1000000;
 
   function CloverToken() {
     totalSupply = INITIAL_SUPPLY;
     balances[msg.sender] = INITIAL_SUPPLY;
   }
-  bytes32[] Gamekeys;
-  mapping(bytes32 => address) Games;
+
+  uint public flipStartValue = 1;
+
+  struct Board {
+    // string moves;
+    address[] owners;
+    uint lastPaidAmount;
+    bool exists;
+  }
+
+  mapping (bytes16 => Board) public boards;
+  bytes16[] public boardKeys;
+
+  event Registered(Board board);
+
+  function exists(bytes16 board) public constant returns(bool isIndeed) {
+      return boards[board].exists;
+  }
+
+  function getBoardsCount() public constant returns(uint boardsCount) {
+    return boardKeys.length;
+  }
+
+  function registerBoard(bytes16 board) internal returns (uint rowNumber){
+    // bytes16 board = movesToBoard(moves)
+    if(exists(board)) revert();
+    // boards[board].moves = msg.sender;
+    boards[board].owners.push(msg.sender);
+    boards[board].lastPaidAmount = flipStartValue;
+    boards[board].exists = true;
+    Registered(boards[board]);
+    return boardKeys.push(board) - 1;
+  }
+
+  function buyBoard(bytes16 board) public returns(bool success) {
+    if(!exists(board)) revert();
+    uint nextPrice = boards[board].lastPaidAmount.mul(2);
+    if (balances(msg.sender) < nextPrice) revert();
+    address lastOwner = boards[board].owners[ boards[board].owners.length.sub(1) ];
+    balances[msg.sender] = balances[msg.sender].sub(nextPrice);
+    balances[lastOwner] = balances[lastOwner].add(nextPrice);
+    boards[board].owners.push(msg.sender);
+    boards[board].lastPaidAmount = nextPrice;
+    return true;
+  }
 
   // struct Game {
   // 	bool error = false;
@@ -40,17 +83,13 @@ contract CloverToken is StandardToken {
 
 	function getThrowaway() public returns (bytes32){
 		registerGame(uintToBytes(Gamekeys.length));
-		registerGame(uintToBytes(Gamekeys.length + 1));
-		registerGame(uintToBytes(Gamekeys.length + 2));
-		registerGame(uintToBytes(Gamekeys.length + 3));
-		registerGame(uintToBytes(Gamekeys.length + 4));
 	}
 
-  function registerGame(bytes32 moves) public returns (string){
-  	if (Games[moves] != address(0x0)) {
+  function registerGame(bytes16 board) public returns (string){
+  	if (Boards[moves] != address(0x0)) {
   		revert();
 		} else {
-	  	Games[moves] = msg.sender;
+	  	Boards[moves] = msg.sender;
 	  	Gamekeys.push(moves);
 	  	balances[msg.sender]++;
 		}
@@ -153,7 +192,7 @@ contract CloverToken is StandardToken {
 
 	// }
 
-	function stringToBytes(string key) returns (bytes32 ret) {
+	function stringToBytes(string key) public constant returns (bytes32 ret) {
     if (bytes(key).length > 32) {
       revert();
     }
@@ -161,6 +200,22 @@ contract CloverToken is StandardToken {
     assembly {
       ret := mload(add(key, 32))
     }
+  }
+  function bytes32ToString(bytes32 x) constant returns (string) {
+    bytes memory bytesString = new bytes(32);
+    uint charCount = 0;
+    for (uint j = 0; j < 32; j++) {
+        byte char = byte(bytes32(uint(x) * 2 ** (8 * j)));
+        if (char != 0) {
+            bytesString[charCount] = char;
+            charCount++;
+        }
+    }
+    bytes memory bytesStringTrimmed = new bytes(charCount);
+    for (j = 0; j < charCount; j++) {
+        bytesStringTrimmed[j] = bytesString[j];
+    }
+    return string(bytesStringTrimmed);
   }
 
   function uintToBytes(uint v) constant returns (bytes32 ret) {

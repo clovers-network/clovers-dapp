@@ -62,15 +62,15 @@ const actions = {
   },
   tryFunction ({commit, dispatch, state}) {
     state.CloverToken.deployed().then((instance) => {
-      // instance.registerGame('0x00d', { from: state.account }).then((response) => {
-      //   console.log(response)
+      instance.stringToBytes.call('0xF5F6E6D6C7C6C4D3D7B4C5B6B5F7A5E3E7A6A4A3F4C8D8E8G6H7G4G5F8G8G3H4H3H2F3F2B3A2C3C2E2F1B8A8E1D1H6H5D2C1B2B7A7B1A1G1G2H1H8G7').then((response) => {
+        console.log(response)
       //   dispatch('getBalance')
       // }).catch((err) => {
       //   console.log(err)
       // })
 
-      instance.getThrowaway({ from: state.account }).then((response) => {
-        console.log(response)
+      // instance.getThrowaway({ from: state.account }).then((response) => {
+      //   console.log(response)
         // instance.registerGame(response, { from: state.account }).then((response) => {
         //   console.log(response)
         // }).catch((err) => {

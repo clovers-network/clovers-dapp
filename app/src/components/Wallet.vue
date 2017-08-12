@@ -2,7 +2,7 @@
   <div class="clover-token">
     <header>
       <h1>CloverToken</h1>
-      <h3>You have <span class="black"><span id="balance" :class="{green: balance !== '0', red: balance === '0'}">{{ balance }}</span> ♣︎</span></h3>
+      <h3>You have <span class="black"><span id="balance" :class="{green: balance !== '0', red: balance === '0'}">{{ balance }}</span> ♧;</span></h3>
     </header>
 
     <section>
@@ -15,7 +15,7 @@
         <button id="send" type="submit">Send CloverToken</button>
       </form>
         <button @click.prevent='tryFunction()'>Try</button>
-      <p id="status">{{ status }}</p>
+      <p id="status">{{ movesConverted }}</p>
     </section>
 
     <footer>
@@ -30,13 +30,23 @@ import * as types from '../store/mutation-types'
 
 export default {
   name: 'CloverToken',
+  data () {
+    return {
+      moves: 'bbbbbbbbbbbbbbbbwbbwbwbbbbwwwwbbbbbbbbbbwbwwbwbwwwbbbbwwwwwwwwww'
+    }
+  },
   computed: {
     ...mapGetters({
       address: 'address',
       amount: 'amount',
       balance: 'balance',
       status: 'status'
-    })
+    }),
+    movesConverted () {
+      // return '0b' + this.moves.match(new RegExp('.{1,' + length + '}', 'g')).map((spot) => {
+      //   return spot === 'b' ? '11' : (spot === 'w' ? '10' : '00')
+      // }).join('')
+    }
   },
   methods: {
     tryFunction () {
