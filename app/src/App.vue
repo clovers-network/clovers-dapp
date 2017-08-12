@@ -55,22 +55,20 @@ export default {
         console.error('No web3 detected. Please use MetaMask for development. https://metamask.io/')
         return
       }
-      // Use Mist/MetaMask's provider
-      // web3 = new Web3(web3.currentProvider)
+      web3 = new Web3(web3.currentProvider)
 
-      // keep account updated if user decides to switch
-      // this.$store.dispatch('setAccount', web3.eth.accounts[0])
-      // this.accountInterval = setInterval(() => {
-      //   const account = web3.eth.accounts[0]
-      //   if (account !== this.account) {
-      //     console.log('update account')
-      //     this.$store.dispatch('updateAccount', account)
-      //   }
-      // }, 100)
+      this.$store.dispatch('setAccount', web3.eth.accounts[0])
+      this.accountInterval = setInterval(() => {
+        const account = web3.eth.accounts[0]
+        if (account !== this.account) {
+          console.log('update account')
+          this.$store.dispatch('updateAccount', account)
+        }
+      }, 100)
 
-      // this.balanceInterval = setInterval(() => {
-      //   this.$store.dispatch('getBalance')
-      // }, 5000)
+      this.balanceInterval = setInterval(() => {
+        this.$store.dispatch('getBalance')
+      }, 5000)
     }
   }
 }

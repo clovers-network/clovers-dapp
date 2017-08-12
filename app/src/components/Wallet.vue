@@ -6,18 +6,16 @@
     </header>
 
     <section>
-      <h1>Send CloverToken</h1>
+      <h1>Register CloverToken</h1>
       <form @submit.prevent="sendHandler">
-        <label for="amount">Amount: </label>
-        <input type="number" id="amount" placeholder="100" :value="amount" @input="updateAmount"></input>
-        <label for="receiver">To Address: </label>
-        <input type="text" id="receiver" placeholder="0x93e66d9baea28c17d9fc393b53e3fbdd76899dae" :value="address" @input="updateAddress"></input>
-        <button id="send" type="submit">Send CloverToken</button>
+      <input type='text' v-model='newBoard' placeholder='board'>
+        <button id="send" type="submit">Submit</button>
       </form>
-        <button @click.prevent='tryFunction()'>Try</button>
-      <p id="status">{{ movesConverted }}</p>
+      <p id="status">{{ boardConverted(newBoard) }}</p>
+      <p id="status">{{ bin2hex(boardConverted(newBoard)) }}</p>
+      <p id="status">{{ hex2bin(bin2hex(boardConverted(newBoard))) }}</p>
     </section>
-
+    <button @click.prevent='tryFunction()'>throwawayFunction()</button>
     <footer>
       <span class="hint"><strong>Hint:</strong> open the browser developer console to view any errors and warnings.</span>
     </footer>
@@ -25,14 +23,16 @@
 </template>
 
 <script>
+/* global web3:true */
+
 import { mapGetters } from 'vuex'
 import * as types from '../store/mutation-types'
-
+import ConvertBase from '../assets/ConvertBase.js'
 export default {
   name: 'CloverToken',
   data () {
     return {
-      moves: 'bbbbbbbbbbbbbbbbwbbwbwbbbbwwwwbbbbbbbbbbwbwwbwbwwwbbbbwwwwwwwwww'
+      newBoard: 'bbbbbbbbbbbbbbbbwbbwbwbbbbwwwwbbbbbbbbbbwbwwbwbwwwbbbbwwwwwwwwww'
     }
   },
   computed: {
@@ -41,16 +41,22 @@ export default {
       amount: 'amount',
       balance: 'balance',
       status: 'status'
-    }),
-    movesConverted () {
-      // return '0b' + this.moves.match(new RegExp('.{1,' + length + '}', 'g')).map((spot) => {
-      //   return spot === 'b' ? '11' : (spot === 'w' ? '10' : '00')
-      // }).join('')
-    }
+    })
   },
   methods: {
+    bin2hex (val) {
+      return val && web3.toHex(val)
+    },
+    hex2bin (hex) {
+      return hex && '0b' + ConvertBase.hex2bin(hex)
+    },
     tryFunction () {
       this.$store.dispatch('tryFunction')
+    },
+    boardConverted (board) {
+      return board && '0b' + (board.match(/.{1,1}/g).map((spot) => {
+        return spot === 'b' ? '11' : (spot === 'w' ? '10' : '00')
+      }).join(''))
     },
     sendHandler () {
       if (isNaN(this.amount) || this.amount === '0' || this.amount === '') {

@@ -43,6 +43,9 @@ export default {
     },
     hex (foo) {
       return web3.toHex(foo)
+    },
+    hex2bin (hex) {
+      return ('00000000' + (parseInt(hex, 16)).toString(2)).substr(-8)
     }
   },
   computed: {
