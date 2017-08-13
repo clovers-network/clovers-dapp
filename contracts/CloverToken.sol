@@ -25,7 +25,7 @@ contract CloverToken is StandardToken {
   mapping (bytes16 => Board) public boards;
   bytes16[] public boardKeys;
 
-  event Registered(address[] previousOwners, uint lastPaidAmount, bytes16 board);
+  // event Registered(address[] previousOwners, uint lastPaidAmount, bytes16 board);
 
   function exists(bytes16 board) public constant returns(bool isIndeed) {
       return boards[board].exists;
@@ -35,16 +35,23 @@ contract CloverToken is StandardToken {
     return boardKeys.length;
   }
 
-  function registerBoard(bytes16 board) internal returns (uint rowNumber){
+  function getBoard(bytes16 board) public constant returns(uint, bool, bytes16) {
+    if(!exists(board)) revert();
+    return (boards[board].lastPaidAmount, boards[board].exists, board);
+  }
+
+  function registerBoard(bytes16 board) public returns(bytes16 b) {
     // bytes16 board = movesToBoard(moves)
     if(exists(board)) revert();
+    // boards[board] = Board(new address[].push(msg.sender), 
     // boards[board].moves = msg.sender;
-    balances[msg.sender] = balances[msg.sender].add(findersFee);
-    boards[board].previousOwners.push(msg.sender);
+    balances[msg.sender] += findersFee;
+    // boards[board].previousOwners[0] = msg.sender;
     boards[board].lastPaidAmount = flipStartValue;
     boards[board].exists = true;
-    Registered(boards[board].previousOwners, boards[board].lastPaidAmount, board);
-    return boardKeys.push(board) - 1;
+    // Registered(boards[board].previousOwners, boards[board].lastPaidAmount, board);
+    boardKeys.push(board);
+    return board.length;
   }
 
   function buyBoard(bytes16 board) public returns(bool success) {

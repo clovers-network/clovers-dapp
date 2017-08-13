@@ -8,17 +8,14 @@
     <section>
       <h1>Register CloverToken</h1>
       <form @submit.prevent="sendHandler">
-      <input type='text' v-model='newBoard' placeholder='board'>
+        <input type='text' v-model='newBoard' placeholder='board'>
+        <p id="status">{{ bin2hex(boardConverted(newBoard)) }}</p>
         <button id="send" type="submit">Submit</button>
       </form>
-      <p id="status">{{ boardConverted(newBoard) }}</p>
-      <p id="status">{{ bin2hex(boardConverted(newBoard)) }}</p>
-      <p id="status">{{ hex2bin(bin2hex(boardConverted(newBoard))) }}</p>
     </section>
+    <br>
     <button @click.prevent='tryFunction()'>throwawayFunction()</button>
-    <footer>
-      <span class="hint"><strong>Hint:</strong> open the browser developer console to view any errors and warnings.</span>
-    </footer>
+    <div v-html='status'></div>
   </div>
 </template>
 
@@ -27,7 +24,6 @@
 
 import { mapGetters } from 'vuex'
 import * as types from '../store/mutation-types'
-import ConvertBase from '../assets/ConvertBase.js'
 export default {
   name: 'CloverToken',
   data () {
@@ -45,13 +41,17 @@ export default {
   },
   methods: {
     bin2hex (val) {
-      return val && web3.toHex(val)
+      if (!val) return
+      var foo = new web3.BigNumber(val, 2)
+      return '0x' + foo.toString(16)
     },
-    hex2bin (hex) {
-      return hex && '0b' + ConvertBase.hex2bin(hex)
+    hex2bin (val) {
+      if (!val) return
+      var foo = new web3.BigNumber(val, 16)
+      return '0b' + foo.toString(2)
     },
     tryFunction () {
-      this.$store.dispatch('tryFunction')
+      this.$store.dispatch('tryFunction', this.bin2hex(this.boardConverted(this.newBoard)))
     },
     boardConverted (board) {
       return board && '0b' + (board.match(/.{1,1}/g).map((spot) => {
@@ -59,17 +59,16 @@ export default {
       }).join(''))
     },
     sendHandler () {
-      if (isNaN(this.amount) || this.amount === '0' || this.amount === '') {
-        alert('inavlid amount: ' + this.amount)
-        return
-      }
-
-      if (this.address === '') {
-        alert('invalid address: ' + this.address)
-        return
-      }
-
-      this.$store.dispatch('sendToken')
+      this.$store.dispatch('registerGame', this.bin2hex(this.boardConverted(this.newBoard)))
+      // if (isNaN(this.amount) || this.amount === '0' || this.amount === '') {
+      //   alert('inavlid amount: ' + this.amount)
+      //   return
+      // }
+      // if (this.address === '') {
+      //   alert('invalid address: ' + this.address)
+      //   return
+      // }
+      // this.$store.dispatch('sendToken')
     },
     updateAddress (e) {
       this.$store.commit(types.UPDATE_ADDRESS, e.target.value)

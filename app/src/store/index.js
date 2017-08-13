@@ -60,10 +60,28 @@ const actions = {
       commit(types.UPDATE_STATUS, 'Error sending coin; see log.')
     })
   },
-  tryFunction ({commit, dispatch, state}) {
+  registerGame ({commit, dispatch, state}, hex) {
     state.CloverToken.deployed().then((instance) => {
-      instance.stringToBytes.call('0xF5F6E6D6C7C6C4D3D7B4C5B6B5F7A5E3E7A6A4A3F4C8D8E8G6H7G4G5F8G8G3H4H3H2F3F2B3A2C3C2E2F1B8A8E1D1H6H5D2C1B2B7A7B1A1G1G2H1H8G7').then((response) => {
+      console.log(state.account)
+      console.log(hex)
+      instance.exists.call(hex).then((a) => {
+        if (!a) {
+          instance.registerBoard(hex, { from: state.account }).then((a, b) => {
+            console.log(a, b)
+          }).catch((err) => {
+            console.log(err)
+          })
+        } else {
+          commit(types.UPDATE_STATUS, 'That Game is already registered')
+        }
+      })
+    })
+  },
+  tryFunction ({commit, dispatch, state}, hex) {
+    state.CloverToken.deployed().then((instance) => {
+      var foo = instance.getBoard.call(hex).then((response) => {
         console.log(response)
+        console.log(foo)
       //   dispatch('getBalance')
       // }).catch((err) => {
       //   console.log(err)
@@ -124,6 +142,9 @@ const mutations = {
   },
   [types.UPDATE_STATUS] (state, status) {
     state.status = status
+    setTimeout(() => {
+      state.status = ''
+    }, 5000)
   },
   [types.UPDATE_CONTRACT] (state) {
     state.CloverToken = contract(cloverTokenArtifacts)
