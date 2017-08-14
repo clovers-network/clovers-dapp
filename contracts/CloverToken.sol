@@ -5,18 +5,18 @@ contract CloverToken is StandardToken {
   string public name = 'CloverToken';
   string public symbol = '♧';
   uint public decimals = 4;
-  uint public INITIAL_SUPPLY = 1000000;
+  uint public INITIAL_SUPPLY = 10000000000; // four decimals
 
   function CloverToken() {
     totalSupply = INITIAL_SUPPLY;
     balances[msg.sender] = INITIAL_SUPPLY;
   }
 
-  uint public flipStartValue = 1;
-  uint public findersFee = 100;
+  uint public flipStartValue = 1000000;
+  uint public findersFee = 1000000;
 
   struct Board {
-    // string moves;
+    string moves;
     address[] previousOwners;
     uint lastPaidAmount;
     bool exists;
@@ -35,23 +35,24 @@ contract CloverToken is StandardToken {
     return boardKeys.length;
   }
 
-  function getBoard(bytes16 board) public constant returns(uint, bool, bytes16) {
+  function getBoard(bytes16 board) public constant returns(uint, bool, bytes16, address, string) {
     if(!exists(board)) revert();
-    return (boards[board].lastPaidAmount, boards[board].exists, board);
+    return (boards[board].lastPaidAmount, boards[board].exists, board, boards[board].previousOwners[boards[board].previousOwners.length - 1], boards[board].moves);
   }
 
-  function registerBoard(bytes16 board) public returns(bytes16 b) {
-    // bytes16 board = movesToBoard(moves)
-    if(exists(board)) revert();
-    // boards[board] = Board(new address[].push(msg.sender), 
-    // boards[board].moves = msg.sender;
+  function registerBoard(string moves) public returns(string ret) {
+    Game memory game = playGame(moves);
+    if (game.error) return game.msg;
+    if (!game.complete) return game.msg;
+    if(exists(game.board)) return 'Game Already Exists';
     balances[msg.sender] += findersFee;
-    // boards[board].previousOwners[0] = msg.sender;
-    boards[board].lastPaidAmount = flipStartValue;
-    boards[board].exists = true;
-    // Registered(boards[board].previousOwners, boards[board].lastPaidAmount, board);
-    boardKeys.push(board);
-    return board.length;
+    boards[game.board].moves = moves;
+    boards[game.board].previousOwners.push(msg.sender);
+    boards[game.board].lastPaidAmount = flipStartValue;
+    boards[game.board].exists = true;
+    // Registered(boards[game.board].previousOwners, boards[game.board].lastPaidAmount, games.board);
+    boardKeys.push(game.board);
+    return 'Success';
   }
 
   function buyBoard(bytes16 board) public returns(bool success) {
@@ -66,47 +67,36 @@ contract CloverToken is StandardToken {
     return true;
   }
 
-  // struct Game {
-  // 	bool error = false;
-  // 	bool complete = false;
-  // 	uint8[8][8] board;
-  // 	uint8 currentPlayer = 0; //0 = black, 1 = white, 3 = green
-  // }
+  struct Game {
+  	bool error;
+  	bool complete;
+    uint8 currentPlayer; //0 = black, 1 = white, 3 = green
+    bytes16 board;
+    string msg;
+    uint8[8][8] boardArray;
+  }
 
   // struct Move {
   // 	uint8 col;
   // 	uint8 row
   // }
 
-//   function returnGame(string moves) public constant returns (address) {
-//   	return Games[stringToBytes(moves)];
-//   }  
 
-//   function returnKeys() public constant returns (uint) {
-//   	return Gamekeys.length;
-//   }
-
-// 	function getThrowaway() public returns (bytes32){
-// 		registerGame(uintToBytes(Gamekeys.length));
-// 	}
-
-//   function registerGame(bytes16 board) public returns (string){
-//   	if (Boards[moves] != address(0x0)) {
-//   		revert();
-// 		} else {
-// 	  	Boards[moves] = msg.sender;
-// 	  	Gamekeys.push(moves);
-// 	  	balances[msg.sender]++;
-// 		}
-//   	// game = playGame(moves)
-//   	// if (game.error) return false
-//   	// if (!game.complete) return false
-//   	// if (Games[gameToKey(game.board)]) return false
-//   	// Games[game.board] = msg.sender
-//    //  balances[msg.sender]++
-//   }
-
-//  //  function playGame(string moves)  returns (struct Game)  {
+    function playGame(string moves) internal constant returns (Game ret)  {
+      Game memory game;
+      game.error = false;
+      game.complete = true;
+      game.currentPlayer = 0;
+      game.board = 0x0;
+      game.msg = 'New Game';
+      if (game.error) {
+        game.msg = 'Invalid Game';
+      }
+      if (!game.complete){
+        game.msg = 'Incomplete Game';
+      }
+      return game;
+    }
 //  //  	new Game game;
 //  //  	moves = convertMoves(moves)
 //  //  	moves = moves.split(2)

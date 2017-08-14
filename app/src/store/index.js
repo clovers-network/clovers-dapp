@@ -17,6 +17,7 @@ const rootState = {
   CloverToken: false,
   account: '',
   balance: '0',
+  decimals: 0,
   amount: '',
   address: '',
   status: ''
@@ -112,10 +113,21 @@ const actions = {
       }, 500)
       return
     }
+    if (!state.decimals) {
+      state.CloverToken.deployed().then(instance => (
+        instance.decimals.call()
+      )).then((decimals) => {
+        commit(types.UPDATE_DECIMALS, parseInt(decimals))
+      }).catch((err) => {
+        console.error(err)
+        commit(types.UPDATE_STATUS, 'Error getting balance; see log.')
+      })
+    }
     state.CloverToken.deployed().then(instance => (
       instance.balanceOf.call(state.account)
     )).then((balance) => {
-      commit(types.UPDATE_BALANCE, balance.toString())
+      var digits = new web3.BigNumber(10).toPower(state.decimals)
+      commit(types.UPDATE_BALANCE, balance.div(digits).toFixed(state.decimals).toString())
     }).catch((err) => {
       console.error(err)
       commit(types.UPDATE_STATUS, 'Error getting balance; see log.')
@@ -137,14 +149,14 @@ const mutations = {
   [types.UPDATE_AMOUNT] (state, amount) {
     state.amount = amount
   },
+  [types.UPDATE_DECIMALS] (state, decimals) {
+    state.decimals = decimals
+  },
   [types.UPDATE_BALANCE] (state, balance) {
     state.balance = balance
   },
   [types.UPDATE_STATUS] (state, status) {
     state.status = status
-    setTimeout(() => {
-      state.status = ''
-    }, 5000)
   },
   [types.UPDATE_CONTRACT] (state) {
     state.CloverToken = contract(cloverTokenArtifacts)
