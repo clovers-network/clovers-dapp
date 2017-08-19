@@ -1,7 +1,9 @@
 pragma solidity ^0.4.13;
 import 'zeppelin-solidity/contracts/token/StandardToken.sol';
+import "solidity-stringutils/strings.sol";
 
 contract CloverToken is StandardToken {
+  using strings for *;
   string public name = 'CloverToken';
   string public symbol = '♧';
   uint public decimals = 4;
@@ -16,7 +18,7 @@ contract CloverToken is StandardToken {
   uint public findersFee = 1000000;
 
   struct Board {
-    string moves;
+    string[] moves;
     address[] previousOwners;
     uint lastPaidAmount;
     bool exists;
@@ -26,6 +28,17 @@ contract CloverToken is StandardToken {
   bytes16[] public boardKeys;
 
   // event Registered(address[] previousOwners, uint lastPaidAmount, bytes16 board);
+  event DebugSring(string print);
+  event DebugMoves(uint8[] arr);
+
+  function testMoves(uint8[] moves) public constant {
+    DebugMoves(moves);
+    DebugSring('working!');
+  }  
+  function testEvent(string hello) public constant returns(bool fuckyou){
+    DebugSring(hello);
+    return true;
+  }
 
   function exists(bytes16 board) public constant returns(bool isIndeed) {
       return boards[board].exists;
@@ -35,18 +48,27 @@ contract CloverToken is StandardToken {
     return boardKeys.length;
   }
 
-  function getBoard(bytes16 board) public constant returns(uint, bool, bytes16, address, string) {
-    if(!exists(board)) revert();
-    return (boards[board].lastPaidAmount, boards[board].exists, board, boards[board].previousOwners[boards[board].previousOwners.length - 1], boards[board].moves);
+  // function getBoard(bytes16 board) public constant returns(uint, bool, bytes16, address, string) {
+  //   if(!exists(board)) revert();
+  //   return (boards[board].lastPaidAmount, boards[board].exists, board, boards[board].previousOwners[boards[board].previousOwners.length - 1], boards[board].moves);
+  // }
+
+  function registerBoard(uint8[] moves) public returns(string ret) {
+    Game memory game = playGame(moves);
+    return evalGame(game);
   }
 
-  function registerBoard(string moves) public returns(string ret) {
-    Game memory game = playGame(moves);
+  function registerBoardString(string moves) public returns (string ret) {
+    Game memory game = playGameString(moves);
+    return evalGame(game);
+  }
+
+  function evalGame(Game game) internal returns (string ret) {
     if (game.error) return game.msg;
     if (!game.complete) return game.msg;
     if(exists(game.board)) return 'Game Already Exists';
     balances[msg.sender] += findersFee;
-    boards[game.board].moves = moves;
+    boards[game.board].moves = game.movesArray;
     boards[game.board].previousOwners.push(msg.sender);
     boards[game.board].lastPaidAmount = flipStartValue;
     boards[game.board].exists = true;
@@ -73,6 +95,7 @@ contract CloverToken is StandardToken {
     uint8 currentPlayer; //0 = black, 1 = white, 3 = green
     bytes16 board;
     string msg;
+    string[] movesArray;
     uint8[8][8] boardArray;
   }
 
@@ -81,14 +104,28 @@ contract CloverToken is StandardToken {
   // 	uint8 row
   // }
 
+    function convertMoves(string moves) internal constant returns (uint8[] movesArray) {
+      var s = moves.toSlice();
+      var delim = "-".toSlice();
+      var parts = new string[](s.count(delim));
+      for(uint i = 0; i < parts.length; i++) {
+        // unsure of this casting
+         parts[i] = s.split(delim).toString();
+      }
+    }
 
-    function playGame(string moves) internal constant returns (Game ret)  {
+    function playGameString(string moves) internal constant returns (Game ret) {
+      return playGame(convertMoves(moves));
+    }
+
+    function playGame(uint8[] moves) internal constant returns (Game ret)  {
       Game memory game;
       game.error = false;
       game.complete = true;
       game.currentPlayer = 0;
       game.board = 0x0;
       game.msg = 'New Game';
+
       if (game.error) {
         game.msg = 'Invalid Game';
       }
@@ -97,8 +134,6 @@ contract CloverToken is StandardToken {
       }
       return game;
     }
-//  //  	new Game game;
-//  //  	moves = convertMoves(moves)
 //  //  	moves = moves.split(2)
 //  //  	for (uint8 i = 0; i < moves.length; i++) {
 //  //  		game = makeMove(game, moves[i])

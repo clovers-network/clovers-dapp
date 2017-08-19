@@ -1,3 +1,4 @@
+export const SET_ETH = 'SET_ETH'
 export const ROUTE_CHANGED = 'router/ROUTE_CHANGED'
 export const UPDATE_ACCOUNT = 'UPDATE_ACCOUNT'
 export const UPDATE_ADDRESS = 'UPDATE_ADDRESS'

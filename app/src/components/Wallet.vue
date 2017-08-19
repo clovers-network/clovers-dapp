@@ -20,7 +20,6 @@
 </template>
 
 <script>
-/* global web3:true */
 
 import { mapGetters } from 'vuex'
 import * as types from '../store/mutation-types'
@@ -42,16 +41,16 @@ export default {
   methods: {
     bin2hex (val) {
       if (!val) return
-      var foo = new web3.BigNumber(val, 2)
+      var foo = new this.$BN(val, 2)
       return '0x' + foo.toString(16)
     },
     hex2bin (val) {
       if (!val) return
-      var foo = new web3.BigNumber(val, 16)
+      var foo = new this.$BN(val, 16)
       return '0b' + foo.toString(2)
     },
     tryFunction () {
-      this.$store.dispatch('tryFunction', this.bin2hex(this.boardConverted(this.newBoard)))
+      this.$store.dispatch('tryFunction', [1, 2, 3, 4])
     },
     boardConverted (board) {
       return board && '0b' + (board.match(/.{1,1}/g).map((spot) => {

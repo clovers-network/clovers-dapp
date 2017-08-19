@@ -2,15 +2,15 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import createLogger from 'vuex/dist/logger'
 import * as types from './mutation-types'
-/* global web3:true */
-
+import BN from 'bignumber.js'
 import contract from 'truffle-contract'
 
 // import artifacts
 import cloverTokenArtifacts from '../../../build/contracts/CloverToken.json'
 
 Vue.use(Vuex)
-
+import Web3 from 'web3'
+let web3 = window.web3
 const debug = process.env.NODE_ENV !== 'production'
 
 const rootState = {
@@ -32,11 +32,30 @@ const getters = {
 }
 
 const actions = {
+  connect ({commit, dispatch, state}) {
+    if (web3) {
+      // Use Mist/MetaMask's provider
+      var web3Provider = web3.currentProvider
+    } else {
+      // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
+      // web3Provider = new Web3.providers.HttpProvider('https://mainnet.infura.io/Q5I7AA6unRLULsLTYd6d')
+      web3Provider = new Web3.providers.HttpProvider('http://localhost:8545')
+    }
+    web3 = new Web3(web3Provider)
+    dispatch('setAccount', web3.eth.accounts[0])
+  },
+  checkAccounts ({ commit, dispatch, state }) {
+    const account = web3.eth.accounts[0]
+    if (account !== state.account) {
+      dispatch('updateAccount', account)
+    }
+  },
   // action is dispatched when account is first set
   // this is where you can put your initialization calls
   setAccount ({ commit, dispatch, state }, account) {
     commit(types.UPDATE_ACCOUNT, account)
     dispatch('setContract')
+    dispatch('setWatchers')
     dispatch('getBalance')
   },
   setContract ({commit, dispatch, state}) {
@@ -78,32 +97,36 @@ const actions = {
       })
     })
   },
-  tryFunction ({commit, dispatch, state}, hex) {
+  setWatchers ({commit, dispatch, state}) {
+    console.log('set watcher')
     state.CloverToken.deployed().then((instance) => {
-      var foo = instance.getBoard.call(hex).then((response) => {
+      console.log('instance available')
+      instance.DebugSring({fromBlock: 'latest'}).watch((error, result) => {
+        console.log('DebugSring triggered')
+        if (error == null) {
+          console.log(result)
+        } else {
+          console.error(error)
+        }
+      })
+      instance.DebugMoves({fromBlock: 'latest'}).watch((error, result) => {
+        console.log('DebugMoves triggered')
+        if (error == null) {
+          console.log(result)
+        } else {
+          console.error(error)
+        }
+      })
+    })
+  },
+  tryFunction ({commit, dispatch, state}, arr) {
+    state.CloverToken.deployed().then((instance) => {
+      // instance.testEvent.call('asdf').then((response) => {
+      instance.testMoves(arr).then((response) => {
         console.log(response)
-        console.log(foo)
-      //   dispatch('getBalance')
-      // }).catch((err) => {
-      //   console.log(err)
-      // })
-
-      // instance.getThrowaway({ from: state.account }).then((response) => {
-      //   console.log(response)
-        // instance.registerGame(response, { from: state.account }).then((response) => {
-        //   console.log(response)
-        // }).catch((err) => {
-        //   console.log(err)
-        // })
       }).catch((err) => {
         console.log(err)
       })
-      // console.log(foo)
-    //   instance.returnKeys.call()
-    // )).then((response) => {
-    //   console.log(response)
-    // }).catch((err) => {
-    //   console.error(err)
     })
   },
   getBalance ({ commit, dispatch, state }) {
@@ -126,7 +149,7 @@ const actions = {
     state.CloverToken.deployed().then(instance => (
       instance.balanceOf.call(state.account)
     )).then((balance) => {
-      var digits = new web3.BigNumber(10).toPower(state.decimals)
+      var digits = new BN(10).toPower(state.decimals)
       commit(types.UPDATE_BALANCE, balance.div(digits).toFixed(state.decimals).toString())
     }).catch((err) => {
       console.error(err)
@@ -160,7 +183,10 @@ const mutations = {
   },
   [types.UPDATE_CONTRACT] (state) {
     state.CloverToken = contract(cloverTokenArtifacts)
-    return state.CloverToken.setProvider(web3.currentProvider)
+    state.CloverToken.setProvider(web3.currentProvider)
+    // state.CloverToken.allEvents(function (error, log) {
+    //   if (!error) console.log(log)
+    // })
   }
 }
 

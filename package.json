@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "solidity-stringutils": "git+ssh://git@github.com/okwme/solidity-stringutils.git",
     "zeppelin-solidity": "^1.2.0"
   }
 }

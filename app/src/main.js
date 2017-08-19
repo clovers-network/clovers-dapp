@@ -6,6 +6,9 @@ import App from './App'
 import store from './store'
 import router from './router'
 
+import BN from 'bignumber.js'
+Object.defineProperty(Vue.prototype, '$BN', { value: BN })
+
 Vue.config.productionTip = false
 
 sync(store, router)
