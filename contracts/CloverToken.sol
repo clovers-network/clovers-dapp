@@ -31,17 +31,24 @@ contract CloverToken is StandardToken {
   event DebugSring(string print);
   event DebugMoves(uint8[] arr);
 
-  function testMoves(uint8[] moves) public constant {
-    DebugMoves(moves);
-    DebugSring('working!');
+  function testMoves(uint8[2][] moves) public constant returns (uint8[2][] arr){
+    return moves;
+    // DebugMoves(moves);
+    // DebugSring('working!');
   }  
   function testEvent(string hello) public constant returns(bool fuckyou){
     DebugSring(hello);
     return true;
   }
 
-  function exists(bytes16 board) public constant returns(bool isIndeed) {
+  function boardExists(bytes16 board) public constant returns(bool isIndeed) {
       return boards[board].exists;
+  }
+
+  function gameExists(uint8[2][] moves) public constant returns(bool isIndeed) {
+      Game memory game = playGame(moves);
+      if (game.error) return true;
+      return boards[game.board].exists;
   }
 
   function getBoardsCount() public constant returns(uint boardsCount) {
@@ -49,24 +56,24 @@ contract CloverToken is StandardToken {
   }
 
   // function getBoard(bytes16 board) public constant returns(uint, bool, bytes16, address, string) {
-  //   if(!exists(board)) revert();
+  //   if(!boardExists(board)) revert();
   //   return (boards[board].lastPaidAmount, boards[board].exists, board, boards[board].previousOwners[boards[board].previousOwners.length - 1], boards[board].moves);
   // }
 
-  function registerBoard(uint8[] moves) public returns(string ret) {
+  function registerBoard(uint8[2][] moves) public returns(string ret) {
     Game memory game = playGame(moves);
     return evalGame(game);
   }
 
-  function registerBoardString(string moves) public returns (string ret) {
-    Game memory game = playGameString(moves);
-    return evalGame(game);
-  }
+  // function registerBoardString(string moves) public returns (string ret) {
+  //   Game memory game = playGameString(moves);
+  //   return evalGame(game);
+  // }
 
   function evalGame(Game game) internal returns (string ret) {
     if (game.error) return game.msg;
     if (!game.complete) return game.msg;
-    if(exists(game.board)) return 'Game Already Exists';
+    if(boardExists(game.board)) return 'Game Already Exists';
     balances[msg.sender] += findersFee;
     boards[game.board].moves = game.movesArray;
     boards[game.board].previousOwners.push(msg.sender);
@@ -78,7 +85,7 @@ contract CloverToken is StandardToken {
   }
 
   function buyBoard(bytes16 board) public returns(bool success) {
-    if(!exists(board)) revert();
+    if(!boardExists(board)) revert();
     uint nextPrice = boards[board].lastPaidAmount.mul(2);
     if (balances[msg.sender] < nextPrice) revert();
     address lastOwner = boards[board].previousOwners[ boards[board].previousOwners.length.sub(1) ];
@@ -92,118 +99,200 @@ contract CloverToken is StandardToken {
   struct Game {
   	bool error;
   	bool complete;
-    uint8 currentPlayer; //0 = black, 1 = white, 3 = green
+    uint8 currentPlayer;
     bytes16 board;
     string msg;
     string[] movesArray;
     uint8[8][8] boardArray;
   }
 
+  uint8 EMPTY = 0;
+  uint8 BLACK = 1;
+  uint8 WHITE = 2;
+
+  int8[2][8] dirs = [
+    [-1, 0], // N
+    [-1, 1], // NE
+    [0, 1], // E
+    [1, 1], // SE
+    [1, 0], // S
+    [1, -1], // SW
+    [0, -1], // W
+    [-1, -1] // NW
+  ];
+
   // struct Move {
   // 	uint8 col;
   // 	uint8 row
   // }
 
-    function convertMoves(string moves) internal constant returns (uint8[] movesArray) {
-      var s = moves.toSlice();
-      var delim = "-".toSlice();
-      var parts = new string[](s.count(delim));
-      for(uint i = 0; i < parts.length; i++) {
-        // unsure of this casting
-         parts[i] = s.split(delim).toString();
-      }
-    }
+    // function convertMoves(string moves) internal constant returns (uint8[2][] movesArray) {
+    //   var s = moves.toSlice();
+    //   var delim = "-".toSlice();
+    //   var parts = new string[](s.count(delim));
+    //   for(uint i = 0; i < parts.length; i++) {
+    //     // unsure of this casting
+    //      parts[i] = s.split(delim).toString();
+    //   }
+    // }
 
-    function playGameString(string moves) internal constant returns (Game ret) {
-      return playGame(convertMoves(moves));
-    }
+    // function playGameString(string moves) internal constant returns (Game ret) {
+    //   return playGame(convertMoves(moves));
+    // }
 
-    function playGame(uint8[] moves) internal constant returns (Game ret)  {
+    function playGame(uint8[2][] moves) internal constant returns (Game ret)  {
       Game memory game;
       game.error = false;
-      game.complete = true;
-      game.currentPlayer = 0;
+      game.complete = false;
+      game.currentPlayer = BLACK;
       game.board = 0x0;
       game.msg = 'New Game';
 
-      if (game.error) {
-        game.msg = 'Invalid Game';
-      }
-      if (!game.complete){
-        game.msg = 'Incomplete Game';
-      }
+    	for (uint8 i = 0; i < moves.length; i++) {
+    		game = makeMove(game, moves[i]);
+    		if (game.error) {
+          if (game.currentPlayer == BLACK) {
+            game.currentPlayer = WHITE;
+          } else {
+            game.currentPlayer = BLACK;
+          }
+    			game = makeMove(game, moves[i]);
+    			if (game.error) {
+    				return game;
+    			}
+    		}
+    	}
+      game = isComplete(game);
       return game;
     }
-//  //  	moves = moves.split(2)
-//  //  	for (uint8 i = 0; i < moves.length; i++) {
-//  //  		game = makeMove(game, moves[i])
-//  //  		if (game.error) {
-//  //  			game.currentPlayer = (game.CurrentPlayer + 1) % 2;
-//  //  			game = makeMove(game, moves[i])
-//  //  			if (game.error) {
-//  //  				return game
-//  //  			}
-//  //  		}
-//  //  	}
-//  //  	return isComplete(game)
-//  //  }
 
-//  //  function makeMove(struct Game game, uint8 move) returns (struct Game)  {
-//  //  	uint8 col = move[0]
-//  //  	uint8 row = move[1]
-//  //  	// square is already occupied
-//  //  	if(Game.board[col][row] != 3) {
-//  //  		Game.error = true
-//  //  		return Game
-//  //  	}
+  function makeMove(Game game, uint8[2] move) returns (Game game)  {
+  	uint8 col = move[0];
+  	uint8 row = move[1];
+  	// square is already occupied
+  	if(game.board[col][row] != 0) {
+      game.msg = 'Invalid Game (makeMove)';
+      game.error = true;
+  		return game;
+  	}
 
-//  //  	possibleDirections = getPossibleDirections()
-//  //  	// no valid directions
-//  //  	if (possibleDirections.length == 0) {
-//  //  		Game.error = true
-//  //  		return Game
-//  //  	}
-//  //  	uint flips = []
-//  //  	for (uint8 i = 0; i < possibleDirections.length; i++) {
-//  //  		flips.push(traverseDirection(possibleDirections[i]))
-//  //  	}
-//  //  	//no valid flips in directions
-//  //  	if (flips.length == 0) {
-//  //  		Game.error = true
-//  //  		return Game
-//  //  	}
-//  //  	for (uint8 i = 0; i < flips.length; i++) {
-//  //  		flip = flips[i]
-//  //  		Game.board[flip.col][flip.row] = Game.currentPlayer;
-//  //  	}
-//  //  	return Game
-//  //  }
+  	int8[2][] possibleDirections = getPossibleDirections(game, move);
+  	// no valid directions
+  	if (possibleDirections.length == 0) {
+  		Game.error = true;
+  		return Game;
+  	}
+  	uint8[2][] flips;
+  	for (uint8 i = 0; i < possibleDirections.length; i++) {
+  		flips.push(traverseDirection(game, possibleDirections[i], move));
+  	}
+  	//no valid flips in directions
+  	if (flips.length == 0) {
+  		Game.error = true;
+      Game.msg = 'Not a valid move';
+  		return Game;
+  	}
+  	for (uint8 i = 0; i < flips.length; i++) {
+  		uint8[2] flip = flips[i];
+  		game.boardArray[flip[0]][flip[1]] = game.currentPlayer;
+  	}
+  	return Game;
+  }
 
-//  //  function getPossibleDirections () {
+  function getPossibleDirections (Game game, uint8[2] move) returns(int8[2][] possibleDirections){
+    int8[2][] possibleDirections;
+    for (uint8 i = 0; i < dirs.length; i++) {
+      int8[2] dir = dirs[i];
+      int8 focusedColPos = move[0] + dir[0];
+      int8 focusedRowPos = move[1] + dir[1];
+      // if tile is off the board it is not a valid move
+      if (!(focusedRowPos > 7 || focusedRowPos < 0 || focusedColPos > 7 || focusedColPos < 0)) {
+        uint8 testSquare = game.boardArray[focusedColPos][focusedRowPos];
+        // if the surrounding tile is current color or no color it can't be part of a capture
+        if (testSquare != game.currentPlayer) {
+          if (testSquare != EMPTY) {
+            possibleDirections.push(dir);
+          }
+        }
+      }
+    }
+    return possibleDirections;
+  }
 
-//  //  }
+  function traverseDirection(Game game, int8[2] direction, uint8[2] move) returns(uint8[2] moves) {
+    uint8[2][] potentialFlips;
 
-//  //  function traverseDirection() {
+    uint8 currentPlayer = game.currentPlayer;
 
-//  //  }
+    if (currentPlayer == BLACK) {
+      uint8 opponentColor = WHITE;
+    } else {
+      uint8 opponentColor = BLACK;
+    }
 
-//  //  function isComplete (struct Game game)  returns (struct Game) {
-//  //  	bool isFull = true;
-//  //  	memory mapping(uint8 => Move) empties;
-//  //  	for (uint8 i = 0; i < game.board.length; i++) {
-//  //  		for (uint8 j = 0; j < game.board[i]; j++) {
-//  //  			if (game.board[i][j] === 3) {
-//  //  				isFull = false
-//  //  			}
-//  //  		}
-//  //  	}
-//  //  	if (!isFull) {
+    // take one step at a time in this direction
+    // ignoring the first step look for the same color as your tile
+    bool skip = false;
+    for (uint8 j = 1; j < 9; j++) {
+      if (!skip) {
+        var testCol = j * direction[0] + move[0];
+        var testRow = j * direction[1] + move[1];
+        // ran off the board before hitting your own tile
+        if (testCol > 7 || testCol < 0 || testRow > 7 || testRow < 0) {
+          potentialFlips = [];
+          skip = true;
+        } else if (game.boardArray[testCol][testRow] == opponentColor) {
+          // if tile is opposite color it coudl be flipped, so add to potential flip array
+          potentialFlips.push([testCol, testRow]);
+        } else if (game.boardArray[testCol][testRow] == currentPlayer && j > 0) {
+          // hit current players tile which means capture is complete
+          skip = true;
+        } else {
+          // either hit current players own color before hitting an opponent's
+          // or hit an empty space
+          potentialFlips = [];
+          skip = true;
+        }
+      }
+    }
+    return potentialFlips;
+  }
 
-// 	// 	} else {
-// 	// 		game.complete = true		
-// 	// 	}
-// 	// 	return game
-//  //  }
+  function isComplete (Game game) returns (Game game) {
+    uint8[2][] empties;
+    for (uint8 i = 0; i < game.boardArray; i++) {
+      uint8[] row = game.boardArray[i];
+      for (uint8 j = 0; j < row.length; j++) {
+        if (row[i] == EMPTY) {
+          empties.push([i, j]);
+        }
+      }
+    }
+  	if (empties.length > 0) {
+      bool validMoveRemains = false;
+      for (uint8 i = 0; i < empties.length; i++) {
+        uint8[2] move = empties[i];
+        game.currentPlayer = BLACK;
+        Game testGame = makeMove(game, move);
+        if (!testGame.error) {
+          validMoveRemains = true;
+        }
+        game.currentPlayer = WHITE;
+        testGame = makeMove(game, move);
+        if (!testGame.error) {
+          validMoveRemains = true;
+        }
+      }
+      if (validMoveRemains) {
+        game.complete = false;
+        game.error = true;
+        game.msg = 'Incomplete Game';
+      }
+		} else {
+			game.complete = true;	
+		}
+		return game;
+  }
 
 //  //  function movesToInt(string memory moves) returns (uint8) {
 
