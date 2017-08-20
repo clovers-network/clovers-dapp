@@ -80,28 +80,37 @@ const actions = {
       commit(types.UPDATE_STATUS, 'Error sending coin; see log.')
     })
   },
-  registerGame ({commit, dispatch, state}, hex) {
+  registerGame ({commit, dispatch, state}, movesArray) {
     state.CloverToken.deployed().then((instance) => {
       console.log(state.account)
-      console.log(hex)
-      instance.exists.call(hex).then((a) => {
-        if (!a) {
-          instance.registerBoard(hex, { from: state.account }).then((a, b) => {
-            console.log(a, b)
-          }).catch((err) => {
-            console.log(err)
-          })
-        } else {
-          commit(types.UPDATE_STATUS, 'That Game is already registered')
-        }
+      console.log(movesArray)
+      // instance.gameExists.call(movesArray).then((a, b) => {
+      //   if (!a) {
+      instance.registerBoard(movesArray, { from: state.account }).then((a, b) => {
+        console.log(a, b)
+      }).catch((err) => {
+        console.log(err)
       })
+      //   } else {
+      //     commit(types.UPDATE_STATUS, 'That Game is already registered')
+      //   }
+      // })
     })
   },
   setWatchers ({commit, dispatch, state}) {
     console.log('set watcher')
     state.CloverToken.deployed().then((instance) => {
       console.log('instance available')
-      instance.DebugSring({fromBlock: 'latest'}).watch((error, result) => {
+      console.log(instance)
+      var event = instance.DebugSring({fromBlock: 0})
+      event.watch(function (err, res) {
+        console.log('hier?')
+        console.log(err)
+        console.log(res)
+      })
+      event.get((error, result) => {
+        console.log(error)
+        console.log(result)
         console.log('DebugSring triggered')
         if (error == null) {
           console.log(result)
@@ -121,8 +130,8 @@ const actions = {
   },
   tryFunction ({commit, dispatch, state}, arr) {
     state.CloverToken.deployed().then((instance) => {
-      // instance.testEvent.call('asdf').then((response) => {
-      instance.testMoves(arr).then((response) => {
+      instance.testEvent('asdf', { from: state.account }).then((response) => {
+      // instance.testMoves(arr).then((response) => {
         console.log(response)
       }).catch((err) => {
         console.log(err)
