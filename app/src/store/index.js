@@ -84,10 +84,12 @@ const actions = {
     state.CloverToken.deployed().then((instance) => {
       console.log(state.account)
       console.log(movesArray)
-      // instance.gameExists.call(movesArray).then((a, b) => {
+      // instance.showGame.call(movesArray).then((a, b) => {
       //   if (!a) {
-      instance.registerBoard(movesArray, { from: state.account }).then((a, b) => {
-        console.log(a, b)
+      instance.showGame(movesArray, { from: state.account }).then((a, b) => {
+        console.log(a)
+        var board = new BN(a[3])
+        console.log(board.toString(2))
       }).catch((err) => {
         console.log(err)
       })
@@ -98,28 +100,44 @@ const actions = {
     })
   },
   setWatchers ({commit, dispatch, state}) {
-    console.log('set watcher')
+    console.log('set watchers')
     state.CloverToken.deployed().then((instance) => {
-      console.log('instance available')
-      console.log(instance)
-      var event = instance.DebugSring({fromBlock: 0})
-      event.watch(function (err, res) {
-        console.log('hier?')
-        console.log(err)
-        console.log(res)
-      })
-      event.get((error, result) => {
-        console.log(error)
-        console.log(result)
-        console.log('DebugSring triggered')
+      instance.DebugUint({fromBlock: 0}).watch(function (error, result) {
+        console.log('watched DebugUint:')
         if (error == null) {
           console.log(result)
         } else {
           console.error(error)
         }
       })
-      instance.DebugMoves({fromBlock: 'latest'}).watch((error, result) => {
-        console.log('DebugMoves triggered')
+
+      instance.DebugByte({fromBlock: 0}).watch(function (error, result) {
+        console.log('watched DebugByte:')
+        if (error == null) {
+          console.log(result)
+        } else {
+          console.error(error)
+        }
+      })
+
+      instance.DebugGame({fromBlock: 0}).watch(function (error, result) {
+        console.log('watched DebugGame:')
+        if (error == null) {
+          console.log(result)
+        } else {
+          console.error(error)
+        }
+      })
+      // event.get((error, result) => {
+      //   console.log('previous DebugGame:')
+      //   if (error == null) {
+      //     console.log(result)
+      //   } else {
+      //     console.error(error)
+      //   }
+      // })
+      instance.DebugMove({fromBlock: 'latest'}).watch((error, result) => {
+        console.log('watched DebugMove')
         if (error == null) {
           console.log(result)
         } else {
@@ -130,9 +148,17 @@ const actions = {
   },
   tryFunction ({commit, dispatch, state}, arr) {
     state.CloverToken.deployed().then((instance) => {
-      instance.testEvent('asdf', { from: state.account }).then((response) => {
+      // instance.boardToByte(arr, { from: state.account }).then((response) => {
+      // instance.shiftLeft.call('0x0000000000000011', 2).then((response) => {
+      var start = new BN(3)
+      var push = 127
+      console.log(start.toString(16))
+      console.log(start.toString(2))
+      instance.shiftLeft.call(start, push).then((response) => {
       // instance.testMoves(arr).then((response) => {
         console.log(response)
+        var foo = new BN(response)
+        console.log(foo.toString(2))
       }).catch((err) => {
         console.log(err)
       })

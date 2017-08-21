@@ -28,7 +28,8 @@ export default {
   data () {
     return {
       moves: 'D3C3C4C5D6F4F3E3D2E2B5B6F2E6C6F5G3F6G5E7D7F7G6G4A6H6H4H2H3H5E8A5F8A7A4A3B4C1E1C7C2C8D8G8G7G1G2B1B2H1B7B8A8H7H8B3A1D1F1A2',
-      newBoard: 'bwwwwwwwwwwwwwwwwwbwwwbwwwwbwbbwwwbwwwbwwwwwwbwwwwwwwwbwwwwwwwwb'
+      newBoard: '-wwwwwwwwwwwwwwwwwbwwwbwwwwbwbbwwwbwwwbwwwwwwbwwwwwwwwbwwwwwwwwb',
+      maxBoard: 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww'
     }
   },
   computed: {
@@ -38,8 +39,19 @@ export default {
       balance: 'balance',
       status: 'status'
     }),
+    maxBoardConverted () {
+      var foo = new this.$BN('0b' + this.maxBoard.match(/.{1,1}/g).map((spot) => {
+        return spot === 'b' ? '10' : (spot === 'w' ? '11' : '00')
+      }).join(''))
+      return foo.toString(2).length
+    },
     moveConverted () {
       return this.movesConverted()
+    },
+    boardConverted () {
+      return this.newBoard.match(/.{1,1}/g).map((spot) => {
+        return spot === 'b' ? 1 : (spot === 'w' ? 2 : 0)
+      })
     }
   },
   methods: {
@@ -54,9 +66,9 @@ export default {
       return '0b' + foo.toString(2)
     },
     tryFunction () {
-      this.$store.dispatch('tryFunction', [[1, 2], [1, 3], [1, 4], [1, 5]])
+      this.$store.dispatch('tryFunction', this.boardConverted)
     },
-    boardConverted (board) {
+    convertBoard (board) {
       return board && '0b' + (board.match(/.{1,1}/g).map((spot) => {
         return spot === 'b' ? '11' : (spot === 'w' ? '10' : '00')
       }).join(''))
@@ -69,8 +81,8 @@ export default {
     },
     moveToArray (moveArray) {
       return [
-        moveArray[0].toLowerCase().charCodeAt(0) - 97,
-        parseInt(moveArray[1]) - 1
+        moveArray[0].toLowerCase().charCodeAt(0) - 97 + 0,
+        parseInt(moveArray[1]) - 1 + 0
       ]
     },
     sendHandler () {
