@@ -98,8 +98,11 @@ export default {
     movesConverted (moves = this.moves) {
       return moves && moves.match(/.{1,2}/g).map((move) => {
         var moveArray = move.match(/.{1,1}/g)
-        return this.moveToArray(moveArray)
-      })
+        var m = this.moveToArray(moveArray)
+        var foo = new this.$BN(m[0] + (m[1] * 8) + 64)
+        console.log(m, foo.toString(2))
+        return foo.toString(2)
+      }).join('')
     },
     moveToArray (moveArray) {
       return [

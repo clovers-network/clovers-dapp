@@ -40,7 +40,10 @@ contract CloverToken is StandardToken {
     uint8 currentPlayer;
     bytes16 board;
     string msg;
-    uint8[2][] movesArray;
+    bytes28 first32Moves;
+    bytes28 lastMoves;
+    uint8 moveKey;
+    // uint8[2][] movesArray;
     // uint8[8][8] boardArray;
   }
 
@@ -51,7 +54,6 @@ contract CloverToken is StandardToken {
   uint8 WHITE = 2; //0b10 //0x2
 
   // event Registered(address[] previousOwners, uint lastPaidAmount, bytes16 board);
-  // event DebugGame( uint8 currentPlayer, uint8[8][8] boardArray, string msg, uint8[2] lastMove);
   event DebugMoves(uint8[2][] arr);
   event DebugByte(bytes16 foo);
   event DebugUint(uint128 bar);
@@ -68,13 +70,13 @@ contract CloverToken is StandardToken {
       return boards[b].exists;
   }
 
-  function showGame(uint8[2][] moves) public constant returns(bool error, bool complete, uint8 currentPlayer, bytes16 board, string msg) {
-      Game memory game = playGame(moves);
+  function showGame(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bool error, bool complete, uint8 currentPlayer, bytes16 board, string msg) {
+      Game memory game = playGame(first32Moves, lastMoves);
       return (game.error, game.complete, game.currentPlayer, game.board, game.msg);
   }
 
-  function gameExists(uint8[2][] moves) public constant returns(bool) {
-      Game memory game = playGame(moves);
+  function gameExists(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bool) {
+      Game memory game = playGame(first32Moves, lastMoves);
       if (game.error) return true;//revert();
       // if (!game.complete) return true;//revert();
       return boards[game.board].exists;
@@ -151,15 +153,20 @@ contract CloverToken is StandardToken {
     return (moveSequence, movesLength);
   }
 
-  function readMove(bytes28 moveSequence, uint8 moveKey) returns(uint8, uint8) {
+  function readMove(bytes28 moveSequence, uint8 moveKey) returns(bool, uint8, uint8) {
     bytes28 mask = bytes28(127);
-    mask = shiftLeft28(mask, (moveKey * 7));
-    move = moves & mask;
-    move = shiftRight28(move, (moveKey * 7));
-    move = uint8(move) - 64;
-    uint8 col = move % 8;
-    uint8 row = (move - col) / 8;
-    return (col, row);
+    uint8 push = 224 - (moveKey * 7) - 7;
+    mask = shiftLeft28(mask, push);
+    bytes28 move = moveSequence & mask;
+    move = shiftRight28(move, push);
+    uint8 moveInt = uint8(move);
+    if (moveInt < 64) {
+      return (false, 0, 0);
+    }
+    moveInt = moveInt - 64;
+    uint8 col = moveInt % 8;
+    uint8 row = (moveInt - col) / 8;
+    return (true, col, row);
   }
 
   function shiftLeft28(bytes28 a, uint256 n) public constant returns (bytes28) {
@@ -198,8 +205,8 @@ contract CloverToken is StandardToken {
   //   return (boards[board].lastPaidAmount, boards[board].exists, board, boards[board].previousOwners[boards[board].previousOwners.length - 1], boards[board].moves);
   // }
 
-  function registerBoard(uint8[2][] moves) public returns(string) {
-    Game memory game = playGame(moves);
+  function registerBoard(bytes28 first32Moves, bytes28 lastMoves) public returns(string) {
+    Game memory game = playGame(first32Moves, lastMoves);
     return 'asfd';
     // return saveGame(game);
   }
@@ -256,9 +263,13 @@ contract CloverToken is StandardToken {
     //   return playGame(convertMoves(moves));
     // }
 
-    function playGame(uint8[2][] moves) internal returns (Game)  {
+    function playGame(bytes28 first32Moves, bytes28 lastMoves) internal returns (Game)  {
       Game memory game;
-      game.movesArray = moves;
+
+      game.first32Moves = first32Moves;
+      game.lastMoves = lastMoves;
+      game.moveKey = 0;
+
       game.error = false;
       game.complete = false;
       game.currentPlayer = BLACK;
@@ -269,15 +280,19 @@ contract CloverToken is StandardToken {
       game.board = turnTile(game.board, BLACK, 4, 3);
 
       game.msg = 'New Game';
-
-      if (moves.length > 60) {
-        throw;
-        game.msg = 'Invalid Game (too many moves)';
-        game.error = true;
-        return game;
-      }
-    	for (uint8 i = 0; i < moves.length; i++) {
-        game = makeMove(game, moves[i]);
+      bool skip = false;
+      bool valid;
+      uint8 col;
+      uint8 row;
+    	for (uint8 i = 0; i < 60 && !skip; i++) {
+        bytes28 currentMoves = game.moveKey < 32 ? game.first32Moves : game.lastMoves;
+        (valid, col, row) = readMove(currentMoves, game.moveKey);
+        if (valid) {
+          game = makeMove(game, col, row);
+          game.moveKey++;
+        } else {
+          skip = true;
+        }
         // if (game.error) {
         //   // maybe player has no valid moves and must pass
         //   if (game.currentPlayer == BLACK) {
@@ -298,9 +313,7 @@ contract CloverToken is StandardToken {
       return game;
     }
   
-  function makeMove(Game game, uint8[2] move) internal constant returns (Game)  {
-  	uint8 col = move[0];
-  	uint8 row = move[1];
+  function makeMove(Game game, uint8 col, uint8 row) internal constant returns (Game)  {
   	// square is already occupied
     if (returnTile(game.board, col, row) != 0){
   	// if(game.boardArray[col][row] != 0) {
@@ -310,9 +323,10 @@ contract CloverToken is StandardToken {
   		return game;
   	}
     int8[2][8] memory possibleDirections;
-  	possibleDirections = getPossibleDirections(game, move);
+    uint8  possibleDirectionsLength;
+  	(possibleDirections, possibleDirectionsLength) = getPossibleDirections(game, col, row);
   	// no valid directions
-  	if (possibleDirections.length == 0) {
+  	if (possibleDirectionsLength == 0) {
   		game.error = true;
       game.msg = 'Invalid Game (doesnt border other tiles)';
   		return game;
@@ -322,29 +336,29 @@ contract CloverToken is StandardToken {
 
     uint8[2][32] memory newFlips;
     uint8 newFlipsLength = 0;
-  	for (uint8 i = 0; i < possibleDirections.length; i++) {
-      delete newFlips;
-      delete newFlipsLength;
-      (newFlips, newFlipsLength) = traverseDirection(game, possibleDirections[i], move);
-      // DebugSring(move, possibleDirections[i], newFlips, newFlipsLength);
-      for (uint8 j = 0; j < newFlipsLength; j++) {
-        flips[flipsLength] = newFlips[j];
-        flipsLength++;
-      }
-  	}
+  	// for (uint8 i = 0; i < possibleDirectionsLength; i++) {
+   //    delete newFlips;
+   //    delete newFlipsLength;
+   //    (newFlips, newFlipsLength) = traverseDirection(game, possibleDirections[i], col, row);
+   //    // DebugSring(move, possibleDirections[i], newFlips, newFlipsLength);
+   //    for (uint8 j = 0; j < newFlipsLength; j++) {
+   //      flips[flipsLength] = newFlips[j];
+   //      flipsLength++;
+   //    }
+  	// }
   	//no valid flips in directions
   	if (flipsLength == 0) {
   		game.error = true;
       game.msg = 'Invalid Game (doesnt flip any other tiles)';
-  		return game;
+  		// return game;
   	}
-    game.board = turnTile(game.board, game.currentPlayer, col, row);
+    // game.board = turnTile(game.board, game.currentPlayer, col, row);
    //  game.boardArray[col][row] = game.currentPlayer;
-  	for (i = 0; i < flipsLength; i++) {
-  		uint8[2] memory flip = flips[i];
-      game.board = turnTile(game.board, game.currentPlayer, flip[0], flip[1]);
-  	// 	game.boardArray[flip[0]][flip[1]] = game.currentPlayer;
-  	}
+  	// for (i = 0; i < flipsLength; i++) {
+  	// 	uint8[2] memory flip = flips[i];
+   //    game.board = turnTile(game.board, game.currentPlayer, flip[0], flip[1]);
+  	// // 	game.boardArray[flip[0]][flip[1]] = game.currentPlayer;
+  	// }
 
     // game.board = boardToByte(game.boardArray);
 
@@ -359,39 +373,39 @@ contract CloverToken is StandardToken {
   }
   event DebugMove(uint8 move);
 
-  function getPossibleDirections (Game game, uint8[2] move) internal constant returns(int8[2][8]){
+  function getPossibleDirections (Game game, uint8 col, uint8 row) internal constant returns(int8[2][8], uint8){
     int8[2][8] memory possibleDirections;
     uint8 possibleDirectionsLength = 0;
-    int8[2][8] memory dirs = [
-      [int8(-1), int8(0)], // W
-      [int8(-1), int8(1)], // SW
-      [int8(0), int8(1)], // S
-      [int8(1), int8(1)], // SE
-      [int8(1), int8(0)], // E
-      [int8(1), int8(-1)], // NE
-      [int8(0), int8(-1)], // N
-      [int8(-1), int8(-1)] // NW
-    ];
-    for (uint8 i = 0; i < 8; i++) {
-      int8[2] memory dir = dirs[i];
-      int8 focusedColPos = int8(move[0]) + dir[0];
-      int8 focusedRowPos = int8(move[1]) + dir[1];
-      // // if tile is off the board it is not a valid move
-      if (!(focusedRowPos > 7 || focusedRowPos < 0 || focusedColPos > 7 || focusedColPos < 0)) {
-        uint8 testSquare = returnTile(game.board, uint8(focusedColPos), uint8(focusedRowPos));
-        // uint8 testSquare = game.boardArray[uint8(focusedColPos)][uint8(focusedRowPos)];
-        // if the surrounding tile is current color or no color it can't be part of a capture
-        if (testSquare != game.currentPlayer) {
-          if (testSquare != EMPTY) {
-            possibleDirections[possibleDirectionsLength] = dir;
-            possibleDirectionsLength++;
-          }
-        }
-      }
-    }
-    return possibleDirections;
+    // int8[2][8] memory dirs = [
+    //   [int8(-1), int8(0)], // W
+    //   [int8(-1), int8(1)], // SW
+    //   [int8(0), int8(1)], // S
+    //   [int8(1), int8(1)], // SE
+    //   [int8(1), int8(0)], // E
+    //   [int8(1), int8(-1)], // NE
+    //   [int8(0), int8(-1)], // N
+    //   [int8(-1), int8(-1)] // NW
+    // ];
+    // for (uint8 i = 0; i < 8; i++) {
+    //   int8[2] memory dir = dirs[i];
+    //   int8 focusedColPos = int8(col) + dir[0];
+    //   int8 focusedRowPos = int8(row) + dir[1];
+    //   // // if tile is off the board it is not a valid move
+    //   if (!(focusedRowPos > 7 || focusedRowPos < 0 || focusedColPos > 7 || focusedColPos < 0)) {
+    //     uint8 testSquare = returnTile(game.board, uint8(focusedColPos), uint8(focusedRowPos));
+    //     // uint8 testSquare = game.boardArray[uint8(focusedColPos)][uint8(focusedRowPos)];
+    //     // if the surrounding tile is current color or no color it can't be part of a capture
+    //     if (testSquare != game.currentPlayer) {
+    //       if (testSquare != EMPTY) {
+    //         possibleDirections[possibleDirectionsLength] = dir;
+    //         possibleDirectionsLength++;
+    //       }
+    //     }
+    //   }
+    // }
+    return (possibleDirections, possibleDirectionsLength);
   }
-  function traverseDirection(Game game, int8[2] dir, uint8[2] move) internal constant returns(uint8[2][32], uint8) {
+  function traverseDirection(Game game, int8[2] dir, uint8 col, uint8 row) internal constant returns(uint8[2][32], uint8) {
     uint8[2][32] memory potentialFlips;
     uint8 potentialFlipsLength = 0;
 
@@ -408,8 +422,8 @@ contract CloverToken is StandardToken {
     bool skip = false;
     for (uint8 j = 1; j < 9; j++) {
       if (!skip) {
-        uint8 testCol = uint8((int8(j) * dir[0]) + int8(move[0]));
-        uint8 testRow = uint8((int8(j) * dir[1]) + int8(move[1]));
+        uint8 testCol = uint8((int8(j) * dir[0]) + int8(col));
+        uint8 testRow = uint8((int8(j) * dir[1]) + int8(row));
         uint8 tile = returnTile(game.board, uint8(testCol), uint8(testRow));
         // ran off the board before hitting your own tile
         if (testCol > 7 || testCol < 0 || testRow > 7 || testRow < 0) {
@@ -458,12 +472,12 @@ contract CloverToken is StandardToken {
       for (i = 0; i < emptiesLength; i++) {
         uint8[2] memory move = empties[i];
         game.currentPlayer = BLACK;
-        tmpGame = makeMove(game, move);
+        tmpGame = makeMove(game, move[0], move[1]);
         if (!tmpGame.error) {
           validMoveRemains = true;
         }
         game.currentPlayer = WHITE;
-        tmpGame = makeMove(game, move);
+        tmpGame = makeMove(game, move[0], move[1]);
         if (!tmpGame.error) {
           validMoveRemains = true;
         }

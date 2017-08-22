@@ -84,11 +84,18 @@ const actions = {
       commit(types.UPDATE_STATUS, 'Error sending coin; see log.')
     })
   },
-  registerGame ({commit, dispatch, state}, movesArray) {
+  registerGame ({commit, dispatch, state}, moves) {
     state.CloverToken.deployed().then((instance) => {
       console.log(state.account)
-      console.log(movesArray)
-      instance.showGame.call(movesArray).then((a, b) => {
+      console.log(moves)
+
+      var first32Moves = moves.slice(0, (32 * 7))
+      var lastMoves = moves.length > (32 * 7) ? moves.slice((32 * 7)) : 0
+      console.log(first32Moves)
+      console.log(lastMoves)
+
+      // instance.showGame.call(new BN(first32Moves, 2), new BN(lastMoves, 2)).then((a, b) => {
+      instance.registerBoard(new BN(first32Moves, 2), new BN(lastMoves, 2), { from: state.account }).then((a, b) => {
       //   if (!a) {
       // instance.registerBoard(movesArray, { from: state.account }).then((a, b) => {
         console.log(a, b)
