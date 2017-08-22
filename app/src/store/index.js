@@ -14,6 +14,8 @@ let web3 = window.web3
 const debug = process.env.NODE_ENV !== 'production'
 
 const rootState = {
+  name: null,
+  symbol: null,
   CloverToken: false,
   account: '',
   balance: '0',
@@ -24,6 +26,8 @@ const rootState = {
 }
 
 const getters = {
+  name: state => state.name,
+  symbol: state => state.symbol,
   account: state => state.account,
   balance: state => state.balance,
   amount: state => state.amount,
@@ -84,12 +88,14 @@ const actions = {
     state.CloverToken.deployed().then((instance) => {
       console.log(state.account)
       console.log(movesArray)
-      // instance.showGame.call(movesArray).then((a, b) => {
+      instance.showGame.call(movesArray).then((a, b) => {
       //   if (!a) {
-      instance.showGame(movesArray, { from: state.account }).then((a, b) => {
-        console.log(a)
-        var board = new BN(a[3])
-        console.log(board.toString(2))
+      // instance.registerBoard(movesArray, { from: state.account }).then((a, b) => {
+        console.log(a, b)
+        if (typeof a === 'object' && a.length > 2) {
+          var board = new BN(a[3])
+          console.log(board.toString(2))
+        }
       }).catch((err) => {
         console.log(err)
       })
@@ -146,19 +152,37 @@ const actions = {
       })
     })
   },
-  tryFunction ({commit, dispatch, state}, arr) {
+  helloWorld ({commit, dispatch, state}, name) {
+    state.CloverToken.deployed().then((instance) => {
+      instance.updateName(name, { from: state.account }).then((response) => {
+        console.log(response)
+        // commit(types.UPDATE_NAME, name)
+      }).catch((err) => {
+        console.log(err)
+      })
+    })
+  },
+  tryFunction ({commit, dispatch, state}, [arr, row, col]) {
     state.CloverToken.deployed().then((instance) => {
       // instance.boardToByte(arr, { from: state.account }).then((response) => {
       // instance.shiftLeft.call('0x0000000000000011', 2).then((response) => {
-      var start = new BN(3)
-      var push = 127
-      console.log(start.toString(16))
-      console.log(start.toString(2))
-      instance.shiftLeft.call(start, push).then((response) => {
-      // instance.testMoves(arr).then((response) => {
+      // function returnTile(bytes16 board, uint8 col, uint8 row) public constant returns (uint8){
+      console.log(arr)
+      console.log(row)
+      console.log(col)
+      instance.turnTile.call(new BN(arr, 2), 2, row, col).then((response) => {
         console.log(response)
-        var foo = new BN(response)
+        var foo = new BN(response, 16)
         console.log(foo.toString(2))
+      // var start = 3
+      // var push = 12
+      // console.log(start.toString(16))
+      // console.log(start.toString(2))
+      // instance.shiftLeft.call(start, push).then((response) => {
+      // // instance.testMoves(arr).then((response) => {
+      //   console.log(response)
+      //   // var foo = new BN(response)
+      //   // console.log(foo.toString(2))
       }).catch((err) => {
         console.log(err)
       })
@@ -172,10 +196,19 @@ const actions = {
       return
     }
     if (!state.decimals) {
-      state.CloverToken.deployed().then(instance => (
-        instance.decimals.call()
-      )).then((decimals) => {
-        commit(types.UPDATE_DECIMALS, parseInt(decimals))
+      state.CloverToken.deployed().then(instance => {
+        instance.decimals.call().then((decimals) => {
+          console.log('decimals', decimals)
+          commit(types.UPDATE_DECIMALS, parseInt(decimals))
+        }).catch((err) => {
+          console.error(err)
+        })
+        instance.name.call().then((name) => {
+          commit(types.UPDATE_NAME, name)
+        })
+        instance.symbol.call().then((symbol) => {
+          commit(types.UPDATE_SYMBOL, symbol)
+        })
       }).catch((err) => {
         console.error(err)
         commit(types.UPDATE_STATUS, 'Error getting balance; see log.')
@@ -206,6 +239,12 @@ const mutations = {
   },
   [types.UPDATE_AMOUNT] (state, amount) {
     state.amount = amount
+  },
+  [types.UPDATE_NAME] (state, name) {
+    state.name = name
+  },
+  [types.UPDATE_SYMBOL] (state, symbol) {
+    state.symbol = symbol
   },
   [types.UPDATE_DECIMALS] (state, decimals) {
     state.decimals = decimals
