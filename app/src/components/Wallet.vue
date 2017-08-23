@@ -100,7 +100,7 @@ export default {
         var moveArray = move.match(/.{1,1}/g)
         var m = this.moveToArray(moveArray)
         var foo = new this.$BN(m[0] + (m[1] * 8) + 64)
-        console.log(m, foo.toString(2))
+        // console.log(m, foo.toString(2))
         return foo.toString(2)
       }).join('')
     },
