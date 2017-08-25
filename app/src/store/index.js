@@ -98,8 +98,10 @@ const actions = {
       lastMoves = lastMoves + padding
       console.log(first32Moves.match(/.{1,7}/g))
       console.log(lastMoves.match(/.{1,7}/g))
-      instance.showGameConstant.call(new BN(first32Moves, 2), new BN(lastMoves, 2)).then((l, a) => {
-      // instance.showGame(new BN(first32Moves, 2), new BN(lastMoves, 2), { from: state.account }).then((l, a) => {
+      console.log(new BN(first32Moves, 2).toString(16))
+      console.log(new BN(lastMoves, 2).toString(16))
+      // instance.showGameConstant.call(new BN(first32Moves, 2), new BN(lastMoves, 2)).then((l, a) => {
+      instance.showGame(new BN(first32Moves, 2), new BN(lastMoves, 2), { from: state.account }).then((l, a) => {
       // instance.registerBoard(new BN(first32Moves, 2), new BN(lastMoves, 2), { from: state.account }).then((a) => {
       //   if (!a) {
       // instance.registerBoard(movesArray, { from: state.account }).then((a, b) => {
@@ -196,10 +198,11 @@ const actions = {
       console.log(arr)
       console.log(row)
       console.log(col)
-      instance.turnTile.call(new BN(arr, 2), 2, row, col).then((response) => {
+      // instance.turnTile.call(new BN(arr, 2), 2, row, col).then((response) => {
+      instance.testMul.call(12).then((response) => {
         console.log(response)
-        var foo = new BN(response, 16)
-        console.log(foo.toString(2))
+        // var foo = new BN(response, 16)
+        // console.log(foo.toString(2))
       // var start = 3
       // var push = 12
       // console.log(start.toString(16))
