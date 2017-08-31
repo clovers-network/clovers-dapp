@@ -1,0 +1,8 @@
+{
+  "contract_name": "Reversi",
+  "abi": [],
+  "unlinked_binary": "0x60606040523415600e57600080fd5b5b603680601c6000396000f30060606040525b600080fd00a165627a7a723058206facfe9a4130b1681c5190745f834689f9e0dc34a5a6b8e70848d026d5b9d3cd0029",
+  "networks": {},
+  "schema_version": "0.0.5",
+  "updated_at": 1504209677343
+}

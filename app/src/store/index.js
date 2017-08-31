@@ -101,28 +101,28 @@ const actions = {
       console.log(new BN(first32Moves, 2).toString(16))
       console.log(new BN(lastMoves, 2).toString(16))
       // instance.showGameConstant.call(new BN(first32Moves, 2), new BN(lastMoves, 2)).then((l, a) => {
-      instance.showGame(new BN(first32Moves, 2), new BN(lastMoves, 2), { from: state.account }).then((l, a) => {
+      instance.showGameDebug(new BN(first32Moves, 2), new BN(lastMoves, 2), { from: state.account }).then((l, a) => {
       // instance.registerBoard(new BN(first32Moves, 2), new BN(lastMoves, 2), { from: state.account }).then((a) => {
       //   if (!a) {
       // instance.registerBoard(movesArray, { from: state.account }).then((a, b) => {
         console.log(l)
-        a = l
-        // l.logs.map(foo => {
-        //   var a = foo.args
-        //   console.log(a)
-        //   var b = new BN(a.board)
-        var b = new BN(a[4])
-        var missing = 128 - b.toString(2).length
-        missing = new Array(missing)
-        missing = missing.fill('0')
-        // console.log(missing)
-        missing = missing.join('') + b.toString(2)
-        missing = missing.match(/.{1,2}/g).map((i) => i === '00' ? '0' : i === '01' ? '1' : '2').join('')
-        console.log(missing.match(/.{1,8}/g))
-        if (typeof a === 'object' && a.length > 2) {
-          var board = new BN(a[3])
-          console.log(board.toString(2))
-        }
+        // a = l
+        // // l.logs.map(foo => {
+        // //   var a = foo.args
+        // //   console.log(a)
+        // //   var b = new BN(a.board)
+        // var b = new BN(a[4])
+        // var missing = 128 - b.toString(2).length
+        // missing = new Array(missing)
+        // missing = missing.fill('0')
+        // // console.log(missing)
+        // missing = missing.join('') + b.toString(2)
+        // missing = missing.match(/.{1,2}/g).map((i) => i === '00' ? '0' : i === '01' ? '1' : '2').join('')
+        // console.log(missing.match(/.{1,8}/g))
+        // if (typeof a === 'object' && a.length > 2) {
+        //   var board = new BN(a[3])
+        //   console.log(board.toString(2))
+        // }
         // })
       }).catch((err) => {
         console.log(err)
