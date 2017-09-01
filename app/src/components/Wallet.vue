@@ -57,9 +57,7 @@ export default {
     }
   },
   mounted () {
-    clover.playGameMovesString(this.moves)
-    console.log(clover)
-    // console.log(clover.byteArrayToRowArray('55555555555959555955555955555555'))
+
   },
   computed: {
     ...mapGetters({
@@ -88,7 +86,8 @@ export default {
       return clover.stringBoardToArrayBoard(board)
     },
     sendHandler () {
-      this.$store.dispatch('registerGame', this.moveConverted)
+      clover.playGameMovesString(this.moves)
+      clover.showGame()
     },
     updateAddress (e) {
       this.$store.commit(types.UPDATE_ADDRESS, e.target.value)

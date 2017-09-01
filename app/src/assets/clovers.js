@@ -11,6 +11,8 @@ class Clover {
     this.EMPTY = 0
     this.BLACK = 1
     this.WHITE = 2
+    this.CloverToken = false
+    this.account = false
     this.clearAttrs()
     if (startVal) {
       Object.assign(this, startVal)
@@ -50,8 +52,28 @@ class Clover {
   }
 
   setContract () {
+    this.initWeb3()
     this.CloverToken = contract(cloverTokenArtifacts)
     this.CloverToken.setProvider(web3.currentProvider)
+  }
+
+  showGameDebug () {
+    if (!this.CloverToken) this.setContract()
+    if (!this.account) return
+    this.CloverToken.deployed().then((instance) => {
+      instance.showGameDebug(new BN(this.first32Moves, 2), new BN(this.lastMoves, 2), {from: this.account}).then((result) => {
+        console.log(result)
+      })
+    })
+  }
+
+  showGame () {
+    if (!this.CloverToken) this.setContract()
+    this.CloverToken.deployed().then((instance) => {
+      instance.showGameConstant(new BN(this.byteFirst32Moves, 16), new BN(this.byteLastMoves, 16)).then((result) => {
+        console.log(result)
+      })
+    })
   }
 
   playGameMovesArray (moves = []) {

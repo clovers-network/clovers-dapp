@@ -12,7 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "solidity-stringutils": "git+ssh://git@github.com/okwme/solidity-stringutils.git",
+    "ethereumjs-testrpc": "^4.1.1",
+    "truffle": "^3.4.9",
     "zeppelin-solidity": "^1.2.0"
   }
 }
