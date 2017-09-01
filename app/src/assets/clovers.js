@@ -43,7 +43,7 @@ class Clover {
   initWeb3 () {
     if (web3) {
       // Use Mist/MetaMask's provider
-      var web3Provider = web3.currentProvider
+      let web3Provider = web3.currentProvider
     } else {
       // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
       // web3Provider = new Web3.providers.HttpProvider('https://mainnet.infura.io/Q5I7AA6unRLULsLTYd6d')
@@ -86,6 +86,66 @@ class Clover {
         console.log(result)
       })
     })
+  }
+
+  mine () {
+    this.clearAttrs()
+    let skip = false
+    for (let i = 0; i < 60 && !skip; i++) {
+      let move = this.pickRandomMove()
+      if (move) {
+        this.moves.push(move)
+        this.buildMovesString()
+        this.moveKey++ 
+        this.makeMove(move)
+        if (this.error) {
+          this.error = false
+          this.currentPlayer = this.currentPlayer === this.BLACK ? this.WHITE : this.BLACK
+          this.makeMove(move)
+          if (this.error) {
+            skip = true
+          }
+        }
+      } else {
+        skip = true
+      }
+    }
+    this.makeVisualBoard()
+    console.log(this.visualBoard)
+    console.log(this.moves.length)
+    console.log(this.movesString)
+  }
+
+  buildMovesString () {
+    this.movesString = this.moves.map((move) => {
+      return this.arrayToMove(move[0], move[1])
+    }).join('')
+  }
+
+  pickRandomMove () {
+    let validMoves = this.getValidMoves()
+    if (!validMoves.length) {
+      this.currentPlayer = this.currentPlayer === this.BLACK ? this.WHITE : this.BLACK
+      validMoves = this.getValidMoves()
+    }
+    return validMoves.length !== 0 && validMoves[Math.floor(Math.random() * validMoves.length)]
+  }
+
+  getValidMoves () {
+    let validMoves = []
+    for (let i = 0; i < this.BOARDDIM; i++) {
+      for (let j = 0; j < this.BOARDDIM; j++) {
+        if (this.board[i][j] === this.EMPTY) {
+          let move = [i, j]
+          let testGame = new Clover(JSON.parse(JSON.stringify(this)))
+          testGame.makeMove(move)
+          if (!testGame.error) {
+            validMoves.push(move)
+          }
+        }
+      }
+    }
+    return validMoves
   }
 
   playGameMovesArray (moves = []) {
@@ -422,7 +482,7 @@ class Clover {
         let col = move % 8
         move -= col
         let row = move / 8
-        return 'abcdefghijklmnopqrstuvwxyz'[col] + (row + 1) 
+        return this.arrayToMove(col, row)
       }
     }).filter((move) => move).join('').toUpperCase()
   }
@@ -432,6 +492,10 @@ class Clover {
         moveArray[0].toLowerCase().charCodeAt(0) - 97 + 0,
         parseInt(moveArray[1]) - 1 + 0
       ]
+    }
+
+  arrayToMove (col, row) {
+      return 'abcdefghijklmnopqrstuvwxyz'[col] + (row + 1)
     }
 }
 

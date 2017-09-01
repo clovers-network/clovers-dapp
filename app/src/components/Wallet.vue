@@ -87,10 +87,11 @@ export default {
       return clover.stringBoardToArrayBoard(board)
     },
     sendHandler () {
-      clover.playGameMovesString(this.moves)
-      console.log(clover)
-      clover.showGameConstant()
+      // clover.playGameMovesString(this.moves)
+      // console.log(clover)
+      // clover.showGameConstant()
       // clover.showGameDebug()
+      clover.mine()
     },
     updateAddress (e) {
       this.$store.commit(types.UPDATE_ADDRESS, e.target.value)
