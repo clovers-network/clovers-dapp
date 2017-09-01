@@ -14,6 +14,10 @@ class Clover {
     this.CloverToken = false
     this.account = false
     this.accountInterval = false
+    this.stop = false
+    this.end = false
+    this.start = false
+    this.increment = 0
     this.clearAttrs()
     if (startVal) {
       Object.assign(this, startVal)
@@ -88,7 +92,18 @@ class Clover {
     })
   }
 
+  stopIt () {
+    this.stop = true
+    this.end = new Date()
+    console.log('seconds:', (this.end - this.start) / 1000)
+    console.log('ms per game:', (this.end - this.start) / this.increment)
+  }
+
   mine () {
+    if (this.stop) return
+    if (!this.start) {
+      this.start = new Date()
+    }
     this.clearAttrs()
     let skip = false
     for (let i = 0; i < 60 && !skip; i++) {
@@ -111,9 +126,18 @@ class Clover {
       }
     }
     this.makeVisualBoard()
-    console.log(this.visualBoard)
-    console.log(this.moves.length)
-    console.log(this.movesString)
+    this.isComplete()
+    this.isSymmetrical()
+    if (this.symmetrical) {
+      console.log(this)
+      alert("SYMMETRY!!!!")
+    }
+    this.increment += 1
+    if (this.increment < 100) {
+      this.mine()
+    } else {
+      this.stopIt()
+    }
   }
 
   buildMovesString () {
