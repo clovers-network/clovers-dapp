@@ -2,12 +2,15 @@ import BN from 'bignumber.js'
 
 class Clover {
 
-  constructor () {
+  constructor (startVal) {
     this.BOARDDIM = 8
     this.EMPTY = 0
     this.BLACK = 1
     this.WHITE = 2
     this.clearAttrs()
+    if (startVal) {
+      Object.assign(this, startVal)
+    }
   }
 
   clearAttrs () {
@@ -17,6 +20,7 @@ class Clover {
     this.currentPlayer = this.BLACK
     // this.board is an array of columns, visually the board should be arranged by arrays of rows
     this.board = new Array(this.BOARDDIM).fill(0).map(c => new Array(this.BOARDDIM).fill(this.EMPTY))
+    this.visualBoard = []
     this.board[(this.BOARDDIM / 2) - 1][(this.BOARDDIM / 2) - 1] = this.WHITE
     this.board[(this.BOARDDIM / 2)][(this.BOARDDIM / 2)] = this.WHITE
     this.board[(this.BOARDDIM / 2) - 1][(this.BOARDDIM / 2)] = this.BLACK
@@ -34,8 +38,8 @@ class Clover {
     this.clearAttrs()
     this.moves = moves
     this.thisMovesToByteMoves()
-    var skip = false
-    for (var i = 0; i < moves.length && !skip; i++) {
+    let skip = false
+    for (let i = 0; i < moves.length && !skip; i++) {
       this.moveKey++
       this.makeMove(this.moveToArray(moves[i]))
       if (this.error) {
@@ -52,6 +56,7 @@ class Clover {
       this.isComplete()
       this.isSymmetrical()
     }
+    this.makeVisualBoard()
   }
 
   playGameMovesString (moves = null) {
@@ -59,24 +64,24 @@ class Clover {
   }
 
   makeMove (move) {
-    var col = move[0]
-    var row = move[1]
+    let col = move[0]
+    let row = move[1]
     if (this.board[col][row] !== this.EMPTY) {
       this.error = true
       this.msg = 'Invalid Game (square is already occupied)'
       return
     }
-    var possibleDirections = this.possibleDirections(col, row)
+    let possibleDirections = this.possibleDirections(col, row)
     if (possibleDirections.length === 0) {
       this.error = true
       this.msg = 'Invalid Game (doesnt border other tiles)'
       return
     }
-    var flipped = false
-    for (var i = 0; i < possibleDirections.length; i++) {
-      var possibleDirection = possibleDirections[i]
-      var flips = this.traverseDirection(possibleDirection, col, row)
-      for (var j = 0; j < flips.length; j ++) {
+    let flipped = false
+    for (let i = 0; i < possibleDirections.length; i++) {
+      let possibleDirection = possibleDirections[i]
+      let flips = this.traverseDirection(possibleDirection, col, row)
+      for (let j = 0; j < flips.length; j ++) {
         flipped = true
         this.board[flips[j][0]][flips[j][1]] = this.currentPlayer
       }
@@ -92,7 +97,7 @@ class Clover {
   }
 
   possibleDirections (col, row) {
-    var dirs = [
+    let dirs = [
       [-1, -1],
       [-1, 0],
       [-1, 1],
@@ -102,13 +107,13 @@ class Clover {
       [1, 0],
       [1, 1]
     ]
-    var possibleDirections = []
-    for (var i = 0; i < dirs.length; i++) {
-      var dir = dirs[i]
-      var fooCol = col + dir[0]
-      var fooRow = row + dir[1]
+    let possibleDirections = []
+    for (let i = 0; i < dirs.length; i++) {
+      let dir = dirs[i]
+      let fooCol = col + dir[0]
+      let fooRow = row + dir[1]
       if (!(fooCol > 7 || fooCol < 0 || fooRow > 7 || fooRow < 0)) {
-        var fooTile = this.board[fooCol][fooRow]
+        let fooTile = this.board[fooCol][fooRow]
         if (fooTile !== this.currentPlayer && fooTile !== this.EMPTY) {
           possibleDirections.push(dir)
         }
@@ -118,18 +123,18 @@ class Clover {
   }
 
   traverseDirection (possibleDirection, col, row) {
-    var flips = []
-    var skip = false
-    var opponentPlayer = this.currentPlayer === this.BLACK ? this.WHITE : this.BLACK
-    for (var i = 1; i < (this.BOARDDIM + 1) && !skip; i++) {
-      var fooCol = (i * possibleDirection[0]) + col
-      var fooRow = (i * possibleDirection[1]) + row
+    let flips = []
+    let skip = false
+    let opponentPlayer = this.currentPlayer === this.BLACK ? this.WHITE : this.BLACK
+    for (let i = 1; i < (this.BOARDDIM + 1) && !skip; i++) {
+      let fooCol = (i * possibleDirection[0]) + col
+      let fooRow = (i * possibleDirection[1]) + row
       if (fooCol > 7 || fooCol < 0 || fooRow > 7 || fooRow < 0) {
         // ran off the board before hitting your own tile
         skip = true
         flips = []
       } else {
-        var fooTile = this.board[fooCol][fooRow]
+        let fooTile = this.board[fooCol][fooRow]
         if (fooTile === opponentPlayer) {
           // if tile is opposite color it could be flipped, so add to potential flip array
           flips.push([fooCol, fooRow])
@@ -153,24 +158,26 @@ class Clover {
       this.msg = 'good game'
       return
     }
-    var empties = []
-    for (var i = 0; i < this.BOARDDIM; i++) {
-      for (var j = 0; j < this.BOARDDIM; j++) {
+    let empties = []
+    for (let i = 0; i < this.BOARDDIM; i++) {
+      for (let j = 0; j < this.BOARDDIM; j++) {
         if (this.board[i][j] === this.EMPTY) {
           empties.push([i, j])
         }
       }
     }
-    var validMovesRemain = false
+    let validMovesRemain = false
     if (empties.length) {
       for (i = 0; i < empties.length && !validMovesRemain; i++) {
-        var gameCopy = JSON.parse(JSON.stringify(this))
+        let gameCopy = new Clover(this)
+        // Object.assign(gameCopy, JSON.parse(JSON.stringify(this)))
         gameCopy.currentPlayer = this.BLACK
         gameCopy.makeMove(empties[i])
         if (!gameCopy.error) {
           validMovesRemain = true
         }
-        gameCopy = JSON.parse(JSON.stringify(this))
+        gameCopy = new Clover(this)
+        // Object.assign(gameCopy, JSON.parse(JSON.stringify(this)))
         gameCopy.currentPlayer = this.WHITE
         gameCopy.makeMove(empties[i])
         if (!gameCopy.error) {
@@ -189,13 +196,13 @@ class Clover {
   }
 
   isSymmetrical () {
-    var RotSym = true
-    var Y0Sym = true
-    var X0Sym = true
-    var XYSym = true
-    var XnYSym = true
-    for (var i = 0; i < this.BOARDDIM && (RotSym || Y0Sym || X0Sym || XYSym || XnYSym); i++) {
-      for (var j = 0; j < this.BOARDDIM && (RotSym || Y0Sym || X0Sym || XYSym || XnYSym); j++) {
+    let RotSym = true
+    let Y0Sym = true
+    let X0Sym = true
+    let XYSym = true
+    let XnYSym = true
+    for (let i = 0; i < this.BOARDDIM && (RotSym || Y0Sym || X0Sym || XYSym || XnYSym); i++) {
+      for (let j = 0; j < this.BOARDDIM && (RotSym || Y0Sym || X0Sym || XYSym || XnYSym); j++) {
         // rotational symmetry
         if (this.board[i][j] != this.board[(7 - i)][(7 - j)]) {
           RotSym = false
@@ -223,13 +230,18 @@ class Clover {
     }
   }
 
+  makeVisualBoard () {
+    this.visualBoard = this.arrayBoardToRows(this.board.map(c => (c.map(t => t === 1 ? 'b' : (t === 2 ? 'w' : '-'))).join('')).join('').match(/.{1,1}/g)).map((r) => {
+      return r.map((t) =>  t === 'b' ? '⬛️' : (t === 'w' ? '⬜️' : '❎'))
+    })
+  }
 
   colArrayBoardToBinaryBoard (colArrayBoard = []) {
     if (!colArrayBoard.length) return
-    var boardString = ''
-    for (var col = 0; col < colArrayBoard.length; col++) {
-      for (var row = 0; row < colArrayBoard[col].length; row++) {
-        var tile = colArrayBoard[col][row]
+    let boardString = ''
+    for (let col = 0; col < colArrayBoard.length; col++) {
+      for (let row = 0; row < colArrayBoard[col].length; row++) {
+        let tile = colArrayBoard[col][row]
         boardString += tile === this.BLACK ? '01' : (tile === this.WHITE ? '10' : '00')
       }
     }
@@ -242,16 +254,16 @@ class Clover {
   }
 
   binaryBoardToByteBoard (binaryBoard) {
-    var foo = new BN(binaryBoard, 2)
+    let foo = new BN(binaryBoard, 2)
     return foo.toString(16)
   }
 
   byteBoardToArrayBoard (byteBoard = 0) {
     byteBoard = new BN(byteBoard, 16)
     byteBoard = byteBoard.toString(2)
-    var len = byteBoard.length
+    let len = byteBoard.length
     if (len < 128) {
-      var padding = 128 - len
+      let padding = 128 - len
       padding = new Array(padding)
       padding = padding.fill('0').join('')
       byteBoard = padding + byteBoard
@@ -270,9 +282,9 @@ class Clover {
   }
 
   arrayBoardToRows (arrayBoard = []) {
-    var rowsArray = []
-    for (var i = 0; i < 64; i++) {
-      var row = i % 8
+    let rowsArray = []
+    for (let i = 0; i < 64; i++) {
+      let row = i % 8
       if (!rowsArray[row]) rowsArray[row] = []
       rowsArray[row].push(arrayBoard[i])
     }
@@ -280,9 +292,9 @@ class Clover {
   }
 
   arrayBoardToCols (arrayBoard = []) {
-    var colsArray = []
-    for (var i = 0; i < 64; i++) {
-      var col = Math.floor(i / 8)
+    let colsArray = []
+    for (let i = 0; i < 64; i++) {
+      let col = Math.floor(i / 8)
       if (!colsArray[col]) colsArray[col] = []
       colsArray[col].push(arrayBoard[i])
     }
@@ -301,23 +313,23 @@ class Clover {
 
   thisMovesToByteMoves (moves = this.moves) {
     moves = this.stringMovesToBinaryMoves(moves.join('')).match(/.{1,224}/g)
-    var foo = new BN(moves[0], 2)
-    var bar = new BN(moves[1], 2)
+    let foo = new BN(moves[0], 2)
+    let bar = new BN(moves[1], 2)
     this.byteFirst32Moves = foo.toString(16)
     this.byteLastMoves = bar.toString(16)
   }
 
   stringMovesToBinaryMoves (stringMoves = false) {
     if (!stringMoves) return
-    var stringMoves = stringMoves.match(/.{1,2}/g).map((move) => {
+    stringMoves = stringMoves.match(/.{1,2}/g).map((move) => {
       if (move.length < 2) return
-      var moveArray = move.match(/.{1,1}/g)
-      var m = this.moveToArray(moveArray)
-      var foo = new BN(m[0] + (m[1] * 8) + 64)
+      let moveArray = move.match(/.{1,1}/g)
+      let m = this.moveToArray(moveArray)
+      let foo = new BN(m[0] + (m[1] * 8) + 64)
       return foo.toString(2)
     }).join('')
     if (stringMoves.length < (64 * 7)) {
-      var padding = (64 * 7) - stringMoves.length
+      let padding = (64 * 7) - stringMoves.length
       padding = new Array(padding)
       padding = padding.fill('0').join('')
       stringMoves += padding
@@ -332,7 +344,7 @@ class Clover {
 
   binaryMovesToByteMoves (binaryMoves = 0) {
     if (!binaryMoves) return
-    var foo = new BN(binaryMoves, 2)
+    let foo = new BN(binaryMoves, 2)
     return foo.toString(16)
   }
 
@@ -340,7 +352,7 @@ class Clover {
     binaryMoves = binaryMoves && new BN(binaryMoves, 2)
     binaryMoves = binaryMoves.toString(2)
     if (binaryMoves.length < (64 * 7)) {
-      var padding = (64 * 7) - binaryMoves.length
+      let padding = (64 * 7) - binaryMoves.length
       padding = new Array(padding)
       padding = padding.fill('0').join('')
       binaryMoves += padding
@@ -351,9 +363,9 @@ class Clover {
         return false
       } else {
         move -= 64
-        var col = move % 8
+        let col = move % 8
         move -= col
-        var row = move / 8
+        let row = move / 8
         return 'abcdefghijklmnopqrstuvwxyz'[col] + (row + 1) 
       }
     }).filter((move) => move).join('').toUpperCase()
