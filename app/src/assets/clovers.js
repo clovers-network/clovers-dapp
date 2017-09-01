@@ -131,12 +131,14 @@ class Clover {
     if (this.symmetrical) {
       console.log(this)
       alert("SYMMETRY!!!!")
-    }
-    this.increment += 1
-    if (this.increment < 100) {
-      this.mine()
-    } else {
       this.stopIt()
+    } else {
+      this.increment += 1
+      if (this.increment < 100) {
+        this.mine()
+      } else {
+        this.stopIt()
+      }
     }
   }
 

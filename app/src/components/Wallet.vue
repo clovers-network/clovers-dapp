@@ -19,11 +19,8 @@
     <form @submit.prevent='helloWorld'>
       <input v-model='newName'>
     </form>
-    <div v-html='status'></div>
-    <div>{{newBoard}}</div>
-    <div>{{convertBoard(newBoard)}}</div>
-    <div> {{moveConverted}}</div>
-    <div> {{moveUnConverted}}</div>
+    <div>{{totalGames}}</div>
+    <div><input type='checkbox' v-model='running'></input>asdf</div>
   </div>
 </template>
 
@@ -47,7 +44,9 @@ export default {
       maxBoard: 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww',
       newName: null,
       row: 0,
-      col: 0
+      col: 0,
+      totalGames: 0,
+      running: false
     }
   },
   watch: {
@@ -59,6 +58,18 @@ export default {
   },
   mounted () {
     console.log('mounted')
+    clover.mine()
+    setInterval(() => {
+      console.log('try to mine')
+      if (this.running && clover.stop && !clover.symmetry) {
+        console.log('mine')
+        this.totalGames += 100
+        clover.stop = false
+        clover.start = false
+        clover.increment = 0
+        clover.mine()
+      }
+    }, 6000)
   },
   computed: {
     ...mapGetters({
