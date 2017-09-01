@@ -209,10 +209,10 @@ contract CloverToken is StandardToken {
         }
       }
     }
-    if (!game.error) {
-      game = isComplete(game);
-      game = isSymmetrical(game);
-    }
+    // if (!game.error) {
+    //   game = isComplete(game);
+    //   game = isSymmetrical(game);
+    // }
     return game;
   }
   
@@ -362,7 +362,7 @@ contract CloverToken is StandardToken {
       game.complete = true;
       return game;
     } else {
-      uint8[2][32] memory empties;
+      uint8[2][60] memory empties;
       uint8 emptiesLength = 0;
       for (uint8 i = 0; i < 64; i++) {
         // for (uint8 j = 0; j < 8; j++) {

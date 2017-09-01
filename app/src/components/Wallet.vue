@@ -41,7 +41,8 @@ export default {
       // moves: 'F5D6C3F3D3D2C4B5E3E2B4F4G3F2C5E6G4G5C7H4H3H5D1H2E7C1F1C2E1G1H6H7A6F6G6A4A3A2B3F7D7E8D8C8G7H8G8F8C6B8A5A7B1A1B2B6G2H1', // x = -y
       // moves: 'C4C5D6C7C6D3E6D7C2B3A2F5C8E3G5B6A5H5F6B1H4A4E7G7E2F7G6B7G8G4F4F3D8H7E8F2H8B5A7E1H3D2G2H2C1C3F1D1A1G1G3A6H6F8B2B8A3H1A8B4', // x = 0
       // moves: 'F5D6C3D3C4F4C5B3C2E6B4F3E3E2F1B6G4D2F6E1D1A3F2G5F7D7E7G6H6B1C1G1B5D8E8A6C8C6C7G8F8B8H5H4G3H7A5B7A8A7H8G7H3H2H1G2A1A4A2B2', // y = 0
-      moves: 'D3E3F6C6F2C4D6E2D2G1G2C1F5C5B3G5E6E7F7E1E8C2D1F8B5A5D7A2B4A4C3C7C8B6F4B2G4H4G6D8F3B8B1H2H6H5H3G7A3G3G8A1H7H8H1F1A6B7A8A7', // rotational
+      // moves: 'D3E3F6C6F2C4D6E2D2G1G2C1F5C5B3G5E6E7F7E1E8C2D1F8B5A5D7A2B4A4C3C7C8B6F4B2G4H4G6D8F3B8B1H2H6H5H3G7A3G3G8A1H7H8H1F1A6B7A8A7', // rotational
+      moves: 'D3', // incomplete
       newBoard: '-wwwwwwwbwwwwwwwbwwwwwwwbwwwwwwwbwwwwwwwbwwwwwwwbwwwwwwwbwwwwwww',
       maxBoard: 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww',
       newName: null,
@@ -87,7 +88,9 @@ export default {
     },
     sendHandler () {
       clover.playGameMovesString(this.moves)
-      clover.showGame()
+      console.log(clover)
+      clover.showGameConstant()
+      // clover.showGameDebug()
     },
     updateAddress (e) {
       this.$store.commit(types.UPDATE_ADDRESS, e.target.value)

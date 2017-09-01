@@ -13,6 +13,7 @@ class Clover {
     this.WHITE = 2
     this.CloverToken = false
     this.account = false
+    this.accountInterval = false
     this.clearAttrs()
     if (startVal) {
       Object.assign(this, startVal)
@@ -49,6 +50,17 @@ class Clover {
       web3Provider = new Web3.providers.HttpProvider('http://localhost:8545')
     }
     web3 = new Web3(web3Provider)
+    this.setAccountInterval()
+  }
+
+  setAccountInterval () {
+    this.account = web3.eth.accounts && web3.eth.accounts[0]
+    if (this.accountInterval) {
+      clearInterval(this.accountInterval)
+    }
+    this.accountInterval = setInterval(() => {
+      this.account = web3.eth.accounts && web3.eth.accounts[0]
+    }, 5000)
   }
 
   setContract () {
@@ -61,13 +73,13 @@ class Clover {
     if (!this.CloverToken) this.setContract()
     if (!this.account) return
     this.CloverToken.deployed().then((instance) => {
-      instance.showGameDebug(new BN(this.first32Moves, 2), new BN(this.lastMoves, 2), {from: this.account}).then((result) => {
+      instance.showGameDebug(new BN(this.byteFirst32Moves, 16), new BN(this.byteLastMoves, 16), {from: this.account}).then((result) => {
         console.log(result)
       })
     })
   }
 
-  showGame () {
+  showGameConstant () {
     if (!this.CloverToken) this.setContract()
     this.CloverToken.deployed().then((instance) => {
       instance.showGameConstant(new BN(this.byteFirst32Moves, 16), new BN(this.byteLastMoves, 16)).then((result) => {
@@ -101,6 +113,7 @@ class Clover {
     }
     this.makeVisualBoard()
   }
+
 
   playGameMovesString (moves = null) {
     this.playGameMovesArray(this.stringMovesToArrayMoves(moves))
@@ -211,7 +224,7 @@ class Clover {
     }
     let validMovesRemain = false
     if (empties.length) {
-      for (i = 0; i < empties.length && !validMovesRemain; i++) {
+      for (let i = 0; i < empties.length && !validMovesRemain; i++) {
         let gameCopy = new Clover(this)
         // Object.assign(gameCopy, JSON.parse(JSON.stringify(this)))
         gameCopy.currentPlayer = this.BLACK
