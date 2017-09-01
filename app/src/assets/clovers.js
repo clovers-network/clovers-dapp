@@ -1,4 +1,8 @@
 import BN from 'bignumber.js'
+import cloverTokenArtifacts from '../../../build/contracts/CloverToken.json'
+import contract from 'truffle-contract'
+import Web3 from 'web3'
+let web3 = window.web3
 
 class Clover {
 
@@ -31,6 +35,23 @@ class Clover {
     this.byteLastMoves = ''
     this.moveKey = 0
     this.msg = ''
+  }
+
+  initWeb3 () {
+    if (web3) {
+      // Use Mist/MetaMask's provider
+      var web3Provider = web3.currentProvider
+    } else {
+      // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
+      // web3Provider = new Web3.providers.HttpProvider('https://mainnet.infura.io/Q5I7AA6unRLULsLTYd6d')
+      web3Provider = new Web3.providers.HttpProvider('http://localhost:8545')
+    }
+    web3 = new Web3(web3Provider)
+  }
+
+  setContract () {
+    this.CloverToken = contract(cloverTokenArtifacts)
+    this.CloverToken.setProvider(web3.currentProvider)
   }
 
   playGameMovesArray (moves = []) {
