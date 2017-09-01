@@ -338,7 +338,7 @@ contract CloverToken is StandardToken {
           tile = returnTile(game.board, uint8(testCol), uint8(testRow));
 
           if (tile == opponentColor) {
-            // if tile is opposite color it coudl be flipped, so add to potential flip array
+            // if tile is opposite color it could be flipped, so add to potential flip array
             (potentialFlips, potentialFlipsLength) = addMove(potentialFlips, potentialFlipsLength, uint8(testCol), uint8(testRow));
           } else if (tile == currentPlayer && j > 1) {
             // hit current players tile which means capture is complete
@@ -408,8 +408,6 @@ contract CloverToken is StandardToken {
     bool X0Sym = true;
     bool XYSym = true;
     bool XnYSym = true;
-    uint8 col;
-    uint8 row;
     for (uint8 i = 0; i < 8 && (RotSym || Y0Sym || X0Sym || XYSym || XnYSym); i++) {
       for (uint8 j = 0; j < 8 && (RotSym || Y0Sym || X0Sym || XYSym || XnYSym); j++) {
 

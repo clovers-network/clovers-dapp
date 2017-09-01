@@ -86,18 +86,11 @@ const actions = {
   },
   registerGame ({commit, dispatch, state}, moves) {
     state.CloverToken.deployed().then((instance) => {
-      console.log(state.account)
       console.log(moves)
 
       var first32Moves = moves.slice(0, (32 * 7))
-      var lastMoves = moves.length > (32 * 7) ? moves.slice((32 * 7)) : 0
+      var lastMoves = moves.slice((32 * 7))
 
-      var padding = (32 * 7) - lastMoves.length
-      padding = new Array(padding)
-      padding = padding.fill('0').join('')
-      lastMoves = lastMoves + padding
-      console.log(first32Moves.match(/.{1,7}/g))
-      console.log(lastMoves.match(/.{1,7}/g))
       console.log(new BN(first32Moves, 2).toString(16))
       console.log(new BN(lastMoves, 2).toString(16))
       // instance.showGameConstant.call(new BN(first32Moves, 2), new BN(lastMoves, 2)).then((l, a) => {
