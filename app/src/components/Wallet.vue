@@ -30,6 +30,8 @@
 import Clover from '../assets/clovers'
 import { mapGetters } from 'vuex'
 import * as types from '../store/mutation-types'
+import Miner from '@/components/Miner'
+
 export default {
   name: 'Wallet',
   data () {
@@ -57,8 +59,6 @@ export default {
         this.newName = this.tokenName
       }
     }
-  },
-  mounted () {
   },
   computed: {
     ...mapGetters({
@@ -103,7 +103,8 @@ export default {
     updateAmount (e) {
       this.$store.commit(types.UPDATE_AMOUNT, e.target.value)
     }
-  }
+  },
+  components: { Miner }
 }
 </script>
 
