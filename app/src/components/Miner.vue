@@ -1,10 +1,12 @@
 <template>
   <div>
-    <button @click="mine">Mine it</button>
+    <button @click="mine">{{ mineBtn }}</button>
+    <!-- <button @click="">More cores+</button> -->
     <p>Time spent mining: <strong>{{ mineTime }}s</strong></p>
-    <button @click="stop">pls stop</button>
+    <p>Cores: <strong>{{ miners.length }}</strong></p>
+    <button v-if="miners.length" @click="stop">{{ stopBtn }}</button>
     <br>
-    <h1 v-if="mining">{{ hashRate }} games/sec</h1>
+    <h1 v-if="mining">{{ hashRate * miners.length }} games/sec</h1>
     <p v-if="totalMined">Total c. <strong>{{ totalMined.toLocaleString() }}</strong></p>
 
     <div v-if="niceOnes.length">
@@ -21,27 +23,40 @@
     name: 'mine',
     data () {
       return {
+        miners: [],
         miner: null,
         hashRate: 0,
         mining: false,
-        start: null,
         mineTime: 0,
         totalMined: 0,
         niceOnes: []
       }
     },
+    computed: {
+      mineBtn () {
+        return this.miners.length ? 'More power' : 'Start mining'
+      },
+      stopBtn () {
+        return this.miners.length === 1 ? 'Stop mining' : 'Slow down!'
+      }
+    },
     methods: {
       mine () {
         this.mining = true
-        this.start = new Date()
-        this.miner = new CloverWorker()
-        this.miner.onmessage = this.handleSymmetry
-        this.miner.postMessage('start')
+        if (!this.start) this.start = new Date()
+        let miner = new CloverWorker()
+        miner.onmessage = this.handleSymmetry
+        miner.postMessage('start')
+        this.miners.push(miner)
       },
       stop () {
-        this.miner.postMessage('stop')
-        this.mining = false
-        this.start = null
+        if (this.miners.length) {
+          let removed = this.miners.pop()
+          removed.postMessage('stop')
+          if (!this.miners.length) this.mining = false
+        } else {
+          this.mining = false
+        }
       },
       handleSymmetry (event) {
         let { data } = event
