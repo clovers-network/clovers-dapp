@@ -64,7 +64,8 @@ contract CloverToken is StandardToken {
     return boardKeys.length;
   }
 
-  function getClover(bytes16 board) public constant returns(bytes16, uint, address, bytes28, bytes28) {
+  function getClover(uint boardKey) public constant returns(bytes16, uint, address, bytes28, bytes28) {
+    bytes16 board = boardKeys[boardKey];
     if(!boardExists(board)) revert();
     return (board, clovers[board].lastPaidAmount, clovers[board].previousOwners[clovers[board].previousOwners.length - 1], clovers[board].first32Moves, clovers[board].lastMoves);
   }
@@ -103,13 +104,14 @@ contract CloverToken is StandardToken {
     return saveGame(game);
   }
 
-  function adminRegisterGame (bytes28 first32Moves, bytes28 lastMoves, bytes16 board) public newBoard(board) onlyAdmin() {
+  function adminRegisterGame (bytes28 first32Moves, bytes28 lastMoves, bytes16 board) public newBoard(board) onlyAdmin() returns(uint boardKey) {
     clovers[board].first32Moves = first32Moves;
     clovers[board].lastMoves = lastMoves;
     clovers[board].previousOwners.push(msg.sender);
     clovers[board].exists = true;
     clovers[board].lastPaidAmount = flipStartValue;
-    boardKeys.push(board);
+    DebugGame(0, false, true, true, 1, board, 'okay');
+    return boardKeys.push(board);
   }
 
   function saveGame(Game game) internal returns(uint){

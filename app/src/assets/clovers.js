@@ -19,6 +19,9 @@ class Clover {
     this.start = false
     this.increment = 0
     this.clearAttrs()
+
+    this.registeredBoards = []
+
     if (startVal) {
       Object.assign(this, startVal)
     }
@@ -45,9 +48,10 @@ class Clover {
   }
 
   initWeb3 () {
+    let web3Provider
     if (web3) {
       // Use Mist/MetaMask's provider
-      let web3Provider = web3.currentProvider
+      web3Provider = web3.currentProvider
     } else {
       // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
       // web3Provider = new Web3.providers.HttpProvider('https://mainnet.infura.io/Q5I7AA6unRLULsLTYd6d')
@@ -83,11 +87,37 @@ class Clover {
     })
   }
 
-  showGameConstant () {
+  showGameConstant (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     if (!this.CloverToken) this.setContract()
     this.CloverToken.deployed().then((instance) => {
-      instance.showGameConstant(new BN(this.byteFirst32Moves, 16), new BN(this.byteLastMoves, 16)).then((result) => {
+      instance.showGameConstant(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
         console.log(result)
+      })
+    })
+  }
+
+  listClovers () {
+    if (!this.CloverToken) this.setContract()
+    this.CloverToken.deployed().then((instance) => {
+      instance.getCloversCount.call().then((result) => {
+        console.log(result)
+        this.registeredBoards = []
+        for (let i = 0; i < result.toNumber(); i++) {
+          instance.getClover(i).then((result) => {
+            console.log(result)
+            this.registeredBoards.push(result)
+          })
+        }
+      })
+    })
+  }
+
+  adminRegisterGame (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, byteBoard = this.byteBoard) {
+    if (!this.CloverToken) this.setContract()
+    console.log(byteFirst32Moves, byteLastMoves, byteBoard)
+    this.CloverToken.deployed().then((instance) => {
+      instance.adminRegisterGame(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), new BN(byteBoard, 16), {from: this.account} ).then((result) => {
+        this.listClovers()
       })
     })
   }
@@ -401,6 +431,9 @@ class Clover {
   }
 
   byteBoardToArrayBoard (byteBoard = 0) {
+    if (byteBoard.slice(0, 2) === '0x') {
+      byteBoard = byteBoard.slice(2)
+    }
     byteBoard = new BN(byteBoard, 16)
     byteBoard = byteBoard.toString(2)
     let len = byteBoard.length
@@ -415,11 +448,11 @@ class Clover {
     })
   }
 
-  byteArrayToRowArray (byteBoard = 0) {
+  byteBoardToRowArray (byteBoard = 0) {
     return this.arrayBoardToRows(this.byteBoardToArrayBoard(byteBoard))
   }
 
-  byteArrayToColArray (byteBoard = 0) {
+  byteBoardToColArray (byteBoard = 0) {
     return this.arrayBoardToCols(this.byteBoardToArrayBoard(byteBoard))
   }
 
@@ -484,10 +517,29 @@ class Clover {
     return stringMoves.match(/.{1,2}/g)
   }
 
+  byteMovesToStringMoves (byteFirst32Moves = 0, byteLastMoves = 0) {
+    if (byteFirst32Moves.slice(0, 2) === '0x') {
+      byteFirst32Moves = byteFirst32Moves.slice(2)
+    }
+    if (byteLastMoves.slice(0, 2) === '0x') {
+      byteLastMoves = byteLastMoves.slice(2)
+    }
+    let byteMoves = byteFirst32Moves + byteLastMoves
+    console.log(byteMoves)
+    byteMoves = new BN(byteMoves, 16)
+    let binaryMoves = byteMoves.toString(2)
+    console.log(binaryMoves)
+    return this.binaryMovesToStringMoves(binaryMoves)
+  }
+
   binaryMovesToByteMoves (binaryMoves = 0) {
     if (!binaryMoves) return
     let foo = new BN(binaryMoves, 2)
     return foo.toString(16)
+  }
+
+  stringMovesToByteMoves (stringMoves) {
+    return this.binaryMovesToByteMoves(this.stringMovesToBinaryMoves(stringMoves))
   }
 
   binaryMovesToStringMoves (binaryMoves = 0) {

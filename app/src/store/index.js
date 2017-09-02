@@ -129,6 +129,15 @@ const actions = {
           console.error(error)
         }
       })
+
+      instance.Registered({fromBlock: 'latest'}).watch((error, result) => {
+        console.log('watched Registered')
+        if (error == null) {
+          console.log(result)
+        } else {
+          console.error(error)
+        }
+      })
     })
   },
   helloWorld ({commit, dispatch, state}, name) {

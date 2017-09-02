@@ -7,26 +7,27 @@
 
     <section>
       <h1>Register {{tokenName}}</h1>
-      <form @submit.prevent="sendHandler">
+      <form @submit.prevent="trigger">
         <input type='text' v-model='moves' placeholder='board'>
         <button id="send" type="submit">Submit</button>
       </form>
     </section>
-    <br>
-    col: <input v-model='col'>
-    row: <input v-model='row'>
-    <button @click.prevent='tryFunction()'>throwawayFunction()</button>
-    <form @submit.prevent='helloWorld'>
-      <input v-model='newName'>
-    </form>
-    <div>{{totalGames}}</div>
-    <div><input type='checkbox' v-model='running'></input>asdf</div>
+    <h4><button @click.prevent='showGameConstant()'>showGameConstant()</button></h4>
+    <h4><button @click.prevent='listClovers()'>List Clovers()</button></h4>
+    <div class='board' v-for='board in clover.registeredBoards'>
+<!--         <div>{{clover.byteMovesToStringMoves(board[3], board[4])}}</div> -->
+        <div class='monospace' v-for='row in clover.byteBoardToRowArray(board[0])'>
+          <span v-for="tile in row">
+          {{tile === 'b' ? '⬛️' : (tile === 'w' ? '⬜️' : '❎')}}
+          </span>
+        </div>
+    </div>
+<!--     <div>{{clover.stringMovesToByteMoves(moves)}}</div> -->
   </div>
 </template>
 
 <script>
 import Clover from '../assets/clovers'
-var clover = new Clover()
 import { mapGetters } from 'vuex'
 import * as types from '../store/mutation-types'
 export default {
@@ -38,15 +39,16 @@ export default {
       // moves: 'F5D6C3F3D3D2C4B5E3E2B4F4G3F2C5E6G4G5C7H4H3H5D1H2E7C1F1C2E1G1H6H7A6F6G6A4A3A2B3F7D7E8D8C8G7H8G8F8C6B8A5A7B1A1B2B6G2H1', // x = -y
       // moves: 'C4C5D6C7C6D3E6D7C2B3A2F5C8E3G5B6A5H5F6B1H4A4E7G7E2F7G6B7G8G4F4F3D8H7E8F2H8B5A7E1H3D2G2H2C1C3F1D1A1G1G3A6H6F8B2B8A3H1A8B4', // x = 0
       // moves: 'F5D6C3D3C4F4C5B3C2E6B4F3E3E2F1B6G4D2F6E1D1A3F2G5F7D7E7G6H6B1C1G1B5D8E8A6C8C6C7G8F8B8H5H4G3H7A5B7A8A7H8G7H3H2H1G2A1A4A2B2', // y = 0
-      // moves: 'D3E3F6C6F2C4D6E2D2G1G2C1F5C5B3G5E6E7F7E1E8C2D1F8B5A5D7A2B4A4C3C7C8B6F4B2G4H4G6D8F3B8B1H2H6H5H3G7A3G3G8A1H7H8H1F1A6B7A8A7', // rotational
-      moves: 'D3', // incomplete
+      moves: 'D3E3F6C6F2C4D6E2D2G1G2C1F5C5B3G5E6E7F7E1E8C2D1F8B5A5D7A2B4A4C3C7C8B6F4B2G4H4G6D8F3B8B1H2H6H5H3G7A3G3G8A1H7H8H1F1A6B7A8A7', // rotational
+      // moves: 'D3', // incomplete
       newBoard: '-wwwwwwwbwwwwwwwbwwwwwwwbwwwwwwwbwwwwwwwbwwwwwwwbwwwwwwwbwwwwwww',
       maxBoard: 'wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww',
       newName: null,
       row: 0,
       col: 0,
       totalGames: 0,
-      running: false
+      running: false,
+      clover: new Clover()
     }
   },
   watch: {
@@ -57,19 +59,6 @@ export default {
     }
   },
   mounted () {
-    console.log('mounted')
-    clover.mine()
-    setInterval(() => {
-      console.log('try to mine')
-      if (this.running && clover.stop && !clover.symmetry) {
-        console.log('mine')
-        this.totalGames += 100
-        clover.stop = false
-        clover.start = false
-        clover.increment = 0
-        clover.mine()
-      }
-    }, 6000)
   },
   computed: {
     ...mapGetters({
@@ -81,28 +70,26 @@ export default {
       status: 'status'
     }),
     moveConverted () {
-      return clover.stringMovesToBinaryMoves(this.moves)
+      return this.clover.stringMovesToBinaryMoves(this.moves)
     },
     moveUnConverted () {
-      return clover.binaryMovesToByteMoves(this.moveConverted)
+      return this.clover.binaryMovesToByteMoves(this.moveConverted)
     }
   },
   methods: {
-    helloWorld () {
-      this.$store.dispatch('helloWorld', this.newName)
+    showGameConstant () {
+      var binaryMoves = this.clover.stringMovesToBinaryMoves(this.moves)
+      var first32Moves = this.clover.binaryMovesToByteMoves(binaryMoves.slice(0, 224))
+      var lastMoves = this.clover.binaryMovesToByteMoves(binaryMoves.slice(224))
+      this.clover.showGameConstant(first32Moves, lastMoves)
     },
-    tryFunction () {
-      this.$store.dispatch('tryFunction', [this.convertBoard(this.newBoard), this.col, this.row])
+    listClovers () {
+      this.clover.listClovers()
     },
-    convertBoard (board) {
-      return clover.stringBoardToArrayBoard(board)
-    },
-    sendHandler () {
-      // clover.playGameMovesString(this.moves)
-      // console.log(clover)
-      // clover.showGameConstant()
-      // clover.showGameDebug()
-      clover.mine()
+    trigger () {
+      this.clover.playGameMovesString(this.moves)
+      console.log(this.clover)
+      this.clover.adminRegisterGame()
     },
     updateAddress (e) {
       this.$store.commit(types.UPDATE_ADDRESS, e.target.value)
@@ -167,5 +154,13 @@ a {
 }
 #balance.red {
   color: #F62A00;
+}
+.board {
+  padding:20px;
+  display: inline-block;
+}
+.monospace {
+  font-family: monospace;
+  display: block;
 }
 </style>
