@@ -88,12 +88,12 @@ class Clover {
   }
 
   showGameConstant (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
-    if (!this.CloverToken) this.setContract()
-    this.CloverToken.deployed().then((instance) => {
-      instance.showGameConstant(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
-        console.log(result)
+      if (!this.CloverToken) this.setContract()
+      return this.CloverToken.deployed().then((instance) => {
+        return instance.showGameConstant(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
+          console.log('clover.js returned')
+        })
       })
-    })
   }
 
   listClovers () {
