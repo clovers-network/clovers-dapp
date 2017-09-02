@@ -113,7 +113,7 @@ class Clover extends Reversi {
     this.registerGame(moves[0], moves[1])
   }
 
-  registerGame (byteFirst32Moves = 0, byteLastMoves = 0, startPrice = 1000000) {
+  registerGame (byteFirst32Moves = 0, byteLastMoves = 0, startPrice = 100) {
     this.playGameByteMoves(byteFirst32Moves, byteLastMoves)
     if (this.error) {
       alert('Game is not valid')

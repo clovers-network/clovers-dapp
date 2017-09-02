@@ -7,8 +7,8 @@ contract CloverToken is StandardToken {
 
   string public name = 'CloverToken';
   string public symbol = '♧';
-  uint public decimals = 4;
-  uint public INITIAL_SUPPLY = 10000000000; // four decimals
+  uint public decimals = 0;
+  uint public INITIAL_SUPPLY = 1000000; // four decimals
   address public owner;
 
   mapping(address => bool) public admins;
@@ -127,7 +127,7 @@ contract CloverToken is StandardToken {
     if (game.X0Sym) base *= 100;
     if (game.XYSym) base *= 100;
     if (game.XnYSym) base *= 100;
-    return base * (10 ** decimals);
+    return base;
   }
 
   function getPayout(bytes16 board) public constant returns(uint256) {
