@@ -12,6 +12,7 @@
       <p><strong>{{ timeSpent }}</strong></p>
       <p>Cores: <strong>{{ miningPower }}</strong></p>
       <button v-if="miners.length" @click="stopAll">{{ stopBtn }}</button>
+
       <div v-if="niceOnes.length">
         <ul class="list-reset flex mxn1 nowrap overflow-auto">
           <clv v-for="board in niceOnes" :key="board.movesString" :board="miner.byteBoardToRowArray(board.byteBoard)"></clv>
