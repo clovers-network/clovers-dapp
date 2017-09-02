@@ -6,7 +6,7 @@ import BN from 'bignumber.js'
 import contract from 'truffle-contract'
 
 // import artifacts
-import cloverTokenArtifacts from '../../../build/contracts/CloverToken.json'
+import clubTokenArtifacts from '../../../build/contracts/ClubToken.json'
 
 Vue.use(Vuex)
 import Web3 from 'web3'
@@ -16,7 +16,7 @@ const debug = process.env.NODE_ENV !== 'production'
 const rootState = {
   name: null,
   symbol: null,
-  CloverToken: false,
+  ClubToken: false,
   account: '',
   balance: '0',
   decimals: 0,
@@ -74,7 +74,7 @@ const actions = {
   },
   sendToken ({ commit, dispatch, state }) {
     commit(types.UPDATE_STATUS, 'Initiating transaction... (please wait)')
-    state.CloverToken.deployed().then(instance => (
+    state.ClubToken.deployed().then(instance => (
       instance.transfer(state.address, parseInt(state.amount, 10), { from: state.account })
     )).then(() => {
       dispatch('getBalance')
@@ -86,7 +86,7 @@ const actions = {
   },
   setWatchers ({commit, dispatch, state}) {
     console.log('set watchers')
-    state.CloverToken.deployed().then((instance) => {
+    state.ClubToken.deployed().then((instance) => {
       instance.DebugUint({fromBlock: 0}).watch(function (error, result) {
         console.log('watched DebugUint:')
         if (error == null) {
@@ -141,7 +141,7 @@ const actions = {
     })
   },
   helloWorld ({commit, dispatch, state}, name) {
-    state.CloverToken.deployed().then((instance) => {
+    state.ClubToken.deployed().then((instance) => {
       instance.updateName(name, { from: state.account }).then((response) => {
         console.log(response)
         // commit(types.UPDATE_NAME, name)
@@ -151,7 +151,7 @@ const actions = {
     })
   },
   tryFunction ({commit, dispatch, state}, [arr, row, col]) {
-    state.CloverToken.deployed().then((instance) => {
+    state.ClubToken.deployed().then((instance) => {
       // instance.boardToByte(arr, { from: state.account }).then((response) => {
       // instance.shiftLeft.call('0x0000000000000011', 2).then((response) => {
       // function returnTile(bytes16 board, uint8 col, uint8 row) public constant returns (uint8){
@@ -185,7 +185,7 @@ const actions = {
       return
     }
     if (!state.decimals) {
-      state.CloverToken.deployed().then(instance => {
+      state.ClubToken.deployed().then(instance => {
         instance.decimals.call().then((decimals) => {
           console.log('decimals', decimals)
           commit(types.UPDATE_DECIMALS, parseInt(decimals))
@@ -203,7 +203,7 @@ const actions = {
         commit(types.UPDATE_STATUS, 'Error getting balance; see log.')
       })
     }
-    state.CloverToken.deployed().then(instance => (
+    state.ClubToken.deployed().then(instance => (
       instance.balanceOf.call(state.account)
     )).then((balance) => {
       var digits = new BN(10).toPower(state.decimals)
@@ -245,9 +245,9 @@ const mutations = {
     state.status = status
   },
   [types.UPDATE_CONTRACT] (state) {
-    state.CloverToken = contract(cloverTokenArtifacts)
-    state.CloverToken.setProvider(web3.currentProvider)
-    // state.CloverToken.allEvents(function (error, log) {
+    state.ClubToken = contract(clubTokenArtifacts)
+    state.ClubToken.setProvider(web3.currentProvider)
+    // state.ClubToken.allEvents(function (error, log) {
     //   if (!error) console.log(log)
     // })
   }

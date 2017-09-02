@@ -1,5 +1,5 @@
-var CloverToken = artifacts.require("./CloverToken.sol");
+var ClubToken = artifacts.require("./ClubToken.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(CloverToken);
+  deployer.deploy(ClubToken);
 };

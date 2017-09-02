@@ -3,12 +3,12 @@
 import contract from 'truffle-contract'
 
 // import artifacts
-import cloverTokenArtifacts from '../../../build/contracts/CloverToken.json'
+import clubTokenArtifacts from '../../../build/contracts/ClubToken.json'
 
 // create contracts
-const CloverToken = contract(cloverTokenArtifacts)
-CloverToken.setProvider(web3.currentProvider)
+const ClubToken = contract(clubTokenArtifacts)
+ClubToken.setProvider(web3.currentProvider)
 
 export {
-  CloverToken
+  ClubToken
 }
