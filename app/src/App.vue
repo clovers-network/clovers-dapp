@@ -1,9 +1,7 @@
 <template>
   <div id="app">
     <router-view></router-view>
-    <div class="mining">
-
-    </div>
+    <div class="mining"></div>
   </div>
 </template>
 
@@ -46,17 +44,6 @@ export default {
 </script>
 
 <style>
-* {
-  box-sizing: border-box;
-}
-
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  margin: 60px auto;
-  max-width: 1200px;
-  padding: 0em 1em;
-}
+  @import 'style/imports';
+  @import 'style/global';
 </style>

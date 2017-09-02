@@ -104,7 +104,6 @@ class Clover {
         this.registeredBoards = []
         for (let i = 0; i < result.toNumber(); i++) {
           instance.getClover(i).then((result) => {
-            console.log(result)
             this.registeredBoards.push(result)
           })
         }
