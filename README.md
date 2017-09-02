@@ -8,16 +8,19 @@ npm install
 
 # serve test network at localhost:8545 in a separate terminal
 testrpc
+
+# build and deploy contract onto network
+truffle compile
+truffle migrate
+
 # or
 tendermint --home ~/.ethermint/tendermint node
 # &
 ethermint --datadir ~/.ethermint --rpc --rpcaddr=0.0.0.0 --ws --wsaddr=0.0.0.0 --rpcapi eth,net,web3,personal,admin --unlock 0x7eFf122b94897EA5b0E2A9abf47B86337FAfebdC
 # and type into the ethermint jargon:
 1234
-
-# build and deploy contract onto network
-truffle compile
-truffle migrate
+# then
+truffle compile && truffle migrate --reset --network ethermint
 
 # move to app and install dependencies
 cd app
