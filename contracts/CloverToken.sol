@@ -30,7 +30,6 @@ contract CloverToken is StandardToken {
   }
 
   function updateName (string newName) public onlyAdmin() {
-    // if (!admins[msg.sender]) revert();
     name = newName;
   }
 
@@ -101,6 +100,7 @@ contract CloverToken is StandardToken {
 
   function registerGame(bytes28 first32Moves, bytes28 lastMoves) public returns(uint) {
     Game memory game = playGame(first32Moves, lastMoves);
+    DebugGame(game.moveKey, game.error, game.complete, game.symmetrical, game.currentPlayer, game.board, game.msg);
     return saveGame(game);
   }
 
@@ -117,7 +117,8 @@ contract CloverToken is StandardToken {
   function saveGame(Game game) internal returns(uint){
     if (game.error) revert();
     if (!game.complete) revert();
-    if(boardExists(game.board)) revert(); //board is still 0x0
+    if (!game.symmetrical) revert();
+    if(boardExists(game.board)) revert();
     balances[msg.sender] += findersFee;
     clovers[game.board].first32Moves = game.first32Moves;
     clovers[game.board].lastMoves = game.lastMoves;
@@ -207,14 +208,15 @@ contract CloverToken is StandardToken {
           game = makeMove(game, col, row);
           if (game.error) {
             skip = true;
+            game.error = false;
           }
         }
       }
     }
-    // if (!game.error) {
-    //   game = isComplete(game);
-    //   game = isSymmetrical(game);
-    // }
+    if (!game.error) {
+      game = isComplete(game);
+      game = isSymmetrical(game);
+    }
     return game;
   }
   
@@ -361,6 +363,7 @@ contract CloverToken is StandardToken {
   function isComplete (Game game) internal returns (Game) {
     if (game.moveKey == 60) {
       game.msg = 'good game';
+      game.error = false;
       game.complete = true;
       return game;
     } else {
@@ -399,6 +402,7 @@ contract CloverToken is StandardToken {
       } else {
         game.msg = 'good game';
         game.complete = true;
+        game.error = false;
       }
     }
     return game;
