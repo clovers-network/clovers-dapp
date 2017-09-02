@@ -69,17 +69,6 @@ contract CloverToken is StandardToken {
     return (board, clovers[board].lastPaidAmount, clovers[board].previousOwners[clovers[board].previousOwners.length - 1], clovers[board].first32Moves, clovers[board].lastMoves);
   }
 
-  function buyClover(bytes16 b) public returns(bool) {
-    if(!boardExists(b)) revert();
-    uint nextPrice = clovers[b].lastPaidAmount.mul(2);
-    if (balances[msg.sender] < nextPrice) revert();
-    address lastOwner = clovers[b].previousOwners[ clovers[b].previousOwners.length.sub(1) ];
-    balances[msg.sender] = balances[msg.sender].sub(nextPrice);
-    balances[lastOwner] = balances[lastOwner].add(nextPrice);
-    clovers[b].previousOwners.push(msg.sender);
-    clovers[b].lastPaidAmount = nextPrice;
-    return true;
-  }
 
   function showGameDebug(bytes28 first32Moves, bytes28 lastMoves) public {
     Game memory game = playGame(first32Moves, lastMoves);
@@ -98,10 +87,10 @@ contract CloverToken is StandardToken {
     return boardExists(game.board);
   }
 
-  function registerGame(bytes28 first32Moves, bytes28 lastMoves) public returns(uint) {
+  function registerGame(bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public returns(uint) {
     Game memory game = playGame(first32Moves, lastMoves);
     DebugGame(game.moveKey, game.error, game.complete, game.symmetrical, game.currentPlayer, game.board, game.msg);
-    return saveGame(game);
+    return saveGame(game, startPrice);
   }
 
   function adminRegisterGame (bytes28 first32Moves, bytes28 lastMoves, bytes16 board) public newBoard(board) onlyAdmin() returns(uint boardKey) {
@@ -114,19 +103,61 @@ contract CloverToken is StandardToken {
     return boardKeys.push(board);
   }
 
-  function saveGame(Game game) internal returns(uint){
+  function saveGame(Game game, uint256 startPrice) internal returns(uint){
     if (game.error) revert();
     if (!game.complete) revert();
     if (!game.symmetrical) revert();
     if(boardExists(game.board)) revert();
-    balances[msg.sender] += findersFee;
+    balances[msg.sender] += findersFee(game);
     clovers[game.board].first32Moves = game.first32Moves;
     clovers[game.board].lastMoves = game.lastMoves;
     clovers[game.board].previousOwners.push(msg.sender);
-    clovers[game.board].lastPaidAmount = flipStartValue;
+    clovers[game.board].lastPaidAmount = startPrice;
     clovers[game.board].exists = true;
     Registered(msg.sender, clovers[game.board].lastPaidAmount, game.board);
     return boardKeys.push(game.board);
+  }
+
+
+  function findersFee(Game game) internal returns(uint256) {
+    uint256 base = 0;
+    if (game.symmetrical) base += 1;
+    if (game.RotSym) base *= 100;
+    if (game.Y0Sym) base *= 100;
+    if (game.X0Sym) base *= 100;
+    if (game.XYSym) base *= 100;
+    if (game.XnYSym) base *= 100;
+    return base * (10 ** decimals);
+  }
+
+  function getPayout(bytes16 board) public constant returns(uint256) {
+    Game memory game;
+    game.board = board;
+    game = isSymmetrical(game);
+    return findersFee(game);
+  }
+
+
+  // flip mechanism
+  // every clover asset is for sale determined on an initial start price
+  // if that clover is purchased, the proceeds are divided evenly among the last two buyers
+  function buyClover (bytes16 b) public returns(bool) {
+    if(!boardExists(b)) revert();
+    // cant flip board you currently own
+    if (clovers[b].previousOwners[ clovers[b].previousOwners.length - 1 ] == msg.sender) revert();
+    uint nextPrice = clovers[b].lastPaidAmount.mul(2);
+    if (balances[msg.sender] < nextPrice) revert();
+    for (uint8 i = 1; i < 3; i++) {
+      if (i <= clovers[b].previousOwners.length) {
+        uint256 receivesPayment = clovers[b].previousOwners.length - uint(i);
+        address lastOwner = clovers[b].previousOwners[ receivesPayment ];
+        balances[msg.sender] = balances[msg.sender].sub(clovers[b].lastPaidAmount);
+        balances[lastOwner] = balances[lastOwner].add(clovers[b].lastPaidAmount);
+      }
+    }
+    clovers[b].previousOwners.push(msg.sender);
+    clovers[b].lastPaidAmount = nextPrice;
+    return true;
   }
 
 
@@ -136,6 +167,11 @@ contract CloverToken is StandardToken {
     bool error;
     bool complete;
     bool symmetrical;
+    bool RotSym;
+    bool Y0Sym;
+    bool X0Sym;
+    bool XYSym;
+    bool XnYSym;
     uint8 currentPlayer;
     bytes16 board;
     bytes28 first32Moves;
@@ -170,7 +206,7 @@ contract CloverToken is StandardToken {
     game.complete = false;
     game.currentPlayer = BLACK;
 
-    // replaced with decimal version below
+    // replaced with hex version below
     // game.board = turnTile(game.board, WHITE, 3, 3);
     // game.board = turnTile(game.board, WHITE, 4, 4);
     // game.board = turnTile(game.board, BLACK, 3, 4);
@@ -441,6 +477,11 @@ contract CloverToken is StandardToken {
     }
     if (RotSym || Y0Sym || X0Sym || XYSym || XnYSym) {
       game.symmetrical = true;
+      game.RotSym = RotSym;
+      game.Y0Sym = Y0Sym;
+      game.X0Sym = X0Sym;
+      game.XYSym = XYSym;
+      game.XnYSym = XnYSym;
     }
     return game;
   }

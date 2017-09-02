@@ -37,9 +37,9 @@ export default {
         this.$store.dispatch('checkAccounts')
       }, 1000)
 
-      // this.balanceInterval = setInterval(() => {
-      //   this.$store.dispatch('getBalance')
-      // }, 5000)
+      this.balanceInterval = setInterval(() => {
+        this.$store.dispatch('getBalance')
+      }, 5000)
     }
   },
   components: { Miner }

@@ -25,6 +25,7 @@ class Reversi {
     this.board[(this.BOARDDIM / 2) - 1][(this.BOARDDIM / 2)] = this.BLACK
     this.board[(this.BOARDDIM / 2)][(this.BOARDDIM / 2) - 1] = this.BLACK
     this.moves = []
+    this.movesString = ''
     this.byteBoard = ''
     this.byteFirst32Moves = ''
     this.byteLastMoves = ''

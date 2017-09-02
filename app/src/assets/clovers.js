@@ -76,15 +76,34 @@ class Clover extends Reversi {
     this.CloverToken.deployed().then((instance) => {
       instance.getCloversCount().then((result) => {
         if (result.toNumber() !== this.registeredBoards.length) {
-          console.log('diff results')
           this.registeredBoards = []
           for (let i = 0; i < result.toNumber(); i++) {
             instance.getClover(i).then((result) => {
-              this.registeredBoards[i] = result
+              this.registeredBoards.splice(i, 1, result)
             })
           }
         }
       })
+    })
+  }
+
+  buyClover (board = this.byteBoard) {
+    if (!this.CloverToken) this.setContract()
+    return this.CloverToken.deployed().then((instance) => {
+      return instance.boardExists.call(new BN(board, 16)).then((result) => {
+        console.log(result)
+        if (!result) {
+          alert('game doesn\'t exist')
+        } else {
+          return instance.buyClover(new BN(board, 16), {from: this.account} ).then((result) => {
+            console.log(result)
+          }).catch((err) => {
+            console.log('adminRegisterGame err', err.toString())
+          })
+        }
+      })
+    }).catch((err) => {
+      console.log('deploy err', err)
     })
   }
 
@@ -94,7 +113,7 @@ class Clover extends Reversi {
     this.registerGame(moves[0], moves[1])
   }
 
-  registerGame (byteFirst32Moves = 0, byteLastMoves = 0) {
+  registerGame (byteFirst32Moves = 0, byteLastMoves = 0, startPrice = 1000000) {
     this.playGameByteMoves(byteFirst32Moves, byteLastMoves)
     if (this.error) {
       alert('Game is not valid')
@@ -106,7 +125,7 @@ class Clover extends Reversi {
       console.log(this)
       if (!this.CloverToken) this.setContract()
       return this.CloverToken.deployed().then((instance) => {
-        return instance.registerGame(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), {from: this.account} ).then((result) => {
+        return instance.registerGame(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), startPrice, {from: this.account} ).then((result) => {
           console.log(result)
         }).catch((err) => {
           console.log('adminRegisterGame err', err.toString())

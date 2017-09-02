@@ -11,7 +11,10 @@
 
     <div v-if="niceOnes.length">
       <p>Symmetrical findings <strong>{{ niceOnes.length }}</strong></p>
-      <pre v-for="clover of niceOnes" v-text="draw(clover.visualBoard)"></pre>
+      <div v-for="clover of niceOnes">
+      <pre  v-text="draw(clover.visualBoard)"></pre>
+      {{clover.movesString}}
+      </div>
     </div>
   </div>
 </template>
