@@ -33,7 +33,6 @@
       </div>
     </div> -->
     <!-- <div>{{clover.stringMovesToByteMoves(moves)}}</div> -->
-    <miner @try-moves="confirm"></miner>
   </div>
 </template>
 
@@ -42,7 +41,6 @@
   import Clover from '../assets/clovers'
   import { mapGetters } from 'vuex'
   import * as types from '../store/mutation-types'
-  import Miner from '@/components/Miner'
   import Clv from '@/components/CloverFunc'
 
   export default {
@@ -131,6 +129,6 @@
         window.scroll(0, 0)
       }
     },
-    components: { Miner, Clv }
+    components: { Clv }
   }
 </script>

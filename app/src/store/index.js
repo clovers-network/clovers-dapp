@@ -11,7 +11,8 @@ import clubTokenArtifacts from '../../../build/contracts/ClubToken.json'
 Vue.use(Vuex)
 import Web3 from 'web3'
 let web3 = window.web3
-const debug = process.env.NODE_ENV !== 'production'
+// const debug = process.env.NODE_ENV !== 'production'
+const debug = false
 
 const rootState = {
   name: null,
@@ -22,7 +23,12 @@ const rootState = {
   decimals: 0,
   amount: '',
   address: '',
-  status: ''
+  status: '',
+  hashRate: 0,
+  mineTime: 346,
+  totalMined: 34,
+  mining: false,
+  miningPower: 0
 }
 
 const getters = {
@@ -32,7 +38,10 @@ const getters = {
   balance: state => state.balance,
   amount: state => state.amount,
   address: state => state.address,
-  status: state => state.status
+  status: state => state.status,
+  hashRate: state => state.hashRate,
+  mining: state => state.mining,
+  miningPower: state => state.miningPower
 }
 
 const actions = {
@@ -250,6 +259,22 @@ const mutations = {
     // state.ClubToken.allEvents(function (error, log) {
     //   if (!error) console.log(log)
     // })
+  },
+
+  [types.TOGGLE_MINER] (state, bool) {
+    state.mining = !!bool
+  },
+  [types.HASH_RATE] (state, rate) {
+    state.hashRate = rate * state.miningPower
+  },
+  [types.MINE_INCREMENT] (state, increment) {
+    state.totalMined = state.totalMined + increment
+  },
+  [types.TIME_INCREMENT] (state) {
+    state.mineTime = state.mineTime + 1
+  },
+  [types.CORE_COUNT] (state, count) {
+    state.miningPower = count
   }
 }
 
