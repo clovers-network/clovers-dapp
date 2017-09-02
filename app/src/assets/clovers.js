@@ -159,21 +159,17 @@ class Clover {
         skip = true
       }
     }
+    this.thisBoardToByteBoard()
     this.makeVisualBoard()
     this.isComplete()
     this.isSymmetrical()
-    // if (this.symmetrical) {
-    //   console.log(this)
-    //   alert("SYMMETRY!!!!")
-    //   this.stopIt()
-    // } else {
-    //   this.increment += 1
-    //   if (this.increment < 100) {
-    //     this.mine()
-    //   } else {
-    //     this.stopIt()
-    //   }
-    // }
+  }
+
+  boardExists (byteBoard = this.byteBoard) {
+    if (!this.CloverToken) this.setContract()
+    return this.CloverToken.deployed().then((instance) => {
+      return instance.boardExists(new BN(byteBoard, 16)).then(response => response)
+    })
   }
 
   buildMovesString () {

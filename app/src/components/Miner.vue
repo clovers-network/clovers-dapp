@@ -1,7 +1,6 @@
 <template>
   <div>
     <button @click="mine">{{ mineBtn }}</button>
-    <!-- <button @click="">More cores+</button> -->
     <p>Time spent mining: <strong>{{ mineTime }}s</strong></p>
     <p>Cores: <strong>{{ miners.length }}</strong></p>
     <button v-if="miners.length" @click="stop">{{ stopBtn }}</button>
@@ -17,14 +16,15 @@
 </template>
 
 <script>
-  const CloverWorker = require('worker-loader!../assets/clover-worker')
+  import CloverWorker from 'worker-loader!../assets/clover-worker'
+  import Clover from '../assets/clovers'
 
   export default {
     name: 'mine',
     data () {
       return {
         miners: [],
-        miner: null,
+        miner: new Clover(),
         hashRate: 0,
         mining: false,
         mineTime: 0,
@@ -65,7 +65,14 @@
           this.totalMined = this.totalMined + data.hashRate
         }
         if ('visualBoard' in data) {
-          this.niceOnes.push(data)
+          console.log(data.movesString)
+          this.miner.boardExists(data.byteBoard).then((exists) => {
+            if (!exists) {
+              this.niceOnes.push(data)
+            }
+          }).catch((err) => {
+            console.log(err)
+          })
         }
       },
       draw (clover) {

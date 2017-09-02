@@ -1,6 +1,9 @@
 <template>
   <div id="app">
     <router-view></router-view>
+    <div class="mining">
+
+    </div>
   </div>
 </template>
 
