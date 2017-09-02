@@ -96,51 +96,8 @@ const actions = {
   setWatchers ({commit, dispatch, state}) {
     console.log('set watchers')
     state.ClubToken.deployed().then((instance) => {
-      instance.DebugUint({fromBlock: 0}).watch(function (error, result) {
-        console.log('watched DebugUint:')
-        if (error == null) {
-          console.log(result)
-        } else {
-          console.error(error)
-        }
-      })
-
-      instance.DebugByte({fromBlock: 0}).watch(function (error, result) {
-        console.log('watched DebugByte:')
-        if (error == null) {
-          console.log(result)
-        } else {
-          console.error(error)
-        }
-      })
-
       instance.DebugGame({fromBlock: 0}).watch(function (error, result) {
         console.log('watched DebugGame:')
-        if (error == null) {
-          console.log(result)
-        } else {
-          console.error(error)
-        }
-      })
-      // event.get((error, result) => {
-      //   console.log('previous DebugGame:')
-      //   if (error == null) {
-      //     console.log(result)
-      //   } else {
-      //     console.error(error)
-      //   }
-      // })
-      instance.DebugMove({fromBlock: 'latest'}).watch((error, result) => {
-        console.log('watched DebugMove')
-        if (error == null) {
-          console.log(result)
-        } else {
-          console.error(error)
-        }
-      })
-
-      instance.Registered({fromBlock: 'latest'}).watch((error, result) => {
-        console.log('watched Registered')
         if (error == null) {
           console.log(result)
         } else {
