@@ -15,14 +15,15 @@
     <h4><button @click.prevent='showGameConstant()'>showGameConstant()</button></h4>
     <h4><button @click.prevent='listClovers()'>List Clovers()</button></h4>
     <div class='board' v-for='board in clover.registeredBoards'>
-<!--         <div>{{clover.byteMovesToStringMoves(board[3], board[4])}}</div> -->
-        <div class='monospace' v-for='row in clover.byteBoardToRowArray(board[0])'>
-          <span v-for="tile in row">
-          {{tile === 'b' ? '⬛️' : (tile === 'w' ? '⬜️' : '❎')}}
-          </span>
-        </div>
+      <!-- <div>{{clover.byteMovesToStringMoves(board[3], board[4])}}</div> -->
+      <div class='monospace' v-for='row in clover.byteBoardToRowArray(board[0])'>
+        <span v-for="tile in row">
+        {{tile === 'b' ? '⬛️' : (tile === 'w' ? '⬜️' : '❎')}}
+        </span>
+      </div>
     </div>
-<!--     <div>{{clover.stringMovesToByteMoves(moves)}}</div> -->
+    <!-- <div>{{clover.stringMovesToByteMoves(moves)}}</div> -->
+    <miner @try-moves="confirm"></miner>
   </div>
 </template>
 
@@ -96,6 +97,10 @@ export default {
     },
     updateAmount (e) {
       this.$store.commit(types.UPDATE_AMOUNT, e.target.value)
+    },
+    confirm (moves) {
+      this.moves = moves
+      window.scroll(0, 0)
     }
   },
   components: { Miner }

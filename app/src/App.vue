@@ -1,13 +1,10 @@
 <template>
   <div id="app">
     <router-view></router-view>
-    <miner></miner>
   </div>
 </template>
 
 <script>
-import Miner from '@/components/Miner'
-
 import { mapGetters } from 'vuex'
 
 export default {
@@ -41,8 +38,7 @@ export default {
       //   this.$store.dispatch('getBalance')
       // }, 5000)
     }
-  },
-  components: { Miner }
+  }
 }
 </script>
 

@@ -11,7 +11,7 @@
 
     <div v-if="niceOnes.length">
       <p>Symmetrical findings <strong>{{ niceOnes.length }}</strong></p>
-      <pre v-for="clover of niceOnes" v-text="draw(clover.visualBoard)"></pre>
+      <pre v-for="clover of niceOnes" v-text="draw(clover.visualBoard)" @click="confirm(clover.movesString)"></pre>
     </div>
   </div>
 </template>
@@ -76,6 +76,9 @@
           display += row.join(' ') + '\n'
         }
         return display
+      },
+      confirm (moves) {
+        this.$emit('try-moves', moves)
       }
     },
     mounted () {
@@ -85,3 +88,11 @@
     }
   }
 </script>
+
+<style scoped>
+  pre {
+    display: inline-block;
+    margin: 1.2rem;
+    cursor: pointer;
+  }
+</style>
