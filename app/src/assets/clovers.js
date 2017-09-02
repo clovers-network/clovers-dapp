@@ -2,7 +2,7 @@ import BN from 'bignumber.js'
 import cloverTokenArtifacts from '../../../build/contracts/CloverToken.json'
 import contract from 'truffle-contract'
 import Web3 from 'web3'
-let web3 = window.web3
+let web3 = self && self.web3
 
 class Clover {
 
@@ -118,7 +118,11 @@ class Clover {
     this.CloverToken.deployed().then((instance) => {
       instance.adminRegisterGame(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), new BN(byteBoard, 16), {from: this.account} ).then((result) => {
         this.listClovers()
+      }).catch((err) => {
+        console.log('adminRegisterGame err', err.toString())
       })
+    }).catch((err) => {
+      console.log('deploy err', err)
     })
   }
 
@@ -141,7 +145,7 @@ class Clover {
       if (move) {
         this.moves.push(move)
         this.buildMovesString()
-        this.moveKey++ 
+        this.moveKey++
         this.makeMove(move)
         if (this.error) {
           this.error = false
@@ -158,18 +162,18 @@ class Clover {
     this.makeVisualBoard()
     this.isComplete()
     this.isSymmetrical()
-    if (this.symmetrical) {
-      console.log(this)
-      alert("SYMMETRY!!!!")
-      this.stopIt()
-    } else {
-      this.increment += 1
-      if (this.increment < 100) {
-        this.mine()
-      } else {
-        this.stopIt()
-      }
-    }
+    // if (this.symmetrical) {
+    //   console.log(this)
+    //   alert("SYMMETRY!!!!")
+    //   this.stopIt()
+    // } else {
+    //   this.increment += 1
+    //   if (this.increment < 100) {
+    //     this.mine()
+    //   } else {
+    //     this.stopIt()
+    //   }
+    // }
   }
 
   buildMovesString () {
@@ -357,7 +361,7 @@ class Clover {
         }
         gameCopy = undefined
       }
-    } 
+    }
     if (validMovesRemain) {
       this.error = true
       this.msg = 'Invalid Game (moves still available)'
