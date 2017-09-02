@@ -107,6 +107,66 @@ class Clover extends Reversi {
     })
   }
 
+  stopIt () {
+    this.stop = true
+    this.end = new Date()
+    console.log('seconds:', (this.end - this.start) / 1000)
+    console.log('ms per game:', (this.end - this.start) / this.increment)
+  }
+
+  mine () {
+    if (this.stop) return
+    if (!this.start) {
+      this.start = new Date()
+    }
+    this.clearAttrs()
+    let skip = false
+    for (let i = 0; i < 60 && !skip; i++) {
+      let move = this.pickRandomMove()
+      if (move) {
+        this.moves.push(move)
+        this.buildMovesString()
+        this.moveKey++
+        this.makeMove(move)
+        if (this.error) {
+          this.error = false
+          this.currentPlayer = this.currentPlayer === this.BLACK ? this.WHITE : this.BLACK
+          this.makeMove(move)
+          if (this.error) {
+            skip = true
+          }
+        }
+      } else {
+        skip = true
+      }
+    }
+    this.thisBoardToByteBoard()
+    this.makeVisualBoard()
+    this.isComplete()
+    this.isSymmetrical()
+  }
+
+  boardExists (byteBoard = this.byteBoard) {
+    if (!this.CloverToken) this.setContract()
+    return this.CloverToken.deployed().then((instance) => {
+      return instance.boardExists(new BN(byteBoard, 16)).then(response => response)
+    })
+  }
+
+  buildMovesString () {
+    this.movesString = this.moves.map((move) => {
+      return this.arrayToMove(move[0], move[1])
+    }).join('')
+  }
+
+  pickRandomMove () {
+    let validMoves = this.getValidMoves()
+    if (!validMoves.length) {
+      this.currentPlayer = this.currentPlayer === this.BLACK ? this.WHITE : this.BLACK
+      validMoves = this.getValidMoves()
+    }
+    return validMoves.length !== 0 && validMoves[Math.floor(Math.random() * validMoves.length)]
+  }
 
   registerGameMovesString (moves = '', startPrice = 100) {
     moves = this.sliceMovesStringToBytes(moves)

@@ -1,0 +1,224 @@
+
+
+/*RESET*/
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  color: var(--black);
+  font-family: var(--body-font);
+  font-size: var(--base-font-size);
+  line-height: 1.5;
+  margin: 0;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  height: auto;
+  max-width: 100%;
+  vertical-align: middle;
+  transition: all var(--anim-timing);
+}
+
+svg {
+  max-height: 100%;
+}
+
+a {
+  color: var(--blue);
+  outline: 0;
+  text-decoration: none;
+  transition: all var(--anim-timing-medium);
+}
+
+/*h1, h2, h3,
+h4, h5, h6 {
+  font-weight: 600;
+  letter-spacing: .02em;
+  line-height: inherit;
+  margin-bottom: var(--space-2);
+  margin-top: var(--space-3);
+}
+*/
+.h1, .h2, .h3 {
+  letter-spacing: .02em;
+}
+
+/*h1 { font-size: 2rem }
+h2 { font-size: 1.5rem }
+h3 { font-size: 1.25rem }
+h4 { font-size: 1rem }
+h5 { font-size: .875rem }
+h6 { font-size: .75rem }
+*/
+p {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+strong { font-weight: 600; }
+
+.medium { font-weight: 500; }
+
+dl, ol, ul, pre, blockquote {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+code,
+pre,
+samp {
+  font-family:
+    'Roboto Mono',
+    'Source Code Pro',
+    Menlo,
+    Consolas,
+    'Liberation Mono',
+    monospace;
+}
+
+code, samp {
+  font-size: 87.5%;
+  padding: .125em;
+}
+
+pre {
+  font-size: 87.5%;
+  overflow: scroll;
+}
+
+.pre {
+  white-space: pre;
+}
+
+blockquote {
+  font-size: 1.25rem;
+  font-style: italic;
+  margin-left: 0;
+}
+
+hr {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+  border: 0;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: #ccc;
+}
+
+
+/* #APP STUFF */
+
+
+/* FORMS */
+
+textarea {
+  vertical-align: middle;
+}
+
+.upload-progress {
+  height: 8px;
+  width: 100%;
+  vertical-align: middle;
+
+  > div {
+    transition: width var(--anim-timing-medium);
+  }
+}
+
+.label {
+  color: var(--gray);
+  display: block;
+  font-size: var(--h6);
+  margin-bottom: var(--space-1);
+}
+
+.input {
+  background-color: var(--white);
+  border: 1px solid var(--light-gray);
+  display: block;
+  font-size: var(--h4);
+  padding: var(--space-2);
+  width: 100%;
+}
+
+/* select-wrap */
+.select {
+  display: block;
+  position: relative;
+
+  &:after {
+    color: var(--gray);
+    content: '\232A';
+    pointer-events: none;
+    position: absolute;
+    right: var(--space-2);
+    text-shadow: 1px 0px 0px var(--gray);
+    top: var(--space-2);
+    transform: rotate(90deg) translateX(20%);
+  }
+}
+
+.textarea {
+  border: 1px solid var(--light-gray);
+  display: block;
+  font-family: inherit;
+  font-size: var(--h4);
+  max-width: 100%;
+  padding: var(--space-2);
+  width: 100%;
+}
+
+.input,
+.textarea,
+.btn {
+  &:focus {
+    outline: none;
+    border-color: rgba(0, 0, 0, .125);
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, .18);
+  }
+}
+
+.currency {
+  position: relative;
+
+  .input {
+    padding-left: 3rem;
+  }
+
+  &:before {
+    content: '€';
+    color: var(--gray);
+    position: absolute;
+    padding: .9rem 1.4rem;
+    top: 0;
+    left: 0;
+  }
+}
+
+button:disabled,
+input:disabled,
+.unselected {
+  opacity: .4;
+}
+
+.input, select, textarea, button {
+  appearance: none;
+}
+
+/* HELPERS */
+
+.pointer {
+  cursor: pointer;
+}
+
+.no-select {
+  user-select: none;
+}
+
+.outline-none {
+  outline: 0;
+}
