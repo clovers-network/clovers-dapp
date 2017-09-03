@@ -9,6 +9,10 @@ import router from './router'
 import BN from 'bignumber.js'
 Object.defineProperty(Vue.prototype, '$BN', { value: BN })
 
+import Clv from '@/components/CloverFunc'
+
+Vue.component('clv', Clv)
+
 Vue.config.productionTip = false
 
 sync(store, router)

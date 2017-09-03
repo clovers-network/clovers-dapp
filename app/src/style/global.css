@@ -109,9 +109,52 @@ hr {
   border-bottom-color: #ccc;
 }
 
+/* #COLORS */
+
+.dark-gray {
+  color: var(--dark-gray);
+}
+
+.bg-dark-gray {
+  background-color: var(--dark-gray);
+}
+
+.border-dark-gray {
+  border-color: var(--dark-gray);
+}
 
 /* #APP STUFF */
 
+.clover {
+  background-color: green;
+  border-radius: 50%;
+  padding: 1.6em;
+
+  .row {
+    line-height: 0;
+  }
+}
+
+.t-b, .t-w, .t-n {
+  display: inline-block;
+  height: .8em;
+  line-height: 0;
+  width: .8em;
+  border-radius: 50%;
+  margin: .06em;
+}
+
+.t-b {
+  background-color: black;
+}
+
+.t-w {
+  background-color: white;
+}
+
+.t-n {
+  background-color: green;
+}
 
 /* FORMS */
 

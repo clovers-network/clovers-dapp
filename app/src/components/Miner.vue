@@ -36,10 +36,15 @@
         </template>
       </div>
     </header>
+    <div v-if="selectedClover">
+      <claim-clover :clover="selectedClover" :miner="miner"></claim-clover>
+    </div>
     <div class="p2">
       <div v-if="clovers.length">
         <ul class="list-reset flex mxn1 nowrap overflow-auto">
-          <clv v-for="board in clovers" :key="board.movesString" :board="miner.byteBoardToRowArray(board.byteBoard)"></clv>
+          <li @click="select(board)" v-for="board in clovers" class="px1 pointer h6">
+            <clv :key="board.movesString" :board="miner.byteBoardToRowArray(board.byteBoard)"></clv>
+          </li>
         </ul>
       </div>
     </div>
@@ -50,7 +55,6 @@
   import { mapMutations } from 'vuex'
   import CloverWorker from 'worker-loader!../assets/clover-worker'
   import Clover from '../assets/clovers'
-  import Clv from '@/components/CloverFunc'
   import ClaimClover from '@/components/ClaimClover'
   import moment from 'moment'
 
@@ -61,7 +65,8 @@
         miners: [],
         miner: new Clover(),
         interval: null,
-        hasStorage: !!window.localStorage
+        hasStorage: !!window.localStorage,
+        selectedClover: null
       }
     },
     computed: {
@@ -167,8 +172,8 @@
           })
         }
       },
-      confirm (moves) {
-        this.$emit('try-moves', moves)
+      select (clover) {
+        this.selectedClover = clover
       },
       timer () {
         if (this.mining) {
@@ -186,21 +191,24 @@
         addMineTime: 'TIME_INCREMENT',
         changePower: 'CORE_COUNT',
         minedClover: 'MINED_CLOVER',
-        restoreMinedClovers: 'EXISTING_CLOVERS'
+        restoreMinedClovers: 'EXISTING_CLOVERS',
+        storedClovers: 'STORED_CLOVERS',
+        storedMineCount: 'STORED_COUNT',
+        storedMineDuration: 'STORED_DURATION'
       })
     },
     mounted () {
       if (this.hasStorage) {
-        this.clovers = getItem('clovers')
-        this.totalMined = getItem('totalMined')
-        this.mineTime = getItem('mineTime')
+        this.storedClovers(getItem('clovers'))
+        this.storedMineCount(getItem('totalMined'))
+        this.storedMineDuration(getItem('mineTime'))
       }
       this.interval = setInterval(this.timer, 1000)
     },
     destroyed () {
       clearInterval(this.interval)
     },
-    components: { Clv, ClaimClover }
+    components: { ClaimClover }
   }
 
   function getItem (key) {

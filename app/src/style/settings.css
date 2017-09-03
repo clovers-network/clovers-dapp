@@ -28,6 +28,7 @@
   --silver: #DDDDDD;
   --light-gray: rgb(233, 233, 233);
   --gray:   #AAAAAA;
+  --dark-gray: rgb(40, 40, 40);
   --black:  #111111;
 
   --darken-1: rgba(0, 0, 0, .0625);

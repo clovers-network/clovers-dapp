@@ -235,6 +235,16 @@ const mutations = {
   },
   [types.EXISTING_CLOVERS] (state, clovers) {
     state.minedClovers.push(...clovers)
+  },
+
+  [types.STORED_CLOVERS] (state, clovers) {
+    state.minedClovers = clovers
+  },
+  [types.STORED_COUNT] (state, total) {
+    state.totalMined = total
+  },
+  [types.STORED_DURATION] (state, duration) {
+    state.mineTime = duration
   }
 }
 

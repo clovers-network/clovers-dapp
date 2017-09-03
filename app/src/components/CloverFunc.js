@@ -1,7 +1,7 @@
-const tiles = {
-  'w': ' ⬜️ ',
-  'b': ' ⬛️ ',
-  '-': ' ❎ '
+const tileMap = {
+  'w': 't-w',
+  'b': 't-b',
+  '-': 't-n'
 }
 
 export default {
@@ -9,15 +9,16 @@ export default {
   functional: true,
   render (createElement, ctx) {
     const { board } = ctx.props
-    let rows = ''
+    let rows = []
     for (let row of board) {
+      let tiles = []
       for (let tile of row) {
-        rows += tiles[tile]
+        tiles.push(createElement('span', {'class': tileMap[tile]}))
       }
-      rows += '\n'
+      rows.push(createElement('div', {'class': 'row'}, tiles))
     }
-    return createElement('li', {
-      'class': 'pre px1 mb2'
+    return createElement('div', {
+      'class': 'clover'
     }, rows)
   }
 }
