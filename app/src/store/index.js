@@ -11,7 +11,8 @@ import clubTokenArtifacts from '../../../build/contracts/ClubToken.json'
 Vue.use(Vuex)
 import Web3 from 'web3'
 let web3 = window.web3
-const debug = process.env.NODE_ENV !== 'production'
+// const debug = process.env.NODE_ENV !== 'production'
+const debug = false
 
 const rootState = {
   name: null,
@@ -22,7 +23,13 @@ const rootState = {
   decimals: 0,
   amount: '',
   address: '',
-  status: ''
+  status: '',
+  hashRate: 0,
+  mineTime: 0,
+  totalMined: 0,
+  mining: false,
+  miningPower: 0,
+  minedClovers: []
 }
 
 const getters = {
@@ -32,7 +39,10 @@ const getters = {
   balance: state => state.balance,
   amount: state => state.amount,
   address: state => state.address,
-  status: state => state.status
+  status: state => state.status,
+  hashRate: state => state.hashRate,
+  mining: state => state.mining,
+  miningPower: state => state.miningPower
 }
 
 const actions = {
@@ -85,53 +95,9 @@ const actions = {
     })
   },
   setWatchers ({commit, dispatch, state}) {
-    console.log('set watchers')
     state.ClubToken.deployed().then((instance) => {
-      instance.DebugUint({fromBlock: 0}).watch(function (error, result) {
-        console.log('watched DebugUint:')
-        if (error == null) {
-          console.log(result)
-        } else {
-          console.error(error)
-        }
-      })
-
-      instance.DebugByte({fromBlock: 0}).watch(function (error, result) {
-        console.log('watched DebugByte:')
-        if (error == null) {
-          console.log(result)
-        } else {
-          console.error(error)
-        }
-      })
-
       instance.DebugGame({fromBlock: 0}).watch(function (error, result) {
         console.log('watched DebugGame:')
-        if (error == null) {
-          console.log(result)
-        } else {
-          console.error(error)
-        }
-      })
-      // event.get((error, result) => {
-      //   console.log('previous DebugGame:')
-      //   if (error == null) {
-      //     console.log(result)
-      //   } else {
-      //     console.error(error)
-      //   }
-      // })
-      instance.DebugMove({fromBlock: 'latest'}).watch((error, result) => {
-        console.log('watched DebugMove')
-        if (error == null) {
-          console.log(result)
-        } else {
-          console.error(error)
-        }
-      })
-
-      instance.Registered({fromBlock: 'latest'}).watch((error, result) => {
-        console.log('watched Registered')
         if (error == null) {
           console.log(result)
         } else {
@@ -184,14 +150,8 @@ const actions = {
       }, 500)
       return
     }
-    if (!state.decimals) {
+    if (!state.symbol) {
       state.ClubToken.deployed().then(instance => {
-        instance.decimals.call().then((decimals) => {
-          console.log('decimals', decimals)
-          commit(types.UPDATE_DECIMALS, parseInt(decimals))
-        }).catch((err) => {
-          console.error(err)
-        })
         instance.name.call().then((name) => {
           commit(types.UPDATE_NAME, name)
         })
@@ -250,6 +210,41 @@ const mutations = {
     // state.ClubToken.allEvents(function (error, log) {
     //   if (!error) console.log(log)
     // })
+  },
+
+  [types.TOGGLE_MINER] (state, bool) {
+    state.mining = !!bool
+  },
+  [types.HASH_RATE] (state, rate) {
+    state.hashRate = rate * state.miningPower
+  },
+  [types.MINE_INCREMENT] (state, increment) {
+    if (!increment) return
+    state.totalMined = state.totalMined + increment
+  },
+  [types.TIME_INCREMENT] (state, inc) {
+    if (!inc) return
+    state.mineTime = state.mineTime + parseInt(inc)
+  },
+  [types.CORE_COUNT] (state, count) {
+    state.miningPower = count
+  },
+
+  [types.MINED_CLOVER] (state, clover) {
+    state.minedClovers.unshift(clover)
+  },
+  [types.EXISTING_CLOVERS] (state, clovers) {
+    state.minedClovers.push(...clovers)
+  },
+
+  [types.STORED_CLOVERS] (state, clovers) {
+    state.minedClovers = clovers
+  },
+  [types.STORED_COUNT] (state, total) {
+    state.totalMined = total
+  },
+  [types.STORED_DURATION] (state, duration) {
+    state.mineTime = duration
   }
 }
 

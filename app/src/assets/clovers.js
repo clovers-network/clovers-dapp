@@ -158,10 +158,10 @@ class Clover extends Reversi {
     this.isSymmetrical()
   }
 
-  boardExists (byteBoard = this.byteBoard) {
-    if (!this.CloverToken) this.setContract()
-    return this.CloverToken.deployed().then((instance) => {
-      return instance.boardExists(new BN(byteBoard, 16)).then(response => response)
+  cloverExists (byteBoard = this.byteBoard) {
+    if (!this.ClubToken) this.setContract()
+    return this.ClubToken.deployed().then((instance) => {
+      return instance.cloverExists(new BN(byteBoard, 16)).then(response => response)
     })
   }
 

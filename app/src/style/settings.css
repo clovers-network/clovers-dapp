@@ -21,13 +21,14 @@
   --orange:  #FF851B;
   --red:     #FF4136;
   --fuchsia: #F012BE;
-  --purple:  #B10DC9;
+  --purple:  #A23FA3;
   --maroon:  #85144B;
 
   --white:  #FFFFFF;
   --silver: #DDDDDD;
   --light-gray: rgb(233, 233, 233);
   --gray:   #AAAAAA;
+  --dark-gray: rgb(40, 40, 40);
   --black:  #111111;
 
   --darken-1: rgba(0, 0, 0, .0625);
