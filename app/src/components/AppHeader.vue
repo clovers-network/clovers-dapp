@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="overflow-hidden">
     <header class="flex bg-purple items-center white">
       <ul class="list-reset px2 py1 flex-auto">
         <li class="inline-block mr2">Clovers</li>

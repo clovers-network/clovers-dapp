@@ -212,6 +212,14 @@ input:disabled,
 
 /* HELPERS */
 
+.lh1 {
+  line-height: 1;
+}
+
+.lh2 {
+  line-height: 1.25;
+}
+
 .pointer {
   cursor: pointer;
 }

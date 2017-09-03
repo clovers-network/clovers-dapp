@@ -25,8 +25,8 @@ const rootState = {
   address: '',
   status: '',
   hashRate: 0,
-  mineTime: 346,
-  totalMined: 34,
+  mineTime: 0,
+  totalMined: 0,
   mining: false,
   miningPower: 0,
   minedClovers: []
@@ -219,9 +219,11 @@ const mutations = {
     state.hashRate = rate * state.miningPower
   },
   [types.MINE_INCREMENT] (state, increment) {
+    if (!increment) return
     state.totalMined = state.totalMined + increment
   },
-  [types.TIME_INCREMENT] (state) {
+  [types.TIME_INCREMENT] (state, inc) {
+    if (!inc) return
     state.mineTime = state.mineTime + 1
   },
   [types.CORE_COUNT] (state, count) {
@@ -229,7 +231,10 @@ const mutations = {
   },
 
   [types.MINED_CLOVER] (state, clover) {
-    this.minedClovers.push(clover)
+    state.minedClovers.unshift(clover)
+  },
+  [types.EXISTING_CLOVERS] (state, clovers) {
+    state.minedClovers.push(...clovers)
   }
 }
 

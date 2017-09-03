@@ -13,6 +13,7 @@ self.addEventListener('message', (event) => {
       hashRate++
       clover.mine()
       if (clover.symmetrical) {
+        console.log('symmetry')
         self.postMessage(clover)
       }
       if (running) {

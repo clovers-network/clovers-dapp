@@ -17,21 +17,26 @@
         <p class="m0 h6">Current mining speed</p>
         <p class="m0 h1 nowrap">{{ hashRate }} games/sec</p>
       </div>
-      <div class="px1 col-4 flex justify-end items-center">
+      <div class="px1 col-4 flex justify-end items-stretch self-stretch">
         <template v-if="!mining">
-          <button @click="mine" class="py1 px2 border bg-black white h4 bold">Mine Clovers</button>
+          <button @click="mine" class="py1 px2 border bg-black white h4 bold pointer no-select">Mine Clovers</button>
         </template>
         <template v-else>
-          <div class="mr2">
-            {{ miningPower }}
+          <div class="mr2 border flex items-center">
+            <div class="flex flex-column justify-stretch">
+              <div @click="mine" class="pointer no-select py1 px2 lh1">&plus;</div>
+              <div @click="stop" class="pointer no-select border-top py1 px2 lh1">&minus;</div>
+            </div>
+            <div class="border-left flex flex-column justify-center p1 center" style="height:100%">
+              <p class="m0 h2 lh1">{{ miningPower }}</p>
+              <p class="m0 h6 lh1">Active miners</p>
+            </div>
           </div>
-          <button @click="stopAll" class="py1 px2 border bg-black white h4 bold">Stop</button>
+          <button @click="stopAll" class="py1 px3 border bg-black white h4 bold pointer no-select">Stop</button>
         </template>
       </div>
     </header>
     <div class="p2">
-      <!-- <p>Cores: <strong>{{ miningPower }}</strong></p> -->
-
       <div v-if="clovers.length">
         <ul class="list-reset flex mxn1 nowrap overflow-auto">
           <clv v-for="board in clovers" :key="board.movesString" :board="miner.byteBoardToRowArray(board.byteBoard)"></clv>
@@ -54,12 +59,18 @@
       return {
         miners: [],
         miner: new Clover(),
-        interval: null
+        interval: null,
+        hasStorage: !!window.localStorage
       }
     },
     computed: {
-      clovers () {
-        return this.$store.state.minedClovers
+      clovers: {
+        get () {
+          return this.$store.state.minedClovers
+        },
+        set (newVal) {
+          this.restoreMinedClovers(newVal)
+        }
       },
       mining: {
         get () {
@@ -89,8 +100,8 @@
         get () {
           return this.$store.state.mineTime
         },
-        set () {
-          this.addMineTime()
+        set (newVal) {
+          this.addMineTime(newVal)
         }
       },
       miningPower: {
@@ -122,7 +133,7 @@
         this.mining = true
         if (!this.start) this.start = new Date()
         let miner = new CloverWorker()
-        miner.onmessage = this.handleSymmetry
+        miner.onmessage = this.minerEvent
         miner.postMessage('start')
         this.miners.push(miner)
         this.miningPower = this.miners.length
@@ -145,7 +156,7 @@
           this.stop()
         }
       },
-      handleSymmetry (event) {
+      minerEvent (event) {
         let { data } = event
         if ('hashRate' in data) {
           this.hashRate = data.hashRate
@@ -166,6 +177,9 @@
       },
       timer () {
         if (this.mining) this.mineTime = this.mineTime + 1
+        setItem('clovers', this.clovers)
+        setItem('totalMined', this.totalMined)
+        setItem('mineTime', this.mineTime)
       },
 
       ...mapMutations({
@@ -174,15 +188,30 @@
         addMineTotal: 'MINE_INCREMENT',
         addMineTime: 'TIME_INCREMENT',
         changePower: 'CORE_COUNT',
-        minedClover: 'MINED_CLOVER'
+        minedClover: 'MINED_CLOVER',
+        restoreMinedClovers: 'EXISTING_CLOVERS'
       })
     },
     mounted () {
+      if (this.hasStorage) {
+        this.clovers = getItem('clovers')
+        this.totalMined = getItem('totalMined')
+        this.mineTime = getItem('mineTime')
+      }
       this.interval = setInterval(this.timer, 1000)
     },
     destroyed () {
       clearInterval(this.interval)
     },
     components: { Clv }
+  }
+
+  function getItem (key) {
+    let res = window.localStorage.getItem(key)
+    return res && JSON.parse(res)
+  }
+
+  function setItem (key, val) {
+    window.localStorage.setItem(key, JSON.stringify(val))
   }
 </script>
