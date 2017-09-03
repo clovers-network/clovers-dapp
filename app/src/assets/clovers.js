@@ -87,6 +87,18 @@ class Clover extends Reversi {
     })
   }
 
+  buildString (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
+    if (!this.ClubToken) this.setContract()
+    this.ClubToken.deployed().then((instance) => {
+      // instance.returnAddress().then((result) => {
+      //   console.log(result)
+      // })
+      instance.buildString(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
+        console.log(result);
+      })
+    })
+  }
+
   buyClover (board = this.byteBoard) {
     if (!this.ClubToken) this.setContract()
     return this.ClubToken.deployed().then((instance) => {

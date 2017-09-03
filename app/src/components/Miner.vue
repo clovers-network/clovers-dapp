@@ -21,6 +21,7 @@
           <clv v-for="board in niceOnes" :key="board.movesString" :board="miner.byteBoardToRowArray(board.byteBoard)"></clv>
         </ul>
       </div>
+      <form @submit.prevent='submitCustom()'><input v-model='customMoves'></form>
     </div>
   </div>
 </template>
@@ -41,7 +42,8 @@
         mineTime: 0,
         totalMined: 0,
         opened: false,
-        niceOnes: []
+        niceOnes: [],
+        customMoves: 'C4C5D6C7C6D3E6D7C2B3A2F5C8E3G5B6A5H5F6B1H4A4E7G7E2F7G6B7G8G4F4F3D8H7E8F2H8B5A7E1H3D2G2H2C1C3F1D1A1G1G3A6H6F8B2B8A3H1A8B4'
       }
     },
     computed: {
@@ -53,6 +55,12 @@
       }
     },
     methods: {
+      submitCustom () {
+        console.log('submit custom')
+        this.miner.playGameMovesString(this.customMoves)
+        this.miner.buildString()
+        // this.miner.buyClover()
+      },
       toggleMiner () {
         this.opened = !this.opened
       },
