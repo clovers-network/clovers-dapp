@@ -109,9 +109,56 @@ hr {
   border-bottom-color: #ccc;
 }
 
+/* #COLORS */
+
+.dark-gray {
+  color: var(--dark-gray);
+}
+
+.bg-dark-gray {
+  background-color: var(--dark-gray);
+}
+
+.border-dark-gray {
+  border-color: var(--dark-gray);
+}
 
 /* #APP STUFF */
 
+.clover {
+  background-color: var(--silver);
+  border-radius: 50%;
+  padding: 1.6em;
+
+  .row {
+    line-height: 0;
+  }
+
+  .active-clover & {
+    box-shadow: 0 0 0 .4em;
+  }
+}
+
+.t-b, .t-w, .t-n {
+  display: inline-block;
+  height: .8em;
+  line-height: 0;
+  width: .8em;
+  border-radius: 50%;
+  margin: .06em;
+}
+
+.t-b {
+  background-color: var(--black);
+}
+
+.t-w {
+  background-color: var(--white);
+}
+
+.t-n {
+  background-color: var(--green);
+}
 
 /* FORMS */
 
@@ -174,11 +221,12 @@ textarea {
 
 .input,
 .textarea,
-.btn {
+.btn,
+button {
+
   &:focus {
     outline: none;
-    border-color: rgba(0, 0, 0, .125);
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, .18);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, .8);
   }
 }
 
@@ -205,11 +253,19 @@ input:disabled,
   opacity: .4;
 }
 
-.input, select, textarea, button {
+.input, select, textarea, .btn {
   appearance: none;
 }
 
 /* HELPERS */
+
+.lh1 {
+  line-height: 1;
+}
+
+.lh2 {
+  line-height: 1.25;
+}
 
 .pointer {
   cursor: pointer;
