@@ -1,26 +1,42 @@
 <template>
-  <div>
-    <header class="bg-green white p2 flex justify-between items-center">
-      <h4 class="h3 m0 lh1 pr2">Mine Clover</h4>
-      <strong v-if="niceOnes.length" class="mx2 h3">&clubs; {{ niceOnes.length }}</strong>
-      <strong class="mx2" v-if="mining">{{ hashRate }} games/sec</strong>
-      <div class="ml2">
-        <button @click="mine" class="btn btn-primary bg-orange">{{ mineBtn }}</button>
+  <div class="bg-black white">
+    <header class="p2 flex flex-wrap border-bottom items-center mxn1">
+      <div class="px1 col-2">
+        <p class="m0 h6">Time spent mining</p>
+        <p class="m0 h1 nowrap">{{ timeSpent }}</p>
+      </div>
+      <div class="px1 col-2">
+        <p class="m0 h6">Games played</p>
+        <p class="m0 h1 nowrap">{{ totalMined.toLocaleString() }}</p>
+      </div>
+      <div class="px1 col-2">
+        <p class="m0 h6">Clovers found</p>
+        <p class="m0 h1 nowrap">&clubs; {{ clovers.length }}</p>
+      </div>
+      <div class="px1 col-2">
+        <p class="m0 h6">Current mining speed</p>
+        <p class="m0 h1 nowrap">{{ hashRate }} games/sec</p>
+      </div>
+      <div class="px1 col-4 flex justify-end items-center">
+        <template v-if="!mining">
+          <button @click="mine" class="py1 px2 border bg-black white h4 bold">Mine Clovers</button>
+        </template>
+        <template v-else>
+          <div class="mr2">
+            {{ miningPower }}
+          </div>
+          <button @click="stopAll" class="py1 px2 border bg-black white h4 bold">Stop</button>
+        </template>
       </div>
     </header>
     <div class="p2">
-      <p><strong>{{ timeSpent }}</strong></p>
-      <p>Cores: <strong>{{ miningPower }}</strong></p>
-      <button v-if="miners.length" @click="stopAll">{{ stopBtn }}</button>
+      <!-- <p>Cores: <strong>{{ miningPower }}</strong></p> -->
 
-      <div v-if="niceOnes.length">
+      <div v-if="clovers.length">
         <ul class="list-reset flex mxn1 nowrap overflow-auto">
-          <clv v-for="board in niceOnes" :key="board.movesString" :board="miner.byteBoardToRowArray(board.byteBoard)"></clv>
+          <clv v-for="board in clovers" :key="board.movesString" :board="miner.byteBoardToRowArray(board.byteBoard)"></clv>
         </ul>
       </div>
-    </div>
-    <div class="bg-teal">
-      <p class="white m0 py1 px2">Games played <strong>~ {{ totalMined.toLocaleString() }}</strong></p>
     </div>
   </div>
 </template>
@@ -38,11 +54,13 @@
       return {
         miners: [],
         miner: new Clover(),
-        niceOnes: [],
         interval: null
       }
     },
     computed: {
+      clovers () {
+        return this.$store.state.minedClovers
+      },
       mining: {
         get () {
           return this.$store.state.mining
@@ -113,7 +131,10 @@
         if (this.miners.length) {
           let removed = this.miners.pop()
           removed.postMessage('stop')
-          if (!this.miners.length) this.mining = false
+          if (!this.miners.length) {
+            this.mining = false
+            this.hashRate = 0
+          }
           this.miningPower = this.miners.length
         } else {
           this.mining = false
@@ -131,10 +152,9 @@
           this.totalMined = data.hashRate
         }
         if ('visualBoard' in data) {
-          console.log(data.movesString)
-          this.miner.boardExists(data.byteBoard).then((exists) => {
+          this.miner.cloverExists(data.byteBoard).then((exists) => {
             if (!exists) {
-              this.niceOnes.push(data)
+              this.minedClover(data)
             }
           }).catch((err) => {
             console.log(err)
@@ -153,7 +173,8 @@
         newHashRate: 'HASH_RATE',
         addMineTotal: 'MINE_INCREMENT',
         addMineTime: 'TIME_INCREMENT',
-        changePower: 'CORE_COUNT'
+        changePower: 'CORE_COUNT',
+        minedClover: 'MINED_CLOVER'
       })
     },
     mounted () {

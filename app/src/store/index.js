@@ -28,7 +28,8 @@ const rootState = {
   mineTime: 346,
   totalMined: 34,
   mining: false,
-  miningPower: 0
+  miningPower: 0,
+  minedClovers: []
 }
 
 const getters = {
@@ -94,7 +95,6 @@ const actions = {
     })
   },
   setWatchers ({commit, dispatch, state}) {
-    console.log('set watchers')
     state.ClubToken.deployed().then((instance) => {
       instance.DebugGame({fromBlock: 0}).watch(function (error, result) {
         console.log('watched DebugGame:')
@@ -150,14 +150,8 @@ const actions = {
       }, 500)
       return
     }
-    if (!state.decimals) {
+    if (!state.symbol) {
       state.ClubToken.deployed().then(instance => {
-        instance.decimals.call().then((decimals) => {
-          console.log('decimals', decimals)
-          commit(types.UPDATE_DECIMALS, parseInt(decimals))
-        }).catch((err) => {
-          console.error(err)
-        })
         instance.name.call().then((name) => {
           commit(types.UPDATE_NAME, name)
         })
@@ -232,6 +226,10 @@ const mutations = {
   },
   [types.CORE_COUNT] (state, count) {
     state.miningPower = count
+  },
+
+  [types.MINED_CLOVER] (state, clover) {
+    this.minedClovers.push(clover)
   }
 }
 

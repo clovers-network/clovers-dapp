@@ -37,7 +37,6 @@
 </template>
 
 <script>
-
   import Clover from '../assets/clovers'
   import { mapGetters } from 'vuex'
   import * as types from '../store/mutation-types'

@@ -15,3 +15,5 @@ export const HASH_RATE = 'HASH_RATE'
 export const MINE_INCREMENT = 'MINE_INCREMENT'
 export const TIME_INCREMENT = 'TIME_INCREMENT'
 export const CORE_COUNT = 'CORE_COUNT'
+
+export const MINED_CLOVER = 'MINED_CLOVER'
