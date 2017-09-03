@@ -70,7 +70,8 @@ dl, ol, ul, pre, blockquote {
 
 code,
 pre,
-samp {
+samp,
+.mono {
   font-family:
     'Roboto Mono',
     'Source Code Pro',
@@ -277,4 +278,8 @@ input:disabled,
 
 .outline-none {
   outline: 0;
+}
+
+.min-width-1 {
+  min-width: var(--width-0);
 }

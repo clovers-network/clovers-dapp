@@ -18,9 +18,11 @@
       <div class="mt0">
         <button @click.prevent="listClovers()" class="btn btn-primary bg-green">List Clovers</button>
       </div>
-      <div v-if="clover.registeredBoards.length" class="mt3">
-        <ul class="list-reset flex flex-wrap mxn1">
-          <clv v-for="board in clover.registeredBoards" :key="board[0]" :board="clover.byteBoardToRowArray(board[0])"></clv>
+      <div v-if="clover.registeredBoards.length" class="mt3 px2">
+        <ul class="list-reset flex flex-wrap mxn2">
+          <li v-for="board in clover.registeredBoards" :key="board[0]" class="px2 mb3">
+            <clv :board="clover.byteBoardToRowArray(board[0])"></clv>
+          </li>
         </ul>
       </div>
     </div>
