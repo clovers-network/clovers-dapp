@@ -23,8 +23,12 @@
     },
     methods: {
       start () {
+        let tmpMoves = this.movesString
         this.animString = ''
-        this.stringList = this.movesString.split('')
+        while (tmpMoves.length) {
+          this.stringList.push(tmpMoves.substring(0, 2))
+          tmpMoves = tmpMoves.substring(2)
+        }
         this.cycle()
       },
       cycle () {
@@ -32,13 +36,20 @@
           this.animString += this.stringList.shift()
           setTimeout(() => {
             this.cycle()
-          }, 20)
+          }, 50)
         }
+      },
+      stop () {
+        this.stringList = []
+        this.animString = ''
       }
     },
     watch: {
       movesString () {
-        this.start()
+        this.stop()
+        setTimeout(() => {
+          this.start()
+        }, 50)
       }
     },
     mounted () {

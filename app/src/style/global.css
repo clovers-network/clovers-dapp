@@ -126,12 +126,16 @@ hr {
 /* #APP STUFF */
 
 .clover {
-  background-color: green;
+  background-color: var(--silver);
   border-radius: 50%;
   padding: 1.6em;
 
   .row {
     line-height: 0;
+  }
+
+  .active-clover & {
+    box-shadow: 0 0 0 .4em;
   }
 }
 
@@ -145,15 +149,15 @@ hr {
 }
 
 .t-b {
-  background-color: black;
+  background-color: var(--black);
 }
 
 .t-w {
-  background-color: white;
+  background-color: var(--white);
 }
 
 .t-n {
-  background-color: green;
+  background-color: var(--green);
 }
 
 /* FORMS */
