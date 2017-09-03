@@ -1,6 +1,6 @@
 <template>
   <div class="bg-black white">
-    <header class="p2 flex flex-wrap border-bottom items-center mxn1">
+    <header class="p2 flex flex-wrap items-center mxn1">
       <div class="px1 col-2">
         <p class="m0 h6">Time spent mining</p>
         <p class="m0 h1 nowrap">{{ timeSpent }}</p>
@@ -51,6 +51,7 @@
   import CloverWorker from 'worker-loader!../assets/clover-worker'
   import Clover from '../assets/clovers'
   import Clv from '@/components/CloverFunc'
+  import ClaimClover from '@/components/ClaimClover'
   import moment from 'moment'
 
   export default {
@@ -119,13 +120,7 @@
         return this.miners.length === 1 ? 'Stop mining' : 'Slow down!'
       },
       timeSpent () {
-        let d = this.mineTime
-        if (d < 120) {
-          return `${moment.duration(d * 1000).as('seconds')} seconds`
-        } else if (d < (60 * 60)) {
-          return `${moment.duration(d * 1000).as('minutes').toFixed(2)} mins`
-        }
-        return `${moment.duration(d * 1000).as('hours').toFixed(2)} hours`
+        return moment.utc(this.mineTime * 1000).format('HH:mm:ss')
       }
     },
     methods: {
@@ -176,10 +171,12 @@
         this.$emit('try-moves', moves)
       },
       timer () {
-        if (this.mining) this.mineTime = this.mineTime + 1
-        setItem('clovers', this.clovers)
-        setItem('totalMined', this.totalMined)
-        setItem('mineTime', this.mineTime)
+        if (this.mining) {
+          this.mineTime = 1
+          setItem('clovers', this.clovers)
+          setItem('totalMined', this.totalMined)
+          setItem('mineTime', this.mineTime)
+        }
       },
 
       ...mapMutations({
@@ -203,7 +200,7 @@
     destroyed () {
       clearInterval(this.interval)
     },
-    components: { Clv }
+    components: { Clv, ClaimClover }
   }
 
   function getItem (key) {

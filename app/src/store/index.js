@@ -224,7 +224,7 @@ const mutations = {
   },
   [types.TIME_INCREMENT] (state, inc) {
     if (!inc) return
-    state.mineTime = state.mineTime + 1
+    state.mineTime = state.mineTime + parseInt(inc)
   },
   [types.CORE_COUNT] (state, count) {
     state.miningPower = count
