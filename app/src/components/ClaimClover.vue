@@ -9,11 +9,11 @@
           <svg-text :movesString="clover.movesString"></svg-text>
         </div>
       </div>
-      <div v-if="clover.removed" class="px3">
-        <p class="h1 md-h0 m0 lh1">❌ Removed {{ removeDate }}</p>
+      <div v-if="clover.removed" class="px3 flex-auto">
+        <p class="h1 m0 lh1">🗑 Removed {{ removeDate }}</p>
       </div>
-      <div v-else-if="clover.claimed" class="px3">
-        <p class="h1 md-h0 m0 lh1">✨ Claimed {{ claimDate }}</p>
+      <div v-else-if="clover.claimed" class="px3 flex-auto">
+        <p class="h1 m0 lh1">✨ Claimed {{ claimDate }}</p>
       </div>
       <div v-else class="col-8 lg-col-7">
         <form @submit.prevent="trigger">
