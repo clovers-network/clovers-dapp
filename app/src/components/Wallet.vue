@@ -20,21 +20,12 @@
       </div>
       <div v-if="clover.registeredBoards.length" class="mt3 px2">
         <ul class="list-reset flex flex-wrap mxn2">
-          <li v-for="board in clover.registeredBoards" :key="board[0]" class="px2 mb3">
+          <li @click='testClover(key, board)'  v-for="(board, key) in clover.registeredBoards" :key="board[0]" class="px2 mb3">
             <clv :board="clover.byteBoardToRowArray(board[0])"></clv>
           </li>
         </ul>
       </div>
     </div>
-      <!-- <div class='board' v-for='board in clover.registeredBoards'> -->
-      <!-- <div>{{clover.byteMovesToStringMoves(board[3], board[4])}}</div> -->
-      <!-- <div class='monospace' v-for='row in clover.byteBoardToRowArray(board[0])'>
-        <span v-for="tile in row">
-        {{tile === 'b' ? '⬛️' : (tile === 'w' ? '⬜️' : '❎')}}
-        </span>
-      </div>
-    </div> -->
-    <!-- <div>{{clover.stringMovesToByteMoves(moves)}}</div> -->
   </div>
 </template>
 
@@ -98,6 +89,12 @@
       }
     },
     methods: {
+      testClover (key, board) {
+        console.log(board)
+        this.clover.renameClover(board[0], 'foo').then((result) => {
+          console.log(result)
+        })
+      },
       buyClover () {
         this.clover.playGameMovesString(this.moves)
         this.clover.buyClover()

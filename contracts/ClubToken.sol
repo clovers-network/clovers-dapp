@@ -55,6 +55,10 @@ contract ClubToken is StandardToken, Reversi {
   mapping(address => bool) public admins;
   address[] public adminKeys;
 
+  function isAdmin () public constant returns (bool) {
+    return admins[msg.sender];
+  }
+
   function addAdmin (address newbie) public onlyAdmin() {
     if (!admins[msg.sender]) revert();
     admins[newbie] = true;
@@ -168,7 +172,17 @@ contract ClubToken is StandardToken, Reversi {
     return (board, clovers[board].lastPaidAmount, clovers[board].previousOwners.length, clovers[board].previousOwners[clovers[board].previousOwners.length - 1], clovers[board].first32Moves, clovers[board].lastMoves);
   }
 
-  function getCloverOwner(uint boardKey, uint ownerKey) public constant returns(bytes16, address previousOwner) {
+  function getCloverOwner(bytes16 board) public constant returns(bytes16, address previousOwner) {
+    if(!cloverExists(board)) revert();
+    return (board, clovers[board].previousOwners[ clovers[board].previousOwners.length - 1 ] );
+  }
+
+  function getCloverOwnerAtKeyByBoard(bytes16 board, uint ownerKey) public constant returns(bytes16, address previousOwner) {
+    if(!cloverExists(board)) revert();
+    return (board, clovers[board].previousOwners[ownerKey]);
+  }
+
+  function getCloverOwnerAtKeyByBoardKey(uint boardKey, uint ownerKey) public constant returns(bytes16, address previousOwner) {
     bytes16 board = cloverKeys[boardKey];
     if(!cloverExists(board)) revert();
     return (board, clovers[board].previousOwners[ownerKey]);
@@ -185,10 +199,10 @@ contract ClubToken is StandardToken, Reversi {
     clovers[board].lastPaidAmount = startPrice;
   }
 
-  function mineClover(bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public returns(uint) {
+  function mineClover(bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public {
     Game memory game = playGame(first32Moves, lastMoves);
     DebugGame(game.moveKey, game.error, game.complete, game.symmetrical, game.currentPlayer, game.board);
-    return saveGame(game, startPrice);
+    saveGame(game, startPrice);
   }
 
   function buyClover (bytes16 b) public returns(bool) {
@@ -259,12 +273,22 @@ contract ClubToken is StandardToken, Reversi {
   }
 
   function adminRegisterGame (bytes28 first32Moves, bytes28 lastMoves, bytes16 board, uint startPrice) public doesNotExist(board) onlyAdmin() returns(uint boardKey) {
+    registerPlayer();
+    addCloverToPlayer(game.board);
+    Game memory game;
+    game = isSymmetrical(game);
+    if (game.symmetrical) {
+      balances[msg.sender] += clovers[game.board].findersFee;
+    }
+    game.board = board;
+    clovers[game.board].findersFee = findersFee(game);
     clovers[board].first32Moves = first32Moves;
     clovers[board].lastMoves = lastMoves;
     clovers[board].previousOwners.push(msg.sender);
-    clovers[board].exists = true;
     clovers[board].lastPaidAmount = startPrice;
-    DebugBoard(board);
+    clovers[board].exists = true;
+    clovers[game.board].created = now;
+    clovers[game.board].modified = now;
     return cloverKeys.push(board);
   }
 
@@ -287,7 +311,7 @@ contract ClubToken is StandardToken, Reversi {
     if (game.symmetrical) {
       balances[msg.sender] += clovers[game.board].findersFee;
     }
-    Registered(msg.sender, clovers[game.board].lastPaidAmount, game.board);
+    // Registered(msg.sender, clovers[game.board].lastPaidAmount, game.board);
     return cloverKeys.push(game.board);
   }
 
