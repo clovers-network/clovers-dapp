@@ -1,5 +1,6 @@
 var ClubToken = artifacts.require("./ClubToken.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(ClubToken);
+  let address = deployer.deploy(ClubToken);
+  console.log('ADDRESS CHANGE CLOVER')
 };

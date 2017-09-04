@@ -3,7 +3,7 @@ class Reversi {
 
  constructor (startVal) {
     this.BOARDDIM = 8
-    this.EMPTY = 0
+    this.EMPTY = 3
     this.BLACK = 1
     this.WHITE = 2
     this.clearAttrs()
@@ -362,7 +362,7 @@ class Reversi {
     for (let col = 0; col < colArrayBoard.length; col++) {
       for (let row = 0; row < colArrayBoard[col].length; row++) {
         let tile = colArrayBoard[col][row]
-        boardString += tile === 1 ? '01' : (tile === 2 ? '10' : '00')
+        boardString += tile === 1 ? '01' : (tile === 2 ? '10' : '11')
       }
     }
     return boardString
@@ -441,7 +441,7 @@ class Reversi {
 
   stringBoardToArrayBoard (stringBoard = false) {
     return stringBoard && (stringBoard.match(/.{1,1}/g).map((spot) => {
-      return spot === 'b' ? '01' : (spot === 'w' ? '10' : '00')
+      return spot === 'b' ? '01' : (spot === 'w' ? '10' : '11')
     }).join(''))
   }
 
