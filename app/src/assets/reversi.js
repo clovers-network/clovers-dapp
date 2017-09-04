@@ -31,6 +31,8 @@ class Reversi {
     this.byteLastMoves = ''
     this.moveKey = 0
     this.msg = ''
+    this.findersFee = 0
+    this.startPrice = 0
   }
 
 
@@ -57,7 +59,7 @@ class Reversi {
       this.isComplete()
       this.isSymmetrical()
     }
-    this.makeVisualBoard()
+    // this.makeVisualBoard()
   }
 
 
@@ -237,6 +239,13 @@ class Reversi {
     }
     if (RotSym || Y0Sym || X0Sym || XYSym || XnYSym) {
       this.symmetrical = true
+      let base = 1
+      if (RotSym) base *= 100
+      if (Y0Sym) base *= 100
+      if (X0Sym) base *= 100
+      if (XYSym) base *= 100
+      if (XnYSym) base *= 100
+      this.findersFee = this.startPrice = base
     }
   }
 
@@ -266,7 +275,7 @@ class Reversi {
         skip = true
       }
     }
-    this.makeVisualBoard()
+    // this.makeVisualBoard()
     this.isComplete()
     this.isSymmetrical()
   }
@@ -346,7 +355,7 @@ class Reversi {
     this.playGameMovesString(this.byteMovesToStringMoves(byteFirst32Moves, byteLastMoves))
   }
 
-  
+
   colArrayBoardToBinaryBoard (colArrayBoard = []) {
     if (!colArrayBoard.length) return
     let boardString = ''
