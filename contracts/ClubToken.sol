@@ -8,6 +8,7 @@ import "./Reversi.sol";
 // contract ClubToken is StandardToken, Reversi, usingOraclize {
 contract ClubToken is StandardToken, Reversi {
 // contract ClubToken is StandardToken {
+// contract ClubToken  {
 
 
 
@@ -224,24 +225,7 @@ contract ClubToken is StandardToken, Reversi {
   // Game Management
   //
   // see ./Reversi.sol for more...
-  //
-  // struct Game {
-  //   bool error;
-  //   bool complete;
-  //   bool symmetrical;
-  //   bool RotSym;
-  //   bool Y0Sym;
-  //   bool X0Sym;
-  //   bool XYSym;
-  //   bool XnYSym;
-  //   uint8 currentPlayer;
-  //   bytes16 board;
-  //   bytes28 first32Moves;
-  //   bytes28 lastMoves;
-  //   uint8 moveKey;
-  //   string msg;
-  // }
-
+  
   function gameIsValid(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bool) {
     Game memory game = playGame(first32Moves, lastMoves);
     if (game.error) return false;
@@ -355,25 +339,25 @@ contract ClubToken is StandardToken, Reversi {
   //   validateEndpoint = endpoint;
   // }
 
-  // // function __callback(bytes32 myid, bool valid, bytes proof) {
-  // //   if (uint8 (validIds[myid]) == 0) throw;
-  // //   if (msg.sender != oraclize_cbAddress()) revert();
-  // //   if (!valid) revert();
-  // //   bytes16 board = validIds[myid];
-  // //   address player = clovers[board].previousOwners[0];
-  // //   if (!clovers[board].exists) revert();
-  // //   if (clovers[board].validated) revert();
-  // //   delete validIds[myid];
+  // function __callback(bytes32 myid, bool valid, bytes proof) {
+  //   if (uint8 (validIds[myid]) == 0) throw;
+  //   if (msg.sender != oraclize_cbAddress()) revert();
+  //   if (!valid) revert();
+  //   bytes16 board = validIds[myid];
+  //   address player = clovers[board].previousOwners[0];
+  //   if (!clovers[board].exists) revert();
+  //   if (clovers[board].validated) revert();
+  //   delete validIds[myid];
 
 
-  // //   addCloverToPlayerExplicit(board, player);
+  //   addCloverToPlayerExplicit(board, player);
 
-  // //   balances[player] += clovers[board].findersFee;
-  // //   clovers[board].validated = valid;
+  //   balances[player] += clovers[board].findersFee;
+  //   clovers[board].validated = valid;
 
-  // //   cloverKeys.push(board);  
-  // //   Registered(player, clovers[board].lastPaidAmount, board);
-  // // }
+  //   cloverKeys.push(board);  
+  //   Registered(player, clovers[board].lastPaidAmount, board);
+  // }
 
   // function returnAddress() public constant returns(address) {
   //   return this;
@@ -391,16 +375,16 @@ contract ClubToken is StandardToken, Reversi {
 
   // }
 
-  // // function verifyGame(bytes16 board, bytes28 first32Moves, bytes28 lastMoves) payable {
-  // //   if (oraclize_getPrice("URL") > this.balance) {
-  // //       // newOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
-  // //   } else {
+  // function verifyGame(bytes16 board, bytes28 first32Moves, bytes28 lastMoves) payable {
+  //   if (oraclize_getPrice("URL") > this.balance) {
+  //       // newOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
+  //   } else {
 
-  // //       // newOraclizeQuery("Oraclize query was sent, standing by for the answer..");
-  // //       bytes32 queryId = oraclize_query("URL", buildString(first32Moves, lastMoves));
-  // //       validIds[queryId] = board;
-  // //   }
-  // // }
+  //       // newOraclizeQuery("Oraclize query was sent, standing by for the answer..");
+  //       bytes32 queryId = oraclize_query("URL", buildString(first32Moves, lastMoves));
+  //       validIds[queryId] = board;
+  //   }
+  // }
 
   // function addressToString(address x) returns (string) {
   //     bytes memory b = new bytes(20);
