@@ -56,7 +56,7 @@
     methods: {
       trigger () {
         this.miner.playGameMovesString(this.clover.movesString)
-        this.miner.adminRegisterGame().then(() => {
+        this.miner.adminMineClover().then(() => {
           this.$emit('claimed', this.clover)
         }).catch((err) => {
           console.log(err)
