@@ -300,3 +300,20 @@ input:disabled,
 .min-width-1 {
   min-width: var(--width-0);
 }
+
+
+/* ANIMATION */
+
+.sending {
+  animation-name: pulse;
+  animation-duration: var(--anim-timing-long);
+  animation-iteration-count: infinite;
+  opacity: 1 !important;
+  display: inline-block;
+}
+
+@keyframes pulse {
+  from { transform: scale(1.4); }
+  50% { transform: scale(1.2); }
+  to { transform: scale(1.4); }
+}

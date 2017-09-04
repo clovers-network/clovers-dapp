@@ -39,11 +39,14 @@
         </template>
       </div>
     </header>
-    <div v-if="selectedClover">
+    <div v-if="selectedClover" class="relative">
+      <div class="lh1 absolute top-0 left-0 m2 z2 pointer">
+        <a @click="deselect">❌</a>
+      </div>
       <claim-clover :clover="selectedClover" :miner="miner" @claimed="claimed" @remove="remove"></claim-clover>
     </div>
-    <div class="p2">
-      <div v-if="clovers.length">
+    <div v-if="clovers.length" :class="{'border-top': !selectedClover}"  class="p2">
+      <div>
         <ul class="list-reset flex mxn1 nowrap overflow-auto">
           <li @click="select(board)" v-for="board in newClovers" class="py1 px2 pointer h6" :class="isFocus(board)">
             <clv :key="board.movesString" :board="miner.byteBoardToRowArray(board.byteBoard)"></clv>
@@ -53,7 +56,7 @@
           </li>
         </ul>
       </div>
-<!--       <form @submit.prevent='submitCustom()'><input v-model='customMoves'></form> -->
+      <!-- <form @submit.prevent='submitCustom()'><input v-model='customMoves'></form> -->
     </div>
   </div>
 </template>
@@ -206,6 +209,9 @@
       },
       select (clover) {
         this.selectedClover = clover
+      },
+      deselect () {
+        this.selectedClover = null
       },
       timer () {
         if (this.mining) {
