@@ -24,7 +24,10 @@
             </div>
             <div class="col-6 px3">
               <label class="block right-align h2">List on flip market for</label>
-              <input class="input big white right-align" type="number" v-model="flipPrice">
+              <div class="flex content-stretch items-center border-bottom">
+                <input class="input big white right-align" style="padding-right:0" type="number" v-model="flipPrice">
+                <span class="h1">♧</span>
+              </div>
             </div>
             <div class="mt3 px3 col-12">
               <button type="submit" class="btn btn-outline py3 col-12 regular h3">
