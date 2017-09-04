@@ -121,8 +121,6 @@ class Clover extends Reversi {
     })
   }
 
-
-
   cloverExists (byteBoard = this.byteBoard) {
     if (!this.ClubToken) this.setContract()
     return this.ClubToken.deployed().then((instance) => {
@@ -176,13 +174,7 @@ class Clover extends Reversi {
   adminRegisterGame (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, byteBoard = this.byteBoard, startPrice = 100) {
     if (!this.ClubToken) this.setContract()
     return this.ClubToken.deployed().then((instance) => {
-      return instance.adminRegisterGame(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), new BN(byteBoard, 16), new BN(startPrice, 10), {from: this.account} ).then((result) => {
-
-      }).catch((err) => {
-        console.log('adminRegisterGame err', err.toString())
-      })
-    }).catch((err) => {
-      console.log('deploy err', err)
+      return instance.adminRegisterGame(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), new BN(byteBoard, 16), new BN(startPrice, 10), {from: this.account})
     })
   }
 

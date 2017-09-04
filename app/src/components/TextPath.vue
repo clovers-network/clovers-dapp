@@ -36,7 +36,7 @@
           this.animString += this.stringList.shift()
           setTimeout(() => {
             this.cycle()
-          }, 50)
+          }, 20)
         }
       },
       stop () {
@@ -49,7 +49,7 @@
         this.stop()
         setTimeout(() => {
           this.start()
-        }, 50)
+        }, 20)
       }
     },
     mounted () {

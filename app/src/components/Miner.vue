@@ -22,7 +22,7 @@
       </div>
       <div class="px1 flex-auto flex justify-end items-stretch self-stretch">
         <template v-if="!mining">
-          <button @click="mine" class="py1 px2 border bg-black white h4 bold pointer no-select">Mine Clovers</button>
+          <button @click="mine" class="py1 px2 border bg-black white h4 bold pointer no-select">Mine Clover</button>
         </template>
         <template v-else>
           <div class="mr2 border flex items-center">
@@ -40,12 +40,15 @@
       </div>
     </header>
     <div v-if="selectedClover">
-      <claim-clover :clover="selectedClover" :miner="miner"></claim-clover>
+      <claim-clover :clover="selectedClover" :miner="miner" @claimed="claimed"></claim-clover>
     </div>
     <div class="p2">
       <div v-if="clovers.length">
         <ul class="list-reset flex mxn1 nowrap overflow-auto">
-          <li @click="select(board)" v-for="board in clovers" class="py1 px2 pointer h6" :class="isFocus(board)">
+          <li @click="select(board)" v-for="board in newClovers" class="py1 px2 pointer h6" :class="isFocus(board)">
+            <clv :key="board.movesString" :board="miner.byteBoardToRowArray(board.byteBoard)"></clv>
+          </li>
+          <li @click="select(board)" v-for="board in claimedClovers" class="py1 px2 pointer h6 claimed" :class="isFocus(board)">
             <clv :key="board.movesString" :board="miner.byteBoardToRowArray(board.byteBoard)"></clv>
           </li>
         </ul>
@@ -84,6 +87,12 @@
         set (newVal) {
           this.restoreMinedClovers(newVal)
         }
+      },
+      newClovers () {
+        return this.clovers.filter(c => !c.claimed)
+      },
+      claimedClovers () {
+        return this.clovers.filter(c => c.claimed)
       },
       mining: {
         get () {
@@ -136,6 +145,11 @@
       }
     },
     methods: {
+      claimed (clover) {
+        this.$set(this.selectedClover, 'claimed', new Date())
+        this.claimedClover(clover)
+        setItem('clovers', this.clovers)
+      },
       submitCustom () {
         console.log('submit custom')
         this.miner.playGameMovesString(this.customMoves)
@@ -178,7 +192,7 @@
           this.hashRate = data.hashRate
           this.totalMined = data.hashRate
         }
-        if ('visualBoard' in data) {
+        if ('movesString' in data) {
           this.miner.cloverExists(data.byteBoard).then((exists) => {
             if (!exists) {
               this.minedClover(data)
@@ -214,7 +228,8 @@
         restoreMinedClovers: 'EXISTING_CLOVERS',
         storedClovers: 'STORED_CLOVERS',
         storedMineCount: 'STORED_COUNT',
-        storedMineDuration: 'STORED_DURATION'
+        storedMineDuration: 'STORED_DURATION',
+        claimedClover: 'CLAIMED_CLOVER'
       })
     },
     mounted () {
