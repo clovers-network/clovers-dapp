@@ -201,7 +201,6 @@ textarea {
   width: 100%;
 
   &.big {
-    border-bottom: 1px solid;
     font-size: var(--h1);
 
     &:disabled {
@@ -243,8 +242,8 @@ textarea {
 button {
 
   &:focus {
+    border-color: currentColor;
     outline: none;
-    /*box-shadow: 0 0 0 1px rgba(255, 255, 255, .8);*/
   }
 }
 
@@ -299,4 +298,21 @@ input:disabled,
 
 .min-width-1 {
   min-width: var(--width-0);
+}
+
+
+/* ANIMATION */
+
+.sending {
+  animation-name: pulse;
+  animation-duration: var(--anim-timing-long);
+  animation-iteration-count: infinite;
+  opacity: 1 !important;
+  display: inline-block;
+}
+
+@keyframes pulse {
+  from { transform: scale(1.4); }
+  50% { transform: scale(1.2); }
+  to { transform: scale(1.4); }
 }
