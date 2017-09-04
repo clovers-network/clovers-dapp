@@ -189,12 +189,21 @@ textarea {
 }
 
 .input {
-  background-color: var(--white);
-  border: 1px solid var(--light-gray);
+  background-color: transparent;
+  border-style: unset;
   display: block;
   font-size: var(--h4);
   padding: var(--space-2);
   width: 100%;
+
+  &.big {
+    border-bottom: 1px solid;
+    font-size: var(--h1);
+
+    &:disabled {
+      border: 0;
+    }
+  }
 }
 
 /* select-wrap */
@@ -215,7 +224,7 @@ textarea {
 }
 
 .textarea {
-  border: 1px solid var(--light-gray);
+  border-style: none;
   display: block;
   font-family: inherit;
   font-size: var(--h4);
@@ -231,7 +240,7 @@ button {
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, .8);
+    /*box-shadow: 0 0 0 1px rgba(255, 255, 255, .8);*/
   }
 }
 

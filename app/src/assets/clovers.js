@@ -15,7 +15,6 @@ class Clover extends Reversi {
     this.registeredBoards = []
   }
 
-
   initWeb3 () {
     let web3Provider
     if (web3) {
@@ -171,7 +170,7 @@ class Clover extends Reversi {
     }
   }
 
-  adminRegisterGame (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, byteBoard = this.byteBoard, startPrice = 100) {
+  adminRegisterGame (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, byteBoard = this.byteBoard, startPrice = this.startPrice) {
     if (!this.ClubToken) this.setContract()
     return this.ClubToken.deployed().then((instance) => {
       return instance.adminRegisterGame(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), new BN(byteBoard, 16), new BN(startPrice, 10), {from: this.account})
@@ -348,11 +347,8 @@ class Clover extends Reversi {
   // }
 
   // function buyClover (bytes16 b) public returns(bool) {
- 
+
   // }
-
-
-
 }
 
 export default Clover
