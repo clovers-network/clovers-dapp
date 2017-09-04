@@ -172,6 +172,10 @@ contract ClubToken is StandardToken, Reversi {
     return (board, clovers[board].lastPaidAmount, clovers[board].previousOwners.length, clovers[board].previousOwners[clovers[board].previousOwners.length - 1], clovers[board].first32Moves, clovers[board].lastMoves);
   }
 
+  function getCloverOwnersLength(bytes16 board) public exists(board) constant returns(uint256) {
+    return clovers[board].previousOwners.length;
+  }
+
   function getCloverOwner(bytes16 board) public constant returns(bytes16, address previousOwner) {
     if(!cloverExists(board)) revert();
     return (board, clovers[board].previousOwners[ clovers[board].previousOwners.length - 1 ] );
