@@ -108,6 +108,13 @@ class Clover extends Reversi {
     })
   }
 
+  adminRegisterGame (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, byteBoard = this.byteBoard, startPrice = this.startPrice) {
+    if (!this.ClubToken) this.setContract()
+    return this.ClubToken.deployed().then((instance) => {
+      return instance.adminRegisterGame(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), new BN(byteBoard, 16), new BN(startPrice, 10), {from: this.account})
+    })
+  }
+
   updateMultiplier (multiplier = 100) {
     return this.deploy().then((instance) => {
       return instance.isAdmin().then((isAdmin) => {
@@ -370,7 +377,6 @@ class Clover extends Reversi {
     })
   }
 
-//returns(uint8 moveKey, bool error, bool complete, uint8 currentPlayer, bytes16 board)
   showGameConstant (byteFirst32Moves = 0, byteLastMoves = 0) {
     return this.deploy().then((instance) => {
       return instance.showGameConstant(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
