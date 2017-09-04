@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import createLogger from 'vuex/dist/logger'
 import * as types from './mutation-types'
-import BN from 'bignumber.js'
+// import BN from 'bignumber.js'
 import contract from 'truffle-contract'
 
 // import artifacts
@@ -70,7 +70,6 @@ const actions = {
   setAccount ({ commit, dispatch, state }, account) {
     commit(types.UPDATE_ACCOUNT, account)
     dispatch('setContract')
-    dispatch('setWatchers')
     dispatch('getBalance')
   },
   setContract ({commit, dispatch, state}) {
@@ -93,55 +92,6 @@ const actions = {
     }).catch((err) => {
       console.error(err)
       commit(types.UPDATE_STATUS, 'Error sending coin; see log.')
-    })
-  },
-  setWatchers ({commit, dispatch, state}) {
-    state.ClubToken.deployed().then((instance) => {
-      instance.DebugGame({fromBlock: 0}).watch(function (error, result) {
-        console.log('watched DebugGame:')
-        if (error == null) {
-          console.log(result)
-        } else {
-          console.error(error)
-        }
-      })
-    })
-  },
-  helloWorld ({commit, dispatch, state}, name) {
-    state.ClubToken.deployed().then((instance) => {
-      instance.updateName(name, { from: state.account }).then((response) => {
-        console.log(response)
-        // commit(types.UPDATE_NAME, name)
-      }).catch((err) => {
-        console.log(err)
-      })
-    })
-  },
-  tryFunction ({commit, dispatch, state}, [arr, row, col]) {
-    state.ClubToken.deployed().then((instance) => {
-      // instance.boardToByte(arr, { from: state.account }).then((response) => {
-      // instance.shiftLeft.call('0x0000000000000011', 2).then((response) => {
-      // function returnTile(bytes16 board, uint8 col, uint8 row) public constant returns (uint8){
-      console.log(arr)
-      console.log(row)
-      console.log(col)
-      // instance.turnTile.call(new BN(arr, 2), 2, row, col).then((response) => {
-      instance.testMul.call(12).then((response) => {
-        console.log(response)
-        // var foo = new BN(response, 16)
-        // console.log(foo.toString(2))
-      // var start = 3
-      // var push = 12
-      // console.log(start.toString(16))
-      // console.log(start.toString(2))
-      // instance.shiftLeft.call(start, push).then((response) => {
-      // // instance.testMoves(arr).then((response) => {
-      //   console.log(response)
-      //   // var foo = new BN(response)
-      //   // console.log(foo.toString(2))
-      }).catch((err) => {
-        console.log(err)
-      })
     })
   },
   getBalance ({ commit, dispatch, state }) {
@@ -167,8 +117,7 @@ const actions = {
     state.ClubToken.deployed().then(instance => (
       instance.balanceOf.call(state.account)
     )).then((balance) => {
-      var digits = new BN(10).toPower(state.decimals)
-      commit(types.UPDATE_BALANCE, balance.div(digits).toFixed(state.decimals).toString())
+      commit(types.UPDATE_BALANCE, balance)
     }).catch((err) => {
       console.error(err)
       commit(types.UPDATE_STATUS, 'Error getting balance; see log.')
@@ -208,9 +157,6 @@ const mutations = {
   [types.UPDATE_CONTRACT] (state) {
     state.ClubToken = contract(clubTokenArtifacts)
     state.ClubToken.setProvider(web3.currentProvider)
-    // state.ClubToken.allEvents(function (error, log) {
-    //   if (!error) console.log(log)
-    // })
   },
 
   [types.TOGGLE_MINER] (state, bool) {
