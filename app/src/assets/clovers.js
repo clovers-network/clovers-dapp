@@ -145,12 +145,12 @@ class Clover extends Reversi {
 
   formatTallys (contractArray = Array(6)) {
     return {
-      Symmetricals: contractArray[0],
-      RotSym: contractArray[1],
-      Y0Sym: contractArray[2],
-      X0Sym: contractArray[3],
-      XYSym: contractArray[4],
-      XnYSym: contractArray[5]
+      Symmetricals: contractArray[0].toNumber(),
+      RotSym: contractArray[1].toNumber(),
+      Y0Sym: contractArray[2].toNumber(),
+      X0Sym: contractArray[3].toNumber(),
+      XYSym: contractArray[4].toNumber(),
+      XnYSym: contractArray[5].toNumber()
     }
   }
 
