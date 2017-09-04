@@ -2,6 +2,7 @@ pragma solidity ^0.4.13;
 
 contract Reversi {
 
+
   struct Game {
     bool error;
     bool complete;
@@ -16,12 +17,12 @@ contract Reversi {
     bytes28 first32Moves;
     bytes28 lastMoves;
     uint8 moveKey;
-    string msg;
+    // string msg;
   }
 
   uint8 BOARDDIM = 8;
 
-  uint8 EMPTY = 0; //0b00 //0x0
+  uint8 EMPTY = 3; //0b11 //0x3
   uint8 BLACK = 1; //0b01 //0x1
   uint8 WHITE = 2; //0b10 //0x2
 
@@ -47,9 +48,9 @@ contract Reversi {
     // game.board = turnTile(game.board, BLACK, 3, 4);
     // game.board = turnTile(game.board, BLACK, 4, 3);
 
-    game.board = bytes16(10625432672847758622720);
-
-    game.msg = 'New Game';
+    // game.board = bytes16(10625432672847758622720); // when empty was 00
+    game.board = bytes16(340282366920938452837941934584009588735);
+    // game.msg = "New Game";
     bool skip;
     uint8 move;
     uint8 col;
@@ -64,7 +65,7 @@ contract Reversi {
       skip = !validMove(move);
       (col, row) = convertMove(move);
       if (!skip && col < 8 && row < 8 && col >= 0 && row >= 0) {
-        game.msg = 'make a move';
+        // game.msg = "make a move";
         game = makeMove(game, col, row);
         game.moveKey++;
 
@@ -95,7 +96,7 @@ contract Reversi {
     // square is already occupied
     if (returnTile(game.board, col, row) != 0){
       game.error = true;
-      game.msg = 'Invalid Game (square is already occupied)';
+      // game.msg = "Invalid Game (square is already occupied)";
       return game;
     }
     int8[2][8] memory possibleDirections;
@@ -104,7 +105,7 @@ contract Reversi {
     // no valid directions
     if (possibleDirectionsLength == 0) {
       game.error = true;
-      game.msg = 'Invalid Game (doesnt border other tiles)';
+      // game.msg = "Invalid Game (doesnt border other tiles)";
       return game;
     }
 
@@ -130,7 +131,7 @@ contract Reversi {
       game.board = turnTile(game.board, game.currentPlayer, col, row);
     } else {
       game.error = true;
-      game.msg = 'Invalid Game (doesnt flip any other tiles)';
+      // game.msg = "Invalid Game (doesnt flip any other tiles)";
       return game;
     }
 
@@ -168,7 +169,7 @@ contract Reversi {
       // if tile is off the board it is not a valid move
       if (!(focusedRowPos > 7 || focusedRowPos < 0 || focusedColPos > 7 || focusedColPos < 0)) {
         testSquare = returnTile(game.board, uint8(focusedColPos), uint8(focusedRowPos));
-        // if the surrounding tile is current color or no color it can't be part of a capture
+        // if the surrounding tile is current color or no color it can"t be part of a capture
         if (testSquare != game.currentPlayer) {
           if (testSquare != EMPTY) {
             possibleDirections[possibleDirectionsLength] = dir;
@@ -218,7 +219,7 @@ contract Reversi {
             // hit current players tile which means capture is complete
             skip = true;
           } else {
-            // either hit current players own color before hitting an opponent's
+            // either hit current players own color before hitting an opponent"s
             // or hit an empty space
             delete potentialFlips;
             delete potentialFlipsLength;
@@ -232,7 +233,7 @@ contract Reversi {
 
   function isComplete (Game game) internal constant returns (Game) {
     if (game.moveKey == 60) {
-      game.msg = 'good game';
+      // game.msg = "good game";
       game.error = false;
       game.complete = true;
       return game;
@@ -268,9 +269,9 @@ contract Reversi {
       } 
       if (validMovesRemains) {
         game.error = true;
-        game.msg = 'Invalid Game (moves still available)';
+        // game.msg = "Invalid Game (moves still available)";
       } else {
-        game.msg = 'good game';
+        // game.msg = "good game";
         game.complete = true;
         game.error = false;
       }
@@ -341,7 +342,6 @@ contract Reversi {
   function turnTile(bytes16 board, uint8 color, uint8 col, uint8 row) internal constant returns (bytes16){
     if (col > 7) throw;
     if (row > 7) throw;
-    if (color > 2) throw;
 
     uint128 push = posToPush(col, row);
     bytes16 blank = bytes16(3); // 0b00000011 (ones)
@@ -394,6 +394,16 @@ contract Reversi {
     uint8 col = move % 8;
     uint8 row = (move - col) / 8;
     return (col, row);
+  }
+
+  function shiftLeft32(bytes32 a, uint256 n) internal constant returns (bytes32) {
+      uint256 shifted = uint256(a) * 2 ** uint256(n);
+      return bytes32(shifted);
+  }
+
+  function shiftRight32(bytes32 a, uint256 n) internal constant returns (bytes32) {
+      uint256 shifted = uint256(a) / 2 ** uint256(n);
+      return bytes32(shifted);
   }
 
   function shiftLeft28(bytes28 a, uint256 n) internal constant returns (bytes28) {
