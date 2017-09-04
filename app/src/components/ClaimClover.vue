@@ -10,7 +10,9 @@
         </div>
       </div>
       <div class="">
-
+        <form @submit.prevent="trigger">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
       </div>
     </div>
   </div>
@@ -29,6 +31,17 @@
       miner: {
         type: Object,
         required: true
+      }
+    },
+    data () {
+      return {
+
+      }
+    },
+    methods: {
+      trigger () {
+        this.miner.playGameMovesString(this.clover.movesString)
+        this.miner.adminRegisterGame()
       }
     },
     components: { SvgText }
