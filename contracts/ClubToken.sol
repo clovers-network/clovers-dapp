@@ -402,12 +402,11 @@ contract ClubToken is StandardToken, Reversi {
   function findersFeeExplicit(bool symmetrical, bool _RotSym, bool _Y0Sym, bool _X0Sym, bool _XYSym, bool _XnYSym) internal constant returns(uint256) {    
     uint256 base = 0;
 
-    if (symmetrical) base += 1;
-    if (_RotSym) base = base.mul( payMultiplier ).mul( Symmetricals + 1 ).div( RotSym + 1 );
-    if (_Y0Sym) base = base.mul( payMultiplier ).mul( Symmetricals + 1 ).div( Y0Sym + 1 );
-    if (_X0Sym) base = base.mul( payMultiplier ).mul( Symmetricals + 1 ).div( X0Sym + 1 );
-    if (_XYSym) base = base.mul( payMultiplier ).mul( Symmetricals + 1 ).div( XYSym + 1 );
-    if (_XnYSym) base = base.mul( payMultiplier ).mul( Symmetricals + 1 ).div( XnYSym + 1 );
+    if (_RotSym) base = base.add( payMultiplier ).mul( Symmetricals + 1 ).div( RotSym + 1 );
+    if (_Y0Sym) base = base.add( payMultiplier ).mul( Symmetricals + 1 ).div( Y0Sym + 1 );
+    if (_X0Sym) base = base.add( payMultiplier ).mul( Symmetricals + 1 ).div( X0Sym + 1 );
+    if (_XYSym) base = base.add( payMultiplier ).mul( Symmetricals + 1 ).div( XYSym + 1 );
+    if (_XnYSym) base = base.add( payMultiplier ).mul( Symmetricals + 1 ).div( XnYSym + 1 );
 
     return base;
   }
