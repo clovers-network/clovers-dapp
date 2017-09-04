@@ -18,7 +18,7 @@ export default {
       rows.push(createElement('div', {'class': 'row'}, tiles))
     }
     return createElement('div', {
-      'class': 'clover'
+      'class': 'clover nowrap'
     }, rows)
   }
 }

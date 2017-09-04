@@ -240,6 +240,10 @@ const mutations = {
     let i = state.minedClovers.findIndex(cl => cl.byteBoard === clover.byteBoard)
     Vue.set(state.minedClovers[i], 'claimed', new Date())
   },
+  [types.UPDATE_CLOVER_PRICE] (state, { clover, newVal }) {
+    let i = state.minedClovers.findIndex(cl => cl.byteBoard === clover.byteBoard)
+    Vue.set(state.minedClovers[i], 'startPrice', newVal)
+  },
 
   [types.STORED_CLOVERS] (state, clovers) {
     state.minedClovers = clovers

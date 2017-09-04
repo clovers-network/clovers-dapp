@@ -250,10 +250,6 @@ class Reversi {
   }
 
   mine () {
-    if (this.stop) return
-    if (!this.start) {
-      this.start = new Date()
-    }
     this.clearAttrs()
     let skip = false
     for (let i = 0; i < 60 && !skip; i++) {
@@ -319,7 +315,6 @@ class Reversi {
       }
     }
     this.thisBoardToByteBoard()
-    this.makeVisualBoard()
     this.isComplete()
     this.isSymmetrical()
   }
