@@ -9,16 +9,26 @@
           <svg-text :movesString="clover.movesString"></svg-text>
         </div>
       </div>
-      <div class="">
+      <div v-if="!clover.claimed" class="">
         <form @submit.prevent="trigger">
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <div>
+            <label class="label">List on flip market for</label>
+            <input class="py2 px3 bg-black border-none border-bottom white h3" type="number" v-model="flipPrice">
+          </div>
+          <div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
         </form>
+      </div>
+      <div v-else>
+        Claimed {{ claimDate }}
       </div>
     </div>
   </div>
 </template>
 
 <script>
+  import moment from 'moment'
   import SvgText from '@/components/TextPath'
 
   export default {
@@ -35,13 +45,22 @@
     },
     data () {
       return {
-
+        flipPrice: 100
+      }
+    },
+    computed: {
+      claimDate () {
+        return moment(this.clover.claimed).fromNow()
       }
     },
     methods: {
       trigger () {
         this.miner.playGameMovesString(this.clover.movesString)
-        this.miner.adminRegisterGame()
+        this.miner.adminRegisterGame().then(() => {
+          this.$emit('claimed', this.clover)
+        }).catch((err) => {
+          console.log(err)
+        })
       }
     },
     components: { SvgText }
