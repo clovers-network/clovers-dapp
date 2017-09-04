@@ -9,11 +9,11 @@
           <svg-text :movesString="clover.movesString"></svg-text>
         </div>
       </div>
-      <div v-if="clover.removed" class="px3">
-        <p class="h1 md-h0 m0 lh1">❌ Removed {{ removeDate }}</p>
+      <div v-if="clover.removed" class="px3 flex-auto">
+        <p class="h1 m0 lh1">🗑 Removed {{ removeDate }}</p>
       </div>
-      <div v-else-if="clover.claimed" class="px3">
-        <p class="h1 md-h0 m0 lh1">✨ Claimed {{ claimDate }}</p>
+      <div v-else-if="clover.claimed" class="px3 flex-auto">
+        <p class="h1 m0 lh1">✨ Claimed {{ claimDate }}</p>
       </div>
       <div v-else class="col-8 lg-col-7">
         <form @submit.prevent="trigger">
@@ -24,10 +24,16 @@
             </div>
             <div class="col-6 px3">
               <label class="block right-align h2">List on flip market for</label>
-              <input class="input big white right-align" type="number" v-model="flipPrice">
+              <div class="flex content-stretch items-center border-bottom">
+                <input class="input big white right-align" style="padding-right:0" type="number" v-model="flipPrice">
+                <span class="h1">♧</span>
+              </div>
             </div>
             <div class="mt3 px3 col-12">
-              <button type="submit" class="btn btn-outline py3 col-12">Claim Clover and register on Flip Market</button>
+              <button type="submit" class="btn btn-outline py3 col-12 regular h3">
+                <span>Claim Clover and register on Flip Market</span>
+                <span class="pl2 sending" v-if="submitting">✨</span>
+              </button>
               <p class="right-align mt1 mb0">
                 <button @click="remove" type="button" class="border-none bg-transparent white h5 pointer">Remove clover</button>
               </p>
@@ -46,6 +52,9 @@
 
   export default {
     name: 'claim-clover',
+    data () {
+      return { submitting: false }
+    },
     props: {
       clover: {
         type: Object,
@@ -75,17 +84,20 @@
         }
       },
       reward () {
-        return this.clover.findersFee || 100 + ' ♧'
+        return (this.clover.findersFee || 100) + ' ♧'
       }
     },
     methods: {
       trigger () {
+        this.submitting = true
         this.miner.startPrice = this.flipPrice
         this.miner.playGameMovesString(this.clover.movesString)
         this.miner.adminMineClover().then(() => {
+          this.submitting = false
           this.$emit('claimed', this.clover)
         }).catch((err) => {
           console.log(err)
+          this.submitting = false
         })
       },
       remove () {
