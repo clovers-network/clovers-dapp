@@ -7,7 +7,6 @@ import Reversi from './reversi'
 let web3 = self && self.web3
 
 class Clover extends Reversi {
-
   constructor (startVal) {
     super()
     this.ClubToken = false
@@ -62,13 +61,13 @@ class Clover extends Reversi {
   }
 
   showGameConstant (byteFirst32Moves = 0, byteLastMoves = 0) {
-      if (!this.ClubToken) this.setContract()
-      return this.ClubToken.deployed().then((instance) => {
-        return instance.showGameConstant(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
-          console.log(result)
-          return result
-        })
+    if (!this.ClubToken) this.setContract()
+    return this.ClubToken.deployed().then((instance) => {
+      return instance.showGameConstant(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
+        console.log(result)
+        return result
       })
+    })
   }
 
   listClovers () {
@@ -208,10 +207,10 @@ class Clover extends Reversi {
     }
   }
 
-  adminRegisterGame (byteFirst32Moves = 0, byteLastMoves = 0, byteBoard = 0, startPrice = 100) {
+  adminRegisterGame (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, byteBoard = this.byteBoard, startPrice = 100) {
     if (!this.ClubToken) this.setContract()
     return this.ClubToken.deployed().then((instance) => {
-      return instance.adminRegisterGame(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), new BN(byteBoard, 16), startPrice, {from: this.account} ).then((result) => {
+      return instance.adminRegisterGame(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), new BN(byteBoard, 16), new BN(startPrice, 10), {from: this.account} ).then((result) => {
 
       }).catch((err) => {
         console.log('adminRegisterGame err', err.toString())
@@ -220,15 +219,6 @@ class Clover extends Reversi {
       console.log('deploy err', err)
     })
   }
-
-  stopIt () {
-    this.stop = true
-    this.end = new Date()
-    console.log('seconds:', (this.end - this.start) / 1000)
-    console.log('ms per game:', (this.end - this.start) / this.increment)
-  }
-
-
 }
 
 export default Clover
