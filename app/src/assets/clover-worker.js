@@ -1,19 +1,19 @@
-import Clover from './clovers'
+import Reversi from './reversi'
 
 let running = false
 let hashRate = 0
 
 self.addEventListener('message', (event) => {
   const { data } = event
-  const clover = new Clover()
+  const reversi = new Reversi()
   if (data === 'start') {
     running = true
     mine()
     function mine () {
       hashRate++
-      clover.mine()
-      if (clover.symmetrical) {
-        self.postMessage(clover)
+      reversi.mine()
+      if (reversi.symmetrical) {
+        self.postMessage(reversi)
       }
       if (running) {
         setTimeout(() => {

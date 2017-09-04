@@ -12,10 +12,6 @@ class Clover extends Reversi {
     this.ClubToken = false
     this.account = false
     this.accountInterval = false
-    this.stop = false
-    this.end = false
-    this.start = false
-    this.increment = 0
     this.registeredBoards = []
   }
 
@@ -32,6 +28,13 @@ class Clover extends Reversi {
     }
     web3 = new Web3(web3Provider)
     this.setAccountInterval()
+  }
+
+  deloy () {
+    if (!this.ClubToken) this.setContract()
+    return this.ClubToken.deployed().catch((err) => {
+      console.error(err)
+    })
   }
 
   setAccountInterval () {
@@ -118,44 +121,7 @@ class Clover extends Reversi {
     })
   }
 
-  stopIt () {
-    this.stop = true
-    this.end = new Date()
-    console.log('seconds:', (this.end - this.start) / 1000)
-    console.log('ms per game:', (this.end - this.start) / this.increment)
-  }
 
-  mine () {
-    if (this.stop) return
-    if (!this.start) {
-      this.start = new Date()
-    }
-    this.clearAttrs()
-    let skip = false
-    for (let i = 0; i < 60 && !skip; i++) {
-      let move = this.pickRandomMove()
-      if (move) {
-        this.moves.push(move)
-        this.buildMovesString()
-        this.moveKey++
-        this.makeMove(move)
-        if (this.error) {
-          this.error = false
-          this.currentPlayer = this.currentPlayer === this.BLACK ? this.WHITE : this.BLACK
-          this.makeMove(move)
-          if (this.error) {
-            skip = true
-          }
-        }
-      } else {
-        skip = true
-      }
-    }
-    this.thisBoardToByteBoard()
-    this.makeVisualBoard()
-    this.isComplete()
-    this.isSymmetrical()
-  }
 
   cloverExists (byteBoard = this.byteBoard) {
     if (!this.ClubToken) this.setContract()
@@ -219,6 +185,52 @@ class Clover extends Reversi {
       console.log('deploy err', err)
     })
   }
+
+
+  // Player Management
+
+
+  listPlayerCount () {
+    this.deploy().then((instance) => {
+      return instance.listPlayerCount().then((count) => {
+        console.log(count)
+      }).catch((err) => {
+        console.error(err)
+      })
+    })
+  }
+
+  playerAddressByKey (key = 0) {
+    this.deploy().then((instance) => {
+      return instance.playerAddressByKey(new BN(key, 10)).then((player) => {
+        console.log(player)
+      })
+    })
+  }
+
+  // function playerAddressByKey(uint playerKey) public constant returns(address) {
+  //   return playerKeys[playerKey];
+  // }
+
+  // function playerExists(address player) public constant returns(bool) {
+  //   return players[player].exists;
+  // }
+
+  // function playerCurrentCount(address player) public constant returns(uint) {
+  //   return players[player].currentCount;
+  // }
+
+  // function playerAllCount(address player) public constant returns(uint) {
+  //   return players[player].cloverKeys.length;
+  // }
+
+  // function playerCloverByKey(address player, uint cloverKey) public constant returns(bytes16) {
+  //   return players[player].cloverKeys[cloverKey];
+  // }
+
+  // function playerOwnsClover(address player, bytes16 board) public constant returns (bool) {
+  //   return players[player].clovers[board];
+  // }
 }
 
 export default Clover
