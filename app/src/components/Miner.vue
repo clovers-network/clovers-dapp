@@ -208,10 +208,10 @@
       timer () {
         if (this.mining) {
           this.mineTime = 1
-          setItem('clovers', this.clovers)
           setItem('totalMined', this.totalMined)
           setItem('mineTime', this.mineTime)
         }
+        setItem('clovers', this.clovers)
       },
       isFocus (board) {
         if (!this.selectedClover) return false
@@ -235,8 +235,8 @@
     mounted () {
       if (this.hasStorage) {
         this.storedClovers(getItem('clovers') || [])
-        this.storedMineCount(getItem('totalMined'))
-        this.storedMineDuration(getItem('mineTime'))
+        this.storedMineCount(getItem('totalMined') || 0)
+        this.storedMineDuration(getItem('mineTime') || 0)
       }
       this.interval = setInterval(this.timer, 1000)
     },
