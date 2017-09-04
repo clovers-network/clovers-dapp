@@ -480,6 +480,20 @@ class Reversi {
   }
 
 
+  buildMovesString () {
+    this.movesString = this.moves.map((move) => {
+      return this.arrayToMove(move[0], move[1])
+    }).join('')
+  }
+
+  pickRandomMove () {
+    let validMoves = this.getValidMoves()
+    if (!validMoves.length) {
+      this.currentPlayer = this.currentPlayer === this.BLACK ? this.WHITE : this.BLACK
+      validMoves = this.getValidMoves()
+    }
+    return validMoves.length !== 0 && validMoves[Math.floor(Math.random() * validMoves.length)]
+  }
 
 
   byteMovesToStringMoves (byteFirst32Moves = 0, byteLastMoves = 0) {
