@@ -86,6 +86,18 @@ class Clover extends Reversi {
     })
   }
 
+  buildString (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
+    if (!this.ClubToken) this.setContract()
+    this.ClubToken.deployed().then((instance) => {
+      // instance.returnAddress().then((result) => {
+      //   console.log(result)
+      // })
+      instance.buildString(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
+        console.log(result);
+      })
+    })
+  }
+
   buyClover (board = this.byteBoard) {
     if (!this.ClubToken) this.setContract()
     return this.ClubToken.deployed().then((instance) => {
@@ -168,10 +180,10 @@ class Clover extends Reversi {
 
   registerGameMovesString (moves = '', startPrice = 100) {
     moves = this.sliceMovesStringToBytes(moves)
-    this.mineGame(moves[0], moves[1], startPrice)
+    this.mineClover(moves[0], moves[1], startPrice)
   }
 
-  mineGame (byteFirst32Moves = 0, byteLastMoves = 0, startPrice = 100) {
+  mineClover (byteFirst32Moves = 0, byteLastMoves = 0, startPrice = 100) {
     this.playGameByteMoves(byteFirst32Moves, byteLastMoves)
     if (this.error) {
       alert('Game is not valid')
@@ -183,10 +195,10 @@ class Clover extends Reversi {
       console.log(this)
       if (!this.ClubToken) this.setContract()
       return this.ClubToken.deployed().then((instance) => {
-        return instance.mineGame(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), startPrice, {from: this.account} ).then((result) => {
+        return instance.mineClover(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), startPrice, {from: this.account} ).then((result) => {
           console.log(result)
         }).catch((err) => {
-          console.log('mineGame err', err.toString())
+          console.log('mineClover err', err.toString())
         })
       }).catch((err) => {
         console.log('deploy err', err)
