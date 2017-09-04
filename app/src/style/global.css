@@ -201,7 +201,6 @@ textarea {
   width: 100%;
 
   &.big {
-    border-bottom: 1px solid;
     font-size: var(--h1);
 
     &:disabled {

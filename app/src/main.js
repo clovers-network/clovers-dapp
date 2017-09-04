@@ -10,8 +10,10 @@ import BN from 'bignumber.js'
 Object.defineProperty(Vue.prototype, '$BN', { value: BN })
 
 import Clv from '@/components/CloverFunc'
+import CloverIcon from '@/components/CloverIcon'
 
 Vue.component('clv', Clv)
+Vue.component('clover-icon', CloverIcon)
 
 Vue.config.productionTip = false
 

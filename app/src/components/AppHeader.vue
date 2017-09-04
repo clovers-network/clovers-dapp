@@ -1,15 +1,19 @@
 <template>
   <div class="overflow-hidden">
     <header class="flex bg-purple items-center white">
-      <ul class="list-reset px2 py1 flex-auto">
+      <ul class="list-reset px2 py1 my0 flex-auto">
         <li class="inline-block mr2">Clovers</li>
         <li class="inline-block mr2">Latest</li>
         <li class="inline-block mr2">Wallet</li>
       </ul>
       <p class="m0 pr3">
+        <span>{{ cloversFound }}</span>
+        <clover-icon width="14" height="14"></clover-icon>
+      </p>
+      <p class="m0 pr3">
         <span id="balance" :class="{white: balance !== '0', red: balance === '0'}">{{ parseFloat(balance).toLocaleString() }}</span> {{ tokenSymbol }}
       </p>
-      <p @click="toggleMinePanel" class="m0 pr2 pointer no-select">
+      <p @click="toggleMinePanel" class="m0 py2 px3 pointer no-select bg-black white">
         {{ mineText }}
       </p>
     </header>
@@ -35,8 +39,11 @@
     },
     computed: {
       mineText () {
-        if (!this.mining) return 'Miner'
+        if (!this.mining) return 'Miner stopped'
         return `Mining at ${this.hashRate} g/s`
+      },
+      cloversFound () {
+        return this.$store.state.cloversFound
       },
 
       ...mapGetters({
