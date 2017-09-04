@@ -31,8 +31,6 @@ class Reversi {
     this.byteLastMoves = ''
     this.moveKey = 0
     this.msg = ''
-    this.findersFee = 0
-    this.startPrice = 0
   }
 
 
@@ -249,35 +247,6 @@ class Reversi {
     }
   }
 
-  mine () {
-    if (this.stop) return
-    if (!this.start) {
-      this.start = new Date()
-    }
-    this.clearAttrs()
-    let skip = false
-    for (let i = 0; i < 60 && !skip; i++) {
-      let move = this.pickRandomMove()
-      if (move) {
-        this.moves.push(move)
-        this.buildMovesString()
-        this.moveKey++
-        this.makeMove(move)
-        if (this.error) {
-          this.error = false
-          this.currentPlayer = this.currentPlayer === this.BLACK ? this.WHITE : this.BLACK
-          this.makeMove(move)
-          if (this.error) {
-            skip = true
-          }
-        }
-      } else {
-        skip = true
-      }
-    }
-    this.isComplete()
-    this.isSymmetrical()
-  }
 
   buildMovesString () {
     this.movesString = this.moves.map((move) => {
@@ -293,8 +262,6 @@ class Reversi {
     }
     return validMoves.length !== 0 && validMoves[Math.floor(Math.random() * validMoves.length)]
   }
-
-
 
   mine () {
     this.clearAttrs()
@@ -319,7 +286,6 @@ class Reversi {
       }
     }
     this.thisBoardToByteBoard()
-    this.makeVisualBoard()
     this.isComplete()
     this.isSymmetrical()
   }

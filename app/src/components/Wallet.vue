@@ -114,7 +114,7 @@
       trigger () {
         this.clover.playGameMovesString(this.moves)
         console.log(this.clover)
-        this.clover.adminRegisterGame()
+        this.clover.adminMineClover()
       },
       updateAddress (e) {
         this.$store.commit(types.UPDATE_ADDRESS, e.target.value)

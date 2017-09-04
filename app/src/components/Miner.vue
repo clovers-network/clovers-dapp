@@ -195,7 +195,10 @@
         if ('movesString' in data) {
           this.miner.cloverExists(data.byteBoard).then((exists) => {
             if (!exists) {
-              this.minedClover(data)
+              this.miner.getFindersFee(data.byteBoard).then((fee) => {
+                data.findersFee = data.startPrice = fee
+                this.minedClover(data)
+              })
             }
           }).catch((err) => {
             console.log(err)

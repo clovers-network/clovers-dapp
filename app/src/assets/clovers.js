@@ -8,12 +8,14 @@ let web3 = self && self.web3
 
 class Clover extends Reversi {
 
-  constructor (startVal) {
+  constructor (events = false) {
     super()
     this.ClubToken = false
     this.account = false
     this.accountInterval = false
     this.registeredBoards = []
+    this.event = events
+    this.findersFee = this.startPrice = 0
   }
 
   // Connections
@@ -46,6 +48,25 @@ class Clover extends Reversi {
     this.initWeb3()
     this.ClubToken = contract(clubTokenArtifacts)
     this.ClubToken.setProvider(web3.currentProvider)
+    if (this.events) {
+      this.deploy().then((instance) => {
+        instance.DebugGame({fromBlock: 'latest'}).watch((error, result) => {
+          console.log('DebugGame Event')
+          if (error) console.error(error)
+          if (result) console.log(result)
+        })
+        instance.DebugBoard({fromBlock: 'latest'}).watch((error, result) => {
+          console.log('DebugBoard Event')
+          if (error) console.error(error)
+          if (result) console.log(result)
+        })
+        instance.Registered({fromBlock: 'latest'}).watch((error, result) => {
+          console.log('Registered Event')
+          if (error) console.error(error)
+          if (result) console.log(result)
+        })
+      })
+    }
   }
 
   deploy () {
@@ -56,7 +77,24 @@ class Clover extends Reversi {
   }
 
 
+
   // Contract Management
+
+  // contract read only / calls
+
+  adminLen () {
+    return this.deploy().then((instance) => {
+      return instance.adminLen()
+    })
+  }
+
+  adminAt (adminKey = 0) {
+    return this.deploy().then((instance) => {
+      return instance.adminAt(new BN(adminKey, 10))
+    })
+  }
+
+  // contract write / transactions
 
   addAdmin (address = '0x0') {
     return this.deploy().then((instance) => {
@@ -64,16 +102,29 @@ class Clover extends Reversi {
         if (isAdmin) {
           return instance.addAdmin(address, {from: this.account})
         } else {
-          console.error('Can\'t add an admin if not an admin')
+          console.error('Can\'t addAdmin() if not an admin')
+        }
+      })
+    })
+  }
+
+  updateMultiplier (multiplier = 100) {
+    return this.deploy().then((instance) => {
+      return instance.isAdmin().then((isAdmin) => {
+        if (isAdmin) {
+          return instance.updateMultiplier(new BN(multiplier, 10), {from: this.account})
+        } else {
+          console.error('Can\'t updateModifier() if not an admin')
         }
       })
     })
   }
 
 
+
   // Player Management
 
-  // read only
+  // contract read only / calls
 
   listPlayerCount () {
     return this.deploy().then((instance) => {
@@ -118,6 +169,7 @@ class Clover extends Reversi {
   }
 
 
+
   // Clover Management
 
   // app calls
@@ -160,7 +212,7 @@ class Clover extends Reversi {
   getCloverByKey (cloverKey = 0) {
     return this.deploy().then((instance) => {
       return instance.getCloverByKey(new BN(cloverKey, 10)).then((clover) => {
-        return this.cloverObjectFromContract(clover)
+        return this.formatClover(clover)
       })
     })
   }
@@ -168,7 +220,7 @@ class Clover extends Reversi {
   getClover (board = '0x0') {
     return this.deploy().then((instance) => {
       return instance.getClover(new BN(board, 16)).then((clover) => {
-        return this.cloverObjectFromContract(clover)
+        return this.formatClover(clover)
       })
     })
   }
@@ -181,64 +233,43 @@ class Clover extends Reversi {
 
   getCloverOwner (board = '0x0') {
     return this.deploy().then((instance) => {
-      return instance.getCloverOwner(new BN(board, 16)).then((clover) => {
-        return this.ownerObjectFromContract(clover)
+      return instance.getCloverOwner(new BN(board, 16)).then((owner) => {
+        return this.formatOwner(owner)
       })
     })
   }
 
   getCloverOwnerAtKeyByBoard (board = '0x0', ownerKey = 0) {
     return this.deploy().then((instance) => {
-      return instance.getCloverOwnerAtKeyByBoard(new BN(board, 16), new BN(ownerKey, 10)).then((clover) => {
-        return this.ownerObjectFromContract(clover)
+      return instance.getCloverOwnerAtKeyByBoard(new BN(board, 16), new BN(ownerKey, 10)).then((owner) => {
+        return this.formatOwner(owner)
       })
     })
   }
 
   getCloverOwnerAtKeyByBoardKey (boardKey = 0, ownerKey = 0) {
     return this.deploy().then((instance) => {
-      return instance.getCloverOwnerAtKeyByBoardKey(new BN(boardKey, 10), new BN(ownerKey, 10)).then((clover) => {
-        return this.ownerObjectFromContract(clover)
+      return instance.getCloverOwnerAtKeyByBoardKey(new BN(boardKey, 10), new BN(ownerKey, 10)).then((owner) => {
+        return this.formatOwner(owner)
       })
     })
   }
 
-  ownerObjectFromContract (contractArray) {
-    return {
-      byteBoard: contractArray[0],
-      arrayBoardRow: this.byteBoardToRowArray(contractArray[0]),
-      owner: contractArray[1]
-    }
-  }
-
-  cloverObjectFromContract (contractArray) {
-    // contractArray =  [board, lastPaidAmount, numberOfOwners, mostRecentOwner, first32Moves, lastMoves]
-    return {
-      byteBoard: contractArray[0],
-      arrayBoardRow: this.byteBoardToRowArray(contractArray[0]),
-      currentPrice: contractArray[1].mul(2).toNumber(),
-      numberOfOwners: contractArray[2].toNumber(),
-      mostRecentOwner: contractArray[3],
-      byteFirst32Moves: contractArray[4],
-      byteLastMoves: contractArray[5],
-      moves: this.byteMovesToStringMoves(contractArray[4].toString(16), contractArray[5].toString(16))
-    }
-  }
 
   // contract write / transactions
 
-  renameClover (board = '0x0', name = false) {
-    if (!name) throw new Error('Can\'t give a clover an empty name')
-    return this.deploy().then((instance) => {
-      return instance.getCloverOwner().then((owner) => {
-        if (owner !== this.account) {
-          throw new Error('Can\'t name a clover you don\'t own')
-        } else {
-          return instance.renameClover(new BN(board, 16), name, {from: this.account})
-        }
-      })
-    })
-  }  
+  // renameClover (board = '0x0', name = false) {
+  //   if (!name) throw new Error('Can\'t give a clover an empty name')
+  //   return this.deploy().then((instance) => {
+  //     return instance.getCloverOwner().then((owner) => {
+  //       if (owner !== this.account) {
+  //         throw new Error('Can\'t name a clover you don\'t own')
+  //       } else {
+  //         return instance.renameClover(new BN(board, 16), name, {from: this.account})
+  //       }
+  //     })
+  //   })
+  // }
 
   changeStartPrice (board = '0x0', startPrice = 0) {
     if (!startPrice === 0) throw new Error('Can\'t give a clover a start price of 0')
@@ -274,11 +305,9 @@ class Clover extends Reversi {
     }
   }
 
-  // formatting
-
-  adminRegisterGame (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, byteBoard = this.byteBoard, startPrice = 100) {
+  adminMineClover (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, byteBoard = this.byteBoard, startPrice = 100) {
     return this.deploy().then((instance) => {
-      return instance.adminRegisterGame(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), new BN(byteBoard, 16), new BN(startPrice, 10), {from: this.account})
+      return instance.adminMineClover(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), new BN(byteBoard, 16), new BN(startPrice, 10), {from: this.account})
     })
   }
 
@@ -294,18 +323,58 @@ class Clover extends Reversi {
     })
   }
 
+  // formatting
+
+  formatOwner (contractArray) {
+    return {
+      byteBoard: contractArray[0],
+      arrayBoardRow: this.byteBoardToRowArray(contractArray[0]),
+      owner: contractArray[1]
+    }
+  }
+
+  formatClover (contractArray) {
+    return {
+      byteBoard: contractArray[0],
+      arrayBoardRow: this.byteBoardToRowArray(contractArray[0]),
+      currentPrice: contractArray[1].mul(2).toNumber(),
+      numberOfOwners: contractArray[2].toNumber(),
+      mostRecentOwner: contractArray[3],
+      byteFirst32Moves: contractArray[4],
+      byteLastMoves: contractArray[5],
+      moves: this.byteMovesToStringMoves(contractArray[4].toString(16), contractArray[5].toString(16))
+    }
+  }
+
 
 
   // Game Management
 
   // contract read only / calls
 
+  gameIsValid (byteFirst32Moves = '0x0', byteLastMoves = '0x0') {
+    return this.deploy().then((instance) => {
+      return instance.gameIsValid(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16))
+    })
+  }
+  
+  gameExists (byteFirst32Moves = '0x0', byteLastMoves = '0x0') {
+    return this.deploy().then((instance) => {
+      return instance.gameExists(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16))
+    })
+  }
+  
+  getFindersFee (byteBoard = '0x0') {
+    return this.deploy().then((instance) => {
+      return instance.getFindersFee(new BN(byteBoard, 16))
+    })
+  }
+
+//returns(uint8 moveKey, bool error, bool complete, uint8 currentPlayer, bytes16 board)
   showGameConstant (byteFirst32Moves = 0, byteLastMoves = 0) {
-    if (!this.ClubToken) this.setContract()
-    return this.ClubToken.deployed().then((instance) => {
+    return this.deploy().then((instance) => {
       return instance.showGameConstant(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
-        console.log(result)
-        return result
+        return formatGame(result)
       })
     })
   }
@@ -316,11 +385,21 @@ class Clover extends Reversi {
     if (!this.ClubToken) this.setContract()
     if (!this.account) return
     this.ClubToken.deployed().then((instance) => {
-      instance.showGameDebug(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), {from: this.account}).then((result) => {
-        console.log(result)
-      })
+      instance.showGameDebug(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), {from: this.account})
     })
   }
+
+  formatGame (contractArray = []) {
+    return {
+      moveKey: contractArray[0],
+      error: contractArray[1],
+      complete: contractArray[2],
+      currentPlayer: contractArray[3],
+      byteBoard: contractArray[4],
+      arrayBoardRow: this.byteBoardToRowArray(contractArray[0])
+    }
+  }
+
 
 }
 
