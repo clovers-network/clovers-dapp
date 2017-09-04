@@ -89,7 +89,7 @@
         this.submitting = true
         this.miner.startPrice = this.flipPrice
         this.miner.playGameMovesString(this.clover.movesString)
-        this.miner.adminRegisterGame().then(() => {
+        this.miner.adminMineClover().then(() => {
           this.submitting = false
           this.$emit('claimed', this.clover)
         }).catch((err) => {
