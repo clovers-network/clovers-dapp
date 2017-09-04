@@ -30,7 +30,7 @@ class Clover extends Reversi {
     this.setAccountInterval()
   }
 
-  deloy () {
+  deploy () {
     if (!this.ClubToken) this.setContract()
     return this.ClubToken.deployed().catch((err) => {
       console.error(err)
@@ -179,50 +179,180 @@ class Clover extends Reversi {
   }
 
 
+  // Contract Management
+
+  addAdmin (address = '0x0') {
+    return this.deploy().then((instance) => {
+      return instance.isAdmin().then((isAdmin) => {
+        if (isAdmin) {
+          return instance.addAdmin(address, {from: this.account})
+        } else {
+          console.error('Can\'t add an admin if not an admin')
+        }
+      })
+    })
+  }
+
+
   // Player Management
 
+  // read only
 
   listPlayerCount () {
-    this.deploy().then((instance) => {
-      return instance.listPlayerCount().then((count) => {
-        console.log(count)
-      }).catch((err) => {
-        console.error(err)
-      })
+    return this.deploy().then((instance) => {
+      return instance.listPlayerCount()
     })
   }
 
   playerAddressByKey (key = 0) {
-    this.deploy().then((instance) => {
-      return instance.playerAddressByKey(new BN(key, 10)).then((player) => {
-        console.log(player)
+    return this.deploy().then((instance) => {
+      return instance.playerAddressByKey(new BN(key, 10))
+    })
+  }
+
+  playerExists (address = '0x0') {
+    return this.deploy().then((instance) => {
+      return instance.playerExists(address)
+    })
+  }
+
+  playerCurrentCount (address = '0x0') {
+    return this.deploy().then((instance) => {
+      return instance.playerCurrentCount(address)
+    })
+  }
+
+  playerAllCount (address = '0x0') {
+    return this.deploy().then((instance) => {
+      return instance.playerAllCount(address)
+    })
+  }
+
+  playerCloverByKey (address = '0x0', cloverKey = 0) {
+    return this.deploy().then((instance) => {
+      return instance.playerCloverByKey(address, new BN(cloverKey, 10))
+    })
+  }
+
+  playerOwnsClover (address = '0x0', board = '0x0') {
+    return this.deploy().then((instance) => {
+      return instance.playerCloverByKey(address, new BN(board, 16))
+    })
+  }
+
+
+  // Clover Management
+
+  // read only / calls
+
+
+  cloverExists (board = '0x0') {
+    return this.deploy().then((instance) => {
+      return instance.cloverExists(new BN(board, 16))
+    })
+  }
+
+  getCloversCount () {
+    return this.deploy().then((instance) => {
+      return instance.getCloversCount()
+    })
+  }
+
+  getCloverByKey (cloverKey = 0) {
+    return this.deploy().then((instance) => {
+      return instance.getCloverByKey(new BN(cloverKey, 10)).then((clover) => {
+        return this.cloverObjectFromContract(clover)
       })
     })
   }
 
-  // function playerAddressByKey(uint playerKey) public constant returns(address) {
-  //   return playerKeys[playerKey];
+  getClover (board = '0x0') {
+    return this.deploy().then((instance) => {
+      return instance.getClover(new BN(board, 16)).then((clover) => {
+        return this.cloverObjectFromContract(clover)
+      })
+    })
+  }
+
+  getCloverOwner (board = '0x0') {
+    return this.deploy().then((instance) => {
+      return instance.getCloverOwner(new BN(board, 16)).then((clover) => {
+        console.log(clover)
+        return this.ownerObjectFromContract(clover)
+      })
+    })
+  }
+
+  getCloverOwnerAtKeyByBoard (board = '0x0', ownerKey = 0) {
+    return this.deploy().then((instance) => {
+      return instance.getCloverOwnerAtKeyByBoard(new BN(board, 16), new BN(ownerKey, 10)).then((clover) => {
+        return this.ownerObjectFromContract(clover)
+      })
+    })
+  }
+
+  getCloverOwnerAtKeyByBoardKey (boardKey = 0, ownerKey = 0) {
+    return this.deploy().then((instance) => {
+      return instance.getCloverOwnerAtKeyByBoardKey(new BN(boardKey, 10), new BN(ownerKey, 10)).then((clover) => {
+        return this.ownerObjectFromContract(clover)
+      })
+    })
+  }
+
+  ownerObjectFromContract (contractArray) {
+    return {
+      byteBoard: contractArray[0],
+      arrayBoardRow: this.byteBoardToRowArray(contractArray[0]),
+      owner: contractArray[1]
+    }
+  }
+
+  cloverObjectFromContract (contractArray) {
+    // contractArray =  [board, lastPaidAmount, numberOfOwners, mostRecentOwner, first32Moves, lastMoves]
+    return {
+      byteBoard: contractArray[0],
+      arrayBoardRow: this.byteBoardToRowArray(contractArray[0]),
+      currentPrice: contractArray[1].mul(2).toNumber(),
+      numberOfOwners: contractArray[2].toNumber(),
+      mostRecentOwner: contractArray[3],
+      byteFirst32Moves: contractArray[4],
+      byteLastMoves: contractArray[5],
+      moves: this.byteMovesToStringMoves(contractArray[4].toString(16), contractArray[5].toString(16))
+    }
+  }
+
+  // write / transactions
+
+
+  renameClover (board = '0x0', name = false) {
+    if (!name) throw new Error('Can\'t give a clover an empty name')
+    return this.deploy().then((instance) => {
+      return instance.getCloverOwner().then((owner) => {
+        if (owner !== this.account) {
+          throw new Error('Can\'t name a clover you don\'t own')
+        } else {
+          return instance.renameClover(new BN(board, 16), name, {from: this.account})
+        }
+      })
+    })
+  }
+
+  // function changeStartPrice(bytes16 board, uint256 startPrice) public exists(board) {
+  //   if(clovers[board].previousOwners[0] != msg.sender) revert();
+  //   if(clovers[board].previousOwners.length > 1) revert();
+  //   clovers[board].lastPaidAmount = startPrice;
   // }
 
-  // function playerExists(address player) public constant returns(bool) {
-  //   return players[player].exists;
+  // function mineClover(bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public returns(uint) {
+
   // }
 
-  // function playerCurrentCount(address player) public constant returns(uint) {
-  //   return players[player].currentCount;
+  // function buyClover (bytes16 b) public returns(bool) {
+ 
   // }
 
-  // function playerAllCount(address player) public constant returns(uint) {
-  //   return players[player].cloverKeys.length;
-  // }
 
-  // function playerCloverByKey(address player, uint cloverKey) public constant returns(bytes16) {
-  //   return players[player].cloverKeys[cloverKey];
-  // }
 
-  // function playerOwnsClover(address player, bytes16 board) public constant returns (bool) {
-  //   return players[player].clovers[board];
-  // }
 }
 
 export default Clover
