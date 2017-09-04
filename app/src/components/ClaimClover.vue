@@ -9,7 +9,13 @@
           <svg-text :movesString="clover.movesString"></svg-text>
         </div>
       </div>
-      <div v-if="!clover.claimed" class="col-8 lg-col-7">
+      <div v-if="clover.removed" class="px3">
+        <p class="h1 md-h0 m0 lh1">❌ Removed {{ removeDate }}</p>
+      </div>
+      <div v-else-if="clover.claimed" class="px3">
+        <p class="h1 md-h0 m0 lh1">✨ Claimed {{ claimDate }}</p>
+      </div>
+      <div v-else class="col-8 lg-col-7">
         <form @submit.prevent="trigger">
           <div class="mb2 flex flex-wrap">
             <div class="col-6 px3">
@@ -22,12 +28,12 @@
             </div>
             <div class="mt3 px3 col-12">
               <button type="submit" class="btn btn-outline py3 col-12">Claim Clover and register on Flip Market</button>
+              <p class="right-align mt1 mb0">
+                <button @click="remove" type="button" class="border-none bg-transparent white h5 pointer">Remove clover</button>
+              </p>
             </div>
           </div>
         </form>
-      </div>
-      <div v-else class="px3">
-        Claimed {{ claimDate }}
       </div>
     </div>
   </div>
@@ -54,6 +60,9 @@
       claimDate () {
         return moment(this.clover.claimed).fromNow()
       },
+      removeDate () {
+        return moment(this.clover.removed).fromNow()
+      },
       flipPrice: {
         get () {
           return this.clover.startPrice || 100
@@ -78,6 +87,9 @@
         }).catch((err) => {
           console.log(err)
         })
+      },
+      remove () {
+        this.$emit('remove')
       },
 
       ...mapMutations({
