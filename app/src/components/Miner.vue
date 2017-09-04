@@ -53,7 +53,7 @@
           </li>
         </ul>
       </div>
-<!--       <form @submit.prevent='submitCustom()'><input v-model='customMoves'></form> -->
+      <form @submit.prevent='submitCustom()'><input v-model='customMoves'></form>
     </div>
   </div>
 </template>
@@ -153,10 +153,7 @@
         setItem('clovers', this.clovers)
       },
       submitCustom () {
-        console.log('submit custom')
-        this.miner.playGameMovesString(this.customMoves)
-        this.miner.buildString()
-        // this.miner.buyClover()
+
       },
       toggleMiner () {
         this.opened = !this.opened
@@ -209,6 +206,15 @@
       },
       select (clover) {
         this.selectedClover = clover
+
+        console.log(clover)
+        console.log(clover.byteBoard)
+        this.miner.getTallys(clover.byteBoard).then((tallys) => {
+          console.log(tallys)
+        })
+        this.miner.getFindersFee(clover.byteBoard).then((fee) => {
+          console.log(fee)
+        })
       },
       timer () {
         if (this.mining) {

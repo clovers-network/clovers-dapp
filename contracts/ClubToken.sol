@@ -53,9 +53,12 @@ contract ClubToken is StandardToken, Reversi {
   // Events
 
   event Registered(address newOwner, uint256 lastPaidAmount, bytes16 board);
-  event DebugGame(uint8 moveKey, bool error, bool complete, bool symmetrical, uint8 currentPlayer, bytes16 board);
+  event DebugGame(bytes16 board, bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym);
   event DebugBoard(bytes16 board);
 
+  function debugGame(Game game) internal {
+    DebugGame(game.board, game.error, game.complete, game.symmetrical, game.RotSym, game.Y0Sym, game.X0Sym, game.XYSym, game.XnYSym);
+  }
 
 
   // Contract Administration
@@ -73,6 +76,10 @@ contract ClubToken is StandardToken, Reversi {
 
   function adminAt (uint256 key) public constant returns (address) {
     return adminKeys[key];
+  }
+
+  function getTallys() public constant returns(uint256, uint256, uint256, uint256, uint256, uint256) {
+    return (Symmetricals, RotSym, Y0Sym, X0Sym, XYSym, XnYSym);
   }
 
   function addAdmin (address newbie) public onlyAdmin() {
@@ -93,6 +100,7 @@ contract ClubToken is StandardToken, Reversi {
   function updateMultiplier(uint256 multiplier) public onlyAdmin(){
     payMultiplier = multiplier;
   }
+
 
 
 
@@ -227,7 +235,7 @@ contract ClubToken is StandardToken, Reversi {
 
   function mineClover(bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public {
     Game memory game = playGame(first32Moves, lastMoves);
-    DebugGame(game.moveKey, game.error, game.complete, game.symmetrical, game.currentPlayer, game.board);
+    debugGame(game);
     saveGame(game, startPrice);
   }
 
@@ -264,13 +272,14 @@ contract ClubToken is StandardToken, Reversi {
     registerPlayer();
     addCloverToPlayer(game.board);
     Game memory game;
+    game.board = board;
+
     game = isSymmetrical(game);
     if (game.symmetrical) {
+      clovers[game.board].findersFee = findersFee(game);
       balances[msg.sender] += clovers[game.board].findersFee;
       addToSymmTallys(game);
     }
-    game.board = board;
-    clovers[game.board].findersFee = findersFee(game);
     clovers[board].first32Moves = first32Moves;
     clovers[board].lastMoves = lastMoves;
     clovers[board].previousOwners.push(msg.sender);
@@ -286,7 +295,7 @@ contract ClubToken is StandardToken, Reversi {
   // Game Management
   //
   // see ./Reversi.sol for more...
-  
+
   function gameIsValid(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bool) {
     Game memory game = playGame(first32Moves, lastMoves);
     if (game.error) return false;
@@ -302,21 +311,55 @@ contract ClubToken is StandardToken, Reversi {
     return cloverExists(game.board);
   }
 
-  function showGameConstant(bytes28 first32Moves, bytes28 lastMoves) public constant returns(uint8 moveKey, bool error, bool complete, uint8 currentPlayer, bytes16 board) {
+  function showGameConstant(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym) {
     Game memory game = playGame(first32Moves, lastMoves);
-    return (game.moveKey, game.error, game.complete, game.currentPlayer, game.board);
+    return returnGame(game);
   }
 
-  function getFindersFee(bytes16 b) public exists(b) constant returns(uint256) {
+  function getSymmetry(bytes16 b) public constant returns(bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym) {
+    Game memory game;
+    game.board = b;
+    game = isSymmetrical(game);
+    return returnGame(game);
+  }
+
+  function getFindersFee(bytes16 b) public constant returns(uint256) {
     Game memory game;
     game.board = b;
     game = isSymmetrical(game);
     return findersFee(game);
   }
 
+  function testTallys(bytes16 b) public constant returns(uint256, uint256, uint256, uint256, uint256, uint256) {
+    
+    Game memory game;
+    game.board = b;
+    game = isSymmetrical(game);
+
+    uint256 _Symmetricals = 0;
+    uint256 _RotSym = 0;
+    uint256 _Y0Sym = 0;
+    uint256 _X0Sym = 0;
+    uint256 _XYSym = 0;
+    uint256 _XnYSym = 0;
+
+    if (game.symmetrical) _Symmetricals += 1;
+    if (game.RotSym) _RotSym += 1;
+    if (game.Y0Sym) _Y0Sym += 1;
+    if (game.X0Sym) _X0Sym += 1;
+    if (game.XYSym) _XYSym += 1;
+    if (game.XnYSym) _XnYSym += 1;
+
+    return (_Symmetricals, _RotSym, _Y0Sym, _X0Sym, _XYSym, _XnYSym);
+  }
+
   function showGameDebug(bytes28 first32Moves, bytes28 lastMoves) public {
     Game memory game = playGame(first32Moves, lastMoves);
-    DebugGame(game.moveKey, game.error, game.complete, game.symmetrical, game.currentPlayer, game.board);
+    debugGame(game);
+  }
+
+  function returnGame(Game game) internal returns(bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym){
+    return (game.error, game.complete, game.symmetrical, game.RotSym, game.Y0Sym, game.X0Sym, game.XYSym, game.XnYSym);
   }
 
   function saveGame(Game game, uint256 startPrice) internal returns(uint){
@@ -326,7 +369,6 @@ contract ClubToken is StandardToken, Reversi {
     
     registerPlayer();
     addCloverToPlayer(game.board);
-    clovers[game.board].findersFee = findersFee(game);
     clovers[game.board].first32Moves = game.first32Moves;
     clovers[game.board].lastMoves = game.lastMoves;
     clovers[game.board].previousOwners.push(msg.sender);
@@ -335,13 +377,14 @@ contract ClubToken is StandardToken, Reversi {
     clovers[game.board].created = now;
     clovers[game.board].modified = now;
     if (game.symmetrical) {
-      addToSymmTallys(game);
+      clovers[game.board].findersFee = findersFee(game);
       balances[msg.sender] += clovers[game.board].findersFee;
+      addToSymmTallys(game);
     }
+
     // Registered(msg.sender, clovers[game.board].lastPaidAmount, game.board);
     return cloverKeys.push(game.board);
   }
-
 
   function addToSymmTallys(Game game) internal {
     if (game.symmetrical) Symmetricals += 1;
@@ -356,14 +399,16 @@ contract ClubToken is StandardToken, Reversi {
     return findersFeeExplicit(game.symmetrical, game.RotSym, game.Y0Sym, game.X0Sym, game.XYSym, game.XnYSym);
   }
 
-  function findersFeeExplicit(bool symmetrical, bool _RotSym, bool _Y0Sym, bool _X0Sym, bool _XYSym, bool _XnYSym) internal constant returns(uint256) {
+  function findersFeeExplicit(bool symmetrical, bool _RotSym, bool _Y0Sym, bool _X0Sym, bool _XYSym, bool _XnYSym) internal constant returns(uint256) {    
     uint256 base = 0;
+
     if (symmetrical) base += 1;
-    if (_RotSym) base *= payMultiplier.div(RotSym.div(Symmetricals));
-    if (_Y0Sym) base *= payMultiplier.div(Y0Sym.div(Symmetricals));
-    if (_X0Sym) base *= payMultiplier.div(X0Sym.div(Symmetricals));
-    if (_XYSym) base *= payMultiplier.div(XYSym.div(Symmetricals));
-    if (_XnYSym) base *= payMultiplier.div(XnYSym.div(Symmetricals));
+    if (_RotSym) base = base.mul( payMultiplier ).mul( Symmetricals + 1 ).div( RotSym + 1 );
+    if (_Y0Sym) base = base.mul( payMultiplier ).mul( Symmetricals + 1 ).div( Y0Sym + 1 );
+    if (_X0Sym) base = base.mul( payMultiplier ).mul( Symmetricals + 1 ).div( X0Sym + 1 );
+    if (_XYSym) base = base.mul( payMultiplier ).mul( Symmetricals + 1 ).div( XYSym + 1 );
+    if (_XnYSym) base = base.mul( payMultiplier ).mul( Symmetricals + 1 ).div( XnYSym + 1 );
+
     return base;
   }
 

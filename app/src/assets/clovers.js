@@ -82,9 +82,15 @@ class Clover extends Reversi {
 
   // contract read only / calls
 
+  isAdmin () {
+    return this.deploy().then((instance) => {
+      return (instance.isAdmin(), instance)
+    })
+  }
+
   adminLen () {
     return this.deploy().then((instance) => {
-      return instance.adminLen()
+      return instance.adminLen().then((num) => new BN(num).toNumber())
     })
   }
 
@@ -94,25 +100,33 @@ class Clover extends Reversi {
     })
   }
 
-  // contract write / transactions
-
-  addAdmin (address = '0x0') {
+  getTallys () {
     return this.deploy().then((instance) => {
-      return instance.isAdmin().then((isAdmin) => {
-        if (isAdmin) {
-          return instance.addAdmin(address, {from: this.account})
-        } else {
-          console.error('Can\'t addAdmin() if not an admin')
-        }
+      return instance.getTallys().then((result) => {
+        return this.formatTallys(result)
       })
     })
   }
 
-  adminRegisterGame (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, byteBoard = this.byteBoard, startPrice = this.startPrice) {
-    if (!this.ClubToken) this.setContract()
-    return this.ClubToken.deployed().then((instance) => {
-      return instance.adminRegisterGame(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), new BN(byteBoard, 16), new BN(startPrice, 10), {from: this.account})
+  testTallys (byteBoard = this.byteBoard) {
+    return this.deploy().then((instance) => {
+      return instance.testTallys(new BN(byteBoard, 16)).then((tallys) => {
+        return this.formatTallys(tallys)
+      })
     })
+  }
+
+  // contract write / transactions
+
+  addAdmin (address = '0x0') {
+    return this.isAdmin().then((isAdmin, instance) => {
+      if (isAdmin) {
+        return instance.addAdmin(address, {from: this.account})
+      } else {
+        throw new Error('Can\'t addAdmin() if not an admin')
+      }
+    })
+    
   }
 
   updateMultiplier (multiplier = 100) {
@@ -127,6 +141,19 @@ class Clover extends Reversi {
     })
   }
 
+  // formatting
+
+  formatTallys (contractArray = Array(6)) {
+    return {
+      Symmetricals: contractArray[0],
+      RotSym: contractArray[1],
+      Y0Sym: contractArray[2],
+      X0Sym: contractArray[3],
+      XYSym: contractArray[4],
+      XnYSym: contractArray[5]
+    }
+  }
+
 
 
   // Player Management
@@ -135,7 +162,7 @@ class Clover extends Reversi {
 
   listPlayerCount () {
     return this.deploy().then((instance) => {
-      return instance.listPlayerCount()
+      return instance.listPlayerCount().then((num) => new BN(num).toNumber())
     })
   }
 
@@ -153,13 +180,13 @@ class Clover extends Reversi {
 
   playerCurrentCount (address = '0x0') {
     return this.deploy().then((instance) => {
-      return instance.playerCurrentCount(address)
+      return instance.playerCurrentCount(address).then((num) => new BN(num).toNumber())
     })
   }
 
   playerAllCount (address = '0x0') {
     return this.deploy().then((instance) => {
-      return instance.playerAllCount(address)
+      return instance.playerAllCount(address).then((num) => new BN(num).toNumber())
     })
   }
 
@@ -169,7 +196,7 @@ class Clover extends Reversi {
     })
   }
 
-  playerOwnsClover (address = '0x0', board = '0x0') {
+  playerOwnsClover (address = '0x0', board = this.byteBoard) {
     return this.deploy().then((instance) => {
       return instance.playerCloverByKey(address, new BN(board, 16))
     })
@@ -197,14 +224,20 @@ class Clover extends Reversi {
     })
   }
 
-  registerGameMovesString (moves = '', startPrice = 100) {
+  registerGameMovesString (moves = '', startPrice = 100, byteBoard = this.byteBoard) {
     moves = this.sliceMovesStringToBytes(moves)
-    this.mineClover(moves[0], moves[1], startPrice)
+    return this.isAdmin().then((isAdmin) => {
+      if (isAdmin) {
+        this.adminMineClover(moves[0], moves[1], byteBoard, startPrice)
+      } else {
+        this.mineClover(moves[0], moves[1], startPrice)
+      }
+    })
   }
 
   // contract read only / calls
 
-  cloverExists (board = '0x0') {
+  cloverExists (board = this.byteBoard) {
     return this.deploy().then((instance) => {
       return instance.cloverExists(new BN(board, 16))
     })
@@ -212,7 +245,7 @@ class Clover extends Reversi {
 
   getCloversCount () {
     return this.deploy().then((instance) => {
-      return instance.getCloversCount()
+      return instance.getCloversCount().then((num) => new BN(num).toNumber())
     })
   }
 
@@ -224,7 +257,7 @@ class Clover extends Reversi {
     })
   }
 
-  getClover (board = '0x0') {
+  getClover (board = this.byteBoard) {
     return this.deploy().then((instance) => {
       return instance.getClover(new BN(board, 16)).then((clover) => {
         return this.formatClover(clover)
@@ -232,13 +265,13 @@ class Clover extends Reversi {
     })
   }
 
-  getCloverOwnersLength (board = '0x0') {
+  getCloverOwnersLength (board = this.byteBoard) {
     return this.deploy().then((instance) => {
-      return instance.getCloverOwnersLength(new BN(board, 16))
+      return instance.getCloverOwnersLength(new BN(board, 16)).then((num) => new BN(num).toNumber())
     })
   }
 
-  getCloverOwner (board = '0x0') {
+  getCloverOwner (board = this.byteBoard) {
     return this.deploy().then((instance) => {
       return instance.getCloverOwner(new BN(board, 16)).then((owner) => {
         return this.formatOwner(owner)
@@ -246,7 +279,7 @@ class Clover extends Reversi {
     })
   }
 
-  getCloverOwnerAtKeyByBoard (board = '0x0', ownerKey = 0) {
+  getCloverOwnerAtKeyByBoard (board = this.byteBoard, ownerKey = 0) {
     return this.deploy().then((instance) => {
       return instance.getCloverOwnerAtKeyByBoard(new BN(board, 16), new BN(ownerKey, 10)).then((owner) => {
         return this.formatOwner(owner)
@@ -278,7 +311,7 @@ class Clover extends Reversi {
   //   })
   // }
 
-  changeStartPrice (board = '0x0', startPrice = 0) {
+  changeStartPrice (board = this.byteBoard, startPrice = 100) {
     if (!startPrice === 0) throw new Error('Can\'t give a clover a start price of 0')
     return this.deploy().then((instance) => {
       return instance.getCloverOwner().then((owner) => {
@@ -297,14 +330,14 @@ class Clover extends Reversi {
     })
   }
 
-  mineClover (byteFirst32Moves = 0, byteLastMoves = 0, startPrice = 100) {
+  mineClover (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, startPrice = 100) {
     this.playGameByteMoves(byteFirst32Moves, byteLastMoves)
     if (this.error) {
-      alert('Game is not valid')
+      throw new Error('Game is not valid')
     } else if (!this.complete) {
-      alert('Game is not complete')
+      throw new Error('Game is not complete')
     } else if (!this.symmetrical) {
-      alert('Game is not symmetrical')
+      throw new Error('Game is not symmetrical')
     } else {
       return this.deploy().then((instance) => {
         return instance.mineClover(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), startPrice, {from: this.account} )
@@ -332,7 +365,7 @@ class Clover extends Reversi {
 
   // formatting
 
-  formatOwner (contractArray) {
+  formatOwner (contractArray = new Array(5)) {
     return {
       byteBoard: contractArray[0],
       arrayBoardRow: this.byteBoardToRowArray(contractArray[0]),
@@ -340,7 +373,7 @@ class Clover extends Reversi {
     }
   }
 
-  formatClover (contractArray) {
+  formatClover (contractArray = new Array(5)) {
     return {
       byteBoard: contractArray[0],
       arrayBoardRow: this.byteBoardToRowArray(contractArray[0]),
@@ -359,50 +392,60 @@ class Clover extends Reversi {
 
   // contract read only / calls
 
-  gameIsValid (byteFirst32Moves = '0x0', byteLastMoves = '0x0') {
+  gameIsValid (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     return this.deploy().then((instance) => {
       return instance.gameIsValid(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16))
     })
   }
   
-  gameExists (byteFirst32Moves = '0x0', byteLastMoves = '0x0') {
+  gameExists (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     return this.deploy().then((instance) => {
       return instance.gameExists(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16))
     })
   }
-  
-  getFindersFee (byteBoard = '0x0') {
+
+  getSymmetry (byteBoard = this.byteBoard) {
     return this.deploy().then((instance) => {
-      return instance.getFindersFee(new BN(byteBoard, 16))
+      return instance.getSymmetry(new BN(byteBoard, 16)).then((game) => {
+        return this.formatGame(game)
+      })
+    })
+  }
+  
+  getFindersFee (byteBoard = this.byteBoard) {
+    return this.deploy().then((instance) => {
+      return instance.getFindersFee(new BN(byteBoard, 16)).then((num) => new BN(num).toNumber())
     })
   }
 
-  showGameConstant (byteFirst32Moves = 0, byteLastMoves = 0) {
+  showGameConstant (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     return this.deploy().then((instance) => {
       return instance.showGameConstant(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
-        return formatGame(result)
+        return this.formatGame(result)
       })
     })
   }
 
   // contract write / transactions
 
-  showGameDebug (byteFirst32Moves = 0, byteLastMoves = 0) {
-    if (!this.ClubToken) this.setContract()
+  showGameDebug (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     if (!this.account) return
-    this.ClubToken.deployed().then((instance) => {
-      instance.showGameDebug(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), {from: this.account})
+    return this.deploy().then((instance) => {
+      return instance.showGameDebug(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), {from: this.account})
     })
   }
 
   formatGame (contractArray = []) {
+    //    DebugGame(game.board, game.error, game.complete, game.symmetrical, game.RotSym, game.Y0Sym, game.X0Sym, game.XYSym, game.XnYSym);
     return {
-      moveKey: contractArray[0],
-      error: contractArray[1],
-      complete: contractArray[2],
-      currentPlayer: contractArray[3],
-      byteBoard: contractArray[4],
-      arrayBoardRow: this.byteBoardToRowArray(contractArray[0])
+      error: contractArray[0],
+      complete: contractArray[1],
+      symmetrical: contractArray[2],
+      RotSym: contractArray[3],
+      Y0Sym: contractArray[4],
+      X0Sym: contractArray[5],
+      XYSym: contractArray[6],
+      XnYSym: contractArray[7]
     }
   }
 
