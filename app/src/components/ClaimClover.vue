@@ -27,7 +27,10 @@
               <input class="input big white right-align" type="number" v-model="flipPrice">
             </div>
             <div class="mt3 px3 col-12">
-              <button type="submit" class="btn btn-outline py3 col-12">Claim Clover and register on Flip Market</button>
+              <button type="submit" class="btn btn-outline py3 col-12 regular h3">
+                <span>Claim Clover and register on Flip Market</span>
+                <span class="pl2 sending" v-if="submitting">✨</span>
+              </button>
               <p class="right-align mt1 mb0">
                 <button @click="remove" type="button" class="border-none bg-transparent white h5 pointer">Remove clover</button>
               </p>
@@ -46,6 +49,9 @@
 
   export default {
     name: 'claim-clover',
+    data () {
+      return { submitting: false }
+    },
     props: {
       clover: {
         type: Object,
@@ -75,17 +81,20 @@
         }
       },
       reward () {
-        return this.clover.findersFee || 100 + ' ♧'
+        return (this.clover.findersFee || 100) + ' ♧'
       }
     },
     methods: {
       trigger () {
+        this.submitting = true
         this.miner.startPrice = this.flipPrice
         this.miner.playGameMovesString(this.clover.movesString)
         this.miner.adminRegisterGame().then(() => {
+          this.submitting = false
           this.$emit('claimed', this.clover)
         }).catch((err) => {
           console.log(err)
+          this.submitting = false
         })
       },
       remove () {
