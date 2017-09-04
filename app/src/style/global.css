@@ -112,6 +112,10 @@ hr {
 
 /* #COLORS */
 
+.bg-transparent {
+  background-color: transparent;
+}
+
 .dark-gray {
   color: var(--dark-gray);
 }

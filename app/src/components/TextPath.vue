@@ -64,6 +64,7 @@
     left: -2em;
     right: -2em;
     top: -2em;
+
     textPath {
       font-family: monospace;
       text-transform: uppercase;
