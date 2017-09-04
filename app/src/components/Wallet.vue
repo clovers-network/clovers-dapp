@@ -53,7 +53,7 @@
         col: 0,
         totalGames: 0,
         running: false,
-        clover: new Clover(),
+        clover: new Clover(true),
         interval: false
       }
     },
@@ -90,10 +90,12 @@
     },
     methods: {
       testClover (key, board) {
-        console.log(board)
-        this.clover.renameClover(board[0], 'foo').then((result) => {
-          console.log(result)
-        })
+        this.clover.playGameByteMoves(board[4], board[5])
+        // this.clover.isSymmetrical()
+        // this.clover.getSymmetry().then((res) => console.log(res))
+        // this.clover.getFindersFee().then((res) => console.log(res))
+        this.clover.testTallys().then((res) => console.log(res))
+        // this.clover.getTallys().then((res) => console.log(res))
       },
       buyClover () {
         this.clover.playGameMovesString(this.moves)

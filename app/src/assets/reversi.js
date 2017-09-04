@@ -237,13 +237,11 @@ class Reversi {
     }
     if (RotSym || Y0Sym || X0Sym || XYSym || XnYSym) {
       this.symmetrical = true
-      let base = 1
-      if (RotSym) base *= 100
-      if (Y0Sym) base *= 100
-      if (X0Sym) base *= 100
-      if (XYSym) base *= 100
-      if (XnYSym) base *= 100
-      this.findersFee = this.startPrice = base
+      this.RotSym = RotSym
+      this.Y0Sym = Y0Sym
+      this.X0Sym = X0Sym
+      this.XYSym = XYSym
+      this.XnYSym = XnYSym
     }
   }
 
