@@ -27,6 +27,7 @@ const rootState = {
   hashRate: 0,
   mineTime: 0,
   totalMined: 0,
+  cloversFound: 0,
   mining: false,
   miningPower: 0,
   minedClovers: []
@@ -177,7 +178,11 @@ const mutations = {
   },
 
   [types.MINED_CLOVER] (state, clover) {
+    state.cloversFound = state.cloversFound + 1
     state.minedClovers.unshift(clover)
+    if (window.localstorage) {
+      window.localStorage.setItem('cloversFound', JSON.stringify(state.cloversFound))
+    }
   },
   [types.EXISTING_CLOVERS] (state, clovers) {
     state.minedClovers.push(...clovers)
@@ -185,6 +190,14 @@ const mutations = {
   [types.CLAIMED_CLOVER] (state, clover) {
     let i = state.minedClovers.findIndex(cl => cl.byteBoard === clover.byteBoard)
     Vue.set(state.minedClovers[i], 'claimed', new Date())
+  },
+  [types.UPDATE_CLOVER_PRICE] (state, { clover, newVal }) {
+    let i = state.minedClovers.findIndex(cl => cl.byteBoard === clover.byteBoard)
+    Vue.set(state.minedClovers[i], 'startPrice', newVal)
+  },
+  [types.REMOVE_MINED_CLOVER] (state, { byteBoard }) {
+    let i = state.minedClovers.findIndex(cl => cl.byteBoard === byteBoard)
+    if (i > -1) state.minedClovers.splice(i, 1)
   },
 
   [types.STORED_CLOVERS] (state, clovers) {
@@ -195,6 +208,12 @@ const mutations = {
   },
   [types.STORED_DURATION] (state, duration) {
     state.mineTime = duration
+  },
+  [types.STORED_CLOVERS_FOUND] (state, count) {
+    if (count < state.minedClovers.length) {
+      state.cloversFound = state.minedClovers.length
+    }
+    state.cloversFound = count
   }
 }
 

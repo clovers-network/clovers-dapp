@@ -247,6 +247,31 @@ class Reversi {
     }
   }
 
+  mine () {
+    this.clearAttrs()
+    let skip = false
+    for (let i = 0; i < 60 && !skip; i++) {
+      let move = this.pickRandomMove()
+      if (move) {
+        this.moves.push(move)
+        this.buildMovesString()
+        this.moveKey++
+        this.makeMove(move)
+        if (this.error) {
+          this.error = false
+          this.currentPlayer = this.currentPlayer === this.BLACK ? this.WHITE : this.BLACK
+          this.makeMove(move)
+          if (this.error) {
+            skip = true
+          }
+        }
+      } else {
+        skip = true
+      }
+    }
+    this.isComplete()
+    this.isSymmetrical()
+  }
 
   buildMovesString () {
     this.movesString = this.moves.map((move) => {

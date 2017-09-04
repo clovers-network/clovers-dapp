@@ -13,7 +13,7 @@
         <p class="m0 h6">Clovers found</p>
         <p class="m0 h1 nowrap">
           <svg width="24" height="24" viewBox="0 0 19 20" xmlns="http://www.w3.org/2000/svg"><title>Group</title><g fill-rule="nonzero" fill="#FFF"><path d="M9.818 9.682a.326.326 0 0 1-.099-.248l.032-4.957a1.882 1.882 0 0 1 0-.216c.003-.096.02-.26.052-.49.03-.231.076-.456.135-.673a3.64 3.64 0 0 1 .29-.712c.135-.258.294-.48.48-.664.607-.608 1.25-.916 1.926-.925.676-.008 1.31.282 1.899.872.163.163.3.359.41.588.11.229.188.467.233.714.045.246.076.467.093.66.017.194.023.388.018.582.194-.005.388.001.582.018.193.017.414.048.66.093.247.045.485.123.714.233.23.11.425.247.588.41.59.59.88 1.223.872 1.9-.009.676-.317 1.318-.925 1.926-.61.61-1.533.93-2.768.96l-4.944.028a.326.326 0 0 1-.248-.099M9.818 10.318a.326.326 0 0 0-.099.248l.032 4.957c-.004.048-.005.12 0 .216.003.096.02.26.052.49.03.231.076.456.135.673.06.217.156.454.29.712.135.258.294.48.48.664.607.608 1.25.916 1.926.925.676.008 1.31-.282 1.899-.872.163-.163.3-.359.41-.588.11-.229.188-.467.233-.714a7.16 7.16 0 0 0 .093-.66c.017-.194.023-.388.018-.582.194.005.388-.001.582-.018a7.16 7.16 0 0 0 .66-.093c.247-.045.485-.123.714-.233.23-.11.425-.247.588-.41.59-.59.88-1.223.872-1.9-.009-.676-.317-1.318-.925-1.926-.61-.61-1.533-.93-2.768-.96l-4.944-.028a.326.326 0 0 0-.248.099M9.281 9.434l-.032-4.957c.004-.048.005-.12 0-.216a5.958 5.958 0 0 0-.052-.49 5.198 5.198 0 0 0-.135-.673 3.64 3.64 0 0 0-.29-.712 2.683 2.683 0 0 0-.48-.664c-.607-.608-1.25-.916-1.926-.925-.676-.008-1.31.282-1.899.872-.163.163-.3.359-.41.588-.11.229-.188.467-.233.714a7.16 7.16 0 0 0-.093.66 5.235 5.235 0 0 0-.018.582 5.235 5.235 0 0 0-.582.018 7.16 7.16 0 0 0-.66.093 2.801 2.801 0 0 0-.714.233c-.23.11-.425.247-.588.41-.59.59-.88 1.223-.872 1.9.009.676.317 1.318.925 1.926.61.61 1.533.93 2.768.96l4.944.028c.097.002.18-.03.248-.099a.326.326 0 0 0 .099-.248zM9.182 10.318a.326.326 0 0 1 .099.248l-.032 4.957c.004.048.005.12 0 .216-.003.096-.02.26-.052.49a5.198 5.198 0 0 1-.135.673 3.64 3.64 0 0 1-.29.712c-.135.258-.294.48-.48.664-.607.608-1.25.916-1.926.925-.676.008-1.31-.282-1.899-.872-.163-.163-.3-.359-.41-.588a2.801 2.801 0 0 1-.233-.714 7.16 7.16 0 0 1-.093-.66 5.235 5.235 0 0 1-.018-.582 5.235 5.235 0 0 1-.582-.018 7.16 7.16 0 0 1-.66-.093 2.801 2.801 0 0 1-.714-.233 2.129 2.129 0 0 1-.588-.41c-.59-.59-.88-1.223-.872-1.9.009-.676.317-1.318.925-1.926.61-.61 1.533-.93 2.768-.96l4.944-.028c.097-.002.18.03.248.099"/></g></svg>
-          <span>{{ clovers.length }}</span>
+          <span>{{ cloversFound }}</span>
         </p>
       </div>
       <div class="py1 px2 min-width-1">
@@ -40,7 +40,7 @@
       </div>
     </header>
     <div v-if="selectedClover">
-      <claim-clover :clover="selectedClover" :miner="miner" @claimed="claimed"></claim-clover>
+      <claim-clover :clover="selectedClover" :miner="miner" @claimed="claimed" @remove="remove"></claim-clover>
     </div>
     <div class="p2">
       <div v-if="clovers.length">
@@ -72,7 +72,6 @@
         miners: [],
         miner: new Clover(),
         opened: false,
-        niceOnes: [],
         customMoves: 'C4C5D6C7C6D3E6D7C2B3A2F5C8E3G5B6A5H5F6B1H4A4E7G7E2F7G6B7G8G4F4F3D8H7E8F2H8B5A7E1H3D2G2H2C1C3F1D1A1G1G3A6H6F8B2B8A3H1A8B4',
         interval: null,
         hasStorage: !!window.localStorage,
@@ -93,6 +92,9 @@
       },
       claimedClovers () {
         return this.clovers.filter(c => c.claimed)
+      },
+      cloversFound () {
+        return this.$store.state.cloversFound
       },
       mining: {
         get () {
@@ -211,14 +213,19 @@
       timer () {
         if (this.mining) {
           this.mineTime = 1
-          setItem('clovers', this.clovers)
           setItem('totalMined', this.totalMined)
           setItem('mineTime', this.mineTime)
         }
+        setItem('clovers', this.clovers)
+        setItem('cloversFound', this.cloversFound)
       },
       isFocus (board) {
         if (!this.selectedClover) return false
         return board.byteBoard === this.selectedClover.byteBoard ? 'active-clover' : false
+      },
+      remove () {
+        this.$set(this.selectedClover, 'removed', new Date())
+        this.removeMinedClover(this.selectedClover)
       },
 
       ...mapMutations({
@@ -232,14 +239,17 @@
         storedClovers: 'STORED_CLOVERS',
         storedMineCount: 'STORED_COUNT',
         storedMineDuration: 'STORED_DURATION',
+        storedCloversFound: 'STORED_CLOVERS_FOUND',
+        removeMinedClover: 'REMOVE_MINED_CLOVER',
         claimedClover: 'CLAIMED_CLOVER'
       })
     },
     mounted () {
       if (this.hasStorage) {
         this.storedClovers(getItem('clovers') || [])
-        this.storedMineCount(getItem('totalMined'))
-        this.storedMineDuration(getItem('mineTime'))
+        this.storedMineCount(getItem('totalMined') || 0)
+        this.storedMineDuration(getItem('mineTime') || 0)
+        this.storedCloversFound(getItem('cloversFound') || 0)
       }
       this.interval = setInterval(this.timer, 1000)
     },
