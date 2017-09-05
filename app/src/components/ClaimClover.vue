@@ -3,16 +3,16 @@
     <div class="flex items-center justify-between">
       <div class="relative mx3">
         <div class="h2">
-          <clv :board="miner.byteBoardToRowArray(clover.byteBoard)"></clv>
+          <clv :board="miner.byteBoardToRowArray(cloverData.byteBoard)"></clv>
         </div>
         <div>
-          <svg-text :movesString="clover.movesString"></svg-text>
+          <svg-text :movesString="cloverData.movesString"></svg-text>
         </div>
       </div>
-      <div v-if="clover.removed" class="px3 flex-auto">
+      <div v-if="cloverData.removed" class="px3 flex-auto">
         <p class="h1 m0 lh1">🗑 Removed {{ removeDate }}</p>
       </div>
-      <div v-else-if="clover.claimed" class="px3 flex-auto">
+      <div v-else-if="cloverData.claimed" class="px3 flex-auto">
         <p class="h1 m0 lh1">✨ Claimed {{ claimDate }}</p>
       </div>
       <div v-else class="col-8 lg-col-7">
@@ -47,7 +47,7 @@
 
 <script>
   import moment from 'moment'
-  import { mapMutations } from 'vuex'
+  import { mapGetters, mapMutations } from 'vuex'
   import SvgText from '@/components/TextPath'
 
   export default {
@@ -56,7 +56,7 @@
       return { submitting: false }
     },
     props: {
-      clover: {
+      cloverData: {
         type: Object,
         required: true
       },
@@ -67,35 +67,40 @@
     },
     computed: {
       claimDate () {
-        return moment(this.clover.claimed).fromNow()
+        return moment(this.cloverData.claimed).fromNow()
       },
       removeDate () {
-        return moment(this.clover.removed).fromNow()
+        return moment(this.cloverData.removed).fromNow()
       },
       flipPrice: {
         get () {
-          return this.clover.startPrice || 100
+          return this.cloverData.startPrice || 100
         },
         set (newVal) {
           this.updateCloverPrice({
             newVal,
-            clover: this.clover
+            clover: this.cloverData
           })
         }
       },
       reward () {
-        return (this.clover.findersFee || 100) + ' ♧'
-      }
+        Object.assign(this.clover, this.cloverData)
+        return (this.clover.calcFinderFees(this.symmetries) || 100) + ' ♧'
+      },
+      ...mapGetters({
+        clover: 'clover',
+        symmetries: 'symmetries'
+      })
     },
     methods: {
       trigger () {
         console.log('trigger')
         this.submitting = true
         this.miner.startPrice = this.flipPrice
-        this.miner.playGameMovesString(this.clover.movesString)
+        this.miner.playGameMovesString(this.cloverData.movesString)
         this.miner.register().then((res) => {
           this.submitting = false
-          this.$emit('claimed', this.clover)
+          this.$emit('claimed', this.cloverData)
         }).catch((err) => {
           console.log(err)
           this.submitting = false
