@@ -19,10 +19,14 @@
 // var address = "0x" + wallet.getAddress().toString("hex");
 // console.log(address)
 
+// const FilterSubprovider = require('web3-provider-engine/subproviders/filters.js')
+// engine.addProvider(new FilterSubprovider())
+
 // var providerUrl = "https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d";
 // var engine = new ProviderEngine();
 // engine.addProvider(new WalletSubprovider(wallet, {}));
 // engine.addProvider(new Web3Subprovider(new Web3.providers.HttpProvider(providerUrl)));
+
 
 // // log new blocks
 // engine.on('block', function(block){
