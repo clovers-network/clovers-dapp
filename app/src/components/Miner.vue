@@ -212,12 +212,11 @@
       },
       select (clover) {
         this.selectedClover = clover
-        this.miner.getTallys(clover.byteBoard).then((tallys) => {
-          // console.log(tallys)
-        })
-        this.miner.getFindersFee(clover.byteBoard).then((fee) => {
-          console.log('fee', fee)
-          this.updateFindersFee(fee)
+        Object.assign(this.miner, clover)
+        // eventually remove isSymmetrical() when memory storage has been refreshed
+        this.miner.isSymmetrical()
+        this.miner.getTallys().then(({tallys, findersFee}) => {
+          this.updateFindersFee(findersFee)
         })
       },
       deselect () {
