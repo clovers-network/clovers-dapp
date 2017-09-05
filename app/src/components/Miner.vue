@@ -199,7 +199,8 @@
           console.log('new', data)
           this.miner.cloverExists(data.byteBoard).then((exists) => {
             if (!exists) {
-              this.miner.getFindersFee(data.byteBoard).then((fee) => {
+              this.miner.getTallys().then((tallys, fee) => {
+                fee = fee || this.miner.calcFinderFees(tallys)
                 data.findersFee = data.startPrice = fee
                 this.minedClover(data)
               })
