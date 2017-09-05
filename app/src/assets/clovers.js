@@ -13,8 +13,8 @@ class Clover extends Reversi {
     this.ClubToken = false
     this.account = false
     this.accountInterval = false
-    this.registeredBoards = []
-    this.event = events
+    this.registeredEvents = []
+    this.events = events
     this.findersFee = this.startPrice = 0
   }
 
@@ -48,29 +48,37 @@ class Clover extends Reversi {
     this.initWeb3()
     this.ClubToken = contract(clubTokenArtifacts)
     this.ClubToken.setProvider(web3.currentProvider)
-    if (this.events) {
-      this.deploy().then((instance) => {
-        instance.DebugGame({fromBlock: 0 }).watch((error, result) => {
-          console.log('DebugGame Event')
-          if (error) console.error(error)
-          if (result) console.log(result)
-        })
-        instance.Registered({fromBlock: 0 }).watch((error, result) => {
-          console.log('Registered Event')
-          if (error) console.error(error)
-          if (result) console.log(result)
-        })
+  }
+
+  stopEvents () {
+    this.deploy().then((instance) => {
+      instance.Registered().stopWatching()
+    })
+  }
+
+  setEvents () {
+    this.deploy().then((instance) => {
+      instance.Registered({}, {fromBlock: 0}).get(function (error, result) {
+        if (error) console.error(error)
+        if (result)
+          result.forEach((e) => window.dispatchEvent(new CustomEvent('eventRegistered', {detail: e})))
       })
-    }
+
+      let newEvents = instance.Registered({}, {fromBlock: 'latest'})
+      newEvents.watch((error, registeredEvent) => {
+        if (error) console.error(error)
+        else {
+          window.dispatchEvent(new CustomEvent('eventRegistered', {detail: registeredEvent}))
+        }
+      })
+      
+    })
   }
 
   deploy () {
     if (!this.ClubToken) this.setContract()
-    return this.ClubToken.deployed().catch((err) => {
-      console.error(err)
-    })
+    return this.ClubToken.deployed()
   }
-
 
 
   // Contract Management
@@ -230,21 +238,21 @@ class Clover extends Reversi {
 
   // app calls
 
-  listClovers () {
-    if (!this.ClubToken) this.setContract()
-    this.ClubToken.deployed().then((instance) => {
-      instance.getCloversCount().then((result) => {
-        if (result.toNumber() !== this.registeredBoards.length) {
-          this.registeredBoards = []
-          for (let i = 0; i < result.toNumber(); i++) {
-            instance.getCloverByKey(i).then((result) => {
-              this.registeredBoards.splice(i, 1, result)
-            })
-          }
-        }
-      })
-    })
-  }
+  // listClovers () {
+  //   if (!this.ClubToken) this.setContract()
+  //   this.ClubToken.deployed().then((instance) => {
+  //     instance.getCloversCount().then((result) => {
+  //       if (result.toNumber() !== this.registeredBoards.length) {
+  //         this.registeredBoards = []
+  //         for (let i = 0; i < result.toNumber(); i++) {
+  //           instance.getCloverByKey(i).then((result) => {
+  //             this.registeredBoards.splice(i, 1, result)
+  //           })
+  //         }
+  //       }
+  //     })
+  //   })
+  // }
 
   register (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, startPrice = this.startPrice, byteBoard = this.byteBoard) {
     return this.isAdmin().then((isAdmin) => {

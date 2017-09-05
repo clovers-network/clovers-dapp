@@ -15,13 +15,10 @@
     </section> -->
     <!-- <h4><button @click.prevent='showGameConstant()'>showGameConstant()</button></h4> -->
     <div class="p2">
-      <div class="mt0">
-        <button @click.prevent="listClovers()" class="btn btn-primary bg-green">List Clovers</button>
-      </div>
-      <div v-if="clover.registeredBoards.length" class="mt3 px2">
+      <div v-if="allClovers.length" class="mt3 px2">
         <ul class="list-reset flex flex-wrap mxn2">
-          <li @click='testClover(key, board)'  v-for="(board, key) in clover.registeredBoards" :key="board[0]" class="px2 mb3">
-            <clv :board="clover.byteBoardToRowArray(board[0])"></clv>
+          <li @click='testClover(key, c)'  v-for="(c, key) in allClovers" :key="c.board" class="px2 mb3">
+            <clv :board="clover.byteBoardToRowArray(c.board)"></clv>
           </li>
         </ul>
       </div>
@@ -31,7 +28,7 @@
 
 <script>
   import Clover from '../assets/clovers'
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapMutations } from 'vuex'
   import * as types from '../store/mutation-types'
   import Clv from '@/components/CloverFunc'
 
@@ -65,12 +62,15 @@
       }
     },
     mounted () {
-      this.interval = setInterval(() => {
-        this.clover.listClovers()
-      }, 1000)
+      this.clover.setEvents()
+      window.addEventListener('eventRegistered', (e) => {
+        this.registerEvent(e.detail)
+      }, false)
     },
     destroyed () {
       clearInterval(this.interval)
+      this.clover.stopEvents()
+      window.removeEventListener('Event', 'eventRegistered')
     },
     computed: {
       balanceString () {
@@ -83,7 +83,8 @@
         address: 'address',
         amount: 'amount',
         balance: 'balance',
-        status: 'status'
+        status: 'status',
+        allClovers: 'allClovers'
       }),
       moveConverted () {
         return this.clover.stringMovesToBinaryMoves(this.moves)
@@ -131,7 +132,10 @@
       confirm (moves) {
         this.moves = moves
         window.scroll(0, 0)
-      }
+      },
+      ...mapMutations({
+        registerEvent: 'ADD_REGISTERED_EVENT'
+      })
     },
     components: { Clv }
   }
