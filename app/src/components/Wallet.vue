@@ -30,7 +30,6 @@
   import Clover from '../assets/clovers'
   import { mapGetters, mapMutations } from 'vuex'
   import * as types from '../store/mutation-types'
-  import Clv from '@/components/CloverFunc'
 
   export default {
     name: 'Wallet',
@@ -133,10 +132,10 @@
         this.moves = moves
         window.scroll(0, 0)
       },
+
       ...mapMutations({
         registerEvent: 'ADD_REGISTERED_EVENT'
       })
-    },
-    components: { Clv }
+    }
   }
 </script>

@@ -9,7 +9,7 @@
 
 <script>
   import AppHeader from '@/components/AppHeader'
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapMutations } from 'vuex'
 
   export default {
     name: 'app',
@@ -21,11 +21,9 @@
     },
     computed: {
       ...mapGetters({
-        account: 'account'
+        account: 'account',
+        clover: 'clover'
       })
-    },
-    mounted () {
-      this.start()
     },
     beforeDestroy () {
       clearInterval(this.accountInterval)
@@ -40,7 +38,23 @@
         this.balanceInterval = setInterval(() => {
           this.$store.dispatch('getBalance')
         }, 5000)
-      }
+      },
+
+      ...mapMutations({
+        registerEvent: 'ADD_REGISTERED_EVENT'
+      })
+    },
+    mounted () {
+      this.start()
+      this.clover.setEvents()
+      window.addEventListener('eventRegistered', (e) => {
+        this.registerEvent(e.detail)
+      }, false)
+    },
+    destroyed () {
+      clearInterval(this.interval)
+      this.clover.stopEvents()
+      window.removeEventListener('Event', 'eventRegistered')
     },
     components: { AppHeader }
   }
