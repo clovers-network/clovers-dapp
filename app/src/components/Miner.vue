@@ -82,7 +82,15 @@
         selectedClover: null
       }
     },
+    watch: {
+      account () {
+        this.checkRead()
+      }
+    },
     computed: {
+      account () {
+        return this.$store.state.account
+      },
       clovers: {
         get () {
           return this.$store.state.minedClovers
@@ -151,10 +159,25 @@
       }
     },
     methods: {
+      checkRead () {
+        if (this.hasStorage) {
+          this.storedClovers(this.getItem('clovers') || [])
+          this.storedMineCount(this.getItem('totalMined') || 0)
+          this.storedMineDuration(this.getItem('mineTime') || 0)
+          this.storedCloversFound(this.getItem('cloversFound') || 0)
+        }
+      },
+      getItem (key) {
+        let res = window.localStorage.getItem(this.account + '_' + key)
+        return res && JSON.parse(res)
+      },
+      setItem (key, val) {
+        window.localStorage.setItem(this.account + '_' + key, JSON.stringify(val))
+      },
       claimed (clover) {
         this.$set(this.selectedClover, 'claimed', new Date())
         this.claimedClover(clover)
-        setItem('clovers', this.clovers)
+        this.setItem('clovers', this.clovers)
       },
       submitCustom () {
 
@@ -225,11 +248,13 @@
       timer () {
         if (this.mining) {
           this.mineTime = 1
-          setItem('totalMined', this.totalMined)
-          setItem('mineTime', this.mineTime)
+          this.setItem('totalMined', this.totalMined)
+          this.setItem('mineTime', this.mineTime)
         }
-        setItem('clovers', this.clovers)
-        setItem('cloversFound', this.cloversFound)
+        if (this.account) {
+          this.setItem('clovers', this.clovers)
+          this.setItem('cloversFound', this.cloversFound)
+        }
       },
       isFocus (board) {
         if (!this.selectedClover) return false
@@ -260,12 +285,7 @@
       })
     },
     mounted () {
-      if (this.hasStorage) {
-        this.storedClovers(getItem('clovers') || [])
-        this.storedMineCount(getItem('totalMined') || 0)
-        this.storedMineDuration(getItem('mineTime') || 0)
-        this.storedCloversFound(getItem('cloversFound') || 0)
-      }
+      this.checkRead()
       this.interval = setInterval(this.timer, 1000)
     },
     destroyed () {
@@ -274,12 +294,4 @@
     components: { ClaimClover }
   }
 
-  function getItem (key) {
-    let res = window.localStorage.getItem(key)
-    return res && JSON.parse(res)
-  }
-
-  function setItem (key, val) {
-    window.localStorage.setItem(key, JSON.stringify(val))
-  }
 </script>

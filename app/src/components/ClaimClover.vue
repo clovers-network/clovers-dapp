@@ -89,10 +89,11 @@
     },
     methods: {
       trigger () {
+        console.log('trigger')
         this.submitting = true
         this.miner.startPrice = this.flipPrice
         this.miner.playGameMovesString(this.clover.movesString)
-        this.miner.adminMineClover().then(() => {
+        this.miner.register().then((res) => {
           this.submitting = false
           this.$emit('claimed', this.clover)
         }).catch((err) => {

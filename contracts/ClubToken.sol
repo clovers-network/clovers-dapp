@@ -54,17 +54,25 @@ contract ClubToken is StandardToken, Reversi {
 
   event Registered(address newOwner, uint256 lastPaidAmount, bytes16 board, bool newBoard);
   event DebugGame(bytes16 board, bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym);
-  event DebugBoard(bytes16 board);
+  // event DebugGame2(bytes16 board, bool error, string message);
+  // event DebugBoard(bytes16 board);
 
   function debugGame(Game game) internal {
     DebugGame(game.board, game.error, game.complete, game.symmetrical, game.RotSym, game.Y0Sym, game.X0Sym, game.XYSym, game.XnYSym);
   }
+  // function debugGame2(Game game) internal {
+  //   DebugGame2(game.board, game.error, game.msg);
+  // }
 
 
   // Contract Administration
 
-  mapping(address => bool) admins ;
+  mapping(address => bool) admins;
   address[] public adminKeys;
+
+  function myAddress () public constant returns (address) {
+    return msg.sender;
+  }
 
   function isAdmin () public constant returns (bool) {
     return admins[msg.sender];
@@ -296,6 +304,7 @@ contract ClubToken is StandardToken, Reversi {
   //
   // see ./Reversi.sol for more...
 
+
   function gameIsValid(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bool) {
     Game memory game = playGame(first32Moves, lastMoves);
     if (game.error) return false;
@@ -309,6 +318,11 @@ contract ClubToken is StandardToken, Reversi {
     if (game.error) revert();
     if (!game.complete) revert();
     return cloverExists(game.board);
+  }
+
+  function showGameBoard(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bytes16 board) {
+    Game memory game = playGame(first32Moves, lastMoves);
+    return game.board;
   }
 
   function showGameConstant(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym) {
@@ -330,7 +344,7 @@ contract ClubToken is StandardToken, Reversi {
     return findersFee(game);
   }
 
-  function testTallys(bytes16 b) public constant returns(uint256, uint256, uint256, uint256, uint256, uint256) {
+  function testTallys(bytes16 b) public constant returns(uint256, uint256, uint256, uint256, uint256, uint256, uint256) {
     
     Game memory game;
     game.board = b;
@@ -350,12 +364,12 @@ contract ClubToken is StandardToken, Reversi {
     if (game.XYSym) _XYSym += 1;
     if (game.XnYSym) _XnYSym += 1;
 
-    return (_Symmetricals, _RotSym, _Y0Sym, _X0Sym, _XYSym, _XnYSym);
+    return (_Symmetricals, _RotSym, _Y0Sym, _X0Sym, _XYSym, _XnYSym, payMultiplier);
   }
 
   function showGameDebug(bytes28 first32Moves, bytes28 lastMoves) public {
     Game memory game = playGame(first32Moves, lastMoves);
-    debugGame(game);
+
   }
 
   function returnGame(Game game) internal returns(bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym){

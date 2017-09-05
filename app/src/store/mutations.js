@@ -52,7 +52,7 @@ export default {
     state.cloversFound = state.cloversFound + 1
     state.minedClovers.unshift(clover)
     if (window.localstorage) {
-      window.localStorage.setItem('cloversFound', JSON.stringify(state.cloversFound))
+      window.localStorage.setItem(state.account + '_cloversFound', JSON.stringify(state.cloversFound))
     }
   },
   EXISTING_CLOVERS (state, clovers) {
