@@ -6,6 +6,8 @@ import actions from './actions'
 import getters from './getters'
 import mutations from './mutations'
 
+import Clover from '../assets/clovers'
+
 Vue.use(Vuex)
 
 // const debug = process.env.NODE_ENV !== 'production'
@@ -29,7 +31,8 @@ const state = {
   miningPower: 0,
   minedClovers: [],
   registeredEvents: [],
-  registeredBoards: {}
+  registeredBoards: {},
+  clover: new Clover()
 }
 
 export default new Vuex.Store({
