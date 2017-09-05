@@ -78,8 +78,8 @@ contract ClubToken is StandardToken, Reversi {
     return adminKeys[key];
   }
 
-  function getTallys() public constant returns(uint256, uint256, uint256, uint256, uint256, uint256) {
-    return (Symmetricals, RotSym, Y0Sym, X0Sym, XYSym, XnYSym);
+  function getTallys() public constant returns(uint256, uint256, uint256, uint256, uint256, uint256, uint256) {
+    return (Symmetricals, RotSym, Y0Sym, X0Sym, XYSym, XnYSym, payMultiplier);
   }
 
   function addAdmin (address newbie) public onlyAdmin() {
