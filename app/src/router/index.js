@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Wallet from '@/components/Wallet'
+import Home from '@/components/Home'
+// import Wallet from '@/components/Wallet'
 
 Vue.use(Router)
 
@@ -9,8 +10,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Wallet',
-      component: Wallet
+      name: 'Home',
+      component: Home
     }
   ]
 })

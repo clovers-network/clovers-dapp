@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-black white absolute col-12 overflow-hidden">
+  <div class="bg-black white absolute col-12 overflow-hidden z1">
     <header class="p2 flex flex-wrap items-center mxn1">
       <div class="py1 px2 min-width-1">
         <p class="m0 h6">Time spent mining</p>
@@ -56,8 +56,8 @@
             <clv :key="board.movesString" :board="miner.byteBoardToRowArray(board.byteBoard)"></clv>
           </li>
           <li>
-            <p v-if="this.limit && this.claimedClovers.length > 4" @click="limit = false" class="ml3 m0">👁 more</p>
-            <p v-else @click="limit = true" class="ml3 m0">🗃 collapse</p>
+            <p v-if="this.limit && this.claimedClovers.length > 4" @click="limit = false" class="mx3 m0 pointer">👁 more</p>
+            <p v-if="!this.limit && this.claimedClovers.length > 5" @click="limit = true" class="mx3 m0 pointer">🗃 collapse</p>
           </li>
         </ul>
       </div>

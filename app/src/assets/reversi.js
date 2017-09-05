@@ -65,7 +65,6 @@ class Reversi {
     // this.makeVisualBoard()
   }
 
-
   thisMovesToByteMoves (moves = this.moves) {
     moves = this.stringMovesToBinaryMoves(moves.join('')).match(/.{1,224}/g)
     let foo = new BN(moves[0], 2)
@@ -414,7 +413,7 @@ class Reversi {
     ]
   }
 
-  byteBoardToArrayBoard (byteBoard = 0) {
+  byteBoardToArrayBoard (byteBoard = this.byteBoard) {
     if (byteBoard.slice(0, 2) === '0x') {
       byteBoard = byteBoard.slice(2)
     }
@@ -432,11 +431,11 @@ class Reversi {
     })
   }
 
-  byteBoardToRowArray (byteBoard = 0) {
+  byteBoardToRowArray (byteBoard = this.byteBoard) {
     return this.arrayBoardToRows(this.byteBoardToArrayBoard(byteBoard))
   }
 
-  byteBoardToColArray (byteBoard = 0) {
+  byteBoardToColArray (byteBoard = this.byteBoard) {
     return this.arrayBoardToCols(this.byteBoardToArrayBoard(byteBoard))
   }
 

@@ -13,7 +13,7 @@
   --blue:  #0074D9;
   --navy:  #001F3F;
   --teal:  #39CCCC;
-  --green: #2ECC40;
+  --green: rgb(0, 159, 89);
   --olive: #3D9970;
   --lime:  #01FF70;
 
@@ -27,7 +27,7 @@
   --white:  #FFFFFF;
   --silver: #DDDDDD;
   --light-gray: rgb(233, 233, 233);
-  --gray:   #AAAAAA;
+  --gray:   rgb(73, 73, 73);
   --dark-gray: rgb(40, 40, 40);
   --black:  #111111;
 
