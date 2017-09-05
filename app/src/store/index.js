@@ -14,7 +14,7 @@ const state = {
   name: null,
   symbol: null,
   ClubToken: false,
-  account: '',
+  account: '0x0',
   balance: '0',
   decimals: 0,
   amount: '',

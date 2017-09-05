@@ -2,6 +2,7 @@ pragma solidity ^0.4.13;
 
 contract Reversi {
 
+// BEGIN Reversi.sol
 
   struct Game {
     bool error;
@@ -27,10 +28,18 @@ contract Reversi {
   uint8 WHITE = 2; //0b10 //0x2
 
   // event DebugMove(uint8 col, uint8 row);
+  // event DebugMoveBytes28(bytes28 first32Moves);
+  // event DebugMovesBytes28(bytes28 first32Moves, bytes28 lastMoves);
   // event DebugMoves(uint8[2][] arr);
   // event DebugByte(bytes16 foo);
   // event DebugUint(uint128 bar);
-  
+  // event DebugUint8(uint8 foo);
+  // event DebugMsg(string msg);
+
+  function showColors () public constant returns(uint8, uint8, uint8) {
+    return (EMPTY, BLACK, WHITE);
+  }
+
   function playGame(bytes28 first32Moves, bytes28 lastMoves) internal constant returns (Game)  {
     Game memory game;
 
@@ -42,6 +51,8 @@ contract Reversi {
     game.complete = false;
     game.currentPlayer = BLACK;
 
+
+
     // replaced with hex version below
     // game.board = turnTile(game.board, WHITE, 3, 3);
     // game.board = turnTile(game.board, WHITE, 4, 4);
@@ -49,7 +60,7 @@ contract Reversi {
     // game.board = turnTile(game.board, BLACK, 4, 3);
 
     // game.board = bytes16(10625432672847758622720); // when empty was 00
-    game.board = bytes16(340282366920938452837941934584009588735);
+    game.board = bytes16(340282366920938456379662753540715053055);
     // game.msg = "New Game";
     bool skip;
     uint8 move;
@@ -57,13 +68,12 @@ contract Reversi {
     uint8 row;
     uint8 i;
     bytes28 currentMoves;
+
     for (i = 0; i < 60 && !skip; i++) {
-
       currentMoves = game.moveKey < 32 ? game.first32Moves : game.lastMoves;
-
       move = readMove(currentMoves, game.moveKey % 32, 32);
-      skip = !validMove(move);
       (col, row) = convertMove(move);
+      skip = !validMove(move);
       if (!skip && col < 8 && row < 8 && col >= 0 && row >= 0) {
         // game.msg = "make a move";
         game = makeMove(game, col, row);
@@ -94,7 +104,7 @@ contract Reversi {
   
   function makeMove(Game game, uint8 col, uint8 row) internal constant returns (Game)  {
     // square is already occupied
-    if (returnTile(game.board, col, row) != 0){
+    if (returnTile(game.board, col, row) != EMPTY){
       game.error = true;
       // game.msg = "Invalid Game (square is already occupied)";
       return game;
@@ -340,19 +350,18 @@ contract Reversi {
   }
 
   function turnTile(bytes16 board, uint8 color, uint8 col, uint8 row) internal constant returns (bytes16){
-    if (col > 7) throw;
-    if (row > 7) throw;
-
+    if (col > 7) revert();
+    if (row > 7) revert();
     uint128 push = posToPush(col, row);
     bytes16 blank = bytes16(3); // 0b00000011 (ones)
     bytes16 block = shiftLeft(blank, push);
 
     board = ((board ^ block) & board);
 
-    bytes16 move = bytes16(color);
-    move = shiftLeft(move, push);
+    bytes16 tile = bytes16(color);
+    tile = shiftLeft(tile, push);
 
-    return board | move;
+    return board | tile;
   }
 
   function returnTile(bytes16 board, uint8 col, uint8 row) internal constant returns (uint8){
@@ -426,4 +435,5 @@ contract Reversi {
       return bytes16(shifted);
   }
 
+  // END Reversi.sol
 }

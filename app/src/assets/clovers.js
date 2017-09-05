@@ -50,17 +50,12 @@ class Clover extends Reversi {
     this.ClubToken.setProvider(web3.currentProvider)
     if (this.events) {
       this.deploy().then((instance) => {
-        instance.DebugGame({fromBlock: 'latest'}).watch((error, result) => {
+        instance.DebugGame({fromBlock: 0 }).watch((error, result) => {
           console.log('DebugGame Event')
           if (error) console.error(error)
           if (result) console.log(result)
         })
-        instance.DebugBoard({fromBlock: 'latest'}).watch((error, result) => {
-          console.log('DebugBoard Event')
-          if (error) console.error(error)
-          if (result) console.log(result)
-        })
-        instance.Registered({fromBlock: 'latest'}).watch((error, result) => {
+        instance.Registered({fromBlock: 0 }).watch((error, result) => {
           console.log('Registered Event')
           if (error) console.error(error)
           if (result) console.log(result)
@@ -84,7 +79,7 @@ class Clover extends Reversi {
 
   isAdmin () {
     return this.deploy().then((instance) => {
-      return (instance.isAdmin(), instance)
+      return instance.isAdmin({from: this.account})
     })
   }
 
@@ -97,6 +92,12 @@ class Clover extends Reversi {
   adminAt (adminKey = 0) {
     return this.deploy().then((instance) => {
       return instance.adminAt(new BN(adminKey, 10))
+    })
+  }
+
+  myAddress () {
+    return this.deploy().then((instance) => {
+      return instance.myAddress({from: this.account})
     })
   }
 
@@ -119,9 +120,11 @@ class Clover extends Reversi {
   // contract write / transactions
 
   addAdmin (address = '0x0') {
-    return this.isAdmin().then((isAdmin, instance) => {
+    return this.isAdmin().then((isAdmin) => {
       if (isAdmin) {
-        return instance.addAdmin(address, {from: this.account})
+        return this.deploy().then((instance) => {
+          return instance.addAdmin(address, {from: this.account})
+        })
       } else {
         throw new Error('Can\'t addAdmin() if not an admin')
       }
@@ -130,20 +133,21 @@ class Clover extends Reversi {
   }
 
   updateMultiplier (multiplier = 100) {
-    return this.deploy().then((instance) => {
-      return instance.isAdmin().then((isAdmin) => {
-        if (isAdmin) {
+    return this.isAdmin().then((isAdmin) => {
+      if (isAdmin) {
+        return this.deploy().then((instance) => {
           return instance.updateMultiplier(new BN(multiplier, 10), {from: this.account})
-        } else {
-          console.error('Can\'t updateModifier() if not an admin')
-        }
-      })
+        })
+      } else {
+        throw new Error('Can\'t updateModifier() if not an admin')
+      }
     })
   }
 
   // formatting
 
   formatTallys (contractArray = Array(6)) {
+    // console.log(contractArray)
     let tallys = {
       Symmetricals: contractArray[0].toNumber(),
       RotSym: contractArray[1].toNumber(),
@@ -169,7 +173,7 @@ class Clover extends Reversi {
     if (XYSym) base += ( tallys.PayMultiplier * ( tallys.Symmetricals + 1 ) ) / ( tallys.XYSym + 1 )
     if (XnYSym) base += ( tallys.PayMultiplier * ( tallys.Symmetricals + 1 ) ) / ( tallys.XnYSym + 1 )
 
-    return base
+    return Math.floor(base)
   }
 
 
@@ -242,14 +246,15 @@ class Clover extends Reversi {
     })
   }
 
-  registerGameMovesString (moves = '', startPrice = 100, byteBoard = this.byteBoard) {
-    moves = this.sliceMovesStringToBytes(moves)
+  register (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, startPrice = this.startPrice, byteBoard = this.byteBoard) {
     return this.isAdmin().then((isAdmin) => {
-      if (isAdmin) {
-        this.adminMineClover(moves[0], moves[1], byteBoard, startPrice)
-      } else {
-        this.mineClover(moves[0], moves[1], startPrice)
-      }
+      return this.deploy().then((instance) => {
+        if (isAdmin) {
+          return this.adminMineClover(byteFirst32Moves, byteLastMoves, byteBoard, startPrice)
+        } else {
+          return this.mineClover(byteFirst32Moves, byteLastMoves, startPrice)
+        }
+      })
     })
   }
 
@@ -438,8 +443,18 @@ class Clover extends Reversi {
 
   showGameConstant (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     return this.deploy().then((instance) => {
+      console.log(this.binaryMovesToStringMoves(new BN(byteFirst32Moves, 16).toString(2)))
+      console.log(this.binaryMovesToStringMoves(new BN(byteLastMoves, 16).toString(2)))
       return instance.showGameConstant(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
         return this.formatGame(result)
+      })
+    })
+  }
+
+  showGameBoard (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
+    return this.deploy().then((instance) => {
+      return instance.showGameBoard(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
+        return this.byteBoardToRowArray(result)
       })
     })
   }
@@ -454,6 +469,7 @@ class Clover extends Reversi {
   }
 
   formatGame (contractArray = []) {
+    // console.log(contractArray)
     //    DebugGame(game.board, game.error, game.complete, game.symmetrical, game.RotSym, game.Y0Sym, game.X0Sym, game.XYSym, game.XnYSym);
     return {
       error: contractArray[0],
