@@ -210,14 +210,12 @@
       },
       select (clover) {
         this.selectedClover = clover
-
-        console.log(clover)
-        console.log(clover.byteBoard)
         this.miner.getTallys(clover.byteBoard).then((tallys) => {
-          console.log(tallys)
+          // console.log(tallys)
         })
         this.miner.getFindersFee(clover.byteBoard).then((fee) => {
-          console.log(fee)
+          console.log('fee', fee)
+          this.updateFindersFee(fee)
         })
       },
       deselect () {
@@ -239,6 +237,9 @@
       remove () {
         this.$set(this.selectedClover, 'removed', new Date())
         this.removeMinedClover(this.selectedClover)
+      },
+      updateFindersFee (newVal) {
+        this.$set(this.selectedClover, 'findersFee', newVal)
       },
 
       ...mapMutations({
