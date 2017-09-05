@@ -153,11 +153,15 @@ class Clover extends Reversi {
       XnYSym: contractArray[5].toNumber(),
       PayMultiplier: contractArray[6].toNumber()
     }
-    return (tallys, this.symmetrical && this.calcFinderFees(tallys))
+    return {tallys, findersFee: this.symmetrical && this.calcFinderFees(tallys)}
   }
 
   calcFinderFees (tallys = Array(), RotSym = this.RotSym, Y0Sym = this.Y0Sym, X0Sym = this.X0Sym, XYSym = this.XYSym, XnYSym = this.XnYSym) {
     let base = 0
+    if(this.symmetrical && !RotSym && !Y0Sym && !X0Sym && !XYSym && !XnYSym) {
+      this.isSymmetrical()
+      return this.calcFinderFees(tallys)
+    }
 
     if (RotSym) base += ( tallys.PayMultiplier * ( tallys.Symmetricals + 1 ) ) / ( tallys.RotSym + 1 )
     if (Y0Sym) base += ( tallys.PayMultiplier * ( tallys.Symmetricals + 1 ) ) / ( tallys.Y0Sym + 1 )

@@ -16,6 +16,11 @@ class Reversi {
     this.error = false
     this.complete = false
     this.symmetrical = false
+    this.RotSym = false
+    this.Y0Sym = false
+    this.X0Sym = false
+    this.XYSym = false
+    this.XnYSym = false
     this.currentPlayer = this.BLACK
     // this.board is an array of columns, visually the board should be arranged by arrays of rows
     this.board = new Array(this.BOARDDIM).fill(0).map(c => new Array(this.BOARDDIM).fill(this.EMPTY))
@@ -367,7 +372,7 @@ class Reversi {
     this.playGameMovesArray(this.stringMovesToArrayMoves(moves))
   }
 
-  playGameByteMoves (byteFirst32Moves = 0, byteLastMoves = 0) {
+  playGameByteMoves (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     this.playGameMovesString(this.byteMovesToStringMoves(byteFirst32Moves, byteLastMoves))
   }
 
