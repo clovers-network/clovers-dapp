@@ -401,7 +401,6 @@ class Reversi {
   sliceBinaryMovesToBytes (binaryMoves) {
     let len = binaryMoves.length
     if (len < 64 * 7) {
-      console.log('yes padding')
       let padding = 64 * 7 - len
       padding = new Array(padding)
       padding = padding.fill('0').join('')
@@ -411,6 +410,12 @@ class Reversi {
       this.binaryMovesToByteMoves(binaryMoves.slice(0, 224)),
       this.binaryMovesToByteMoves(binaryMoves.slice(224))
     ]
+  }
+
+  byteBoardPopulateBoard (byteBoard = this.byteBoard) {
+    this.board = this.arrayBoardToCols(this.byteBoardToArrayBoard(byteBoard).map((t) => {
+      return t === 'b' ? 1 : (t === 'w' ? 2 : 3)
+    }))
   }
 
   byteBoardToArrayBoard (byteBoard = this.byteBoard) {
