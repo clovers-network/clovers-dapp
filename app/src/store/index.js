@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import createLogger from 'vuex/dist/logger'
 
 import actions from './actions'
+import getters from './getters'
 import mutations from './mutations'
 
 Vue.use(Vuex)
@@ -27,20 +28,8 @@ const state = {
   mining: false,
   miningPower: 0,
   minedClovers: [],
-  registeredClovers: []
-}
-
-const getters = {
-  name: state => state.name,
-  symbol: state => state.symbol,
-  account: state => state.account,
-  balance: state => state.balance,
-  amount: state => state.amount,
-  address: state => state.address,
-  status: state => state.status,
-  hashRate: state => state.hashRate,
-  mining: state => state.mining,
-  miningPower: state => state.miningPower
+  registeredEvents: [],
+  registeredBoards: {}
 }
 
 export default new Vuex.Store({

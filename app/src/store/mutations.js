@@ -86,5 +86,11 @@ export default {
       state.cloversFound = state.minedClovers.length
     }
     state.cloversFound = count
+  },
+  ADD_REGISTERED_EVENT (state, event) {
+    if (event.event === 'Registered' && !state.registeredBoards[event.args.registeredEvent.toNumber()]) {
+      state.registeredEvents.push(event)
+      state.registeredBoards[event.args.registeredEvent.toNumber()] = true
+    }
   }
 }
