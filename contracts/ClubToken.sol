@@ -21,12 +21,13 @@ contract ClubToken is StandardToken, Reversi {
   address public owner;
 
   uint256 payMultiplier = 100;
-  uint Symmetricals;
-  uint RotSym;
-  uint Y0Sym;
-  uint X0Sym;
-  uint XYSym;
-  uint XnYSym;
+  uint256 Symmetricals;
+  uint256 RotSym;
+  uint256 Y0Sym;
+  uint256 X0Sym;
+  uint256 XYSym;
+  uint256 XnYSym;
+  uint256 registeredEvent;
 
   function ClubToken() {
     totalSupply = INITIAL_SUPPLY;
@@ -52,7 +53,7 @@ contract ClubToken is StandardToken, Reversi {
 
   // Events
 
-  event Registered(address newOwner, uint256 lastPaidAmount, bytes16 board, bool newBoard);
+  event Registered(address newOwner, uint256 lastPaidAmount, bytes16 board, bool newBoard, uint256 registeredEvent, bytes28 first32Moves, bytes28 lastMoves);
   event DebugGame(bytes16 board, bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym);
   // event DebugGame2(bytes16 board, bool error, string message);
   // event DebugBoard(bytes16 board);
@@ -272,7 +273,8 @@ contract ClubToken is StandardToken, Reversi {
     clovers[b].previousOwners.push(msg.sender);
     clovers[b].lastPaidAmount = nextPrice;
     clovers[b].modified = now;
-    Registered(msg.sender, nextPrice, b, false);
+    Registered(msg.sender, nextPrice, b, false, registeredEvent, clovers[b].first32Moves, clovers[b].lastMoves);
+    registeredEvent++;
   }
 
   function adminMineClover (bytes28 first32Moves, bytes28 lastMoves, bytes16 board, uint startPrice) public doesNotExist(board) onlyAdmin() returns(uint boardKey) {
@@ -294,7 +296,8 @@ contract ClubToken is StandardToken, Reversi {
     clovers[board].exists = true;
     clovers[board].created = now;
     clovers[board].modified = now;
-    Registered(msg.sender, startPrice, board, true);
+    Registered(msg.sender, startPrice, board, true, registeredEvent, first32Moves, lastMoves);
+    registeredEvent++;
     return cloverKeys.push(board);
   }
 
@@ -395,7 +398,8 @@ contract ClubToken is StandardToken, Reversi {
       balances[msg.sender] += clovers[game.board].findersFee;
       addToSymmTallys(game);
     }
-    Registered(msg.sender, startPrice, game.board, true);
+    Registered(msg.sender, startPrice, game.board, true, registeredEvent, game.first32Moves, game.lastMoves);
+    registeredEvent++;
     return cloverKeys.push(game.board);
   }
 
