@@ -9,10 +9,11 @@ export default {
   hashRate: state => state.hashRate,
   mining: state => state.mining,
   miningPower: state => state.miningPower,
+  clover: state => state.clover,
   allClovers: state => {
     let clovers = []
     state.registeredEvents.sort((a, b) => {
-      return a.args.registeredEvent.toNumber() - b.args.registeredEvent.toNumber() < 0
+      return a.args.registeredEvent.toNumber() - b.args.registeredEvent.toNumber()
     }).forEach((e) => {
       if (e.event !== 'Registered') return
       if (e.args.newBoard) {

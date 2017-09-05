@@ -59,6 +59,7 @@ class Clover extends Reversi {
   setEvents () {
     this.deploy().then((instance) => {
       instance.Registered({}, {fromBlock: 0}).get(function (error, result) {
+        console.log('debug results', result)
         if (error) console.error(error)
         if (result)
           result.forEach((e) => window.dispatchEvent(new CustomEvent('eventRegistered', {detail: e})))
@@ -71,7 +72,7 @@ class Clover extends Reversi {
           window.dispatchEvent(new CustomEvent('eventRegistered', {detail: registeredEvent}))
         }
       })
-      
+
     })
   }
 
@@ -137,7 +138,7 @@ class Clover extends Reversi {
         throw new Error('Can\'t addAdmin() if not an admin')
       }
     })
-    
+
   }
 
   updateMultiplier (multiplier = 100) {
@@ -428,7 +429,7 @@ class Clover extends Reversi {
       return instance.gameIsValid(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16))
     })
   }
-  
+
   gameExists (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     return this.deploy().then((instance) => {
       return instance.gameExists(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16))
@@ -442,7 +443,7 @@ class Clover extends Reversi {
       })
     })
   }
-  
+
   getFindersFee (byteBoard = this.byteBoard) {
     return this.deploy().then((instance) => {
       return instance.getFindersFee(new BN(byteBoard, 16)).then((num) => new BN(num).toNumber())
