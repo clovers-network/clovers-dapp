@@ -41,9 +41,11 @@
         return this.allClovers.find(c => c.board === this.boardId)
       },
       flippers () {
+        if (!this.boardId) return 0
         return this.board.previousOwners.length - 1
       },
       price () {
+        if (!this.boardId) return 0
         if (!this.flippers) {
           return this.board.lastPaidAmount.toLocaleString()
         }
