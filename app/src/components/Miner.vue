@@ -196,6 +196,7 @@
           this.totalMined = data.hashRate
         }
         if ('movesString' in data) {
+          console.log('new', data)
           this.miner.cloverExists(data.byteBoard).then((exists) => {
             if (!exists) {
               this.miner.getFindersFee(data.byteBoard).then((fee) => {
