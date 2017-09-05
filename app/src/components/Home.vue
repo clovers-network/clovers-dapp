@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="bg-green white p2 md-p3 flex flex-column intro-screen relative">
+    <div class="bg-green white p2 md-p3 flex flex-column intro-screen relative overflow-hidden">
       <div class="center h2">
         <p class="max-width-3 mx-auto">
           <u>Clovers</u> is the first board-game proof-of-work aesthetic cryptocurrency mountain-range pyramid scheme<sup>&trade;</sup>
@@ -22,7 +22,7 @@
       <div v-if="allClovers.length" class="mt3 px2">
         <ul class="list-reset flex flex-wrap mxn2">
           <li v-for="board in allClovers" :key="board.board" class="px2 mb3">
-            <clv :board="clover.byteBoardToRowArray(board.board)"></clv>
+            <clover-grid-item :board="board"></clover-grid-item>
           </li>
         </ul>
       </div>
