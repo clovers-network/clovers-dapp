@@ -53,7 +53,7 @@ contract ClubToken is StandardToken, Reversi {
 
   // Events
 
-  event Registered(address newOwner, uint256 lastPaidAmount, bytes16 board, bool newBoard, uint256 registeredEvent, bytes28 first32Moves, bytes28 lastMoves);
+  event Registered(address newOwner, uint256 lastPaidAmount, bytes16 board, bool newBoard, uint256 registeredEvent, bytes28 first32Moves, bytes28 lastMoves, uint256 modified, uint256 findersFee);
   event DebugGame(bytes16 board, bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym);
   // event DebugGame2(bytes16 board, bool error, string message);
   // event DebugBoard(bytes16 board);
@@ -273,7 +273,7 @@ contract ClubToken is StandardToken, Reversi {
     clovers[b].previousOwners.push(msg.sender);
     clovers[b].lastPaidAmount = nextPrice;
     clovers[b].modified = now;
-    Registered(msg.sender, nextPrice, b, false, registeredEvent, clovers[b].first32Moves, clovers[b].lastMoves);
+    Registered(msg.sender, nextPrice, b, false, registeredEvent, clovers[b].first32Moves, clovers[b].lastMoves, clovers[b].modified, clovers[b].findersFee);
     registeredEvent++;
   }
 
@@ -296,7 +296,7 @@ contract ClubToken is StandardToken, Reversi {
     clovers[board].exists = true;
     clovers[board].created = now;
     clovers[board].modified = now;
-    Registered(msg.sender, startPrice, board, true, registeredEvent, first32Moves, lastMoves);
+    Registered(msg.sender, startPrice, board, true, registeredEvent, first32Moves, lastMoves, now, clovers[board].findersFee);
     registeredEvent++;
     return cloverKeys.push(board);
   }
@@ -398,7 +398,7 @@ contract ClubToken is StandardToken, Reversi {
       balances[msg.sender] += clovers[game.board].findersFee;
       addToSymmTallys(game);
     }
-    Registered(msg.sender, startPrice, game.board, true, registeredEvent, game.first32Moves, game.lastMoves);
+    Registered(msg.sender, startPrice, game.board, true, registeredEvent, game.first32Moves, game.lastMoves, now, clovers[game.board].findersFee);
     registeredEvent++;
     return cloverKeys.push(game.board);
   }

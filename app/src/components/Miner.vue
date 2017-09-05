@@ -43,7 +43,7 @@
       <div class="lh1 absolute top-0 left-0 m2 z2 pointer">
         <a @click="deselect">❌</a>
       </div>
-      <claim-clover :clover="selectedClover" :miner="miner" @claimed="claimed" @remove="remove"></claim-clover>
+      <claim-clover :clover-data="selectedClover" :miner="miner" @claimed="claimed" @remove="remove"></claim-clover>
     </div>
     <div v-if="clovers.length" :class="{'border-top': !selectedClover}"  class="p2 relative">
       <p class="h6 m0 pt1 silver absolute top-0">Mined clovers</p>
@@ -230,14 +230,9 @@
           this.totalMined = data.hashRate
         }
         if ('movesString' in data) {
-          console.log('new', data)
           this.miner.cloverExists(data.byteBoard).then((exists) => {
             if (!exists) {
-              this.miner.getTallys().then((tallys, fee) => {
-                fee = fee || this.miner.calcFinderFees(tallys)
-                data.findersFee = data.startPrice = fee
-                this.minedClover(data)
-              })
+              this.minedClover(data)
             }
           }).catch((err) => {
             console.log(err)
@@ -246,12 +241,6 @@
       },
       select (clover) {
         this.selectedClover = clover
-        Object.assign(this.miner, clover)
-        // eventually remove isSymmetrical() when memory storage has been refreshed
-        this.miner.isSymmetrical()
-        this.miner.getTallys().then(({tallys, findersFee}) => {
-          this.updateFindersFee(findersFee)
-        })
       },
       deselect () {
         this.selectedClover = null
