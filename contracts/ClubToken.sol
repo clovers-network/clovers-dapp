@@ -52,7 +52,7 @@ contract ClubToken is StandardToken, Reversi {
 
   // Events
 
-  event Registered(address newOwner, uint256 lastPaidAmount, bytes16 board);
+  event Registered(address newOwner, uint256 lastPaidAmount, bytes16 board, bool newBoard);
   event DebugGame(bytes16 board, bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym);
   event DebugBoard(bytes16 board);
 
@@ -235,11 +235,10 @@ contract ClubToken is StandardToken, Reversi {
 
   function mineClover(bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public {
     Game memory game = playGame(first32Moves, lastMoves);
-    debugGame(game);
     saveGame(game, startPrice);
   }
 
-  function buyClover (bytes16 b) public returns(bool) {
+  function buyClover (bytes16 b) public{
     // every clover asset is for sale determined on an initial start price
     // if that clover is purchased, the proceeds are divided evenly among the last two buyers
     if(!cloverExists(b)) revert();
@@ -265,7 +264,7 @@ contract ClubToken is StandardToken, Reversi {
     clovers[b].previousOwners.push(msg.sender);
     clovers[b].lastPaidAmount = nextPrice;
     clovers[b].modified = now;
-    return true;
+    Registered(msg.sender, nextPrice, b, false);
   }
 
   function adminMineClover (bytes28 first32Moves, bytes28 lastMoves, bytes16 board, uint startPrice) public doesNotExist(board) onlyAdmin() returns(uint boardKey) {
@@ -276,8 +275,8 @@ contract ClubToken is StandardToken, Reversi {
 
     game = isSymmetrical(game);
     if (game.symmetrical) {
-      clovers[game.board].findersFee = findersFee(game);
-      balances[msg.sender] += clovers[game.board].findersFee;
+      clovers[board].findersFee = findersFee(game);
+      balances[msg.sender] += clovers[board].findersFee;
       addToSymmTallys(game);
     }
     clovers[board].first32Moves = first32Moves;
@@ -285,8 +284,9 @@ contract ClubToken is StandardToken, Reversi {
     clovers[board].previousOwners.push(msg.sender);
     clovers[board].lastPaidAmount = startPrice;
     clovers[board].exists = true;
-    clovers[game.board].created = now;
-    clovers[game.board].modified = now;
+    clovers[board].created = now;
+    clovers[board].modified = now;
+    Registered(msg.sender, startPrice, board, true);
     return cloverKeys.push(board);
   }
 
@@ -381,8 +381,7 @@ contract ClubToken is StandardToken, Reversi {
       balances[msg.sender] += clovers[game.board].findersFee;
       addToSymmTallys(game);
     }
-
-    // Registered(msg.sender, clovers[game.board].lastPaidAmount, game.board);
+    Registered(msg.sender, startPrice, game.board, true);
     return cloverKeys.push(game.board);
   }
 
@@ -402,12 +401,11 @@ contract ClubToken is StandardToken, Reversi {
   function findersFeeExplicit(bool symmetrical, bool _RotSym, bool _Y0Sym, bool _X0Sym, bool _XYSym, bool _XnYSym) internal constant returns(uint256) {    
     uint256 base = 0;
 
-    if (symmetrical) base += 1;
-    if (_RotSym) base = base.mul( payMultiplier ).mul( Symmetricals + 1 ).div( RotSym + 1 );
-    if (_Y0Sym) base = base.mul( payMultiplier ).mul( Symmetricals + 1 ).div( Y0Sym + 1 );
-    if (_X0Sym) base = base.mul( payMultiplier ).mul( Symmetricals + 1 ).div( X0Sym + 1 );
-    if (_XYSym) base = base.mul( payMultiplier ).mul( Symmetricals + 1 ).div( XYSym + 1 );
-    if (_XnYSym) base = base.mul( payMultiplier ).mul( Symmetricals + 1 ).div( XnYSym + 1 );
+    if (_RotSym) base = base.add( payMultiplier ).mul( Symmetricals + 1 ).div( RotSym + 1 );
+    if (_Y0Sym) base = base.add( payMultiplier ).mul( Symmetricals + 1 ).div( Y0Sym + 1 );
+    if (_X0Sym) base = base.add( payMultiplier ).mul( Symmetricals + 1 ).div( X0Sym + 1 );
+    if (_XYSym) base = base.add( payMultiplier ).mul( Symmetricals + 1 ).div( XYSym + 1 );
+    if (_XnYSym) base = base.add( payMultiplier ).mul( Symmetricals + 1 ).div( XnYSym + 1 );
 
     return base;
   }
