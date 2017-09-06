@@ -41,7 +41,7 @@ export default {
   // action is dispatched when/if the account is updated
   // use this action to refresh the app with the new account's data
   updateAccount ({ commit, dispatch, state }, account) {
-    commit('UPDATE_ACCOUNT', account)
+    if (account !== state.account) commit('UPDATE_ACCOUNT', account)
     dispatch('getBalance')
   },
   sendToken ({ commit, dispatch, state }) {
@@ -66,10 +66,10 @@ export default {
     if (!state.symbol) {
       state.ClubToken.deployed().then(instance => {
         instance.name.call().then((name) => {
-          commit('UPDATE_NAME', name)
+          if (name !== state.name) commit('UPDATE_NAME', name)
         })
         instance.symbol.call().then((symbol) => {
-          commit('UPDATE_SYMBOL', symbol)
+          if (symbol !== state.symbol) commit('UPDATE_SYMBOL', symbol)
         })
       }).catch((err) => {
         console.error(err)
@@ -79,7 +79,7 @@ export default {
     state.ClubToken.deployed().then(instance => (
       instance.balanceOf.call(state.account)
     )).then((balance) => {
-      commit('UPDATE_BALANCE', balance)
+      if (balance.toNumber() !== state.balance) commit('UPDATE_BALANCE', balance.toNumber())
     }).catch((err) => {
       console.error(err)
       commit('UPDATE_STATUS', 'Error getting balance; see log.')

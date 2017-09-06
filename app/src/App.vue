@@ -41,7 +41,8 @@
       },
 
       ...mapMutations({
-        registerEvent: 'ADD_REGISTERED_EVENT'
+        registerEvent: 'ADD_REGISTERED_EVENT',
+        registerEvents: 'ADD_REGISTERED_EVENTS'
       })
     },
     mounted () {
@@ -49,6 +50,9 @@
       this.clover.setEvents()
       window.addEventListener('eventRegistered', (e) => {
         this.registerEvent(e.detail)
+      }, false)
+      window.addEventListener('eventsRegistered', (e) => {
+        this.registerEvents(e.detail)
       }, false)
     },
     destroyed () {
@@ -60,7 +64,7 @@
   }
 </script>
 
-<style>
+<style >
   @import './style/imports';
   @import './style/global';
 </style>

@@ -20,6 +20,18 @@
       <p class="h2">
         <code>flips: {{ flippers }} &orarr;</code>
       </p>
+      <p class="h2">
+        <code>found by: <router-link :to="toFounder" v-html="founder"></router-link></code>
+      </p>
+      <p class="h2">
+        <code>found at block: {{board && board.created}}</code>
+      </p>
+      <p class="h2">
+        <code>currently owned by: <router-link :to="toOwner" v-html="owner"></router-link></code>
+      </p>
+      <p class="h2">
+        <code>last flipped at block: {{board && board.modified}}</code>
+      </p>
     </div>
   </div>
 </template>
@@ -41,15 +53,27 @@
         return this.allClovers.find(c => c.board === this.boardId)
       },
       flippers () {
-        if (!this.boardId) return 0
+        if (!this.boardId || !this.board) return 0
         return this.board.previousOwners.length - 1
       },
       price () {
-        if (!this.boardId) return 0
+        if (!this.boardId || !this.board) return 0
         if (!this.flippers) {
           return this.board.lastPaidAmount.toLocaleString()
         }
         return (this.board.lastPaidAmount * 2).toLocaleString()
+      },
+      founder () {
+        return this.board && this.board.previousOwners && this.board.previousOwners[0]
+      },
+      toFounder () {
+        return '/users/' + this.founder
+      },
+      owner () {
+        return this.board && this.board.previousOwners && this.board.previousOwners[this.board.previousOwners.length - 1]
+      },
+      toOwner () {
+        return '/users/' + this.owner
       },
 
       ...mapGetters([

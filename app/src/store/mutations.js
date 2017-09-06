@@ -88,9 +88,10 @@ export default {
     state.cloversFound = count
   },
   ADD_REGISTERED_EVENT (state, event) {
-    if (event.event === 'Registered' && !state.registeredBoards[event.args.registeredEvent.toNumber()]) {
-      state.registeredEvents.push(event)
-      state.registeredBoards[event.args.registeredEvent.toNumber()] = true
-    }
+    let rIndex = state.registeredEvents.findIndex((e) => e.transactionHash === event.transactionHash)
+    if (rIndex < 0) state.registeredEvents.push(event)
+  },
+  ADD_REGISTERED_EVENTS (state, events) {
+    state.registeredEvents = events
   }
 }

@@ -59,10 +59,10 @@ class Clover extends Reversi {
   setEvents () {
     this.deploy().then((instance) => {
       instance.Registered({}, {fromBlock: 0}).get(function (error, result) {
-        console.log('debug results', result)
         if (error) console.error(error)
         if (result)
-          result.forEach((e) => window.dispatchEvent(new CustomEvent('eventRegistered', {detail: e})))
+          window.dispatchEvent(new CustomEvent('eventsRegistered', {detail: result}))
+          // result.forEach((e) => window.dispatchEvent(new CustomEvent('eventRegistered', {detail: e})))
       })
 
       let newEvents = instance.Registered({}, {fromBlock: 'latest'})
@@ -166,14 +166,14 @@ class Clover extends Reversi {
       XnYSym: contractArray[5].toNumber(),
       PayMultiplier: contractArray[6].toNumber()
     }
-    return {tallys, findersFee: this.symmetrical && this.calcFinderFees(tallys)}
+    return {tallys, findersFee: this.symmetrical && this.calcFindersFees(tallys)}
   }
 
-  calcFinderFees (tallys = Array(), RotSym = this.RotSym, Y0Sym = this.Y0Sym, X0Sym = this.X0Sym, XYSym = this.XYSym, XnYSym = this.XnYSym) {
+  calcFindersFees (tallys = Array(), RotSym = this.RotSym, Y0Sym = this.Y0Sym, X0Sym = this.X0Sym, XYSym = this.XYSym, XnYSym = this.XnYSym) {
     let base = 0
     if(this.symmetrical && !RotSym && !Y0Sym && !X0Sym && !XYSym && !XnYSym) {
       this.isSymmetrical()
-      return this.calcFinderFees(tallys)
+      return this.calcFindersFees(tallys)
     }
 
     if (RotSym) base += ( tallys.PayMultiplier * ( tallys.Symmetricals + 1 ) ) / ( tallys.RotSym + 1 )

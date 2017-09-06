@@ -34,10 +34,11 @@ export default {
     return {Symmetricals, RotSym, X0Sym, Y0Sym, XYSym, XnYSym, PayMultiplier: 100}
   },
   allClovers: state => {
+    console.log('re calc allClovers')
     let clovers = []
-    state.registeredEvents
+    JSON.parse(JSON.stringify(state.registeredEvents))
     .sort((a, b) => {
-      return a.args.registeredEvent.toNumber() - b.args.registeredEvent.toNumber()
+      return a.args.registeredEvent - b.args.registeredEvent
     })
     .forEach((e) => {
       if (e.event !== 'Registered') return
@@ -68,10 +69,11 @@ export default {
     return clovers
   },
   allUsers: state => {
+    console.log('re calc allUsers')
     let users = []
-    state.registeredEvents
+    JSON.parse(JSON.stringify(state.registeredEvents))
     .sort((a, b) => {
-      return a.args.registeredEvent.toNumber() - b.args.registeredEvent.toNumber()
+      return a.args.registeredEvent - b.args.registeredEvent
     })
     .forEach((e) => {
       if (e.event !== 'Registered') return

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/Home'
 import Clover from '@/components/Clover'
+import User from '@/components/User'
 import Wallet from '@/components/Wallet'
 
 Vue.use(Router)
@@ -23,6 +24,11 @@ export default new Router({
       path: '/clovers/:board',
       name: 'Clover',
       component: Clover
+    },
+    {
+      path: '/users/:address',
+      name: 'User',
+      component: User
     }
   ]
 })
