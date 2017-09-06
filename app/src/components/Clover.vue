@@ -15,7 +15,7 @@
         <code>id: {{ boardId }}</code>
       </p>
       <p class="h2">
-        <code>price: {{ price }} &clubs;</code>
+        <code>price: {{ price }} &clubs;</code> <div @click='flip()' class='btn bg'>Buy</div>
       </p>
       <p class="h2">
         <code>flips: {{ flippers }} &orarr;</code>
@@ -45,6 +45,11 @@
       return {
         boardId: null,
         boardArray: []
+      }
+    },
+    methods: {
+      flip () {
+        this.clover.buyClover(this.boardId)
       }
     },
     computed: {

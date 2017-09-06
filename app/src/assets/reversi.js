@@ -373,6 +373,7 @@ class Reversi {
 
   playGameByteMoves (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     this.playGameMovesString(this.byteMovesToStringMoves(byteFirst32Moves, byteLastMoves))
+    this.thisBoardToByteBoard()
   }
 
 
