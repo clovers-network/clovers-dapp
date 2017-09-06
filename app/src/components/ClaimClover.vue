@@ -49,11 +49,15 @@
   import moment from 'moment'
   import { mapGetters, mapMutations } from 'vuex'
   import SvgText from '@/components/TextPath'
+  import Clover from '../assets/clovers'
 
   export default {
     name: 'claim-clover',
     data () {
-      return { submitting: false }
+      return {
+        submitting: false,
+        clover: new Clover()
+      }
     },
     props: {
       cloverData: {
@@ -88,7 +92,6 @@
         return (this.clover.calcFinderFees(this.symmetries) || 100) + ' ♧'
       },
       ...mapGetters({
-        clover: 'clover',
         symmetries: 'symmetries'
       })
     },
