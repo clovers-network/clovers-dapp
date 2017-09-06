@@ -58,10 +58,9 @@ export default {
   EXISTING_CLOVERS (state, clovers) {
     state.minedClovers.push(...clovers)
   },
-  CLAIMED_CLOVER (state, clover) {
-    let i = state.minedClovers.findIndex(cl => cl.byteBoard === clover.byteBoard)
-    state.minedClovers[i]
-    Object.assign(state.minedClovers[i], {claimed: new Date()})
+  CLAIMED_CLOVER (state, byteBoard) {
+    let i = state.minedClovers.findIndex(cl => cl.byteBoard === byteBoard)
+    Object.assign(state.minedClovers[i], { claimed: new Date() })
   },
   UPDATE_CLOVER_PRICE (state, { clover, newVal }) {
     let i = state.minedClovers.findIndex(cl => cl.byteBoard === clover.byteBoard)
