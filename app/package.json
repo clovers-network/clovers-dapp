@@ -26,6 +26,8 @@
     "bignumber.js": "^4.0.2",
     "ethjs": "^0.2.7",
     "moment": "^2.18.1",
+    "node-sass": "^4.5.3",
+    "sass-loader": "^6.0.6",
     "truffle-contract": "^2.0.5",
     "vue": "^2.2.6",
     "vue-router": "^2.3.1",

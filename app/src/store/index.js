@@ -31,7 +31,6 @@ const state = {
   miningPower: 0,
   minedClovers: [],
   registeredEvents: [],
-  registeredBoards: {},
   clover: new Clover()
 }
 
@@ -40,6 +39,6 @@ export default new Vuex.Store({
   getters,
   actions,
   mutations,
-  strict: debug,
+  strict: false, // debug,
   plugins: debug ? [createLogger()] : []
 })
