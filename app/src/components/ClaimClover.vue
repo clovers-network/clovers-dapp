@@ -144,6 +144,7 @@
         this.miner.playGameMovesString(this.movesString)
         this.miner.register().then((res) => {
           this.submitting = false
+          console.log('claimed', res)
           this.$emit('claimed', res)
         }).catch((err) => {
           console.log(err)
