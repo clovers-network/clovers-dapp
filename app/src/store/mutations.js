@@ -60,7 +60,10 @@ export default {
   },
   CLAIMED_CLOVER (state, byteBoard) {
     let i = state.minedClovers.findIndex(cl => cl.byteBoard === byteBoard)
-    Object.assign(state.minedClovers[i], { claimed: new Date() })
+    // Object.assign(state.minedClovers[i], { claimed: new Date() })
+    let clover = state.minedClovers[i]
+    clover.claimed = new Date()
+    state.minedClovers.splice(i, 1, clover)
   },
   UPDATE_CLOVER_PRICE (state, { clover, newVal }) {
     let i = state.minedClovers.findIndex(cl => cl.byteBoard === clover.byteBoard)

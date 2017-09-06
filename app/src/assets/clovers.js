@@ -67,10 +67,11 @@ class Clover extends Reversi {
       })
 
       let newEvents = instance.Registered({}, {fromBlock: 'latest'})
-      newEvents.watch((error, registeredEvent) => {
+      newEvents.watch((error, result) => {
+        console.log('new', result)
         if (error) console.error(error)
         else {
-          window.dispatchEvent(new CustomEvent('eventRegistered', {detail: registeredEvent}))
+          window.dispatchEvent(new CustomEvent('eventRegistered', {detail: result}))
         }
       })
 
