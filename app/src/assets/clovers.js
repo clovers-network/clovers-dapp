@@ -30,6 +30,7 @@ class Clover extends Reversi {
       // web3Provider = new Web3.providers.HttpProvider('https://mainnet.infura.io/Q5I7AA6unRLULsLTYd6d')
       web3Provider = new Web3.providers.HttpProvider('http://localhost:8545')
     }
+
     web3 = new Web3(web3Provider)
     this.setAccountInterval()
   }
@@ -59,7 +60,6 @@ class Clover extends Reversi {
   setEvents () {
     this.deploy().then((instance) => {
       instance.Registered({}, {fromBlock: 848335}).get(function (error, result) {
-        console.log('all', result)
         if (error) console.error(error)
         if (result)
           window.dispatchEvent(new CustomEvent('eventsRegistered', {detail: result}))
