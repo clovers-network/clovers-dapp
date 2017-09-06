@@ -2,9 +2,13 @@
   <div class="overflow-hidden">
     <header class="flex bg-purple items-center white">
       <ul class="list-reset px2 py1 my0 flex-auto">
-        <li class="inline-block mr2">Clovers</li>
+        <li class="inline-block mr2">
+          <router-link to="/" class="white">Clovers</router-link>
+        </li>
         <li class="inline-block mr2">Latest</li>
-        <li class="inline-block mr2">Wallet</li>
+        <li class="inline-block mr2">
+          <router-link to="/wallet" class="white">Wallet</router-link>
+        </li>
       </ul>
       <p class="m0 pr3">
         <span>{{ cloversFound }}</span>
@@ -17,7 +21,7 @@
         {{ mineText }}
       </p>
     </header>
-    <miner v-show="showMiner"></miner>
+    <miner v-show="showMiner" @close="toggleMinePanel"></miner>
   </div>
 </template>
 

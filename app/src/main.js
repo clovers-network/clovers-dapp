@@ -11,9 +11,11 @@ Object.defineProperty(Vue.prototype, '$BN', { value: BN })
 
 import Clv from '@/components/CloverFunc'
 import CloverIcon from '@/components/CloverIcon'
+import CloverGridItem from '@/components/CloverGridItem'
 
 Vue.component('clv', Clv)
 Vue.component('clover-icon', CloverIcon)
+Vue.component('clover-grid-item', CloverGridItem)
 
 Vue.config.productionTip = false
 
