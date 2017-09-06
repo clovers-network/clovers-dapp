@@ -15,7 +15,7 @@
         <code>id: {{ boardId }}</code>
       </p>
       <p class="h2">
-        <code>finders fee: {{ board.findersFee }} &clubs;</code>
+        <code>finders fee: {{ board && board.findersFee }} &clubs;</code>
       </p>
       <p class="h2">
         <code>price: {{ price }} &clubs;</code> <div @click='flip()' class='btn bg'>Buy</div>
