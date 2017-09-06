@@ -45,26 +45,26 @@
         <div class="lh1 absolute top-0 left-0 m2 z2 pointer">
           <a @click="deselect">❌</a>
         </div>
-      <claim-clover :clover-data="selectedClover" :miner="miner" @claimed="claimed" @remove="remove"></claim-clover>
-    </div>
-    <div v-if="clovers.length" :class="{'border-top': !selectedClover}"  class="p2 relative">
-      <p class="h6 m0 pt1 silver absolute top-0">Mined clovers</p>
-      <div>
-        <ul class="list-reset flex mxn1 nowrap overflow-auto items-center">
-          <li @click="select(board)" v-for="board in newClovers" class="py1 px2 pointer h6" :class="isFocus(board)">
-            <clv :key="board.movesString" :board="miner.byteBoardToRowArray(board.byteBoard)"></clv>
-          </li>
-          <li @click="select(board)" v-for="board in claimedClovers" class="py1 px2 pointer h6 claimed" :class="isFocus(board)">
-            <clv :key="board.movesString" :board="miner.byteBoardToRowArray(board.byteBoard)"></clv>
-          </li>
-          <li>
-            <p v-if="this.limit && this.claimedClovers.length > 4" @click="limit = false" class="mx3 m0 pointer">👁 more</p>
-            <p v-if="!this.limit && this.claimedClovers.length > 5" @click="limit = true" class="mx3 m0 pointer">🗃 collapse</p>
-          </li>
-        </ul>
+        <claim-clover :clover-data="selectedClover" :miner="miner" @claimed="claimed" @remove="remove"></claim-clover>
       </div>
-      <!-- <form @submit.prevent='submitCustom()'><input v-model='customMoves'></form> -->
-
+      <div v-if="clovers.length" :class="{'border-top': !selectedClover}"  class="p2 relative">
+        <p class="h6 m0 pt1 silver absolute top-0">Mined clovers</p>
+        <div>
+          <ul class="list-reset flex mxn1 nowrap overflow-auto items-center">
+            <li @click="select(board)" v-for="board in newClovers" class="py1 px2 pointer h6" :class="isFocus(board)">
+              <clv :key="board.movesString" :board="miner.byteBoardToRowArray(board.byteBoard)"></clv>
+            </li>
+            <li @click="select(board)" v-for="board in claimedClovers" class="py1 px2 pointer h6 claimed" :class="isFocus(board)">
+              <clv :key="board.movesString" :board="miner.byteBoardToRowArray(board.byteBoard)"></clv>
+            </li>
+            <li>
+              <p v-if="this.limit && this.claimedClovers.length > 4" @click="limit = false" class="mx3 m0 pointer">👁 more</p>
+              <p v-if="!this.limit && this.claimedClovers.length > 5" @click="limit = true" class="mx3 m0 pointer">🗃 collapse</p>
+            </li>
+          </ul>
+        </div>
+        <!-- <form @submit.prevent='submitCustom()'><input v-model='customMoves'></form> -->
+      </div>
     </div>
   </div>
 </template>
