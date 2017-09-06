@@ -1,48 +1,50 @@
 <template>
-  <div class="bg-black white absolute col-12 overflow-hidden z1">
-    <header class="p2 flex flex-wrap items-center mxn1">
-      <div class="py1 px2 min-width-1">
-        <p class="m0 h6">Time spent mining</p>
-        <p class="m0 h1 nowrap">{{ timeSpent }}</p>
-      </div>
-      <div class="py1 px2 min-width-1">
-        <p class="m0 h6">Games played</p>
-        <p class="m0 h1 nowrap">{{ totalMined.toLocaleString() }}</p>
-      </div>
-      <div class="py1 px2 min-width-1">
-        <p class="m0 h6">Clovers found</p>
-        <p class="m0 h1 nowrap">
-          <span>{{ cloversFound }}</span>
-          <clover-icon></clover-icon>
-        </p>
-      </div>
-      <div class="py1 px2 min-width-1">
-        <p class="m0 h6">Current mining speed</p>
-        <p class="m0 h1 nowrap">{{ hashRate }} games/sec</p>
-      </div>
-      <div class="px1 flex-auto flex justify-end items-stretch self-stretch">
-        <template v-if="!mining">
-          <button @click="mine" class="py1 px2 border bg-black white h4 bold pointer no-select">Mine Clover</button>
-        </template>
-        <template v-else>
-          <div class="mr2 border flex items-center">
-            <div class="flex flex-column justify-stretch">
-              <div @click="mine" class="pointer no-select py1 px2 lh1">&plus;</div>
-              <div @click="stop" class="pointer no-select border-top py1 px2 lh1">&minus;</div>
+  <div>
+    <div class="bg-darken-1 fixed top-0 left-0 right-0 bottom-0 z1 pointer" @click="close"></div>
+    <div class="bg-black white absolute col-12 overflow-hidden z2">
+      <header class="p2 flex flex-wrap items-center mxn1">
+        <div class="py1 px2 min-width-1">
+          <p class="m0 h6">Time spent mining</p>
+          <p class="m0 h1 nowrap">{{ timeSpent }}</p>
+        </div>
+        <div class="py1 px2 min-width-1">
+          <p class="m0 h6">Games played</p>
+          <p class="m0 h1 nowrap">{{ totalMined.toLocaleString() }}</p>
+        </div>
+        <div class="py1 px2 min-width-1">
+          <p class="m0 h6">Clovers found</p>
+          <p class="m0 h1 nowrap">
+            <span>{{ cloversFound }}</span>
+            <clover-icon></clover-icon>
+          </p>
+        </div>
+        <div class="py1 px2 min-width-1">
+          <p class="m0 h6">Current mining speed</p>
+          <p class="m0 h1 nowrap">{{ hashRate }} games/sec</p>
+        </div>
+        <div class="px1 flex-auto flex justify-end items-stretch self-stretch">
+          <template v-if="!mining">
+            <button @click="mine" class="py1 px2 border bg-black white h4 bold pointer no-select">Mine Clover</button>
+          </template>
+          <template v-else>
+            <div class="mr2 border flex items-center">
+              <div class="flex flex-column justify-stretch">
+                <div @click="mine" class="pointer no-select py1 px2 lh1">&plus;</div>
+                <div @click="stop" class="pointer no-select border-top py1 px2 lh1">&minus;</div>
+              </div>
+              <div class="border-left flex flex-column justify-center p1 center" style="height:100%">
+                <p class="m0 h2 lh1">{{ miningPower }}</p>
+                <p class="m0 h6 lh1">Active miners</p>
+              </div>
             </div>
-            <div class="border-left flex flex-column justify-center p1 center" style="height:100%">
-              <p class="m0 h2 lh1">{{ miningPower }}</p>
-              <p class="m0 h6 lh1">Active miners</p>
-            </div>
-          </div>
-          <button @click="stopAll" class="py1 px3 border bg-black white h4 bold pointer no-select">Stop</button>
-        </template>
-      </div>
-    </header>
-    <div v-if="selectedClover" class="relative">
-      <div class="lh1 absolute top-0 left-0 m2 z2 pointer">
-        <a @click="deselect">❌</a>
-      </div>
+            <button @click="stopAll" class="py1 px3 border bg-black white h4 bold pointer no-select">Stop</button>
+          </template>
+        </div>
+      </header>
+      <div v-if="selectedClover" class="relative">
+        <div class="lh1 absolute top-0 left-0 m2 z2 pointer">
+          <a @click="deselect">❌</a>
+        </div>
       <claim-clover :clover-data="selectedClover" :miner="miner" @claimed="claimed" @remove="remove"></claim-clover>
     </div>
     <div v-if="clovers.length" :class="{'border-top': !selectedClover}"  class="p2 relative">
@@ -62,6 +64,7 @@
         </ul>
       </div>
       <!-- <form @submit.prevent='submitCustom()'><input v-model='customMoves'></form> -->
+
     </div>
   </div>
 </template>
@@ -79,7 +82,6 @@
       return {
         miners: [],
         miner: new Clover(),
-        opened: false,
         customMoves: 'C4C5D6C7C6D3E6D7C2B3A2F5C8E3G5B6A5H5F6B1H4A4E7G7E2F7G6B7G8G4F4F3D8H7E8F2H8B5A7E1H3D2G2H2C1C3F1D1A1G1G3A6H6F8B2B8A3H1A8B4',
         interval: null,
         hasStorage: !!window.localStorage,
@@ -190,12 +192,6 @@
         this.claimedClover(clover)
         this.setItem('clovers', this.clovers)
       },
-      submitCustom () {
-
-      },
-      toggleMiner () {
-        this.opened = !this.opened
-      },
       mine () {
         this.mining = true
         if (!this.start) this.start = new Date()
@@ -266,6 +262,9 @@
       },
       updateFindersFee (newVal) {
         this.$set(this.selectedClover, 'findersFee', newVal)
+      },
+      close () {
+        this.$emit('close')
       },
 
       ...mapMutations({
