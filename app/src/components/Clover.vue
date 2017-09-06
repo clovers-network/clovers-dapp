@@ -15,6 +15,9 @@
         <code>id: {{ boardId }}</code>
       </p>
       <p class="h2">
+        <code>finders fee: {{ board.findersFee }} &clubs;</code>
+      </p>
+      <p class="h2">
         <code>price: {{ price }} &clubs;</code>
       </p>
       <p class="h2">
