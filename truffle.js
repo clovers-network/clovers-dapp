@@ -65,7 +65,7 @@ module.exports = {
       network_id: 4,    // Official rinkeby network id
       host: "localhost", // Use our custom provider
       port: "8545", // Use our custom provider
-      from: '0xcDE232e835330daFA2Ebc629219BbF4fc92cfa24',     // Use the address we derived
+      from: '0xcDE232e835330daFA2Ebc629219BbF4fc92cfa24',
       gas: 4700000
     },
     // ethermint: {

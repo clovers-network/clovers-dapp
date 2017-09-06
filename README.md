@@ -22,6 +22,14 @@ ethermint --datadir ~/.ethermint --rpc --rpcaddr=0.0.0.0 --ws --wsaddr=0.0.0.0 -
 # then
 truffle compile && truffle migrate --reset --network ethermint
 
+
+# or
+geth --datadir=/Users/billy/.rinkeby --cache=1024 --syncmode=full --networkid=4 --rinkeby --rpc --rpcapi db,eth,net,web3,personal --unlock="0xcDE232e835330daFA2Ebc629219BbF4fc92cfa24"
+
+# &
+/Applications/Ethereum\ Wallet.app/Contents/MacOS/Ethereum\ Wallet --rpc /Users/billy/.rinkeby/geth.ipc
+
+
 # move to app and install dependencies
 cd app
 npm install
