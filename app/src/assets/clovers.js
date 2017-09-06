@@ -58,7 +58,8 @@ class Clover extends Reversi {
 
   setEvents () {
     this.deploy().then((instance) => {
-      instance.Registered({}, {fromBlock: 0}).get(function (error, result) {
+      instance.Registered({}, {fromBlock: 848335}).get(function (error, result) {
+        console.log('all', result)
         if (error) console.error(error)
         if (result)
           window.dispatchEvent(new CustomEvent('eventsRegistered', {detail: result}))
@@ -66,10 +67,11 @@ class Clover extends Reversi {
       })
 
       let newEvents = instance.Registered({}, {fromBlock: 'latest'})
-      newEvents.watch((error, registeredEvent) => {
+      newEvents.watch((error, result) => {
+        console.log('new', result)
         if (error) console.error(error)
         else {
-          window.dispatchEvent(new CustomEvent('eventRegistered', {detail: registeredEvent}))
+          window.dispatchEvent(new CustomEvent('eventRegistered', {detail: result}))
         }
       })
 
