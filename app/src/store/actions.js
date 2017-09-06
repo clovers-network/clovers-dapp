@@ -12,8 +12,11 @@ export default {
       var web3Provider = web3.currentProvider
     } else {
       // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
-      // web3Provider = new Web3.providers.HttpProvider('https://mainnet.infura.io/Q5I7AA6unRLULsLTYd6d')
-      web3Provider = new Web3.providers.HttpProvider('http://localhost:8545')
+      web3Provider = new Web3.providers.HttpProvider('https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d')
+      // web3Provider = new Web3.providers.HttpProvider('http://localhost:8545')
+      setTimeout(() => {
+        dispatch('connect')
+      }, 1000)
     }
     web3 = new Web3(web3Provider)
     dispatch('setAccount', web3.eth.accounts[0])
