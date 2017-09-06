@@ -2,12 +2,14 @@
   <div class="bg-dark-gray white px2 py3">
     <div class="flex items-center justify-between">
       <div class="relative mx3">
+        <template v-if='byteBoard'>
         <div class="h2">
-          <clv :board="miner.byteBoardToRowArray(cloverData.byteBoard)"></clv>
+          <clv  :board="miner.byteBoardToRowArray(byteBoard)"></clv>
         </div>
         <div>
-          <svg-text :movesString="cloverData.movesString"></svg-text>
+          <svg-text :movesString="movesString"></svg-text>
         </div>
+        </template>
       </div>
       <div v-if="cloverData.removed" class="px3 flex-auto">
         <p class="h1 m0 lh1">🗑 Removed {{ removeDate }}</p>
@@ -16,6 +18,10 @@
         <p class="h1 m0 lh1">✨ Claimed {{ claimDate }}</p>
       </div>
       <div v-else class="col-8 lg-col-7">
+<!--         <div>
+          <input class="btn btn-outline py3 col-12 regular h3" v-model='movesString'>
+          <button @click.prevent="test()" class="btn btn-outline py3 col-12 regular h3">TEST</button>
+        </div> -->
         <form @submit.prevent="trigger">
           <div class="mb2 flex flex-wrap">
             <div class="col-6 px3">
@@ -56,7 +62,9 @@
     data () {
       return {
         submitting: false,
-        clover: new Clover()
+        clover: new Clover(),
+        byteBoard: null,
+        movesString: null
       }
     },
     props: {
@@ -89,18 +97,51 @@
       },
       reward () {
         Object.assign(this.clover, this.cloverData)
-        return (this.clover.calcFinderFees(this.symmetries) || 100) + ' ♧'
+        this.clover.isSymmetrical()
+        return (this.clover.calcFindersFees(this.symmetries) || 100) + ' ♧'
       },
       ...mapGetters({
         symmetries: 'symmetries'
       })
     },
+    mounted () {
+      this.setBoard()
+    },
+    watch: {
+      cloverData () {
+        this.setBoard()
+      },
+      movesString () {
+        if (!this.movesString) return
+        this.clover.playGameMovesString(this.movesString)
+        this.clover.isSymmetrical()
+        this.byteBoard = this.clover.byteBoard
+      }
+    },
     methods: {
+      setBoard () {
+        this.byteBoard = this.cloverData.byteBoard
+        this.movesString = this.cloverData.movesString
+      },
+      test () {
+        // console.log('test')
+        // console.log(this.miner.byteMovesToStringMoves('0xcb7696ecd7aad499b73d6edd6753b5dfa57fd3efc69b17eef89af9ec', '0x8f2bffa83cbcfbf927569d166042974306287c30d891c7c510000000'))
+        // this.miner.buildMovesString()
+        // console.log(this.miner.movesString)
+
+        // this.miner.playGameMovesString(this.movesString)
+        // this.miner.getTallys().then((res) => {
+        //   console.log('chain', res)
+        //   console.log('store', this.symmetries)
+        // })
+        // this.miner.getFindersFee().then((res) => {
+        //   console.log('chain', res)
+        // })
+      },
       trigger () {
-        console.log('trigger')
         this.submitting = true
         this.miner.startPrice = this.flipPrice
-        this.miner.playGameMovesString(this.cloverData.movesString)
+        this.miner.playGameMovesString(this.movesString)
         this.miner.register().then((res) => {
           this.submitting = false
           this.$emit('claimed', this.cloverData)

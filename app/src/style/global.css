@@ -134,7 +134,7 @@ hr {
   background-color: var(--silver);
   border-radius: 50%;
   padding: 1.6em;
-
+  display: inline-block;
   .row {
     line-height: 0;
   }

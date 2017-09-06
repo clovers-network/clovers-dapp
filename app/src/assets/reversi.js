@@ -502,10 +502,8 @@ class Reversi {
       byteLastMoves = byteLastMoves.slice(2)
     }
     let byteMoves = byteFirst32Moves + byteLastMoves
-    console.log(byteMoves)
     byteMoves = new BN(byteMoves, 16)
     let binaryMoves = byteMoves.toString(2)
-    console.log(binaryMoves)
     return this.binaryMovesToStringMoves(binaryMoves)
   }
 

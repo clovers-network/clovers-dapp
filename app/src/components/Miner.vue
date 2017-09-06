@@ -42,7 +42,7 @@
         </div>
       </header>
       <div v-if="selectedClover" class="relative">
-        <div class="lh1 absolute top-0 left-0 m2 z2 pointer">
+        <div class="lh1 absolute top-0 left-0 m2 z2 pointer p1">
           <a @click="deselect">❌</a>
         </div>
         <claim-clover :clover-data="selectedClover" :miner="miner" @claimed="claimed" @remove="remove"></claim-clover>
