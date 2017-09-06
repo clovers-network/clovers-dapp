@@ -366,6 +366,7 @@ class Clover extends Reversi {
 
   mineClover (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, startPrice = 100) {
     this.playGameByteMoves(byteFirst32Moves, byteLastMoves)
+    let byteBoard = this.byteBoard
     if (this.error) {
       throw new Error('Game is not valid')
     } else if (!this.complete) {
