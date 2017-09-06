@@ -187,9 +187,9 @@
       setItem (key, val) {
         window.localStorage.setItem(this.account + '_' + key, JSON.stringify(val))
       },
-      claimed (clover) {
-        this.$set(this.selectedClover, 'claimed', new Date())
-        this.claimedClover(clover)
+      claimed (byteBoard) {
+        console.log('claimed:', byteBoard)
+        this.claimedClover(byteBoard)
         this.setItem('clovers', this.clovers)
       },
       mine () {

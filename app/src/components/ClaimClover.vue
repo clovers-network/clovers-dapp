@@ -103,7 +103,7 @@
         this.miner.playGameMovesString(this.cloverData.movesString)
         this.miner.register().then((res) => {
           this.submitting = false
-          this.$emit('claimed', this.cloverData)
+          this.$emit('claimed', res)
         }).catch((err) => {
           console.log(err)
           this.submitting = false
