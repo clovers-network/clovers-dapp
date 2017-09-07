@@ -15,8 +15,8 @@ class Clover extends Reversi {
     this.address = '0x6175f6d198c4c7e072ac5fe82bdf28b96c5d9b12'
     this.ClubToken = false
     this.account = false
-    this.name = false
-    this.symbol = false
+    this.name = null
+    this.symbol = null
     this.balance = 0
     this.accountInterval = false
     this.registeredEvents = []
@@ -27,29 +27,30 @@ class Clover extends Reversi {
   // Connections
 
   initWeb3 () {
-    console.log('initWeb3')
+    console.log('init')
     let web3Provider
     if (web3) {
-      console.log('yes web3', web3)
       // Use Mist/MetaMask's provider
       web3Provider = web3.currentProvider
     } else {
-      console.log('no web3')
       // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
       web3Provider = new Web3.providers.HttpProvider('https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d')
       // web3Provider = new Web3.providers.HttpProvider('http://localhost:8545')
     }
-    console.log('before', web3, web3Provider)
     web3 = new Web3(web3Provider)
-    // if (web3Provider.timeout === 0) {
-    //   setTimeout(() => this.initWeb3(), 1000)
-    // }
-    console.log('after', web3)
+
     this.setAccountInterval()
+    this.getPastEvents()
+    this.watchFutureEvents()
+  }
+
+  resetConnection () {
+    console.log('reset connection')
+    web3 = false
+    this.ClubToken = false
   }
 
   setAccountInterval () {
-    console.log('setAccountInterval', this.accountInterval)
     this.account = web3.eth.accounts && web3.eth.accounts[0]
     this.accountInterval = this.accountInterval || setInterval(() => {
       this.checkAccount()
@@ -61,8 +62,7 @@ class Clover extends Reversi {
   }
 
   checkAccount () {
-    console.log('check account')
-    if (!web3) return
+    if (!web3) this.initWeb3()
     if (!this.symbol) {
       this.getSymbol().then((symbol) => this.symbol = symbol).catch((err) => console.log(err))
     }
@@ -84,19 +84,18 @@ class Clover extends Reversi {
   }
 
   stopEvents () {
-    this.deploy().then((instance) => {
-      instance.Registered().stopWatching()
+    return this.deploy().then((instance) => {
+      return instance.Registered().stopWatching()
     })
   }
 
   getPastEvents () {
     console.log('set getPastEvents')
     this.deploy().then((instance) => {
-      instance.Registered({}, {fromBlock: this.genesisBlock}).get(function (error, result) {
+      instance.Registered({}, {fromBlock: this.genesisBlock}).get((error, result) => {
         if (error) {
           this.error = 'need-metamask'
-          console.log(error)
-          setTimeout(() => this.getPastEvents(), 2000)
+          this.resetConnection()
         } else {
           this.error = false
           window.dispatchEvent(new CustomEvent('eventsRegistered', {detail: result}))
@@ -111,7 +110,7 @@ class Clover extends Reversi {
       instance.Registered({}, {fromBlock: 'latest'}).watch((error, result) => {
         if (error) {
           this.error = 'need-metamask'
-          setTimeout(() => this.watchFutureEvents(), 2000)
+          this.resetConnection()
         } else {
           this.error = false
           window.dispatchEvent(new CustomEvent('eventRegistered', {detail: result}))
