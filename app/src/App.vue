@@ -15,8 +15,6 @@
     name: 'app',
     data () {
       return {
-        accountInterval: null,
-        balanceInterval: null
       }
     },
     computed: {
@@ -25,29 +23,17 @@
         clover: 'clover'
       })
     },
-    beforeDestroy () {
-      clearInterval(this.accountInterval)
-      clearInterval(this.balanceInterval)
-    },
     methods: {
-      start () {
-        this.$store.dispatch('connect')
-        this.accountInterval = setInterval(() => {
-          this.$store.dispatch('checkAccounts')
-        }, 1000)
-        this.balanceInterval = setInterval(() => {
-          this.$store.dispatch('getBalance')
-        }, 5000)
-      },
-
       ...mapMutations({
         registerEvent: 'ADD_REGISTERED_EVENT',
         registerEvents: 'ADD_REGISTERED_EVENTS'
       })
     },
     mounted () {
-      this.start()
-      this.clover.setEvents()
+      this.clover.initWeb3()
+      this.clover.getPastEvents()
+      this.clover.watchFutureEvents()
+
       window.addEventListener('eventRegistered', (e) => {
         this.registerEvent(e.detail)
       }, false)
@@ -56,9 +42,10 @@
       }, false)
     },
     destroyed () {
-      clearInterval(this.interval)
+      this.clover.stopAccountInterval()
       this.clover.stopEvents()
       window.removeEventListener('Event', 'eventRegistered')
+      window.removeEventListener('Event', 'eventsRegistered')
     },
     components: { AppHeader }
   }

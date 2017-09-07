@@ -1,17 +1,15 @@
 import Clover from '../assets/clovers'
 
 export default {
-  name: state => state.name,
-  symbol: state => state.symbol,
-  account: state => state.account,
-  balance: state => state.balance,
-  amount: state => state.amount,
-  address: state => state.address,
-  status: state => state.status,
+  clover: state => state.clover,
+  error: state => state.clover.error,
+  name: state => state.clover.name,
+  symbol: state => state.clover.symbol,
+  account: state => state.clover.account,
+  balance: state => state.clover.balance,
   hashRate: state => state.hashRate,
   mining: state => state.mining,
   miningPower: state => state.miningPower,
-  clover: state => state.clover,
   symmetries: (state, getters) => {
     let Symmetricals = 0
     let RotSym = 0
