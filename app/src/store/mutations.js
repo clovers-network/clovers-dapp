@@ -46,7 +46,9 @@ export default {
     let i = state.minedClovers.findIndex(cl => cl.byteBoard === byteBoard)
     if (i > -1) state.minedClovers.splice(i, 1)
   },
-
+  UPDATE_CLOVER (state, clover) {
+    state.clover = Object.assign(state.clover, clover)
+  },
   STORED_CLOVERS (state, clovers) {
     state.minedClovers = clovers
   },
