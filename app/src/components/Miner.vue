@@ -156,10 +156,7 @@
         },
         set (newVal) {
           this.changePower(newVal)
-        },
-        ...mapGetters({
-          account: 'account'
-        })
+        }
       },
       mineBtn () {
         return this.miners.length ? 'More power' : 'Start mining'
@@ -169,7 +166,11 @@
       },
       timeSpent () {
         return moment.utc(this.mineTime * 1000).format('HH:mm:ss')
-      }
+      },
+
+      ...mapGetters({
+        account: 'account'
+      })
     },
     methods: {
       checkRead () {
