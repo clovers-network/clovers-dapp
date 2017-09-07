@@ -3,6 +3,15 @@
     <app-header></app-header>
     <main>
       <router-view></router-view>
+      <div class="p2">
+        <div v-if="allClovers.length" class="mt3 px2">
+          <ul class="list-reset flex flex-wrap mxn2">
+            <li v-for="board in cloversSorted" :key="board.board" class="px2 mb3">
+              <clover-grid-item :board="board"></clover-grid-item>
+            </li>
+          </ul>
+        </div>
+      </div>
     </main>
   </div>
 </template>
@@ -18,9 +27,14 @@
       }
     },
     computed: {
+      cloversSorted () {
+        return this.allClovers.sort((a, b) => b.modified - a.modified)
+      },
+
       ...mapGetters({
         account: 'account',
-        clover: 'clover'
+        clover: 'clover',
+        allClovers: 'allClovers'
       })
     },
     methods: {
