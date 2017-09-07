@@ -4,11 +4,13 @@
     <main>
       <router-view></router-view>
     </main>
+    <clover-list></clover-list>
   </div>
 </template>
 
 <script>
   import AppHeader from '@/components/AppHeader'
+  import CloverList from '@/components/CloverList'
   import { mapGetters, mapMutations } from 'vuex'
 
   export default {
@@ -49,7 +51,7 @@
       window.removeEventListener('Event', 'eventRegistered')
       window.removeEventListener('Event', 'eventsRegistered')
     },
-    components: { AppHeader }
+    components: { AppHeader, CloverList }
   }
 </script>
 
