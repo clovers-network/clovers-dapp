@@ -14,15 +14,6 @@
 
     </section> -->
     <!-- <h4><button @click.prevent='showGameConstant()'>showGameConstant()</button></h4> -->
-    <div class="p2">
-      <div v-if="allClovers.length" class="mt3 px2">
-        <ul class="list-reset flex flex-wrap mxn2">
-          <li @click='testClover(key, c)'  v-for="(c, key) in allClovers" :key="c.board" class="px2 mb3">
-            <clv :board="clover.byteBoardToRowArray(c.board)"></clv>
-          </li>
-        </ul>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -75,6 +66,12 @@
       balanceString () {
         return parseInt(this.balance).toLocaleString()
       },
+      moveConverted () {
+        return this.clover.stringMovesToBinaryMoves(this.moves)
+      },
+      moveUnConverted () {
+        return this.clover.binaryMovesToByteMoves(this.moveConverted)
+      },
 
       ...mapGetters({
         tokenName: 'name',
@@ -82,15 +79,8 @@
         address: 'address',
         amount: 'amount',
         balance: 'balance',
-        status: 'status',
-        allClovers: 'allClovers'
-      }),
-      moveConverted () {
-        return this.clover.stringMovesToBinaryMoves(this.moves)
-      },
-      moveUnConverted () {
-        return this.clover.binaryMovesToByteMoves(this.moveConverted)
-      }
+        status: 'status'
+      })
     },
     methods: {
       testClover (key, board) {
