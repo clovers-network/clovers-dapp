@@ -18,15 +18,6 @@
     <div class="bg-gray white p2 md-p3">
       toolbarz
     </div>
-    <div class="p2">
-      <div v-if="allClovers.length" class="mt3 px2">
-        <ul class="list-reset flex flex-wrap mxn2">
-          <li v-for="board in cloversSorted" :key="board.board" class="px2 mb3">
-            <clover-grid-item :board="board"></clover-grid-item>
-          </li>
-        </ul>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -47,12 +38,9 @@
         this.clover.playGameMovesString(this.heart)
         return this.clover.byteBoardToRowArray()
       },
-      cloversSorted () {
-        return this.allClovers.sort((a, b) => b.modified - a.modified)
-      },
+
       ...mapGetters([
         'balance',
-        'allClovers',
         'clover'
       ])
     },
