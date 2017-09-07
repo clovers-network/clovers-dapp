@@ -53,6 +53,8 @@ contract ClubToken is StandardToken, Reversi {
 
   // Events
 
+  event newUserName(address player, string name);
+  event newCloverName(bytes16 board, string name);
   event Registered(address newOwner, uint256 lastPaidAmount, bytes16 board, bool newBoard, uint256 registeredEvent, bytes28 first32Moves, bytes28 lastMoves, uint256 modified, uint256 findersFee);
   event DebugGame(bytes16 board, bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym);
   // event DebugGame2(bytes16 board, bool error, string message);
@@ -97,15 +99,6 @@ contract ClubToken is StandardToken, Reversi {
     adminKeys.push(newbie);
   }
 
-  function updateName (string newName) public onlyAdmin() {
-    name = newName;
-  }
-
-  function updateSymbol (string newSymbol) public onlyAdmin() {
-    if (!admins[msg.sender]) revert();
-    symbol = newSymbol;
-  }
-
   function updateMultiplier(uint256 multiplier) public onlyAdmin(){
     payMultiplier = multiplier;
   }
@@ -124,6 +117,10 @@ contract ClubToken is StandardToken, Reversi {
 
   mapping(address => Player) public players;
   address[] public playerKeys;
+
+  function changeName (string name) {
+    newUserName(msg.sender, name);
+  }
 
   function listPlayerCount() public constant returns(uint) {
     return playerKeys.length;
@@ -231,10 +228,10 @@ contract ClubToken is StandardToken, Reversi {
     return (board, clovers[board].previousOwners[ownerKey]);
   }
 
-  // function renameClover(bytes16 board, string name) public exists(board) {
-  //   if (clovers[board].previousOwners[clovers[board].previousOwners.length - 1] != msg.sender) revert();
-  //   clovers[board].name = name;
-  // }
+  function renameClover(bytes16 board, string name) public exists(board) {
+    if (clovers[board].previousOwners[clovers[board].previousOwners.length - 1] != msg.sender) revert();
+    newCloverName(board, name);
+  }
 
   function changeStartPrice(bytes16 board, uint256 startPrice) public exists(board) {
     if(clovers[board].previousOwners[0] != msg.sender) revert();
@@ -253,7 +250,7 @@ contract ClubToken is StandardToken, Reversi {
     if(!cloverExists(b)) revert();
     // cant flip board you currently own
     if (clovers[b].previousOwners[ clovers[b].previousOwners.length - 1 ] == msg.sender) revert();
-    uint nextPrice = clovers[b].lastPaidAmount.mul(2);
+    uint nextPrice = clovers[b].previousOwners.length == 1 ? clovers[b].lastPaidAmount : clovers[b].lastPaidAmount.mul(2);
     if (balances[msg.sender] < nextPrice) revert();
     registerPlayer();
     for (uint8 i = 1; i < 3; i++) {

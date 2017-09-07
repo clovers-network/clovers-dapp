@@ -10,8 +10,14 @@ class Clover extends Reversi {
 
   constructor (events = false) {
     super()
+    this.error = false
+    this.genesisBlock = 848335
+    this.address = '0x6175f6d198c4c7e072ac5fe82bdf28b96c5d9b12'
     this.ClubToken = false
     this.account = false
+    this.name = false
+    this.symbol = false
+    this.balance = 0
     this.accountInterval = false
     this.registeredEvents = []
     this.events = events
@@ -21,32 +27,58 @@ class Clover extends Reversi {
   // Connections
 
   initWeb3 () {
+    console.log('initWeb3')
     let web3Provider
     if (web3) {
+      console.log('yes web3', web3)
       // Use Mist/MetaMask's provider
       web3Provider = web3.currentProvider
     } else {
+      console.log('no web3')
       // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
       web3Provider = new Web3.providers.HttpProvider('https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d')
       // web3Provider = new Web3.providers.HttpProvider('http://localhost:8545')
     }
-
+    console.log('before', web3, web3Provider)
     web3 = new Web3(web3Provider)
+    // if (web3Provider.timeout === 0) {
+    //   setTimeout(() => this.initWeb3(), 1000)
+    // }
+    console.log('after', web3)
     this.setAccountInterval()
   }
 
   setAccountInterval () {
+    console.log('setAccountInterval', this.accountInterval)
     this.account = web3.eth.accounts && web3.eth.accounts[0]
-    if (this.accountInterval) {
-      clearInterval(this.accountInterval)
+    this.accountInterval = this.accountInterval || setInterval(() => {
+      this.checkAccount()
+    }, 3000)
+  }
+
+  stopAccountInterval () {
+    clearInterval(this.accountInterval)
+  }
+
+  checkAccount () {
+    console.log('check account')
+    if (!web3) return
+    if (!this.symbol) {
+      this.getSymbol().then((symbol) => this.symbol = symbol).catch((err) => console.log(err))
     }
-    this.accountInterval = setInterval(() => {
-      this.account = web3.eth.accounts && web3.eth.accounts[0]
-    }, 5000)
+    if (!this.name) {
+      this.getName().then((name) => this.name = name).catch((err) => console.log(err))
+    }
+
+    this.account = web3.eth.accounts && web3.eth.accounts[0]
+    this.account && this.balanceOf().then(balance => {
+      if (balance.toNumber() !== this.balance) this.balance = balance.toNumber()
+    }).catch((err) => console.log(err))
   }
 
   setContract () {
-    this.initWeb3()
+    console.log('set Contract')
+    if (!web3) this.initWeb3()
     this.ClubToken = contract(clubTokenArtifacts)
     this.ClubToken.setProvider(web3.currentProvider)
   }
@@ -57,30 +89,71 @@ class Clover extends Reversi {
     })
   }
 
-  setEvents () {
+  getPastEvents () {
+    console.log('set getPastEvents')
     this.deploy().then((instance) => {
-      instance.Registered({}, {fromBlock: 848335}).get(function (error, result) {
-        if (error) console.error(error)
-        if (result)
+      instance.Registered({}, {fromBlock: this.genesisBlock}).get(function (error, result) {
+        if (error) {
+          this.error = 'need-metamask'
+          console.log(error)
+          setTimeout(() => this.getPastEvents(), 2000)
+        } else {
+          this.error = false
           window.dispatchEvent(new CustomEvent('eventsRegistered', {detail: result}))
-          // result.forEach((e) => window.dispatchEvent(new CustomEvent('eventRegistered', {detail: e})))
+        }
       })
+    })
+  }
 
-      let newEvents = instance.Registered({}, {fromBlock: 'latest'})
-      newEvents.watch((error, result) => {
-        console.log('new', result)
-        if (error) console.error(error)
-        else {
+  watchFutureEvents () {
+    console.log('set watchFutureEvents')
+    this.deploy().then((instance) => {
+      instance.Registered({}, {fromBlock: 'latest'}).watch((error, result) => {
+        if (error) {
+          this.error = 'need-metamask'
+          setTimeout(() => this.watchFutureEvents(), 2000)
+        } else {
+          this.error = false
           window.dispatchEvent(new CustomEvent('eventRegistered', {detail: result}))
         }
       })
-
     })
   }
 
   deploy () {
+    console.log('deploy')
     if (!this.ClubToken) this.setContract()
     return this.ClubToken.deployed()
+  }
+
+  // Token
+
+  // contract read only / calls
+
+  balanceOf (account = this.account) {
+    return this.deploy().then((instance) => {
+      return instance.balanceOf(account)
+    })
+  }
+
+  getName () {
+    return this.deploy().then((instance) => {
+      return instance.name()
+    })
+  }
+
+  getSymbol () {
+    return this.deploy().then((instance) => {
+      return instance.symbol()
+    })
+  }
+
+  // contract write / transactions
+
+  transfer (to = this.account, amount = 0) {
+    return this.deploy().then((instance) => {
+      return this.instance.transfer(to, new BN(amount, 10), {from: this.account})
+    })
   }
 
 

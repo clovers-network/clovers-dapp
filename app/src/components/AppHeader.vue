@@ -9,7 +9,7 @@
         <li class="inline-block mr2">
           <router-link to="/wallet" class="white">Wallet</router-link>
         </li>
-        <li class="inline-block mr2">0x6175f6d198c4c7e072ac5fe82bdf28b96c5d9b12</li>
+        <li class="inline-block mr2"></li>
       </ul>
       <p class="m0 pr3">
         <span>{{ cloversFound }}</span>

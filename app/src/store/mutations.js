@@ -3,33 +3,6 @@ export default {
   ROUTE_CHANGED (state, { to, from }) {
     console.log('route changed from', from.name, 'to', to.name)
   },
-  UPDATE_ACCOUNT (state, account) {
-    state.account = account
-  },
-  UPDATE_ADDRESS (state, address) {
-    state.address = address
-  },
-  UPDATE_AMOUNT (state, amount) {
-    state.amount = amount
-  },
-  UPDATE_NAME (state, name) {
-    state.name = name
-  },
-  UPDATE_SYMBOL (state, symbol) {
-    state.symbol = symbol
-  },
-  UPDATE_DECIMALS (state, decimals) {
-    state.decimals = decimals
-  },
-  UPDATE_BALANCE (state, balance) {
-    state.balance = balance
-  },
-  UPDATE_STATUS (state, status) {
-    state.status = status
-  },
-  UPDATE_CONTRACT (state, contract) {
-    state.ClubToken = contract
-  },
   TOGGLE_MINER (state, bool) {
     state.mining = !!bool
   },
