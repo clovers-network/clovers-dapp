@@ -70,7 +70,7 @@
 </template>
 
 <script>
-  import { mapMutations } from 'vuex'
+  import { mapMutations, mapGetters } from 'vuex'
   import CloverWorker from 'worker-loader!../assets/clover-worker'
   import Clover from '../assets/clovers'
   import ClaimClover from '@/components/ClaimClover'
@@ -95,9 +95,6 @@
       }
     },
     computed: {
-      account () {
-        return this.$store.state.account
-      },
       clovers: {
         get () {
           return this.$store.state.minedClovers
@@ -159,7 +156,10 @@
         },
         set (newVal) {
           this.changePower(newVal)
-        }
+        },
+        ...mapGetters({
+          account: 'account'
+        })
       },
       mineBtn () {
         return this.miners.length ? 'More power' : 'Start mining'
