@@ -25,6 +25,7 @@
     },
     methods: {
       ...mapMutations({
+        updateClover: 'UPDATE_CLOVER',
         registerEvent: 'ADD_REGISTERED_EVENT',
         registerEvents: 'ADD_REGISTERED_EVENTS'
       })
@@ -32,6 +33,9 @@
     mounted () {
       this.clover.initWeb3()
 
+      window.addEventListener('updateCloverObject', (e) => {
+        this.updateClover(e.detail)
+      }, false)
       window.addEventListener('eventRegistered', (e) => {
         this.registerEvent(e.detail)
       }, false)
