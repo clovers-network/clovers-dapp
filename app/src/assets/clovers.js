@@ -5,7 +5,7 @@ import Web3 from 'web3'
 import Reversi from './reversi'
 
 let web3 = self && self.web3
-
+let _web3 = false
 class Clover extends Reversi {
 
   constructor (events = false) {
@@ -27,6 +27,7 @@ class Clover extends Reversi {
   // Connections
 
   initWeb3 () {
+    web3 = self && self.web3
     let web3Provider
     if (web3) {
       // Use Mist/MetaMask's provider
@@ -36,7 +37,7 @@ class Clover extends Reversi {
       web3Provider = new Web3.providers.HttpProvider('https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d')
       // web3Provider = new Web3.providers.HttpProvider('http://localhost:8545')
     }
-    web3 = new Web3(web3Provider)
+    _web3 = new Web3(web3Provider)
 
     this.setAccountInterval()
     this.getPastEvents()
@@ -44,7 +45,7 @@ class Clover extends Reversi {
   }
 
   resetConnection () {
-    web3 = false
+    _web3 = false
     this.ClubToken = false
   }
 
@@ -59,7 +60,7 @@ class Clover extends Reversi {
   }
 
   checkAccount () {
-    if (!web3) this.initWeb3()
+    if (!_web3) this.initWeb3()
     if (!this.symbol) {
       this.getSymbol().then((symbol) => {
         this.symbol = symbol
@@ -72,8 +73,8 @@ class Clover extends Reversi {
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       }).catch((err) => console.log(err))
     }
-    if (web3.eth.accounts) {
-      this.account = web3.eth.accounts[0]
+    if (_web3.eth.accounts) {
+      this.account = _web3.eth.accounts[0]
       window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
     }
     this.account && this.balanceOf().then(balance => {
@@ -85,9 +86,9 @@ class Clover extends Reversi {
   }
 
   setContract () {
-    if (!web3) this.initWeb3()
+    if (!_web3) this.initWeb3()
     this.ClubToken = contract(clubTokenArtifacts)
-    this.ClubToken.setProvider(web3.currentProvider)
+    this.ClubToken.setProvider(_web3.currentProvider)
   }
 
   stopEvents () {
@@ -238,7 +239,6 @@ class Clover extends Reversi {
   // formatting
 
   formatTallys (contractArray = Array(6)) {
-    // console.log(contractArray)
     let tallys = {
       Symmetricals: contractArray[0].toNumber(),
       RotSym: contractArray[1].toNumber(),
