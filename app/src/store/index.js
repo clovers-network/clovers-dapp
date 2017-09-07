@@ -15,10 +15,6 @@ const debug = false
 
 const state = {
   clover: new Clover(),
-  name: null,
-  symbol: null,
-  account: '0x0',
-  balance: '0',
   hashRate: 0,
   mineTime: 0,
   totalMined: 0,

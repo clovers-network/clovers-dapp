@@ -27,7 +27,6 @@ class Clover extends Reversi {
   // Connections
 
   initWeb3 () {
-    console.log('init')
     let web3Provider
     if (web3) {
       // Use Mist/MetaMask's provider
@@ -45,13 +44,11 @@ class Clover extends Reversi {
   }
 
   resetConnection () {
-    console.log('reset connection')
     web3 = false
     this.ClubToken = false
   }
 
   setAccountInterval () {
-    this.account = web3.eth.accounts && web3.eth.accounts[0]
     this.accountInterval = this.accountInterval || setInterval(() => {
       this.checkAccount()
     }, 3000)
@@ -64,20 +61,30 @@ class Clover extends Reversi {
   checkAccount () {
     if (!web3) this.initWeb3()
     if (!this.symbol) {
-      this.getSymbol().then((symbol) => this.symbol = symbol).catch((err) => console.log(err))
+      this.getSymbol().then((symbol) => {
+        this.symbol = symbol
+        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+      }).catch((err) => console.log(err))
     }
     if (!this.name) {
-      this.getName().then((name) => this.name = name).catch((err) => console.log(err))
+      this.getName().then((name) => {
+        this.name = name
+        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+      }).catch((err) => console.log(err))
     }
-
-    this.account = web3.eth.accounts && web3.eth.accounts[0]
+    if (web3.eth.accounts) {
+      this.account = web3.eth.accounts[0]
+      window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+    }
     this.account && this.balanceOf().then(balance => {
-      if (balance.toNumber() !== this.balance) this.balance = balance.toNumber()
+      if (balance.toNumber() !== this.balance) {
+        this.balance = balance.toNumber()
+        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+      }
     }).catch((err) => console.log(err))
   }
 
   setContract () {
-    console.log('set Contract')
     if (!web3) this.initWeb3()
     this.ClubToken = contract(clubTokenArtifacts)
     this.ClubToken.setProvider(web3.currentProvider)
@@ -90,29 +97,30 @@ class Clover extends Reversi {
   }
 
   getPastEvents () {
-    console.log('set getPastEvents')
     this.deploy().then((instance) => {
       instance.Registered({}, {fromBlock: this.genesisBlock}).get((error, result) => {
         if (error) {
           this.error = 'need-metamask'
+          window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
           this.resetConnection()
         } else {
           this.error = false
-          window.dispatchEvent(new CustomEvent('eventsRegistered', {detail: result}))
+          window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
         }
       })
     })
   }
 
   watchFutureEvents () {
-    console.log('set watchFutureEvents')
     this.deploy().then((instance) => {
       instance.Registered({}, {fromBlock: 'latest'}).watch((error, result) => {
         if (error) {
           this.error = 'need-metamask'
+          window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
           this.resetConnection()
         } else {
           this.error = false
+          window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
           window.dispatchEvent(new CustomEvent('eventRegistered', {detail: result}))
         }
       })
@@ -120,7 +128,6 @@ class Clover extends Reversi {
   }
 
   deploy () {
-    console.log('deploy')
     if (!this.ClubToken) this.setContract()
     return this.ClubToken.deployed()
   }
@@ -527,8 +534,6 @@ class Clover extends Reversi {
 
   showGameConstant (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     return this.deploy().then((instance) => {
-      console.log(this.binaryMovesToStringMoves(new BN(byteFirst32Moves, 16).toString(2)))
-      console.log(this.binaryMovesToStringMoves(new BN(byteLastMoves, 16).toString(2)))
       return instance.showGameConstant(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
         return this.formatGame(result)
       })
@@ -553,8 +558,6 @@ class Clover extends Reversi {
   }
 
   formatGame (contractArray = []) {
-    // console.log(contractArray)
-    //    DebugGame(game.board, game.error, game.complete, game.symmetrical, game.RotSym, game.Y0Sym, game.X0Sym, game.XYSym, game.XnYSym);
     return {
       error: contractArray[0],
       complete: contractArray[1],
