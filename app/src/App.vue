@@ -31,8 +31,6 @@
     },
     mounted () {
       this.clover.initWeb3()
-      this.clover.getPastEvents()
-      this.clover.watchFutureEvents()
 
       window.addEventListener('eventRegistered', (e) => {
         this.registerEvent(e.detail)
