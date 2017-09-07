@@ -11,8 +11,8 @@ class Clover extends Reversi {
   constructor (events = false) {
     super()
     this.error = false
-    this.genesisBlock = 848335
-    this.address = '0x6175f6d198c4c7e072ac5fe82bdf28b96c5d9b12'
+    this.genesisBlock = 853456
+    this.address = '0x65f7bac696583ddc7dac4c7779f3856d44303d31'
     this.ClubToken = false
     this.account = false
     this.name = null
@@ -291,7 +291,7 @@ class Clover extends Reversi {
     })
   }
 
-  playerCurrentCount (address = '0x0') {
+  playerCurrentCount (address = this.account) {
     return this.deploy().then((instance) => {
       return instance.playerCurrentCount(address).then((num) => new BN(num).toNumber())
     })

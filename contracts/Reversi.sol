@@ -40,7 +40,7 @@ contract Reversi {
     return (EMPTY, BLACK, WHITE);
   }
 
-  function playGame(bytes28 first32Moves, bytes28 lastMoves) internal constant returns (Game)  {
+  function playGame (bytes28 first32Moves, bytes28 lastMoves) internal constant returns (Game)  {
     Game memory game;
 
     game.first32Moves = first32Moves;
