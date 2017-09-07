@@ -106,6 +106,7 @@ class Clover extends Reversi {
         } else {
           this.error = false
           window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+          window.dispatchEvent(new CustomEvent('eventsRegistered', {detail: result}))
         }
       })
     })
