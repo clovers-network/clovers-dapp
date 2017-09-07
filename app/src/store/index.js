@@ -14,15 +14,11 @@ Vue.use(Vuex)
 const debug = false
 
 const state = {
+  clover: new Clover(),
   name: null,
   symbol: null,
-  ClubToken: false,
   account: '0x0',
   balance: '0',
-  decimals: 0,
-  amount: '',
-  address: '',
-  status: '',
   hashRate: 0,
   mineTime: 0,
   totalMined: 0,
@@ -30,8 +26,7 @@ const state = {
   mining: false,
   miningPower: 0,
   minedClovers: [],
-  registeredEvents: [],
-  clover: new Clover()
+  registeredEvents: []
 }
 
 export default new Vuex.Store({

@@ -4,7 +4,7 @@
       <div class="relative mx3">
         <template v-if='byteBoard'>
           <div class="h2">
-            <clv  :board="miner.byteBoardToRowArray(byteBoard)"></clv>
+            <clv :board="miner.byteBoardToRowArray(byteBoard)"></clv>
           </div>
           <div>
             <svg-text :movesString="movesString"></svg-text>
@@ -15,7 +15,9 @@
         <p class="h1 m0 lh1">🗑 Removed {{ removeDate }}</p>
       </div>
       <div v-else-if="cloverData.claimed" class="px3 flex-auto">
-        <p class="h1 m0 lh1">✨ Claimed {{ claimDate }}</p>
+        <router-link :to="'/boards/' + cloverData.byteBoard">
+          <p class="h1 m0 lh1">✨ Claimed {{ claimDate }}</p>
+        </router-link>
       </div>
       <div v-else class="col-8 lg-col-7">
         <!-- <div>
