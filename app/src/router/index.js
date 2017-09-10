@@ -3,7 +3,6 @@ import Router from 'vue-router'
 import Home from '@/components/Home'
 import Clover from '@/components/Clover'
 import User from '@/components/User'
-import Wallet from '@/components/Wallet'
 
 Vue.use(Router)
 
@@ -14,11 +13,6 @@ export default new Router({
       path: '/',
       name: 'Home',
       component: Home
-    },
-    {
-      path: '/wallet',
-      name: 'Wallet',
-      component: Wallet
     },
     {
       path: '/clovers/:board',

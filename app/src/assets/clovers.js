@@ -242,14 +242,7 @@ class Clover extends Reversi {
       })
     })
   }
-
-  testTallys (byteBoard = this.byteBoard) {
-    return this.deploy().then((instance) => {
-      return instance.testTallys(new BN(byteBoard, 16)).then((tallys) => {
-        return this.formatTallys(tallys)
-      })
-    })
-  }
+  
 
   // contract write / transactions
 
@@ -507,13 +500,13 @@ class Clover extends Reversi {
     })
   }
 
-  buyClover (board = this.byteBoard) {
+  flipClover (board = this.byteBoard) {
     return this.deploy().then((instance) => {
       return instance.cloverExists.call(new BN(board, 16)).then((result) => {
         if (!result) {
           throw new Error('Can\'t buy a clover that hasn\'t been found')
         } else {
-          return instance.buyClover(new BN(board, 16), {from: this.account} )
+          return instance.flipClover(new BN(board, 16), {from: this.account} )
         }
       })
     })
@@ -578,14 +571,6 @@ class Clover extends Reversi {
     return this.deploy().then((instance) => {
       return instance.showGameConstant(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
         return this.formatGame(result)
-      })
-    })
-  }
-
-  showGameBoard (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
-    return this.deploy().then((instance) => {
-      return instance.showGameBoard(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
-        return this.byteBoardToRowArray(result)
       })
     })
   }
