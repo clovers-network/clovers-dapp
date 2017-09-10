@@ -452,8 +452,6 @@ class Clover extends Reversi {
     return this.cloverExists(board).then((exists) => {
       if (!exists) throw new Error('Can\'t name a clover that hasn\'t been registered')
       return this.getCloverOwner(board).then((result) => {
-        console.log(this.account)
-        console.log(result.owner)
         if (result.owner !== this.account) throw new Error('Can\'t name a clover you don\'t own')
         return this.deploy().then((instance) => {
           return instance.renameClover(new BN(board, 16), name, {from: this.account})

@@ -14,7 +14,6 @@ export default {
     console.log('clover names calculated')
     let cloverNames = []
     state.clovernameEvents.forEach((event) => {
-      console.log(event.args.name)
       let cloverKey = cloverNames.findIndex((clover) => clover.board === event.args.board)
       if (cloverKey > -1) {
         let clover = cloverNames[cloverKey]
