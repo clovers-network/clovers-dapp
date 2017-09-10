@@ -2,11 +2,19 @@
   <div class="p2">
     <div v-if="allClovers.length" class="mt3 px2">
       <div>
-      <span 
-      @click='clickSort(i)'
-      :class="sortableClass(i)"
-      class='btn btn-outline mb1 green' 
-      v-for='sort, i in sortable'>{{sort}}</span>
+      <form 
+      class='border-bottom inline-block my1'
+      @submit.prevent="search">
+      <input class='input' v-model="search" placeholder="search">
+      </form>
+      </div>
+      <div>
+        <span 
+        @click='clickSort(i)'
+        :class="sortableClass(i)"
+        class='btn btn-outline mb1 green' 
+        v-html="sort"
+        v-for='sort, i in sortable'></span>
       </div>
       <div>
         <span 
@@ -29,8 +37,8 @@
         <span>Page {{paged}} of {{pagedTotal}}</span>
       </div>
       <ul class="list-reset flex flex-wrap mxn2">
-        <li v-for="board in cloversSorted" :key="board.board" class="px2 mb3">
-          <clover-grid-item :key="board.board" :board="board"></clover-grid-item>
+        <li v-for="board in cloversSliced" :key="board.board" class="px2 mb3">
+          <clover-grid-item :by-flip="sortableIndex == 1 || sortableIndex == 3" :key="board.board" :board="board"></clover-grid-item>
         </li>
       </ul>
     </div>
@@ -51,7 +59,8 @@
         limits: [5, 10, 20, 50, 100],
         asc: true,
         sortableIndex: 0,
-        sortable: ['Date Found', 'Date Flipped', 'Current Price', 'Times Flipped']
+        sortable: ['Date Found', 'Date Flipped', 'Current Price', 'Times Flipped'],
+        search: null
       }
     },
     watch: {
@@ -61,7 +70,7 @@
     },
     computed: {
       pagedTotal () {
-        return Math.floor(this.allClovers.length / this.limit) + (this.allClovers.length % this.limit && 1)
+        return Math.floor(this.cloversSorted.length / this.limit) + (this.cloversSorted.length % this.limit && 1)
       },
       prevPossible () {
         return this.paged > 1
@@ -75,6 +84,9 @@
       endSlice () {
         return this.limit * this.paged
       },
+      cloversSliced () {
+        return this.cloversSorted.slice(this.startSlice, this.endSlice)
+      },
       cloversSorted () {
         return this.allClovers.sort((a, b) => {
           switch (this.sortableIndex) {
@@ -87,10 +99,25 @@
             case (3):
               return this.asc ? b.previousOwners.length - a.previousOwners.length : a.previousOwners.length - b.previousOwners.length
           }
-        }).slice(this.startSlice, this.endSlice)
+        }).filter((c) => {
+          if (!this.search) return c
+          return c.previousOwners.slice(-1).filter((p) => {
+            return (p.name && p.name.search(this.search) > -1) || p.address.search(this.search) > -1
+          }).length || // owner
+          c.previousOwners.slice(0, 1).filter((p) => {
+            return (p.name && p.name.search(this.search) > -1) || p.address.search(this.search) > -1
+          }).length || // founder
+          c.name && c.name.search(this.search) > -1 || // board name
+          c.first32Moves.search(this.search) > -1 || // moves
+          c.first32Moves.search(this.search) > -1 || // moves
+          c.lastMoves.search(this.search) > -1 || // moves
+          c.board.search(this.search) > -1 // board
+        })
       },
       ...mapGetters([
-        'allClovers'
+        'allClovers',
+        'usernames',
+        'clovernames'
       ])
     },
     methods: {

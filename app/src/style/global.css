@@ -83,6 +83,8 @@ samp,
     Consolas,
     'Liberation Mono',
     monospace;
+    white-space: pre;
+    line-height: 1.3em;
 }
 
 code, samp {
@@ -133,6 +135,10 @@ hr {
 }
 
 /* #APP STUFF */
+
+.gridItem {
+  max-width:172px;
+}
 
 .clover {
   transition: background 500ms ease;
@@ -277,6 +283,7 @@ button {
     outline: none;
   }
 }
+
 
 .currency {
   position: relative;
