@@ -1,8 +1,7 @@
 <template>
   <div>
-    <div class="bg-gray white p2 md-p3" v-text='address'></div>
-
-    <div class="p3">
+    <div class="bg-gray white p2 md-p3 pre mono" v-text="address"></div>
+     <div class="p3">
       <p class="h2" v-if='mine && username'>
         <form class=' border-bottom fit' @submit.prevent="changeName()"><input class='input big fit' type="text" placeholder="Name" v-model="name"/></form>
       </p>
@@ -20,13 +19,10 @@
 </template>
 
 <script>
-
   import { mapMutations, mapGetters, mapActions } from 'vuex'
 
   export default {
-
     name: 'User',
-
     data () {
       return {
         name: null
@@ -100,6 +96,3 @@
     }
   }
 </script>
-
-<style lang="css" scoped>
-</style>
