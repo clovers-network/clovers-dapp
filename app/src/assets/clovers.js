@@ -68,22 +68,26 @@ class Clover extends Reversi {
     if (!this.symbol) {
       this.getSymbol().then((symbol) => {
         this.symbol = symbol
+        console.log('updateSymbol')
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       }).catch((err) => console.log(err))
     }
     if (!this.name) {
       this.getName().then((name) => {
         this.name = name
+        console.log('name')
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       }).catch((err) => console.log(err))
     }
-    if (_web3.eth.accounts) {
+    if (_web3.eth.accounts && this.account !== _web3.eth.accounts[0]) {
       this.account = _web3.eth.accounts[0]
+      console.log('updateAccount')
       window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
     }
     this.account && this.balanceOf().then(balance => {
       if (balance.toNumber() !== this.balance) {
         this.balance = balance.toNumber()
+        console.log('updateBalance')
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       }
     }).catch((err) => console.log(err))
@@ -111,6 +115,7 @@ class Clover extends Reversi {
           this.error = false
           window.dispatchEvent(new CustomEvent('eventsRegistered', {detail: result}))
         }
+        console.log('RegisteredUpdate')
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       })
       instance.newCloverName({}, {fromBlock: this.genesisBlock}).get((error, result) => {
@@ -121,6 +126,7 @@ class Clover extends Reversi {
           this.error = false
           window.dispatchEvent(new CustomEvent('newClovernameEvents', {detail: result}))
         }
+        console.log('newcloverNameUpdate')
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       })
       instance.newUserName({}, {fromBlock: this.genesisBlock}).get((error, result) => {
@@ -131,6 +137,7 @@ class Clover extends Reversi {
           this.error = false
           window.dispatchEvent(new CustomEvent('newUsernameEvents', {detail: result}))
         }
+        console.log('new userame update')
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       })
     })
@@ -146,6 +153,7 @@ class Clover extends Reversi {
           this.error = false
           window.dispatchEvent(new CustomEvent('eventRegistered', {detail: result}))
         }
+        console.log('new registered update')
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       })
       instance.newCloverName({}, {fromBlock: 'latest'}).watch((error, result) => {
@@ -156,6 +164,7 @@ class Clover extends Reversi {
           this.error = false
           window.dispatchEvent(new CustomEvent('newClovernameEvent', {detail: result}))
         }
+        console.log('new clover name update')
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       })
       instance.newUserName({}, {fromBlock: 'latest'}).watch((error, result) => {
@@ -166,6 +175,7 @@ class Clover extends Reversi {
           this.error = false
           window.dispatchEvent(new CustomEvent('newUsernameEvent', {detail: result}))
         }
+        console.log('new username update')
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       })
     })

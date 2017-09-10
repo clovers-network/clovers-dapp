@@ -200,6 +200,7 @@
       },
       claimed (byteBoard) {
         console.log('miner claimed:', byteBoard)
+        this.claimedClover(byteBoard)
         this.setItem('clovers', this.clovers)
       },
       mine () {
