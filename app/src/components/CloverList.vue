@@ -30,7 +30,7 @@
       </div>
       <ul class="list-reset flex flex-wrap mxn2">
         <li v-for="board in cloversSorted" :key="board.board" class="px2 mb3">
-          <clover-grid-item :board="board"></clover-grid-item>
+          <clover-grid-item :key="board.board" :board="board"></clover-grid-item>
         </li>
       </ul>
     </div>

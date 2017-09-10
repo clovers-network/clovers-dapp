@@ -567,7 +567,13 @@ class Clover extends Reversi {
     })
   }
 
-  showGameConstant (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
+  debugGame (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
+    return this.deploy().then((instance) => {
+      return instance.debugGame(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), {from: this.account})
+    })
+  }
+
+  showGame (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     return this.deploy().then((instance) => {
       return instance.showGameConstant(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
         return this.formatGame(result)
@@ -575,14 +581,22 @@ class Clover extends Reversi {
     })
   }
 
-  // contract write / transactions
-
-  showGameDebug (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
-    if (!this.account) return
+  showGame2 (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
+    console.log(new BN(byteFirst32Moves, 16).toString(2))
+    console.log(new BN(byteLastMoves, 16).toString(2))
     return this.deploy().then((instance) => {
-      return instance.showGameDebug(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), {from: this.account})
+      return instance.showGame2(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
+        return this.formatGame2(result)
+      })
     })
   }
+
+  // contract write / transactions
+
+  // (none)
+
+
+  // formatting
 
   formatGame (contractArray = []) {
     return {
@@ -594,6 +608,18 @@ class Clover extends Reversi {
       X0Sym: contractArray[5],
       XYSym: contractArray[6],
       XnYSym: contractArray[7]
+    }
+  }
+
+  formatGame2 (contractArray = []) {
+    console.log(contractArray)
+    return {
+      board: contractArray[0],
+      arrayBoardRow: this.byteBoardToRowArray(contractArray[0]),
+      blackScore: new BN(contractArray[1], 16).toNumber(10),
+      whiteScore: new BN(contractArray[2], 16).toNumber(10),
+      currentPlayer: new BN(contractArray[3], 16).toNumber(10),
+      moveKey: new BN(contractArray[4], 16).toNumber(10)
     }
   }
 
