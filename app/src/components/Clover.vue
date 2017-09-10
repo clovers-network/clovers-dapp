@@ -39,10 +39,10 @@
       </div>
       <div class="col-12 order-3 center">
         <template v-if="currentOwner">
-          <p class="m0 px2 py1 border inline-block">you own it</p>
+          <p class="m0 px2 py1 border inline-block">It's yours 💯</p>
         </template>
         <template v-else>
-          <a @click="flip" class="m0 px2 py1 border inline-block pointer white">buy it from {{ founderName }}</a>
+          <a @click="flip" class="m0 px2 py1 border inline-block pointer white">Buy it from {{ founderName }}</a>
         </template>
       </div>
     </div>
