@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="bg-gray white p2 md-p3" v-text='address'></div>
+    <div class="bg-gray white p2 md-p3 pre mono" v-text="address"></div>
     <div class="p2">
       <div v-if="myClovers" class="mt3 px2">
         <ul class="list-reset flex flex-wrap mxn2">
@@ -14,18 +14,10 @@
 </template>
 
 <script>
-
   import { mapGetters } from 'vuex'
 
   export default {
-
     name: 'User',
-
-    data () {
-      return {
-
-      }
-    },
     watch: {
       allUsers () {
         console.log('all Users changed')
@@ -48,6 +40,7 @@
         return this.user && this.user.clovers
         .map((c) => this.allClovers.find((ac) => ac.board === c))
       },
+
       ...mapGetters([
         'allUsers',
         'allClovers'
@@ -55,6 +48,3 @@
     }
   }
 </script>
-
-<style lang="css" scoped>
-</style>

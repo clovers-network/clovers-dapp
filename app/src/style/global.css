@@ -169,6 +169,37 @@ hr {
   opacity: .5;
 }
 
+.zig-zag {
+
+  &:before {
+    background: linear-gradient(-150deg, var(--black) 16px, transparent 0), linear-gradient(150deg, var(--black) 16px, transparent 0);
+    background-position: bottom left;
+    background-repeat: repeat-x;
+    background-size: 32px 32px;
+    content: " ";
+    display: block;
+    height: 32px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+
+  &:after {
+    background: linear-gradient(-30deg, var(--black) 16px, transparent 0), linear-gradient(30deg, var(--black) 16px, transparent 0);
+    background-position: bottom left;
+    background-repeat: repeat-x;
+    background-size: 32px 32px;
+    bottom: 0;
+    content: " ";
+    display: block;
+    height: 32px;
+    left: 0;
+    position: absolute;
+    width: 100%;
+  }
+}
+
 /* FORMS */
 
 textarea {
