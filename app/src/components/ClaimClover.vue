@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-dark-gray white px2 py3">
+  <div class="bg-dark-gray white px2 py4 zig-zag relative">
     <div class="flex items-center justify-between">
       <div class="relative mx3">
         <template v-if='byteBoard'>
@@ -12,14 +12,14 @@
         <p class="h1 m0 lh1">🗑 Removed {{ removeDate }}</p>
       </div>
       <div v-else-if="cloverData.claimed" class="px3 flex-auto">
-        <router-link :to="'/boards/' + cloverData.byteBoard">
-          <p class="h1 m0 lh1">✨ Claimed {{ claimDate }}</p>
+        <router-link :to="'/clovers/' + cloverData.byteBoard">
+          <p class="h1 m0 lh1 white">✨ Claimed {{ claimDate }}</p>
         </router-link>
       </div>
       <div v-else class="col-8 lg-col-7">
-        <div>
-<!--           <input class="btn btn-outline py3 col-12 regular h3" v-model='movesString'> -->
-        </div>
+        <!-- <div>
+          <input class="btn btn-outline py3 col-12 regular h3" v-model='movesString'>
+        </div> -->
         <form @submit.prevent="trigger">
           <div class="mb2 flex flex-wrap">
             <div class="col-6 px3">
@@ -46,7 +46,7 @@
         </form>
       </div>
     </div>
-<!--     <button @click.self="test()" class="btn btn-outline py3 col-12 regular h3">TEST</button> -->
+    <!-- <button @click.self="test()" class="btn btn-outline py3 col-12 regular h3">TEST</button> -->
   </div>
 </template>
 
@@ -136,7 +136,7 @@
           console.log('claimed', res)
           this.$emit('claimed', res)
         }).catch((err) => {
-          console.log(err)
+          window.alert(err.toString())
           this.submitting = false
         })
       },
