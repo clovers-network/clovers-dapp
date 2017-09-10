@@ -9,7 +9,7 @@
         <li class="inline-block mr2">
           <router-link to="/wallet" class="white">Wallet</router-link>
         </li>
-        <li class="inline-block  ml4 white">account: <router-link class='white' :to="'/users/' + username.address">{{username.name}}</router-link></li>
+        <li class="inline-block  ml4 white">account: <router-link class='white' :to="'/users/' + username.address" v-html="userName"></router-link></li>
       </ul>
       <p class="m0 pr3">
         <span>{{ cloversFound }}</span>
@@ -43,6 +43,9 @@
       }
     },
     computed: {
+      userName () {
+        return this.username && this.username.name && (this.username.name.length > 7 ? this.username.name.slice(0, 7) + '&hellip;' : this.username.name)
+      },
       mineText () {
         if (!this.mining) return 'Miner stopped'
         return `Mining at ${this.hashRate} g/s`

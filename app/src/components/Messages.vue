@@ -38,7 +38,7 @@
       buildClass (msg) {
         return {
           'bg-green': msg.type === 'success',
-          'bg-blue': msg.type === 'progress',
+          'bg-orange': msg.type === 'progress',
           'bg-red': msg.type === 'error'
         }
       },
