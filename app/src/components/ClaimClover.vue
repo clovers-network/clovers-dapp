@@ -133,18 +133,17 @@
         this.clover.playGameMovesString(this.movesString)
         this.addMessage({
           msg: 'Large TXs take time, please be patient',
-          link: '/',
           type: 'progress'
         }).then((msgId) => {
           this.clover.register().then((res) => {
             console.log('res', res)
+            this.claimedClover(this.clover.byteBoard)
             this.submitting = false
             console.log('claim returned')
-            this.$emit('claimed', res)
             this.removeMessage(msgId)
             this.selfDestructMsg({
               msg: 'Clover 0x' + this.clover.byteBoard + ' Claimed',
-              link: '/clovers/' + this.clover.byteBoard,
+              link: '/clovers/0x' + this.clover.byteBoard,
               type: 'success'
             })
           }).catch((err) => {
@@ -169,7 +168,8 @@
 
       ...mapMutations({
         updateCloverPrice: 'UPDATE_CLOVER_PRICE',
-        removeMessage: 'REMOVE_MSG'
+        removeMessage: 'REMOVE_MSG',
+        claimedClover: 'CLAIMED_CLOVER'
       })
     },
     components: { SvgText }
