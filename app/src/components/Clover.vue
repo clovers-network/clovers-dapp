@@ -53,7 +53,7 @@
     },
     methods: {
       flip () {
-        this.clover.buyClover(this.boardId)
+        this.clover.flipClover(this.boardId)
       },
       changeName () {
         this.clover.renameClover(this.boardId, this.name).catch((err) => {
