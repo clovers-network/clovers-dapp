@@ -11,6 +11,7 @@ export default {
   mining: state => state.mining,
   miningPower: state => state.miningPower,
   cloverNames: state => {
+    console.log('clover names calculated')
     let cloverNames = []
     state.clovernameEvents.forEach((event) => {
       console.log(event.args.name)
@@ -26,6 +27,7 @@ export default {
     return cloverNames
   },
   symmetries: (state, getters) => {
+    console.log('symmetries calculated')
     let Symmetricals = 0
     let RotSym = 0
     let X0Sym = 0
@@ -47,7 +49,7 @@ export default {
     return {Symmetricals, RotSym, X0Sym, Y0Sym, XYSym, XnYSym, PayMultiplier: 100}
   },
   allClovers: (state, getters) => {
-    console.log('re calc allClovers')
+    console.log('all clovers calculated')
     let clovers = []
     JSON.parse(JSON.stringify(state.registeredEvents))
     .forEach((e) => {
@@ -83,6 +85,7 @@ export default {
     })
   },
   allUsers: state => {
+    console.log('all users calculated')
     let users = []
     JSON.parse(JSON.stringify(state.registeredEvents))
     .forEach((e) => {

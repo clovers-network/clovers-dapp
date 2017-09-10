@@ -1,6 +1,24 @@
 pragma solidity ^0.4.13;
 
 library Reversi {
+  // event DebugGame(bytes16 board, bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym);
+  // event DebugGame2(bytes16 board, bool error, string message, uint8 moveKey, uint8 blackScore, uint8 whiteScore);
+  // function debugGame(Game game) internal {
+  //   DebugGame(game.board, game.error, game.complete, game.symmetrical, game.RotSym, game.Y0Sym, game.X0Sym, game.XYSym, game.XnYSym);
+  // }
+  // function debugGame2(Game game) internal {
+  //   DebugGame2(game.board, game.error, game.msg, game.moveKey, game.blackScore, game.whiteScore);
+  // }
+  // event DebugBoard(bytes16 b);
+  // event DebugMove(uint8 col, uint8 row);
+  // event DebugMoveBytes28(bytes28 first32Moves);
+  // event DebugMovesBytes28(bytes28 first32Moves, bytes28 lastMoves);
+  // event DebugMoves(uint8[2][] arr);
+  // event DebugBool(bool boo);
+  // event DebugByte(byte foo);
+  // event DebugUint(uint128 bar);
+  // event DebugUint8(uint8 foo);
+  // event DebugMsg(string msg);
 
   struct Game {
     bool error;
@@ -11,31 +29,24 @@ library Reversi {
     bool X0Sym;
     bool XYSym;
     bool XnYSym;
-    byte currentPlayer;
-    byte moveKey;
-    byte blackScore;
-    byte whiteScore;
     bytes16 board;
     bytes28 first32Moves;
     bytes28 lastMoves;
+
+    uint8 currentPlayer;
+    uint8 moveKey;
+    uint8 blackScore;
+    uint8 whiteScore;
+
     // string msg;
   }
 
-  byte constant BLACK = byte(1); //0b01 //0x1
-  byte constant WHITE = byte(2); //0b10 //0x2
-  byte constant EMPTY = byte(3); //0b11 //0x3
-
-  // event DebugMove(uint8 col, uint8 row);
-  // event DebugMoveBytes28(bytes28 first32Moves);
-  // event DebugMovesBytes28(bytes28 first32Moves, bytes28 lastMoves);
-  // event DebugMoves(uint8[2][] arr);
-  // event DebugByte(bytes16 foo);
-  // event DebugUint(uint128 bar);
-  // event DebugUint8(uint8 foo);
-  // event DebugMsg(string msg);
+  uint8 constant BLACK = 1; //0b01 //0x1
+  uint8 constant WHITE = 2; //0b10 //0x2
+  uint8 constant EMPTY = 3; //0b11 //0x3
 
   function showColors () public constant returns(uint8, uint8, uint8) {
-    return (uint8(EMPTY), uint8(BLACK), uint8(WHITE));
+    return (EMPTY, BLACK, WHITE);
   }
 
   function playGame (bytes28 first32Moves, bytes28 lastMoves) internal constant returns (Game)  {
@@ -43,9 +54,9 @@ library Reversi {
 
     game.first32Moves = first32Moves;
     game.lastMoves = lastMoves;
-    game.moveKey = byte(0);
-    game.blackScore = byte(60);
-    game.whiteScore = byte(60);
+    game.moveKey = 0;
+    game.blackScore = 2;
+    game.whiteScore = 2;
 
     game.error = false;
     game.complete = false;
@@ -68,15 +79,14 @@ library Reversi {
     bytes28 currentMoves;
 
     for (i = 0; i < 60 && !skip; i++) {
-      currentMoves = uint8(game.moveKey) < 32 ? game.first32Moves : game.lastMoves;
-      move = readMove(currentMoves, uint8(game.moveKey) % 32, 32);
+      currentMoves = game.moveKey < 32 ? game.first32Moves : game.lastMoves;
+      move = readMove(currentMoves, game.moveKey % 32, 32);
       (col, row) = convertMove(move);
       skip = !validMove(move);
       if (!skip && col < 8 && row < 8 && col >= 0 && row >= 0) {
         // game.msg = "make a move";
         game = makeMove(game, col, row);
-        game.moveKey = byte((uint8(game.moveKey) + 1));
-
+        game.moveKey = game.moveKey + 1;
         if (game.error) {
           game.error = false;
           // maybe player has no valid moves and must pass
@@ -132,11 +142,11 @@ library Reversi {
         (newFlipCol, newFlipRow) = convertMove(readMove(newFlips, j, newFlipsLength));
         game.board = turnTile(game.board, game.currentPlayer, newFlipCol, newFlipRow);
         if (game.currentPlayer == WHITE) {
-          game.whiteScore = byte(uint8(game.whiteScore) + 1);
-          game.blackScore = byte(uint8(game.blackScore) - 1);
+          game.whiteScore += 1;
+          game.blackScore -= 1;
         } else {
-          game.whiteScore = byte(uint8(game.whiteScore) - 1);
-          game.blackScore = byte(uint8(game.blackScore) + 1);
+          game.whiteScore -= 1;
+          game.blackScore += 1;
         }
       }
     }
@@ -145,9 +155,9 @@ library Reversi {
     if (valid) {
       game.board = turnTile(game.board, game.currentPlayer, col, row);
       if (game.currentPlayer == WHITE) {
-        game.whiteScore = byte(uint8(game.whiteScore) + 1);
+        game.whiteScore += 1;
       } else {
-        game.blackScore = byte(uint8(game.blackScore) + 1);
+        game.blackScore += 1;
       }
     } else {
       game.error = true;
@@ -180,7 +190,7 @@ library Reversi {
     int8 focusedRowPos;
     int8 focusedColPos;
     int8[2] memory dir;
-    byte testSquare;
+    uint8 testSquare;
 
     for (uint8 i = 0; i < 8; i++) {
       dir = dirs[i];
@@ -205,10 +215,10 @@ library Reversi {
     bytes28 potentialFlips;
     uint8 potentialFlipsLength = 0;
 
-    byte currentPlayer = game.currentPlayer;
+    uint8 currentPlayer = game.currentPlayer;
 
-    if (currentPlayer == BLACK) {
-      byte opponentColor = WHITE;
+    if (game.currentPlayer == BLACK) {
+      uint8 opponentColor = WHITE;
     } else {
       opponentColor = BLACK;
     }
@@ -218,7 +228,7 @@ library Reversi {
     bool skip = false;
     int8 testCol;
     int8 testRow;
-    byte tile;
+    uint8 tile;
     for (uint8 j = 1; j < 9; j++) {
       if (!skip) {
         testCol = (int8(j) * dir[0]) + int8(col);
@@ -235,7 +245,7 @@ library Reversi {
           if (tile == opponentColor) {
             // if tile is opposite color it could be flipped, so add to potential flip array
             (potentialFlips, potentialFlipsLength) = addMove(potentialFlips, potentialFlipsLength, uint8(testCol), uint8(testRow));
-          } else if (tile == currentPlayer && j > 1) {
+          } else if (tile == game.currentPlayer && j > 1) {
             // hit current players tile which means capture is complete
             skip = true;
           } else {
@@ -252,7 +262,7 @@ library Reversi {
   }
 
   function isComplete (Game game) internal constant returns (Game) {
-    if (game.moveKey == byte(60) || game.blackScore == byte(0) || game.whiteScore == byte(0)) {
+    if (game.moveKey == 60 || game.blackScore == 0 || game.whiteScore == 0) {
       // game.msg = "good game";
       game.error = false;
       game.complete = true;
@@ -262,7 +272,7 @@ library Reversi {
       uint8 emptiesLength = 0;
       for (uint8 i = 0; i < 64; i++) {
         // for (uint8 j = 0; j < 8; j++) {
-          byte tile = returnTile(game.board, ((i - (i % 8)) / 8), (i % 8));
+          uint8 tile = returnTile(game.board, ((i - (i % 8)) / 8), (i % 8));
           if (tile == EMPTY) {
             empties[emptiesLength] = [((i - (i % 8)) / 8), (i % 8)];
             emptiesLength++;
@@ -359,7 +369,7 @@ library Reversi {
     return shiftRight(before, push);
   }
 
-  function turnTile (bytes16 board, byte color, uint8 col, uint8 row) internal constant returns (bytes16){
+  function turnTile (bytes16 board, uint8 color, uint8 col, uint8 row) internal constant returns (bytes16){
     if (col > 7) revert();
     if (row > 7) revert();
     uint128 push = posToPush(col, row);
@@ -374,13 +384,13 @@ library Reversi {
     return board | tile;
   }
 
-  function returnTile (bytes16 board, uint8 col, uint8 row) internal constant returns (byte){
+  function returnTile (bytes16 board, uint8 col, uint8 row) internal constant returns (uint8){
     uint128 push = posToPush(col, row);
     bytes16 ones = bytes16(3); // 0b00000011 (ones)
     ones = shiftLeft(ones, push); // 0b00011000 (ones shifted)
     bytes16 before = board & ones; // (board)0b01010101 & (ones)0b00011000 = (tile)0b00010000
     bytes16 tile = shiftRight(before, push); // 0b00000010 = 0b10
-    return byte(tile); // returns 2
+    return uint8(tile); // returns 2
   }
 
   function posToPush (uint8 col, uint8 row) internal constant returns (uint128){
@@ -444,4 +454,6 @@ library Reversi {
       uint128 shifted = uint128(a) / 2 ** uint128(n);
       return bytes16(shifted);
   }
+
+
 }

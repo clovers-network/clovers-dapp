@@ -22,7 +22,7 @@
         {{ mineText }}
       </p>
     </header>
-    <miner :show-miner="showMiner" v-show="showMiner" @close="toggleMinePanel"></miner>
+    <miner :show-miner="showMiner" v-if="showMiner" @close="toggleMinePanel"></miner>
   </div>
 </template>
 
