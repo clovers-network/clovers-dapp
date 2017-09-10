@@ -78,8 +78,9 @@
               link: '/users/' + this.account,
               type: 'success'})
           }).catch((err) => {
+            console.error(err)
             this.removeMessage(msgId)
-            this.selfDestructMsg({msg: err, type: 'error'})
+            this.selfDestructMsg({msg: 'Error check logs', type: 'error'})
             console.log(err)
           })
         })

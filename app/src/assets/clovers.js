@@ -368,12 +368,15 @@ class Clover extends Reversi {
 
   register (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, startPrice = this.startPrice, byteBoard = this.byteBoard) {
     return this.isAdmin().then((isAdmin) => {
-      return this.deploy().then((instance) => {
-        if (isAdmin) {
-          return this.adminMineClover(byteFirst32Moves, byteLastMoves, byteBoard, startPrice)
-        } else {
-          return this.mineClover(byteFirst32Moves, byteLastMoves, startPrice)
-        }
+      return this.gameExists().then((exists) => {
+        if (exists) throw new Error('Game has already been mined')
+        return this.deploy().then((instance) => {
+          if (isAdmin) {
+            return this.adminMineClover(byteFirst32Moves, byteLastMoves, byteBoard, startPrice)
+          } else {
+            return this.mineClover(byteFirst32Moves, byteLastMoves, startPrice)
+          }
+        })
       })
     })
   }

@@ -10,8 +10,9 @@
       <div class="order-0 md-right-align col-6 sm-col-3">
 
         <p class="h2">
-          <form v-if='mine' class='inline-block border-bottom' @submit.prevent="changeName()"><input class='input big' type="text" placeholder="Name" v-model="name"/></form>
-          <span v-else>{{name}}</span>
+          <form v-if='mine' class='inline-block border-bottom' @submit.prevent="changeName()">
+            <input class='input big align-right white' type="text" placeholder="Name" v-model="name"/></form>
+          <span v-else class="h1">{{name}}</span>
         </p>
         <div>
           Flips
@@ -84,7 +85,7 @@
       },
       flip () {
         this.flipping = true
-        this.clover.buyClover(this.boardId).then((res) => {
+        this.clover.flipClover(this.boardId).then((res) => {
           this.flipping = false
           console.log(res)
         }).catch((err) => {
@@ -105,9 +106,10 @@
             })
             this.removeMessage(msgId)
           }).catch((err) => {
+            console.error(err)
             this.removeMessage(msgId)
             this.selfDestructMsg({
-              msg: err,
+              msg: 'Error check logs',
               type: 'error'
             })
             console.log(err)
@@ -200,7 +202,7 @@
         return this.board && moment(this.board.modified * 1000).format('MMMM Do YYYY, h:mm:ss a')
       },
       currentOwner () {
-        return this.account === this.owner.address
+        return this.account && this.owner && (this.account === this.owner.address)
       },
       findersFee () {
         return this.board && parseInt(this.board.findersFee).toLocaleString()

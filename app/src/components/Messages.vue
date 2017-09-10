@@ -30,7 +30,7 @@
     methods: {
       clickMessage (msg) {
         if (msg.link) {
-          this.$router.go(msg.link)
+          this.$router.push(msg.link)
         }
         this.removeMessage(msg.id)
       },
