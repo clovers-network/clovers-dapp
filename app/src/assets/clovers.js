@@ -13,12 +13,12 @@ class Clover extends Reversi {
     this.error = false
     this.genesisBlock = 868317
     this.address = '0xee262da86309e4bec8504ba1af9e337b67fd49cb'
-    this.ClubToken = false
-    this.account = false
+    this.ClubToken = null
+    this.account = null
     this.name = null
     this.symbol = null
     this.balance = 0
-    this.accountInterval = false
+    this.accountInterval = null
     this.registeredEvents = []
     this.events = events
     this.findersFee = this.startPrice = 0
@@ -350,27 +350,21 @@ class Clover extends Reversi {
     })
   }
 
+  // contract write / transactions
+
+  changeName (name = '') {
+    if (name === '') throw new Error('Shouldn\'t have an empty name')
+    return this.deploy().then((instance) => {
+      return instance.changeName(name, {from: this.account})
+    })
+  }
+
+
 
 
   // Clover Management
 
   // app calls
-
-  // listClovers () {
-  //   if (!this.ClubToken) this.setContract()
-  //   this.ClubToken.deployed().then((instance) => {
-  //     instance.getCloversCount().then((result) => {
-  //       if (result.toNumber() !== this.registeredBoards.length) {
-  //         this.registeredBoards = []
-  //         for (let i = 0; i < result.toNumber(); i++) {
-  //           instance.getCloverByKey(i).then((result) => {
-  //             this.registeredBoards.splice(i, 1, result)
-  //           })
-  //         }
-  //       }
-  //     })
-  //   })
-  // }
 
   register (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, startPrice = this.startPrice, byteBoard = this.byteBoard) {
     return this.isAdmin().then((isAdmin) => {

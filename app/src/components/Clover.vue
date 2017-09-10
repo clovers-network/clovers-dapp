@@ -8,12 +8,12 @@
       </div>
     </div>
     <div class="p3">
-      <button class='btn bg-silver' @click='test()'>TEST</button>
       <p class="h2">
-        <code>id: {{ boardId }}</code>
+        <form v-if='mine' class='inline-block border-bottom' @submit.prevent="changeName()"><input class='input big' type="text" placeholder="Name" v-model="name"/></form>
+        <span v-else>{{name}}</span>
       </p>
       <p class="h2">
-        <code >name: <form @submit.prevent="changeName()"><input type="text" placeholder="Unnamed" v-model="name"/></form></code>
+        <code>id: {{ boardId }}</code>
       </p>
       <p class="h2">
         <code>finders fee: {{ board && board.findersFee }} &clubs;</code>
@@ -25,27 +25,28 @@
         <code>flips: {{ flippers }} &orarr;</code>
       </p>
       <p class="h2">
-        <code>found by: <router-link :to="toFounder" v-html="founder"></router-link></code>
+        <code>found by: <router-link :to="'/users/' + founderAddress" v-html="founderName"></router-link></code>
       </p>
       <p class="h2">
-        <code>found at block: {{board && board.created}}</code>
+        <code>found: {{created}}</code>
       </p>
       <p class="h2">
-        <code>currently owned by: <router-link :to="toOwner" v-html="owner"></router-link></code>
+        <code>currently owned by: <router-link :to="'/users/' + ownerAddress" v-html="ownerName"></router-link></code>
       </p>
       <p class="h2">
-        <code>last flipped at block: {{board && board.modified}}</code>
+        <code>last flipped: {{modified}}</code>
       </p>
       <p class="h2">
-        <code>moves: {{moveString}}</code>
+        <code>moves: <div v-for="chunk in visibleMoveString">{{chunk}}</div></code>
       </p>
     </div>
   </div>
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapActions, mapMutations } from 'vuex'
   import Reversi from '../assets/reversi'
+  import moment from 'moment'
   export default {
     name: 'clover',
     data () {
@@ -67,19 +68,60 @@
         this.clover.flipClover(this.boardId)
       },
       changeName () {
-        this.clover.renameClover(this.boardId, this.name).catch((err) => {
-          console.log(err)
+        this.addMessage({
+          msg: 'Updating Name',
+          type: 'progress'
+        }).then((msgId) => {
+          this.clover.renameClover(this.boardId, this.name).then(() => {
+            this.selfDestructMsg({
+              msg: 'Updated name to ' + this.name,
+              type: 'success',
+              link: '/clovers/' + this.boardId
+            })
+            this.removeMessage(msgId)
+          }).catch((err) => {
+            this.removeMessage(msgId)
+            this.selfDestructMsg({
+              msg: err,
+              type: 'error'
+            })
+            console.log(err)
+          })
         })
-      }
+      },
+
+      ...mapActions([
+        'addMessage',
+        'selfDestructMsg'
+      ]),
+
+      ...mapMutations({
+        'removeMessage': 'REMOVE_MSG'
+      })
+    },
+    mounted () {
+      this.name = this.board && this.board.name || null
     },
     watch: {
       board () {
-        this.name = this.board.name || ''
+        this.name = this.board && this.board.name || null
       }
     },
     computed: {
+      mine () {
+        return this.board && this.ownerAddress === this.account
+      },
       board () {
         return this.boardId && this.allClovers.find(c => c.board === this.boardId)
+      },
+      visibleMoveString () {
+        if (!this.moveString) return
+        let arr = this.moveString.match(/.{1,2}/g)
+        arr.splice(27, 0, '  ')
+        arr.splice(27, 0, '  ')
+        arr.splice(35, 0, '  ')
+        arr.splice(35, 0, '  ')
+        return arr.join('').match(/.{1,16}/g)
       },
       moveString () {
         return this.board && this.reversi.byteMovesToStringMoves(this.board.first32Moves, this.board.lastMoves)
@@ -98,14 +140,20 @@
       founder () {
         return this.board && this.board.previousOwners && this.board.previousOwners[0]
       },
-      toFounder () {
-        return '/users/' + this.founder
+      founderName () {
+        return this.founder && this.founder.name
+      },
+      founderAddress () {
+        return this.founder && this.founder.address
       },
       owner () {
         return this.board && this.board.previousOwners && this.board.previousOwners[this.board.previousOwners.length - 1]
       },
-      toOwner () {
-        return '/users/' + this.owner
+      ownerName () {
+        return this.owner && this.owner.name
+      },
+      ownerAddress () {
+        return this.owner && this.owner.address
       },
       boardId () {
         return this.$route.params.board
@@ -113,9 +161,17 @@
       boardArray () {
         return this.reversi.byteBoardToRowArray(this.boardId)
       },
+      created () {
+        return this.board && moment(this.board.created * 1000).format('MMMM Do YYYY, h:mm:ss a')
+      },
+      modified () {
+        return this.board && moment(this.board.modified * 1000).format('MMMM Do YYYY, h:mm:ss a')
+      },
 
       ...mapGetters([
+        'account',
         'clover',
+        'usernames',
         'allClovers'
       ])
     }

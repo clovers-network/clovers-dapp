@@ -52,7 +52,7 @@
 
 <script>
   import moment from 'moment'
-  import { mapGetters, mapMutations } from 'vuex'
+  import { mapActions, mapGetters, mapMutations } from 'vuex'
   import SvgText from '@/components/TextPath'
   import Reversi from '../assets/reversi'
   export default {
@@ -131,21 +131,47 @@
         this.submitting = true
         this.clover.startPrice = this.flipPrice
         this.clover.playGameMovesString(this.movesString)
-        this.clover.register().then((res) => {
-          this.submitting = false
-          console.log('claimed', res)
-          this.$emit('claimed', res)
-        }).catch((err) => {
-          console.log(err)
-          this.submitting = false
+        // this.clover.thisBoardToByteBoard()
+
+        this.addMessage({
+          msg: 'Large TXs take time, please be patient',
+          link: '/',
+          type: 'progress'
+        }).then((msgId) => {
+          this.clover.register().then((res) => {
+            console.log(res)
+            this.submitting = false
+            console.log('claim returned')
+            this.$emit('claimed', res)
+            this.removeMessage(msgId)
+            this.selfDestructMsg({
+              msg: 'Clover 0x' + this.clover.byteBoard + ' Claimed',
+              link: '/clovers/' + this.clover.byteBoard,
+              type: 'success'
+            })
+          }).catch((err) => {
+            console.log(err)
+            this.submitting = false
+            this.removeMessage(msgId)
+            this.selfDestructMsg({
+              msg: 'Error Claiming 0x' + this.clover.byteBoard + ' (check logs)',
+              type: 'error'
+            })
+          })
         })
       },
       remove () {
         this.$emit('remove')
       },
 
+      ...mapActions([
+        'selfDestructMsg',
+        'addMessage'
+      ]),
+
       ...mapMutations({
-        updateCloverPrice: 'UPDATE_CLOVER_PRICE'
+        updateCloverPrice: 'UPDATE_CLOVER_PRICE',
+        removeMessage: 'REMOVE_MSG'
       })
     },
     components: { SvgText }

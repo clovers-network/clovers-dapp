@@ -6,24 +6,43 @@ export default {
   name: state => state.clover.name,
   symbol: state => state.clover.symbol,
   account: state => state.clover.account,
+  username: (state, getters) => {
+    return getters.usernames.find((u) => u.address === getters.account) || {address: getters.account, name: getters.account}
+  },
   balance: state => state.clover.balance,
   hashRate: state => state.hashRate,
   mining: state => state.mining,
+  messages: state => state.messages,
   miningPower: state => state.miningPower,
-  cloverNames: state => {
-    console.log('clover names calculated')
-    let cloverNames = []
-    state.clovernameEvents.forEach((event) => {
-      let cloverKey = cloverNames.findIndex((clover) => clover.board === event.args.board)
-      if (cloverKey > -1) {
-        let clover = cloverNames[cloverKey]
-        clover.name = event.args.name
-        cloverNames.splice(cloverKey, 1, clover)
+  usernames: state => {
+    console.log('user names calculated')
+    let usernames = []
+    state.usernameEvents.forEach((event) => {
+      let userKey = usernames.findIndex((user) => user.address === event.args.player)
+      if (userKey > -1) {
+        let username = usernames[userKey]
+        username.name = event.args.name
+        usernames.splice(userKey, 1, username)
       } else {
-        cloverNames.push({board: event.args.board, name: event.args.name})
+        usernames.push({address: event.args.player, name: event.args.name})
       }
     })
-    return cloverNames
+    return usernames
+  },
+  clovernames: state => {
+    console.log('clover names calculated')
+    let clovernames = []
+    state.clovernameEvents.forEach((event) => {
+      let cloverKey = clovernames.findIndex((clover) => clover.board === event.args.board)
+      if (cloverKey > -1) {
+        let clover = clovernames[cloverKey]
+        clover.name = event.args.name
+        clovernames.splice(cloverKey, 1, clover)
+      } else {
+        clovernames.push({board: event.args.board, name: event.args.name})
+      }
+    })
+    return clovernames
   },
   symmetries: (state, getters) => {
     console.log('symmetries calculated')
@@ -78,12 +97,13 @@ export default {
       }
     })
     return clovers.map((c) => {
-      let nameIndex = getters.cloverNames.findIndex((cn) => cn.board === c.board)
-      if (nameIndex > -1) c.name = getters.cloverNames[nameIndex].name
+      let nameIndex = getters.clovernames.findIndex((cn) => cn.board === c.board)
+      if (nameIndex > -1) c.name = getters.clovernames[nameIndex].name
+      c.previousOwners = c.previousOwners.map((po) => (getters.allUsers && getters.allUsers.find((u) => u.address === po)) || po)
       return c
     })
   },
-  allUsers: state => {
+  allUsers: (state, getters) => {
     console.log('all users calculated')
     let users = []
     JSON.parse(JSON.stringify(state.registeredEvents))
@@ -102,6 +122,11 @@ export default {
         })
       }
     })
-    return users
+    return users.map((u) => {
+      let nameIndex = getters.usernames.findIndex((un) => un.address === u.address)
+      if (nameIndex > -1) u.name = getters.usernames[nameIndex].name
+      else u.name = u.address
+      return u
+    })
   }
 }
