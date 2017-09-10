@@ -4,10 +4,7 @@
       <div class="relative mx3">
         <template v-if='byteBoard'>
           <div class="h2">
-            <clv :board="reversi.byteBoardToRowArray(byteBoard)"></clv>
-          </div>
-          <div>
-            <svg-text :movesString="movesString"></svg-text>
+            <clv class='no-border' :moveString="movesString" :byteBoard="byteBoard"></clv>
           </div>
         </template>
       </div>

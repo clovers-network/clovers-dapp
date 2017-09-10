@@ -2,52 +2,41 @@ pragma solidity ^0.4.13;
 
 import "zeppelin-solidity/contracts/token/StandardToken.sol";
 import "./Reversi.sol";
+import "./DataStorage.sol";
 // import "./oraclizeAPI.sol";
-
 
 contract ClubToken is StandardToken {
 
+  DataStorage public dataStorage;
+
   // Token Contract
 
-
   uint256 public decimals = 0;
-  uint256 public INITIAL_SUPPLY = 1000000; // zero decimals
-  uint256 payMultiplier = 100;
-  uint256 Symmetricals;
-  uint256 RotSym;
-  uint256 Y0Sym;
-  uint256 X0Sym;
-  uint256 XYSym;
-  uint256 XnYSym;
-  uint256 nameLength = 21;
+  uint256 public INITIAL_SUPPLY = 1000000; // four decimals
+
   address public owner;
   string public name = "ClubToken";
   string public symbol = "♧";
 
-
-
-  function ClubToken() {
+  function ClubToken(address _dataStorage) {
+    dataStorage = DataStorage(_dataStorage);
     totalSupply = INITIAL_SUPPLY;
     balances[msg.sender] = INITIAL_SUPPLY;
-    admins[msg.sender] = true;
-    adminKeys.push(msg.sender);
     owner = msg.sender;
+  }
+
+  function getBalance(address someone) public constant returns (uint) {
+    return balances[someone];
   }
 
 
   // Modifiers
 
   modifier onlyOwner { if (msg.sender != owner) revert(); _; }
-  modifier onlyAdmin { if (!admins[msg.sender]) revert(); _; }
-  modifier doesNotExist(bytes16 b) { if (clovers[b].exists) revert(); _; }
-  modifier exists(bytes16 b) { if (!clovers[b].exists) revert(); _; }
-
-
 
   // Events
 
   event newUserName(address player, string name);
-  event newCloverName(bytes16 board, string name);
   event Registered(address newOwner, uint256 lastPaidAmount, bytes16 board, bool newBoard, bytes28 first32Moves, bytes28 lastMoves, uint256 modified, uint256 findersFee);
   event DebugGame(bytes16 board, bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym);
 
@@ -59,45 +48,40 @@ contract ClubToken is StandardToken {
 
   // Contract Administration
 
-  mapping(address => bool) admins;
-  address[] public adminKeys;
+  // mapping(address => bool) admins;
+  // address[] public adminKeys;
 
-  function getBalance(address someone) public constant returns(uint) {
-    return balances[someone];
-  }
 
-  function myAddress () public constant returns (address) {
-    return msg.sender;
+  function updateDataStorage (address _dataStorage) public {
+    dataStorage = DataStorage(_dataStorage);
   }
 
   function isAdmin () public constant returns (bool) {
-    return admins[msg.sender];
+    return dataStorage.isAdmin();
   }  
 
   function adminLen () public constant returns (uint256) {
-    return adminKeys.length;
+    return dataStorage.adminLen();
   } 
 
   function adminAt (uint256 key) public constant returns (address) {
-    return adminKeys[key];
+    return dataStorage.adminAt(key);
   }
 
-  function getTallys() public constant returns(uint256, uint256, uint256, uint256, uint256, uint256, uint256) {
-    return (Symmetricals, RotSym, Y0Sym, X0Sym, XYSym, XnYSym, payMultiplier);
+  function getTallys () public constant returns(uint256, uint256, uint256, uint256, uint256, uint256, uint256) {
+    return dataStorage.getTallys();
   }
 
-  function changeNameLength (uint256 len) public onlyAdmin() {
-    nameLength = len;
+  function changeUsernameLength (uint256 len) public {
+    dataStorage.changeUsernameLength(len);
   }
 
-  function addAdmin (address newbie) public onlyAdmin() {
-    if (!admins[msg.sender]) revert();
-    admins[newbie] = true;
-    adminKeys.push(newbie);
+  function addAdmin (address newbie) public {
+    dataStorage.addAdmin(newbie);
   }
 
-  function updateMultiplier(uint256 multiplier) public onlyAdmin(){
-    payMultiplier = multiplier;
+  function updateMultiplier (uint256 multiplier) public {
+    dataStorage.updateMultiplier(multiplier);
   }
 
 
@@ -116,7 +100,7 @@ contract ClubToken is StandardToken {
   address[] public playerKeys;
 
   function changeName (string name) {
-    if (bytes(name).length > nameLength) revert();
+    dataStorage.changeName(name);
     newUserName(msg.sender, name);
   }
 
@@ -171,66 +155,64 @@ contract ClubToken is StandardToken {
 
   // Clover Management
 
-  struct Clover {
-    bool exists;
-    bytes28 first32Moves;
-    bytes28 lastMoves;
-    uint256 lastPaidAmount;
-    uint256 findersFee;
-    uint256 created;
-    uint256 modified;
-    address[] previousOwners;
-    // bool validated;
-  }
+  // struct Clover {
+  //   bool exists;
+  //   bytes28 first32Moves;
+  //   bytes28 lastMoves;
+  //   uint256 lastPaidAmount;
+  //   uint256 findersFee;
+  //   uint256 created;
+  //   uint256 modified;
+  //   address[] previousOwners;
+  //   // bool validated;
+  // }
 
-  mapping (bytes16 => Clover) public clovers;
-  bytes16[] public cloverKeys;
+  // mapping (bytes16 => Clover) public clovers;
+  // bytes16[] public cloverKeys;
 
 
-  function cloverExists(bytes16 b) public exists(b) constant{
+  function cloverExists(bytes16 b) public constant{
+    return dataStorage.cloverExists(b);
   }
 
   function getCloversCount() public constant returns(uint) {
-    return cloverKeys.length;
+    return dataStorage.getCloversCount();
   }
 
   function getCloverByKey (uint boardKey) public constant returns(bytes16, uint lastPaidAmount, uint owners, address lastOwner, bytes28 first32Moves, bytes28 lastMoves) {
-    bytes16 board = cloverKeys[boardKey];
-    return getClover(board);
+    return dataStorage.getCloverByKey(boardKey);
   }
 
-  function getClover (bytes16 board) public exists(board) constant returns(bytes16, uint lastPaidAmount, uint ownersLength, address lastOwner, bytes28 first32Moves, bytes28 lastMoves) {
-    return (board, clovers[board].lastPaidAmount, clovers[board].previousOwners.length, clovers[board].previousOwners[clovers[board].previousOwners.length - 1], clovers[board].first32Moves, clovers[board].lastMoves);
+  function getClover (bytes16 board) public constant returns(bytes16, uint lastPaidAmount, uint ownersLength, address lastOwner, bytes28 first32Moves, bytes28 lastMoves) {
+    return dataStorage.getClover(board);
   }
 
-  function getCloverOwnersLength(bytes16 board) public exists(board) constant returns(uint256) {
-    return clovers[board].previousOwners.length;
+  function getCloverOwnersLength(bytes16 board) public constant returns(uint256) {
+    return dataStorage.getCloverOwnersLength(board);
   }
 
-  function getCloverOwner(bytes16 board) public exists(board) constant returns(bytes16, address previousOwner) {
-    return (board, clovers[board].previousOwners[ clovers[board].previousOwners.length - 1 ] );
+  function getCloverOwner(bytes16 board) public constant returns(address previousOwner) {
+    return dataStorage.getCloverOwner(board);
   }
 
-  function getCloverOwnerAtKeyByBoard(bytes16 board, uint ownerKey) public exists(board) constant returns(bytes16, address previousOwner) {
-    return (board, clovers[board].previousOwners[ownerKey]);
+  function getCloverOwnerAtKeyByBoard(bytes16 board, uint ownerKey) public constant returns(bytes16, address previousOwner) {
+    return dataStorage.getCloverOwnerAtKeyByBoard(board, ownerKey);
   }
 
   function getCloverOwnerAtKeyByBoardKey(uint boardKey, uint ownerKey) public constant returns(bytes16, address previousOwner) {
-    bytes16 board = cloverKeys[boardKey];
-    if(!clovers[board].exists) revert();
-    return (board, clovers[board].previousOwners[ownerKey]);
+    return dataStorage.getCloverOwnerAtKeyByBoardKey(boardKey, ownerKey);
   }
 
-  function renameClover(bytes16 board, string name) public exists(board) {
-    if (bytes(name).length > nameLength) revert();
-    if (clovers[board].previousOwners[clovers[board].previousOwners.length - 1] != msg.sender) revert();
-    newCloverName(board, name);
+  function changeClovernameLength (uint256 len) public {
+    dataStorage.changeClovernameLength(len);
   }
 
-  function changeStartPrice(bytes16 board, uint256 startPrice) public exists(board) {
-    if(clovers[board].previousOwners[0] != msg.sender) revert();
-    if(clovers[board].previousOwners.length > 1) revert();
-    clovers[board].lastPaidAmount = startPrice;
+  function changeStartPrice(bytes16 board, uint256 startPrice) public {
+    return dataStorage.changeStartPrice(board, startPrice);
+  }
+
+  function renameClover(bytes16 board, string name) public {
+    return dataStorage.renameClover(board, name);
   }
 
   function mineClover(bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public {
@@ -238,35 +220,41 @@ contract ClubToken is StandardToken {
     saveGame(game, startPrice);
   }
 
-  function buyClover (bytes16 b) exists(b) public{
+  function buyClover (bytes16 b) public{
+    cloverExists(b);
     // every clover asset is for sale determined on an initial start price
     // if that clover is purchased, the proceeds are divided evenly among the last two buyers
     // cant flip board you currently own
-    if (clovers[b].previousOwners[ clovers[b].previousOwners.length - 1 ] == msg.sender) revert();
-    uint nextPrice = clovers[b].previousOwners.length == 1 ? clovers[b].lastPaidAmount : clovers[b].lastPaidAmount.mul(2);
+    if (dataStorage.getCloverOwner(b) == msg.sender) revert();
+    uint nextPrice = dataStorage.getNextPrice(b);
     if (balances[msg.sender] < nextPrice) revert();
     registerPlayer();
+
+    uint previousOwnersLength = dataStorage.getCloverOwnersLength(b);
     for (uint8 i = 1; i < 3; i++) {
-      if (i <= clovers[b].previousOwners.length) {
-        uint256 lastOwnerKey = clovers[b].previousOwners.length - uint(i);
-        address lastOwner = clovers[b].previousOwners[ lastOwnerKey ];
+      if (i <= previousOwnersLength) {
+        uint256 lastOwnerKey = previousOwnersLength - uint(i);
+        address lastOwner = dataStorage.getCloverOwnerAtKeyByBoard(b, lastOwnerKey);
 
-        balances[msg.sender] = balances[msg.sender].sub(clovers[b].lastPaidAmount);
+        balances[msg.sender] = balances[msg.sender].sub(dataStorage.getLastPaidAmount(b));
 
-        balances[lastOwner] = balances[lastOwner].add(clovers[b].lastPaidAmount);
+        balances[lastOwner] = balances[lastOwner].add(dataStorage.getLastPaidAmount(b));
         if (i == 1) {
           players[lastOwner].currentCount -= 1;
         }
       }
     }
     addCloverToPlayer(b);
-    clovers[b].previousOwners.push(msg.sender);
-    clovers[b].lastPaidAmount = nextPrice;
-    clovers[b].modified = now;
-    Registered(msg.sender, nextPrice, b, false, clovers[b].first32Moves, clovers[b].lastMoves, clovers[b].modified, clovers[b].findersFee);
+    dataStorage.addPreviousOwners(b);
+    dataStorage.clovers[b].lastPaidAmount = nextPrice;
+    dataStorage.clovers[b].modified = now;
+    Registered(msg.sender, nextPrice, b, false, dataStorage.clovers[b].first32Moves, dataStorage.clovers[b].lastMoves, dataStorage.clovers[b].modified, dataStorage.clovers[b].findersFee);
   }
 
-  function adminMineClover (bytes28 first32Moves, bytes28 lastMoves, bytes16 board, uint startPrice) public doesNotExist(board) onlyAdmin() returns(uint boardKey) {
+  function adminMineClover (bytes28 first32Moves, bytes28 lastMoves, bytes16 board, uint startPrice) public returns(uint boardKey) {
+    if(!dataStorage.admins[msg.sender]) revert();
+    if (dataStorage.clovers[board].exists) revert();
+
     registerPlayer();
     addCloverToPlayer(game.board);
     Reversi.Game memory game;
@@ -274,20 +262,19 @@ contract ClubToken is StandardToken {
 
     game = Reversi.isSymmetrical(game);
     if (game.symmetrical) {
-      clovers[board].findersFee = findersFee(game);
-      balances[msg.sender] += clovers[board].findersFee;
-      totalSupply += clovers[board].findersFee;
+      dataStorage.clovers[board].findersFee = findersFee(game);
+      balances[msg.sender] += dataStorage.clovers[board].findersFee;
       addToSymmTallys(game);
     }
-    clovers[board].first32Moves = first32Moves;
-    clovers[board].lastMoves = lastMoves;
-    clovers[board].previousOwners.push(msg.sender);
-    clovers[board].lastPaidAmount = startPrice;
-    clovers[board].exists = true;
-    clovers[board].created = now;
-    clovers[board].modified = now;
-    Registered(msg.sender, startPrice, board, true, first32Moves, lastMoves, now, clovers[board].findersFee);
-    return cloverKeys.push(board);
+    dataStorage.clovers[board].first32Moves = first32Moves;
+    dataStorage.clovers[board].lastMoves = lastMoves;
+    dataStorage.clovers[board].previousOwners.push(msg.sender);
+    dataStorage.clovers[board].lastPaidAmount = startPrice;
+    dataStorage.clovers[board].exists = true;
+    dataStorage.clovers[board].created = now;
+    dataStorage.clovers[board].modified = now;
+    Registered(msg.sender, startPrice, board, true, first32Moves, lastMoves, now, dataStorage.clovers[board].findersFee);
+    return dataStorage.cloverKeys.push(board);
   }
 
 
@@ -308,7 +295,7 @@ contract ClubToken is StandardToken {
     Reversi.Game memory game = Reversi.playGame(first32Moves, lastMoves);
     if (game.error) revert();
     if (!game.complete) revert();
-    return clovers[game.board].exists;
+    return dataStorage.clovers[game.board].exists;
   }
 
   function showGameBoard(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bytes16 board) {
@@ -355,7 +342,7 @@ contract ClubToken is StandardToken {
     if (game.XYSym) _XYSym += 1;
     if (game.XnYSym) _XnYSym += 1;
 
-    return (_Symmetricals, _RotSym, _Y0Sym, _X0Sym, _XYSym, _XnYSym, payMultiplier);
+    return (_Symmetricals, _RotSym, _Y0Sym, _X0Sym, _XYSym, _XnYSym, dataStorage.payMultiplier);
   }
 
   function showGameDebug(bytes28 first32Moves, bytes28 lastMoves) public {
@@ -370,34 +357,33 @@ contract ClubToken is StandardToken {
   function saveGame(Reversi.Game game, uint256 startPrice) internal returns(uint){
     if (game.error) revert();
     if (!game.complete) revert();
-    if (clovers[game.board].exists) revert();
+    if (dataStorage.clovers[game.board].exists) revert();
     
     registerPlayer();
     addCloverToPlayer(game.board);
-    clovers[game.board].first32Moves = game.first32Moves;
-    clovers[game.board].lastMoves = game.lastMoves;
-    clovers[game.board].previousOwners.push(msg.sender);
-    clovers[game.board].lastPaidAmount = startPrice;
-    clovers[game.board].exists = true;
-    clovers[game.board].created = now;
-    clovers[game.board].modified = now;
+    dataStorage.clovers[game.board].first32Moves = game.first32Moves;
+    dataStorage.clovers[game.board].lastMoves = game.lastMoves;
+    dataStorage.clovers[game.board].previousOwners.push(msg.sender);
+    dataStorage.clovers[game.board].lastPaidAmount = startPrice;
+    dataStorage.clovers[game.board].exists = true;
+    dataStorage.clovers[game.board].created = now;
+    dataStorage.clovers[game.board].modified = now;
     if (game.symmetrical) {
-      clovers[game.board].findersFee = findersFee(game);
-      balances[msg.sender] += clovers[game.board].findersFee;
-      totalSupply += clovers[game.board].findersFee;
+      dataStorage.clovers[game.board].findersFee = findersFee(game);
+      balances[msg.sender] += dataStorage.clovers[game.board].findersFee;
       addToSymmTallys(game);
     }
-    Registered(msg.sender, startPrice, game.board, true, game.first32Moves, game.lastMoves, now, clovers[game.board].findersFee);
-    return cloverKeys.push(game.board);
+    Registered(msg.sender, startPrice, game.board, true, game.first32Moves, game.lastMoves, now, dataStorage.clovers[game.board].findersFee);
+    return dataStorage.cloverKeys.push(game.board);
   }
 
   function addToSymmTallys (Reversi.Game game) internal {
-    if (game.symmetrical) Symmetricals += 1;
-    if (game.RotSym) RotSym += 1;
-    if (game.Y0Sym) Y0Sym += 1;
-    if (game.X0Sym) X0Sym += 1;
-    if (game.XYSym) XYSym += 1;
-    if (game.XnYSym) XnYSym += 1;
+    if (game.symmetrical) dataStorage.Symmetricals += 1;
+    if (game.RotSym) dataStorage.RotSym += 1;
+    if (game.Y0Sym) dataStorage.Y0Sym += 1;
+    if (game.X0Sym) dataStorage.X0Sym += 1;
+    if (game.XYSym) dataStorage.XYSym += 1;
+    if (game.XnYSym) dataStorage.XnYSym += 1;
   }
 
   function findersFee (Reversi.Game game) internal constant returns(uint256) {
@@ -407,11 +393,11 @@ contract ClubToken is StandardToken {
   function findersFeeExplicit (bool symmetrical, bool _RotSym, bool _Y0Sym, bool _X0Sym, bool _XYSym, bool _XnYSym) internal constant returns(uint256) {    
     uint256 base = 0;
 
-    if (_RotSym) base = base.add( payMultiplier.mul( Symmetricals + 1 ).div( RotSym + 1 ) );
-    if (_Y0Sym) base = base.add( payMultiplier.mul( Symmetricals + 1 ).div( Y0Sym + 1 ) );
-    if (_X0Sym) base = base.add( payMultiplier.mul( Symmetricals + 1 ).div( X0Sym + 1 ) );
-    if (_XYSym) base = base.add( payMultiplier.mul( Symmetricals + 1 ).div( XYSym + 1 ) );
-    if (_XnYSym) base = base.add( payMultiplier.mul( Symmetricals + 1 ).div( XnYSym + 1 ) );
+    if (_RotSym) base = base.add( dataStorage.payMultiplier.mul( dataStorage.Symmetricals + 1 ).div( dataStorage.RotSym + 1 ) );
+    if (_Y0Sym) base = base.add( dataStorage.payMultiplier.mul( dataStorage.Symmetricals + 1 ).div( dataStorage.Y0Sym + 1 ) );
+    if (_X0Sym) base = base.add( dataStorage.payMultiplier.mul( dataStorage.Symmetricals + 1 ).div( dataStorage.X0Sym + 1 ) );
+    if (_XYSym) base = base.add( dataStorage.payMultiplier.mul( dataStorage.Symmetricals + 1 ).div( dataStorage.XYSym + 1 ) );
+    if (_XnYSym) base = base.add( dataStorage.payMultiplier.mul( dataStorage.Symmetricals + 1 ).div( dataStorage.XnYSym + 1 ) );
 
     return base;
   }
@@ -419,7 +405,6 @@ contract ClubToken is StandardToken {
 
 
   // // Oraclize Management
-
 
   // function claimClover (bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public {
   //   registerPlayer();
@@ -439,7 +424,7 @@ contract ClubToken is StandardToken {
   //   game.board = board;
   //   clover.findersFee = findersFee(game);
 
-  //   clovers[board] = clover;
+  //   dataStorage.clovers[board] = clover;
 
   // }
 
@@ -456,7 +441,7 @@ contract ClubToken is StandardToken {
   //   if (msg.sender != oraclize_cbAddress()) revert();
   //   if (!valid) revert();
   //   bytes16 board = validIds[myid];
-  //   address player = clovers[board].previousOwners[0];
+  //   address player = dataStorage.clovers[board].previousOwners[0];
   //   if (!clovers[board].exists) revert();
   //   if (clovers[board].validated) revert();
   //   delete validIds[myid];
@@ -464,11 +449,11 @@ contract ClubToken is StandardToken {
 
   //   addCloverToPlayerExplicit(board, player);
 
-  //   balances[player] += clovers[board].findersFee;
-  //   clovers[board].validated = valid;
+  //   balances[player] += dataStorage.clovers[board].findersFee;
+  //   dataStorage.clovers[board].validated = valid;
 
   //   cloverKeys.push(board);  
-  //   Registered(player, clovers[board].lastPaidAmount, board);
+  //   Registered(player, dataStorage.clovers[board].lastPaidAmount, board);
   // }
 
   // function returnAddress() public constant returns(address) {

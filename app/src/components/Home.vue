@@ -8,10 +8,7 @@
       </div>
       <div class="center my2 relative">
         <div class="h1">
-          <clv :board="featured"></clv>
-        </div>
-        <div>
-          <svg-text :movesString="heart"></svg-text>
+          <clv class='no-border' :moveString="this.heart"></clv>
         </div>
       </div>
     </div>
@@ -23,7 +20,6 @@
 
 <script>
   import { mapGetters } from 'vuex'
-  import SvgText from '@/components/TextPath'
 
   export default {
     name: 'Home',
@@ -34,16 +30,10 @@
       }
     },
     computed: {
-      featured () {
-        this.clover.playGameMovesString(this.heart)
-        return this.clover.byteBoardToRowArray()
-      },
       ...mapGetters([
-        'balance',
-        'clover'
+        'balance'
       ])
-    },
-    components: { SvgText }
+    }
   }
 </script>
 

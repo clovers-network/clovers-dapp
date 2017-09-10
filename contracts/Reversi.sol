@@ -1,8 +1,6 @@
 pragma solidity ^0.4.13;
 
-contract Reversi {
-
-// BEGIN Reversi.sol
+library Reversi {
 
   struct Game {
     bool error;
@@ -13,19 +11,19 @@ contract Reversi {
     bool X0Sym;
     bool XYSym;
     bool XnYSym;
-    uint8 currentPlayer;
+    byte currentPlayer;
+    byte moveKey;
+    byte blackScore;
+    byte whiteScore;
     bytes16 board;
     bytes28 first32Moves;
     bytes28 lastMoves;
-    uint8 moveKey;
     // string msg;
   }
 
-  uint8 BOARDDIM = 8;
-
-  uint8 EMPTY = 3; //0b11 //0x3
-  uint8 BLACK = 1; //0b01 //0x1
-  uint8 WHITE = 2; //0b10 //0x2
+  byte constant BLACK = byte(1); //0b01 //0x1
+  byte constant WHITE = byte(2); //0b10 //0x2
+  byte constant EMPTY = byte(3); //0b11 //0x3
 
   // event DebugMove(uint8 col, uint8 row);
   // event DebugMoveBytes28(bytes28 first32Moves);
@@ -37,7 +35,7 @@ contract Reversi {
   // event DebugMsg(string msg);
 
   function showColors () public constant returns(uint8, uint8, uint8) {
-    return (EMPTY, BLACK, WHITE);
+    return (uint8(EMPTY), uint8(BLACK), uint8(WHITE));
   }
 
   function playGame (bytes28 first32Moves, bytes28 lastMoves) internal constant returns (Game)  {
@@ -45,13 +43,13 @@ contract Reversi {
 
     game.first32Moves = first32Moves;
     game.lastMoves = lastMoves;
-    game.moveKey = 0;
+    game.moveKey = byte(0);
+    game.blackScore = byte(60);
+    game.whiteScore = byte(60);
 
     game.error = false;
     game.complete = false;
     game.currentPlayer = BLACK;
-
-
 
     // replaced with hex version below
     // game.board = turnTile(game.board, WHITE, 3, 3);
@@ -70,14 +68,14 @@ contract Reversi {
     bytes28 currentMoves;
 
     for (i = 0; i < 60 && !skip; i++) {
-      currentMoves = game.moveKey < 32 ? game.first32Moves : game.lastMoves;
-      move = readMove(currentMoves, game.moveKey % 32, 32);
+      currentMoves = uint8(game.moveKey) < 32 ? game.first32Moves : game.lastMoves;
+      move = readMove(currentMoves, uint8(game.moveKey) % 32, 32);
       (col, row) = convertMove(move);
       skip = !validMove(move);
       if (!skip && col < 8 && row < 8 && col >= 0 && row >= 0) {
         // game.msg = "make a move";
         game = makeMove(game, col, row);
-        game.moveKey++;
+        game.moveKey = byte((uint8(game.moveKey) + 1));
 
         if (game.error) {
           game.error = false;
@@ -102,7 +100,7 @@ contract Reversi {
     return game;
   }
   
-  function makeMove(Game game, uint8 col, uint8 row) internal constant returns (Game)  {
+  function makeMove (Game game, uint8 col, uint8 row) internal constant returns (Game)  {
     // square is already occupied
     if (returnTile(game.board, col, row) != EMPTY){
       game.error = true;
@@ -133,12 +131,24 @@ contract Reversi {
         if (!valid) valid = true;
         (newFlipCol, newFlipRow) = convertMove(readMove(newFlips, j, newFlipsLength));
         game.board = turnTile(game.board, game.currentPlayer, newFlipCol, newFlipRow);
+        if (game.currentPlayer == WHITE) {
+          game.whiteScore = byte(uint8(game.whiteScore) + 1);
+          game.blackScore = byte(uint8(game.blackScore) - 1);
+        } else {
+          game.whiteScore = byte(uint8(game.whiteScore) - 1);
+          game.blackScore = byte(uint8(game.blackScore) + 1);
+        }
       }
     }
 
     //no valid flips in directions
     if (valid) {
       game.board = turnTile(game.board, game.currentPlayer, col, row);
+      if (game.currentPlayer == WHITE) {
+        game.whiteScore = byte(uint8(game.whiteScore) + 1);
+      } else {
+        game.blackScore = byte(uint8(game.blackScore) + 1);
+      }
     } else {
       game.error = true;
       // game.msg = "Invalid Game (doesnt flip any other tiles)";
@@ -170,7 +180,7 @@ contract Reversi {
     int8 focusedRowPos;
     int8 focusedColPos;
     int8[2] memory dir;
-    uint8 testSquare;
+    byte testSquare;
 
     for (uint8 i = 0; i < 8; i++) {
       dir = dirs[i];
@@ -191,14 +201,14 @@ contract Reversi {
     return (possibleDirections, possibleDirectionsLength);
   }
 
-  function traverseDirection(Game game, int8[2] dir, uint8 col, uint8 row) internal constant returns(bytes28, uint8) {
+  function traverseDirection (Game game, int8[2] dir, uint8 col, uint8 row) internal constant returns(bytes28, uint8) {
     bytes28 potentialFlips;
     uint8 potentialFlipsLength = 0;
 
-    uint8 currentPlayer = game.currentPlayer;
+    byte currentPlayer = game.currentPlayer;
 
     if (currentPlayer == BLACK) {
-      uint8 opponentColor = WHITE;
+      byte opponentColor = WHITE;
     } else {
       opponentColor = BLACK;
     }
@@ -208,7 +218,7 @@ contract Reversi {
     bool skip = false;
     int8 testCol;
     int8 testRow;
-    uint8 tile;
+    byte tile;
     for (uint8 j = 1; j < 9; j++) {
       if (!skip) {
         testCol = (int8(j) * dir[0]) + int8(col);
@@ -242,7 +252,7 @@ contract Reversi {
   }
 
   function isComplete (Game game) internal constant returns (Game) {
-    if (game.moveKey == 60) {
+    if (game.moveKey == byte(60) || game.blackScore == byte(0) || game.whiteScore == byte(0)) {
       // game.msg = "good game";
       game.error = false;
       game.complete = true;
@@ -252,7 +262,7 @@ contract Reversi {
       uint8 emptiesLength = 0;
       for (uint8 i = 0; i < 64; i++) {
         // for (uint8 j = 0; j < 8; j++) {
-          uint8 tile = returnTile(game.board, ((i - (i % 8)) / 8), (i % 8));
+          byte tile = returnTile(game.board, ((i - (i % 8)) / 8), (i % 8));
           if (tile == EMPTY) {
             empties[emptiesLength] = [((i - (i % 8)) / 8), (i % 8)];
             emptiesLength++;
@@ -289,7 +299,7 @@ contract Reversi {
     return game;
   }
 
-  function isSymmetrical(Game game) internal constant returns (Game) {
+  function isSymmetrical (Game game) internal constant returns (Game) {
     bool RotSym = true;
     bool Y0Sym = true;
     bool X0Sym = true;
@@ -335,13 +345,13 @@ contract Reversi {
 
   // Utilities
 
-  function addBytes(bytes16 board, uint8 key, bytes16 tile) internal constant returns (bytes16) {
+  function addBytes (bytes16 board, uint8 key, bytes16 tile) internal constant returns (bytes16) {
     board = shiftLeft(board, key);
     board = board | tile;
     return board;
   }
 
-  function returnBytes(bytes16 board, uint8 col, uint8 row) internal constant returns (bytes16) {
+  function returnBytes (bytes16 board, uint8 col, uint8 row) internal constant returns (bytes16) {
     uint128 push = posToPush(col, row);
     bytes16 ones = bytes16(3);
     ones = shiftLeft(ones, push);
@@ -349,7 +359,7 @@ contract Reversi {
     return shiftRight(before, push);
   }
 
-  function turnTile(bytes16 board, uint8 color, uint8 col, uint8 row) internal constant returns (bytes16){
+  function turnTile (bytes16 board, byte color, uint8 col, uint8 row) internal constant returns (bytes16){
     if (col > 7) revert();
     if (row > 7) revert();
     uint128 push = posToPush(col, row);
@@ -364,20 +374,20 @@ contract Reversi {
     return board | tile;
   }
 
-  function returnTile(bytes16 board, uint8 col, uint8 row) internal constant returns (uint8){
+  function returnTile (bytes16 board, uint8 col, uint8 row) internal constant returns (byte){
     uint128 push = posToPush(col, row);
     bytes16 ones = bytes16(3); // 0b00000011 (ones)
     ones = shiftLeft(ones, push); // 0b00011000 (ones shifted)
     bytes16 before = board & ones; // (board)0b01010101 & (ones)0b00011000 = (tile)0b00010000
     bytes16 tile = shiftRight(before, push); // 0b00000010 = 0b10
-    return uint8(tile); // returns 2
+    return byte(tile); // returns 2
   }
 
-  function posToPush(uint8 col, uint8 row) internal constant returns (uint128){
-    return uint128( ( (BOARDDIM * BOARDDIM) - ( (8 * col) + row + 1) ) * 2);
+  function posToPush (uint8 col, uint8 row) internal constant returns (uint128){
+    return uint128( ( (64) - ( (8 * col) + row + 1) ) * 2);
   }
 
-  function readMove(bytes28 moveSequence, uint8 moveKey, uint8 movesLength) internal constant returns(uint8) {
+  function readMove (bytes28 moveSequence, uint8 moveKey, uint8 movesLength) internal constant returns(uint8) {
     bytes28 mask = bytes28(127);
     uint8 push = (movesLength * 7) - (moveKey * 7) - 7;
     mask = shiftLeft28(mask, push);
@@ -386,54 +396,52 @@ contract Reversi {
     return uint8(move);
   }
 
-  function addMove(bytes28 moveSequence, uint8 movesLength, uint8 col, uint8 row) internal constant returns (bytes28, uint8) {
-    bytes28 move = bytes28(col + (row * BOARDDIM) + 64);
+  function addMove (bytes28 moveSequence, uint8 movesLength, uint8 col, uint8 row) internal constant returns (bytes28, uint8) {
+    bytes28 move = bytes28(col + (row * 8) + 64);
     moveSequence = shiftLeft28(moveSequence, 7);
     moveSequence = moveSequence | move;
     movesLength++;
     return (moveSequence, movesLength);
   }
 
-  function validMove(uint8 move) internal constant returns(bool) {
+  function validMove (uint8 move) internal constant returns(bool) {
     return move >= 64;
   }
 
-  function convertMove(uint8 move) internal constant returns(uint8, uint8) {
+  function convertMove (uint8 move) internal constant returns(uint8, uint8) {
     move = move - 64;
     uint8 col = move % 8;
     uint8 row = (move - col) / 8;
     return (col, row);
   }
 
-  function shiftLeft32(bytes32 a, uint256 n) internal constant returns (bytes32) {
+  function shiftLeft32 (bytes32 a, uint256 n) internal constant returns (bytes32) {
       uint256 shifted = uint256(a) * 2 ** uint256(n);
       return bytes32(shifted);
   }
 
-  function shiftRight32(bytes32 a, uint256 n) internal constant returns (bytes32) {
+  function shiftRight32 (bytes32 a, uint256 n) internal constant returns (bytes32) {
       uint256 shifted = uint256(a) / 2 ** uint256(n);
       return bytes32(shifted);
   }
 
-  function shiftLeft28(bytes28 a, uint256 n) internal constant returns (bytes28) {
+  function shiftLeft28 (bytes28 a, uint256 n) internal constant returns (bytes28) {
       uint256 shifted = uint256(a) * 2 ** uint256(n);
       return bytes28(shifted);
   }
 
-  function shiftRight28(bytes28 a, uint256 n) internal constant returns (bytes28) {
+  function shiftRight28 (bytes28 a, uint256 n) internal constant returns (bytes28) {
       uint256 shifted = uint256(a) / 2 ** uint256(n);
       return bytes28(shifted);
   }
 
-  function shiftLeft(bytes16 a, uint128 n) internal constant returns (bytes16) {
+  function shiftLeft (bytes16 a, uint128 n) internal constant returns (bytes16) {
       uint128 shifted = uint128(a) * 2 ** uint128(n);
       return bytes16(shifted);
   }
 
-  function shiftRight(bytes16 a, uint128 n) internal constant returns (bytes16) {
+  function shiftRight (bytes16 a, uint128 n) internal constant returns (bytes16) {
       uint128 shifted = uint128(a) / 2 ** uint128(n);
       return bytes16(shifted);
   }
-
-  // END Reversi.sol
 }

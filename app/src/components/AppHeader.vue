@@ -1,6 +1,6 @@
 <template>
   <div class="overflow-hidden">
-    <header class="flex bg-purple items-center white">
+    <header class="fixed z3 top-0 left-0 right-0 flex bg-purple items-center white">
       <ul class="list-reset px2 py1 my0 flex-auto">
         <li class="inline-block mr2">
           <router-link to="/" class="white">Clovers</router-link>
@@ -22,7 +22,7 @@
         {{ mineText }}
       </p>
     </header>
-    <miner v-show="showMiner" @close="toggleMinePanel"></miner>
+    <miner :show-miner="showMiner" v-show="showMiner" @close="toggleMinePanel"></miner>
   </div>
 </template>
 

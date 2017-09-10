@@ -24,11 +24,18 @@ class Reversi {
     this.currentPlayer = this.BLACK
     // this.board is an array of columns, visually the board should be arranged by arrays of rows
     this.board = new Array(this.BOARDDIM).fill(0).map(c => new Array(this.BOARDDIM).fill(this.EMPTY))
+    this.rowBoard = new Array(this.BOARDDIM).fill(0).map(c => new Array(this.BOARDDIM).fill(this.EMPTY))
     this.visualBoard = []
     this.board[(this.BOARDDIM / 2) - 1][(this.BOARDDIM / 2) - 1] = this.WHITE
     this.board[(this.BOARDDIM / 2)][(this.BOARDDIM / 2)] = this.WHITE
     this.board[(this.BOARDDIM / 2) - 1][(this.BOARDDIM / 2)] = this.BLACK
     this.board[(this.BOARDDIM / 2)][(this.BOARDDIM / 2) - 1] = this.BLACK
+
+    this.rowBoard[(this.BOARDDIM / 2) - 1][(this.BOARDDIM / 2) - 1] = this.BLACK
+    this.rowBoard[(this.BOARDDIM / 2)][(this.BOARDDIM / 2)] = this.BLACK
+    this.rowBoard[(this.BOARDDIM / 2) - 1][(this.BOARDDIM / 2)] = this.WHITE
+    this.rowBoard[(this.BOARDDIM / 2)][(this.BOARDDIM / 2) - 1] = this.WHITE
+
     this.moves = []
     this.movesString = ''
     this.byteBoard = ''
@@ -39,31 +46,6 @@ class Reversi {
   }
 
 
-  playGameMovesArray (moves = []) {
-    if (moves.length === 0) return
-    this.clearAttrs()
-    this.moves = moves
-    this.thisMovesToByteMoves()
-    let skip = false
-    for (let i = 0; i < moves.length && !skip; i++) {
-      this.moveKey++
-      this.makeMove(this.moveToArray(moves[i]))
-      if (this.error) {
-        this.error = false
-        this.currentPlayer = this.currentPlayer === this.BLACK ? this.WHITE : this.BLACK
-        this.makeMove(this.moveToArray(moves[i]))
-        if (this.error) {
-          skip = true
-        }
-      }
-    }
-    this.thisBoardToByteBoard()
-    if (!this.error) {
-      this.isComplete()
-      this.isSymmetrical()
-    }
-    // this.makeVisualBoard()
-  }
 
   thisMovesToByteMoves (moves = this.moves) {
     moves = this.stringMovesToBinaryMoves(moves.join('')).match(/.{1,224}/g)
@@ -98,10 +80,12 @@ class Reversi {
       for (let j = 0; j < flips.length; j ++) {
         flipped = true
         this.board[flips[j][0]][flips[j][1]] = this.currentPlayer
+        this.rowBoard[flips[j][1]][flips[j][0]] = this.currentPlayer
       }
     }
     if (flipped) {
       this.board[col][row] = this.currentPlayer
+      this.rowBoard[row][col] = this.currentPlayer
     } else {
       this.error = true
       this.msg = 'Invalid Game (doesnt flip any other tiles)'
@@ -368,14 +352,51 @@ class Reversi {
 
 
   playGameMovesString (moves = null) {
-    this.playGameMovesArray(this.stringMovesToArrayMoves(moves))
+    return this.playGameMovesArray(this.stringMovesToArrayMoves(moves))
   }
 
   playGameByteMoves (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     this.playGameMovesString(this.byteMovesToStringMoves(byteFirst32Moves, byteLastMoves))
     this.thisBoardToByteBoard()
+    return this
   }
 
+  playMove (moveKey = 0, moves = this.moves) {
+    if (typeof (moves[moveKey]) === 'undefined') return true
+    let move = moves[moveKey]
+    this.movesString += move
+    let skip = false
+    this.moveKey++
+    this.makeMove(this.moveToArray(move))
+    if (this.error) {
+      this.error = false
+      this.currentPlayer = this.currentPlayer === this.BLACK ? this.WHITE : this.BLACK
+      this.makeMove(this.moveToArray(move))
+      if (this.error) {
+        skip = true
+      }
+    }
+    return skip
+  }
+
+
+  playGameMovesArray (moves = []) {
+    if (moves.length === 0) return
+    this.clearAttrs()
+    this.moves = moves
+    this.thisMovesToByteMoves()
+    let skip = false
+    for (let i = 0; i < this.moves.length && !skip; i++) {
+      skip = this.playMove(i)
+    }
+    this.thisBoardToByteBoard()
+    if (!this.error) {
+      this.isComplete()
+      this.isSymmetrical()
+    }
+    return this
+    // this.makeVisualBoard()
+  }
 
   colArrayBoardToBinaryBoard (colArrayBoard = []) {
     if (!colArrayBoard.length) return
@@ -443,6 +464,21 @@ class Reversi {
 
   byteBoardToColArray (byteBoard = this.byteBoard) {
     return this.arrayBoardToCols(this.byteBoardToArrayBoard(byteBoard))
+  }
+
+  multiArrayBoardToRows (arrayBoard = []) {
+    return this.arrayBoardToRows2D(arrayBoard.map((r) => r.map((t) => t === this.BLACK ? 'b' : (t === this.WHITE ? 'w' : '-'))))
+  }
+
+  arrayBoardToRows2D (arrayBoard = []) {
+    let rowsArray = []
+    for (let col = 0; col < arrayBoard.length; col++) {
+      for (let i = 0; i < arrayBoard[col].length; i++) {
+        if (!rowsArray[col]) rowsArray[col] = []
+        rowsArray[col].push(arrayBoard[i][col])
+      }
+    }
+    return rowsArray
   }
 
   arrayBoardToRows (arrayBoard = []) {
