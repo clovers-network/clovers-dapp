@@ -1366,11 +1366,58 @@
           ],
           "name": "newCloverName",
           "type": "event"
+        },
+        "0x5c3b20386cb190ab356d48388402e550e47af17282ac5ac49df339be5376a980": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "name": "newOwner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "name": "lastPaidAmount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "board",
+              "type": "bytes16"
+            },
+            {
+              "indexed": false,
+              "name": "newBoard",
+              "type": "bool"
+            },
+            {
+              "indexed": false,
+              "name": "first32Moves",
+              "type": "bytes28"
+            },
+            {
+              "indexed": false,
+              "name": "lastMoves",
+              "type": "bytes28"
+            },
+            {
+              "indexed": false,
+              "name": "modified",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "name": "findersFee",
+              "type": "uint256"
+            }
+          ],
+          "name": "Registered",
+          "type": "event"
         }
       },
       "links": {},
-      "address": "0x65f7bac696583ddc7dac4c7779f3856d44303d31",
-      "updated_at": 1504813549545
+      "address": "0xee262da86309e4bec8504ba1af9e337b67fd49cb",
+      "updated_at": 1505036500062
     },
     "1504553608143": {
       "events": {
@@ -3181,5 +3228,5 @@
     }
   },
   "schema_version": "0.0.5",
-  "updated_at": 1505036036113
+  "updated_at": 1505036500062
 }
