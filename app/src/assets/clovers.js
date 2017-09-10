@@ -11,8 +11,8 @@ class Clover extends Reversi {
   constructor (events = false) {
     super()
     this.error = false
-    this.genesisBlock = 0
-    this.address = '0x65f7bac696583ddc7dac4c7779f3856d44303d31'
+    this.genesisBlock = 868317
+    this.address = '0xee262da86309e4bec8504ba1af9e337b67fd49cb'
     this.ClubToken = false
     this.account = false
     this.name = null
