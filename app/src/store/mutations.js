@@ -79,12 +79,19 @@ export default {
     state.usernameEvents = events
   },
   ADD_CLOVERNAME_EVENT (state, event) {
-    console.log('single', event)
     let rIndex = state.clovernameEvents.findIndex((e) => e.transactionHash === event.transactionHash)
     if (rIndex < 0) state.clovernameEvents.push(event)
   },
   ADD_CLOVERNAME_EVENTS (state, events) {
-    console.log('multiple', events)
     state.clovernameEvents = events
+  },
+  ADD_MSG (state, msg) {
+    state.messages.push(msg)
+  },
+  REMOVE_MSG (state, msgId) {
+    let msgKey = state.messages.findIndex((m) => m.id === msgId)
+    if (msgKey < 0) return
+    state.messages.splice(msgKey, 1)
   }
+
 }

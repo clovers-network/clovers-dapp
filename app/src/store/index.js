@@ -25,7 +25,7 @@ const state = {
   registeredEvents: [],
   usernameEvents: [],
   clovernameEvents: [],
-  transactions: []
+  messages: []
 }
 
 export default new Vuex.Store({

@@ -9,7 +9,7 @@
         <li class="inline-block mr2">
           <router-link to="/wallet" class="white">Wallet</router-link>
         </li>
-        <li class="inline-block mr2"></li>
+        <li class="inline-block  ml4 white">account: <router-link class='white' :to="'/users/' + username.address">{{username.name}}</router-link></li>
       </ul>
       <p class="m0 pr3">
         <span>{{ cloversFound }}</span>
@@ -22,7 +22,7 @@
         {{ mineText }}
       </p>
     </header>
-    <miner :show-miner="showMiner" v-if="showMiner" @close="toggleMinePanel"></miner>
+    <miner :show-miner="showMiner" v-show="showMiner" @close="toggleMinePanel"></miner>
   </div>
 </template>
 
@@ -55,6 +55,7 @@
       },
 
       ...mapGetters({
+        username: 'username',
         tokenName: 'name',
         tokenSymbol: 'symbol',
         balance: 'balance',
