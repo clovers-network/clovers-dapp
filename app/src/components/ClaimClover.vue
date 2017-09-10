@@ -11,7 +11,7 @@
       <div v-if="cloverData.removed" class="px3 flex-auto">
         <p class="h1 m0 lh1">🗑 Removed {{ removeDate }}</p>
       </div>
-      <div v-else-if="cloverData.claimed" class="px3 flex-auto">
+      <div v-else-if="false" class="px3 flex-auto">
         <router-link :to="'/clovers/' + cloverData.byteBoard">
           <p class="h1 m0 lh1 white">✨ Claimed {{ claimDate }}</p>
         </router-link>
@@ -148,7 +148,7 @@
               type: 'success'
             })
           }).catch((err) => {
-            console.log(err)
+            console.error(err)
             this.submitting = false
             this.removeMessage(msgId)
             this.selfDestructMsg({

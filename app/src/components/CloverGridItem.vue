@@ -4,7 +4,7 @@
     <!-- <div class="center silver mb2">by {{board.previousOwners[0]}}</div> -->
     <div>
       <clv :no-click='true' :byteBoard="board.board"></clv>
-      <div class="center mt2 max-fit overflow-hidden" ><code v-html="boardName"></code></div>
+      <div class="h1 center mt2 max-fit overflow-hidden" ><code v-html="boardName"></code></div>
       <div class="center mt2 max-fit overflow-hidden" v-html="boardOwner"></div>
       <div class="center mt2">
         <span>{{ price }}</span> &clubs; /
@@ -38,7 +38,7 @@
     computed: {
       boardName () {
         let name = this.board.name || this.board.board
-        return name && (name.length > 11 ? name.slice(0, 11) + '&hellip;' : name)
+        return name && (name.length > 9 ? name.slice(0, 9) + '&hellip;' : name)
       },
       boardOwner () {
         let owner = this.board.previousOwners && this.board.previousOwners[ this.board.previousOwners.length - 1 ].name
