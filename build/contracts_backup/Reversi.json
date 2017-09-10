@@ -1,0 +1,43 @@
+{
+  "contract_name": "Reversi",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "showColors",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint8"
+        },
+        {
+          "name": "",
+          "type": "uint8"
+        },
+        {
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    }
+  ],
+  "unlinked_binary": "0x6060604052341561000f57600080fd5b5b60a58061001e6000396000f300606060405263ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416632f07d8578114603c575b600080fd5b6042606d565b60405160ff938416815291831660208301529091166040808301919091526060909101905180910390f35b6003600160025b9091925600a165627a7a7230582081d1ef17e2202c68a283b1f2914dcd5c17b8551875f374051e3325d78a211f220029",
+  "networks": {
+    "4": {
+      "events": {},
+      "links": {},
+      "address": "0xee6534bd917117e0152276e232b64943ff37376b",
+      "updated_at": 1505046698462
+    },
+    "1505045769286": {
+      "events": {},
+      "links": {},
+      "address": "0xcf83da9093bd10fff3ed4596588ed5a765bed499",
+      "updated_at": 1505046429985
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1505046698462
+}
