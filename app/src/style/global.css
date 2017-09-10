@@ -72,6 +72,13 @@ dl, ol, ul, pre, blockquote {
   margin-bottom: 1em;
 }
 
+.align-right {
+  text-align: right;
+}
+.align-left {
+  text-align:left;
+}
+
 code,
 pre,
 samp,
@@ -137,7 +144,7 @@ hr {
 /* #APP STUFF */
 
 .gridItem {
-  max-width:172px;
+  max-width:10em;
 }
 
 .clover {
