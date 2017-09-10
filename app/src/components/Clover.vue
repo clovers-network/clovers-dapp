@@ -3,16 +3,16 @@
     <div class="bg-green white p2 md-p3 flex flex-column intro-screen relative overflow-hidden">
       <div class="center my3 relative">
         <div class="h1">
-          <clv :board="boardArray"></clv>
-        </div>
-        <div>
-          <!-- <svg-text :movesString="heart"></svg-text> -->
+          <clv class='no-border' :key="boardId" :moveString="moveString"></clv>
         </div>
       </div>
     </div>
     <div class="p3">
       <p class="h2">
         <code>id: {{ boardId }}</code>
+      </p>
+      <p class="h2">
+        <code >name: <form @submit.prevent="changeName()"><input type="text" placeholder="Unnamed" v-model="name"/></form></code>
       </p>
       <p class="h2">
         <code>finders fee: {{ board && board.findersFee }} &clubs;</code>
@@ -41,24 +41,37 @@
 
 <script>
   import { mapGetters } from 'vuex'
-
+  import Reversi from '../assets/reversi'
   export default {
     name: 'clover',
     data () {
       return {
-        boardId: null,
-        boardArray: []
+        nameNotClicked: true,
+        name: '',
+        reversi: new Reversi()
       }
     },
     methods: {
       flip () {
         this.clover.buyClover(this.boardId)
+      },
+      changeName () {
+        this.clover.renameClover(this.boardId, this.name).catch((err) => {
+          console.log(err)
+        })
+      }
+    },
+    watch: {
+      board () {
+        this.name = this.board.name || ''
       }
     },
     computed: {
       board () {
-        if (!this.boardId) return {}
-        return this.allClovers.find(c => c.board === this.boardId)
+        return this.boardId && this.allClovers.find(c => c.board === this.boardId)
+      },
+      moveString () {
+        return this.board && this.reversi.byteMovesToStringMoves(this.board.first32Moves, this.board.lastMoves)
       },
       flippers () {
         if (!this.boardId || !this.board) return 0
@@ -83,16 +96,17 @@
       toOwner () {
         return '/users/' + this.owner
       },
+      boardId () {
+        return this.$route.params.board
+      },
+      boardArray () {
+        return this.reversi.byteBoardToRowArray(this.boardId)
+      },
 
       ...mapGetters([
         'clover',
         'allClovers'
       ])
-    },
-    mounted () {
-      const { board } = this.$route.params
-      this.boardId = board
-      this.boardArray = this.clover.byteBoardToRowArray(board)
     }
   }
 </script>

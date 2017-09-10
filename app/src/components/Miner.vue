@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <div class="bg-darken-1 fixed top-0 left-0 right-0 bottom-0 z1 pointer" @click="close"></div>
-    <div class="bg-black white absolute col-12 overflow-hidden z2">
+  <div >
+    <div class="bg-darken-4 fixed top-0 left-0 right-0 bottom-0 z2 pointer" @click="close"></div>
+    <div class="bg-black z1 fixed left-0 right-0 white absolute col-12 overflow-hidden z2">
       <header class="p2 flex flex-wrap items-center mxn1">
         <div class="py1 px2 min-width-1">
           <p class="m0 h6">Time spent mining</p>
@@ -52,10 +52,10 @@
         <div>
           <ul class="list-reset flex mxn1 nowrap overflow-auto items-center">
             <li @click="select(board)" v-for="board in newClovers" class="py1 px2 pointer h6" :class="isFocus(board)">
-              <clv :key="board.movesString" :board="reversi.byteBoardToRowArray(board.byteBoard)"></clv>
+              <clv :no-click='true' :key="board.movesString" :byteBoard="board.byteBoard"></clv>
             </li>
             <li @click="select(board)" v-for="board in claimedClovers" class="py1 px2 pointer h6 claimed" :class="isFocus(board)">
-              <clv :key="board.movesString" :board="reversi.byteBoardToRowArray(board.byteBoard)"></clv>
+              <clv :no-click='true' :key="board.movesString" :byteBoard="board.byteBoard"></clv>
             </li>
             <li>
               <p v-if="this.limit && this.claimedClovers.length > 4" @click="limit = false" class="mx3 m0 pointer">👁 more</p>
@@ -92,6 +92,15 @@
     watch: {
       account () {
         this.checkRead()
+      },
+      showMiner () {
+        if (!this.showMiner) this.selectedClover = null
+      }
+    },
+    props: {
+      showMiner: {
+        type: Boolean,
+        default: false
       }
     },
     computed: {

@@ -70,5 +70,21 @@ export default {
   },
   ADD_REGISTERED_EVENTS (state, events) {
     state.registeredEvents = events
+  },
+  ADD_USERNAME_EVENT (state, event) {
+    let rIndex = state.usernameEvents.findIndex((e) => e.transactionHash === event.transactionHash)
+    if (rIndex < 0) state.usernameEvents.push(event)
+  },
+  ADD_USERNAME_EVENTS (state, events) {
+    state.usernameEvents = events
+  },
+  ADD_CLOVERNAME_EVENT (state, event) {
+    console.log('single', event)
+    let rIndex = state.clovernameEvents.findIndex((e) => e.transactionHash === event.transactionHash)
+    if (rIndex < 0) state.clovernameEvents.push(event)
+  },
+  ADD_CLOVERNAME_EVENTS (state, events) {
+    console.log('multiple', events)
+    state.clovernameEvents = events
   }
 }
