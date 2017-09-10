@@ -45,17 +45,17 @@
         <div class="lh1 absolute top-0 left-0 m2 z2 pointer p1">
           <a @click="deselect">❌</a>
         </div>
-        <claim-clover :clover-data="selectedClover" :miner="miner" @claimed="claimed" @remove="remove"></claim-clover>
+        <claim-clover :clover-data="selectedClover" @claimed="claimed" @remove="remove"></claim-clover>
       </div>
       <div v-if="clovers.length" :class="{'border-top': !selectedClover}"  class="p2 relative">
         <p class="h6 m0 pt1 silver absolute top-0">Mined clovers</p>
         <div>
           <ul class="list-reset flex mxn1 nowrap overflow-auto items-center">
             <li @click="select(board)" v-for="board in newClovers" class="py1 px2 pointer h6" :class="isFocus(board)">
-              <clv :key="board.movesString" :board="miner.byteBoardToRowArray(board.byteBoard)"></clv>
+              <clv :key="board.movesString" :board="reversi.byteBoardToRowArray(board.byteBoard)"></clv>
             </li>
             <li @click="select(board)" v-for="board in claimedClovers" class="py1 px2 pointer h6 claimed" :class="isFocus(board)">
-              <clv :key="board.movesString" :board="miner.byteBoardToRowArray(board.byteBoard)"></clv>
+              <clv :key="board.movesString" :board="reversi.byteBoardToRowArray(board.byteBoard)"></clv>
             </li>
             <li>
               <p v-if="this.limit && this.claimedClovers.length > 4" @click="limit = false" class="mx3 m0 pointer">👁 more</p>
@@ -72,7 +72,7 @@
 <script>
   import { mapMutations, mapGetters } from 'vuex'
   import CloverWorker from 'worker-loader!../assets/clover-worker'
-  import Clover from '../assets/clovers'
+  import Reversi from '../assets/reversi'
   import ClaimClover from '@/components/ClaimClover'
   import moment from 'moment'
 
@@ -81,7 +81,7 @@
     data () {
       return {
         miners: [],
-        miner: new Clover(),
+        reversi: new Reversi(),
         customMoves: 'C4C5D6C7C6D3E6D7C2B3A2F5C8E3G5B6A5H5F6B1H4A4E7G7E2F7G6B7G8G4F4F3D8H7E8F2H8B5A7E1H3D2G2H2C1C3F1D1A1G1G3A6H6F8B2B8A3H1A8B4',
         interval: null,
         hasStorage: !!window.localStorage,
@@ -169,7 +169,8 @@
       },
 
       ...mapGetters({
-        account: 'account'
+        account: 'account',
+        clover: 'clover'
       })
     },
     methods: {
@@ -227,7 +228,7 @@
           this.totalMined = data.hashRate
         }
         if ('movesString' in data) {
-          this.miner.cloverExists(data.byteBoard).then((exists) => {
+          this.clover.cloverExists(data.byteBoard).then((exists) => {
             if (!exists) {
               this.minedClover(data)
             }

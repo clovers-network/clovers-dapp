@@ -38,8 +38,8 @@ export default {
     clover.claimed = new Date()
     state.minedClovers.splice(i, 1, clover)
   },
-  UPDATE_CLOVER_PRICE (state, { clover, newVal }) {
-    let i = state.minedClovers.findIndex(cl => cl.byteBoard === clover.byteBoard)
+  UPDATE_CLOVER_PRICE (state, { byteBoard, newVal }) {
+    let i = state.minedClovers.findIndex(cl => cl.byteBoard === byteBoard)
     Object.assign(state.minedClovers[i], {startPrice: newVal})
   },
   REMOVE_MINED_CLOVER (state, { byteBoard }) {

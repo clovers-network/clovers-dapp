@@ -4,7 +4,7 @@
       <div class="relative mx3">
         <template v-if='byteBoard'>
           <div class="h2">
-            <clv :board="miner.byteBoardToRowArray(byteBoard)"></clv>
+            <clv :board="reversi.byteBoardToRowArray(byteBoard)"></clv>
           </div>
           <div>
             <svg-text :movesString="movesString"></svg-text>
@@ -20,15 +20,14 @@
         </router-link>
       </div>
       <div v-else class="col-8 lg-col-7">
-        <!-- <div>
-          <input class="btn btn-outline py3 col-12 regular h3" v-model='movesString'>
-          <button @click.prevent="test()" class="btn btn-outline py3 col-12 regular h3">TEST</button>
-        </div> -->
+        <div>
+<!--           <input class="btn btn-outline py3 col-12 regular h3" v-model='movesString'> -->
+        </div>
         <form @submit.prevent="trigger">
           <div class="mb2 flex flex-wrap">
             <div class="col-6 px3">
               <label class="block right-align h2">You will receive</label>
-              <input class="input big white right-align" disabled :value="reward">
+              <input class="input big white right-align" disabled :value="rewardTxt">
             </div>
             <div class="col-6 px3">
               <label class="block right-align h2">List on flip market for</label>
@@ -50,6 +49,7 @@
         </form>
       </div>
     </div>
+<!--     <button @click.self="test()" class="btn btn-outline py3 col-12 regular h3">TEST</button> -->
   </div>
 </template>
 
@@ -57,29 +57,28 @@
   import moment from 'moment'
   import { mapGetters, mapMutations } from 'vuex'
   import SvgText from '@/components/TextPath'
-  import Clover from '../assets/clovers'
-
+  import Reversi from '../assets/reversi'
   export default {
     name: 'claim-clover',
     data () {
       return {
         submitting: false,
-        clover: new Clover(),
         byteBoard: null,
-        movesString: null
+        movesString: null,
+        reward: null,
+        reversi: new Reversi()
       }
     },
     props: {
       cloverData: {
         type: Object,
         required: true
-      },
-      miner: {
-        type: Object,
-        required: true
       }
     },
     computed: {
+      rewardTxt () {
+        return (this.reward || 100) + ' ♧'
+      },
       claimDate () {
         return moment(this.cloverData.claimed).fromNow()
       },
@@ -93,17 +92,13 @@
         set (newVal) {
           this.updateCloverPrice({
             newVal,
-            clover: this.cloverData
+            byteBoard: this.byteBoard
           })
         }
       },
-      reward () {
-        Object.assign(this.clover, this.cloverData)
-        this.clover.isSymmetrical()
-        return (this.clover.calcFindersFees(this.symmetries) || 100) + ' ♧'
-      },
       ...mapGetters({
-        symmetries: 'symmetries'
+        symmetries: 'symmetries',
+        clover: 'clover'
       })
     },
     mounted () {
@@ -115,36 +110,31 @@
       },
       movesString () {
         if (!this.movesString) return
-        this.clover.playGameMovesString(this.movesString)
-        this.clover.isSymmetrical()
-        this.byteBoard = this.clover.byteBoard
+        this.reversi.playGameMovesString(this.movesString)
+        this.reversi.isSymmetrical()
+        this.byteBoard = this.reversi.byteBoard
       }
     },
     methods: {
       setBoard () {
         this.byteBoard = this.cloverData.byteBoard
         this.movesString = this.cloverData.movesString
+        this.clover.playGameMovesString(this.movesString)
+        this.clover.isSymmetrical()
+        this.reward = this.clover.calcFindersFees(this.symmetries)
       },
       test () {
-        // console.log('test')
-        // console.log(this.miner.byteMovesToStringMoves('0xcb7696ecd7aad499b73d6edd6753b5dfa57fd3efc69b17eef89af9ec', '0x8f2bffa83cbcfbf927569d166042974306287c30d891c7c510000000'))
-        // this.miner.buildMovesString()
-        // console.log(this.miner.movesString)
-
-        // this.miner.playGameMovesString(this.movesString)
-        // this.miner.getTallys().then((res) => {
-        //   console.log('chain', res)
-        //   console.log('store', this.symmetries)
-        // })
-        // this.miner.getFindersFee().then((res) => {
-        //   console.log('chain', res)
-        // })
+        console.log('test')
+        this.clover.playGameMovesString(this.movesString)
+        this.clover.listPlayerCount().then((res) => {
+          console.log(res)
+        })
       },
       trigger () {
         this.submitting = true
-        this.miner.startPrice = this.flipPrice
-        this.miner.playGameMovesString(this.movesString)
-        this.miner.register().then((res) => {
+        this.clover.startPrice = this.flipPrice
+        this.clover.playGameMovesString(this.movesString)
+        this.clover.register().then((res) => {
           this.submitting = false
           console.log('claimed', res)
           this.$emit('claimed', res)
