@@ -123,7 +123,7 @@
       test () {
         console.log('test')
         this.clover.playGameMovesString(this.movesString)
-        this.clover.listPlayerCount().then((res) => {
+        this.clover.debugGame().then((res) => {
           console.log(res)
         })
       },

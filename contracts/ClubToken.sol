@@ -225,6 +225,7 @@ contract ClubToken is StandardToken {
 
   function mineClover(bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public {
     Reversi.Game memory game = Reversi.playGame(first32Moves, lastMoves);
+    // Game memory game = playGame(first32Moves, lastMoves);
     saveGame(game, startPrice);
   }
 
@@ -232,9 +233,11 @@ contract ClubToken is StandardToken {
     registerPlayer();
     addCloverToPlayer(game.board);
     Reversi.Game memory game;
+    // Game memory game;
     game.board = board;
 
     game = Reversi.isSymmetrical(game);
+    // game = isSymmetrical(game);
     if (game.symmetrical) {
       clovers[board].findersFee = findersFee(game);
       balances[msg.sender] += clovers[board].findersFee;
@@ -285,8 +288,10 @@ contract ClubToken is StandardToken {
   //
   // see ./Reversi.sol for playGame(), isSymmetrical() and Game struct
 
+
   function gameIsValid(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bool) {
     Reversi.Game memory game = Reversi.playGame(first32Moves, lastMoves);
+    // Game memory game = playGame(first32Moves, lastMoves);
     if (game.error) return false;
     if (!game.complete) return false;
     if (!game.symmetrical) return false;
@@ -295,34 +300,54 @@ contract ClubToken is StandardToken {
 
   function gameExists(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bool) {
     Reversi.Game memory game = Reversi.playGame(first32Moves, lastMoves);
+    // Game memory game = playGame(first32Moves, lastMoves);
     if (game.error) revert();
     if (!game.complete) revert();
     return clovers[game.board].exists;
   }
-  function showGameConstant(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym) {
+
+  function debugGame(bytes28 first32Moves, bytes28 lastMoves) public{
     Reversi.Game memory game = Reversi.playGame(first32Moves, lastMoves);
+    // Game memory game = playGame(first32Moves, lastMoves);
+  }
+  function showGame(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym) {
+    Reversi.Game memory game = Reversi.playGame(first32Moves, lastMoves);
+    // Game memory game = playGame(first32Moves, lastMoves);
     return returnGame(game);
   }
 
+  function showGame2(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bytes16 board, uint8 blackScore, uint8 whiteScore, uint8 currentPlayer, uint8 moveKey) {
+    Reversi.Game memory game = Reversi.playGame(first32Moves, lastMoves);
+    // Game memory game = playGame(first32Moves, lastMoves);
+    return (game.board, game.blackScore, game.whiteScore, game.currentPlayer, game.moveKey);
+  }
+
+
   function getSymmetry(bytes16 b) public constant returns(bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym) {
     Reversi.Game memory game;
+    // Game memory game;
     game.board = b;
     game = Reversi.isSymmetrical(game);
+    // game = isSymmetrical(game);
     return returnGame(game);
   }
 
   function getFindersFee(bytes16 b) public constant returns(uint256) {
     Reversi.Game memory game;
+    // Game memory game;
     game.board = b;
     game = Reversi.isSymmetrical(game);
+    // game = isSymmetrical(game);
     return findersFee(game);
   }
 
   function returnGame(Reversi.Game game) internal returns(bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym){
+  // function returnGame(Game game) internal returns(bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym){
     return (game.error, game.complete, game.symmetrical, game.RotSym, game.Y0Sym, game.X0Sym, game.XYSym, game.XnYSym);
   }
 
   function saveGame(Reversi.Game game, uint256 startPrice) internal returns(uint){
+  // function saveGame(Game game, uint256 startPrice) internal returns(uint){
     if (game.error) revert();
     if (!game.complete) revert();
     if (clovers[game.board].exists) revert();
@@ -347,6 +372,7 @@ contract ClubToken is StandardToken {
   }
 
   function addToSymmTallys (Reversi.Game game) internal {
+  // function addToSymmTallys (Game game) internal {
     if (game.symmetrical) Symmetricals += 1;
     if (game.RotSym) RotSym += 1;
     if (game.Y0Sym) Y0Sym += 1;
@@ -356,6 +382,7 @@ contract ClubToken is StandardToken {
   }
 
   function findersFee (Reversi.Game game) internal constant returns(uint256) {
+  // function findersFee (Game game) internal constant returns(uint256) {
     uint256 base = 0;
 
     if (game.RotSym) base = base.add( payMultiplier.mul( Symmetricals + 1 ).div( RotSym + 1 ) );

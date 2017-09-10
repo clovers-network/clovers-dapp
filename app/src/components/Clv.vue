@@ -13,7 +13,7 @@ import Reversi from '../assets/reversi'
 import SvgPath from './TextPath'
 
 export default {
-  name: 'clover',
+  name: 'Clv',
   data () {
     return {
       stop: true,

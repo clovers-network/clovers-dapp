@@ -3,11 +3,12 @@
     <div class="bg-green white p2 md-p3 flex flex-column intro-screen relative overflow-hidden">
       <div class="center my3 relative">
         <div class="h1">
-          <clv class='no-border' :key="boardId" :moveString="moveString"></clv>
+          <clv class='no-border' :key="boardId" :byteBoard="boardId" :moveString="moveString"></clv>
         </div>
       </div>
     </div>
     <div class="p3">
+      <button class='btn bg-silver' @click='test()'>TEST</button>
       <p class="h2">
         <code>id: {{ boardId }}</code>
       </p>
@@ -35,6 +36,9 @@
       <p class="h2">
         <code>last flipped at block: {{board && board.modified}}</code>
       </p>
+      <p class="h2">
+        <code>moves: {{moveString}}</code>
+      </p>
     </div>
   </div>
 </template>
@@ -52,6 +56,13 @@
       }
     },
     methods: {
+      test () {
+        this.clover.showGame2(this.board.first32Moves, this.board.lastMoves).then((res) => {
+          console.log(res)
+        }).catch((error) => {
+          console.log('ERROR: ', error)
+        })
+      },
       flip () {
         this.clover.flipClover(this.boardId)
       },
