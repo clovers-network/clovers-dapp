@@ -34,6 +34,10 @@ a {
   transition: all var(--anim-timing-medium);
 }
 
+.mt3-5 {
+  margin-top: 3.5rem;
+}
+
 /*h1, h2, h3,
 h4, h5, h6 {
   font-weight: 600;
@@ -131,16 +135,41 @@ hr {
 /* #APP STUFF */
 
 .clover {
-  background-color: var(--silver);
+  transition: background 500ms ease;
+  background-color: var(--green);
   border-radius: 50%;
   padding: 1.6em;
   display: inline-block;
+  z-index:0;
+  position: relative;
+  &.no-border {
+    border: 0px !important;
+  }
   .row {
     line-height: 0;
   }
 
   .active-clover & {
     box-shadow: 0 0 0 .4em;
+  }
+  &.w-b {
+    background-color: var(--black);
+    border: 1px solid var(--white);
+    &:hover .t-b {
+      border: 1px solid var(--white);
+    }
+  }
+  &.w-w {
+    background-color: var(--white);
+    border: 1px solid var(--black);
+    &:hover .t-w {
+      border: 1px solid var(--black);
+    }
+  }
+  &.w-t {
+    background-color: var(--silver);
+  }
+  &:hover {
   }
 }
 
@@ -151,6 +180,8 @@ hr {
   width: .8em;
   border-radius: 50%;
   margin: .06em;
+  border: 1px solid transparent;
+  transition: border 500ms ease;
 }
 
 .t-b {

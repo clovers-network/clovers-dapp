@@ -10,6 +10,21 @@ export default {
   hashRate: state => state.hashRate,
   mining: state => state.mining,
   miningPower: state => state.miningPower,
+  cloverNames: state => {
+    let cloverNames = []
+    state.clovernameEvents.forEach((event) => {
+      console.log(event.args.name)
+      let cloverKey = cloverNames.findIndex((clover) => clover.board === event.args.board)
+      if (cloverKey > -1) {
+        let clover = cloverNames[cloverKey]
+        clover.name = event.args.name
+        cloverNames.splice(cloverKey, 1, clover)
+      } else {
+        cloverNames.push({board: event.args.board, name: event.args.name})
+      }
+    })
+    return cloverNames
+  },
   symmetries: (state, getters) => {
     let Symmetricals = 0
     let RotSym = 0
@@ -31,13 +46,10 @@ export default {
     })
     return {Symmetricals, RotSym, X0Sym, Y0Sym, XYSym, XnYSym, PayMultiplier: 100}
   },
-  allClovers: state => {
+  allClovers: (state, getters) => {
     console.log('re calc allClovers')
     let clovers = []
     JSON.parse(JSON.stringify(state.registeredEvents))
-    .sort((a, b) => {
-      return a.args.registeredEvent - b.args.registeredEvent
-    })
     .forEach((e) => {
       if (e.event !== 'Registered') return
       if (e.args.newBoard) {
@@ -64,15 +76,15 @@ export default {
         }
       }
     })
-    return clovers
+    return clovers.map((c) => {
+      let nameIndex = getters.cloverNames.findIndex((cn) => cn.board === c.board)
+      if (nameIndex > -1) c.name = getters.cloverNames[nameIndex].name
+      return c
+    })
   },
   allUsers: state => {
-    console.log('re calc allUsers')
     let users = []
     JSON.parse(JSON.stringify(state.registeredEvents))
-    .sort((a, b) => {
-      return a.args.registeredEvent - b.args.registeredEvent
-    })
     .forEach((e) => {
       if (e.event !== 'Registered') return
 

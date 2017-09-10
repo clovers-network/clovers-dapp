@@ -9,7 +9,7 @@ import router from './router'
 import BN from 'bignumber.js'
 Object.defineProperty(Vue.prototype, '$BN', { value: BN })
 
-import Clv from '@/components/CloverFunc'
+import Clv from '@/components/Clv'
 import CloverIcon from '@/components/CloverIcon'
 import CloverGridItem from '@/components/CloverGridItem'
 

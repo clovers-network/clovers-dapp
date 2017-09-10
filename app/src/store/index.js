@@ -22,7 +22,9 @@ const state = {
   mining: false,
   miningPower: 0,
   minedClovers: [],
-  registeredEvents: []
+  registeredEvents: [],
+  usernameEvents: [],
+  clovernameEvents: []
 }
 
 export default new Vuex.Store({
