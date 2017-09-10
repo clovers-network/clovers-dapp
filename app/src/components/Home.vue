@@ -30,8 +30,14 @@
       }
     },
     computed: {
+      featured () {
+        this.clover.playGameMovesString(this.heart)
+        return this.clover.byteBoardToRowArray()
+      },
+
       ...mapGetters([
-        'balance'
+        'balance',
+        'clover'
       ])
     }
   }
