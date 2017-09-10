@@ -28,7 +28,10 @@ export default new Router({
     {
       path: '/users/:address',
       name: 'User',
-      component: User
+      component: User,
+      meta: {
+        hideMainCloverList: true
+      }
     }
   ],
   scrollBehavior (to, from, savedPosition) {
