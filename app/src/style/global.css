@@ -307,6 +307,11 @@ input:disabled,
 
 /* HELPERS */
 
+.material-icons {
+  font-size: inherit;
+  line-height: inherit;
+}
+
 .lh1 {
   line-height: 1;
 }
