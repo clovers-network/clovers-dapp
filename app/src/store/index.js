@@ -24,7 +24,8 @@ const state = {
   minedClovers: [],
   registeredEvents: [],
   usernameEvents: [],
-  clovernameEvents: []
+  clovernameEvents: [],
+  transactions: []
 }
 
 export default new Vuex.Store({

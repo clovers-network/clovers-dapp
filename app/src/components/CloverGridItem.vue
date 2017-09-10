@@ -28,9 +28,6 @@
         required: true
       }
     },
-    mounted () {
-      console.log('mounted CGI', this.board.board)
-    },
     computed: {
       flippers () {
         return this.board && this.board.previousOwners && this.board.previousOwners.length - 1
