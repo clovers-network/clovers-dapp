@@ -11,7 +11,7 @@
       <div v-if="cloverData.removed" class="px3 flex-auto">
         <p class="h1 m0 lh1">🗑 Removed {{ removeDate }}</p>
       </div>
-      <div v-else-if="false" class="px3 flex-auto">
+      <div v-else-if="cloverData.claimed" class="px3 flex-auto">
         <router-link :to="'/clovers/' + cloverData.byteBoard">
           <p class="h1 m0 lh1 white">✨ Claimed {{ claimDate }}</p>
         </router-link>
@@ -137,7 +137,7 @@
           type: 'progress'
         }).then((msgId) => {
           this.clover.register().then((res) => {
-            console.log(res)
+            console.log('res', res)
             this.submitting = false
             console.log('claim returned')
             this.$emit('claimed', res)
