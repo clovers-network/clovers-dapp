@@ -1,4 +1,7 @@
 export default {
+  NOT_RINKEBY (state) {
+    state.notRinkeby = true
+  },
   // this mutatation is called when the route changes
   ROUTE_CHANGED (state, { to, from }) {
     console.log('route changed from', from.name, 'to', to.name)

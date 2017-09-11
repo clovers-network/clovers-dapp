@@ -6,6 +6,14 @@ import App from './App'
 import store from './store'
 import router from './router'
 
+router.beforeEach((to, from, next) => {
+  if (store.getters.notRinkeby && to.path !== '/') {
+    next('/')
+  } else {
+    next()
+  }
+})
+
 import BN from 'bignumber.js'
 Object.defineProperty(Vue.prototype, '$BN', { value: BN })
 

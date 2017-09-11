@@ -4,6 +4,7 @@ import xss from 'xss'
 
 export default {
   clover: state => state.clover,
+  notRinkeby: state => state.clover.notRinkeby,
   error: state => state.clover.error,
   name: state => state.clover.name,
   symbol: state => state.clover.symbol,
