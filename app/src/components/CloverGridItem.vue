@@ -1,9 +1,9 @@
 <template>
   <router-link :to="link" tag="div" class="pointer gridItem">
-    <div class="center silver mb2" v-text='timeAgo'></div>
+    <div class="center silver mb2" v-text="timeAgo"></div>
     <!-- <div class="center silver mb2">by {{board.previousOwners[0]}}</div> -->
     <div>
-      <clv :no-click='true' :byteBoard="board.board"></clv>
+      <clv :no-click="true" :byteBoard="board.board"></clv>
       <div class="h1 center mt2 max-fit overflow-hidden" ><code v-html="boardName"></code></div>
       <div class="center mt2 max-fit overflow-hidden" v-html="boardOwner"></div>
       <div class="center mt2">
