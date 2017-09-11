@@ -517,7 +517,7 @@ class Clover extends Reversi {
     if (this.error) throw new Error('Game is not valid')
     if (!this.complete) throw new Error('Game is not complete')
     if (!this.symmetrical) throw new Error('Game is not symmetrical')
-    return this.cloverExists(board).then((exists) => {
+    return this.cloverExists(byteBoard).then((exists) => {
       if (exists) throw new Error('Clover already exists')
       return this.deploy().then((instance) => {
         return instance.mineClover(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), startPrice, {from: this.account}).then(() => byteBoard)
