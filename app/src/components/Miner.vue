@@ -240,6 +240,7 @@
           this.totalMined = data.hashRate
         }
         if ('symmetrical' in data) {
+          console.log(data)
           // this.clover.cloverExists(data.byteBoard).then((exists) => {
           this.cloverExists(data.byteBoard).then((exists) => {
             if (!exists) {

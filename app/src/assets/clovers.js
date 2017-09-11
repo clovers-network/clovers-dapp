@@ -10,6 +10,7 @@ class Clover extends Reversi {
 
   constructor (events = false) {
     super()
+    this.notRinkeby = false
     this.error = false
     this.genesisBlock = 858317
     this.address = '0xee262da86309e4bec8504ba1af9e337b67fd49cb'
@@ -27,16 +28,25 @@ class Clover extends Reversi {
   // Connections
 
   initWeb3 () {
-    console.log('init')
     web3 = self && self.web3
     let web3Provider
     if (web3) {
       // Use Mist/MetaMask's provider
       web3Provider = web3.currentProvider
       _web3 = new Web3(web3Provider)
-      this.setAccountInterval()
-      this.getPastEvents()
-      this.watchFutureEvents()
+      _web3.version.getNetwork((err, netId) => {
+        switch (netId) {
+          case '4':
+            this.setAccountInterval()
+            this.getPastEvents().then(() => {
+              this.watchFutureEvents()
+            })
+            break
+          default:
+            this.notRinkeby = true
+            window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+        }
+      })
     } else {
       this.resetConnection()
       setTimeout(() => {
@@ -68,29 +78,28 @@ class Clover extends Reversi {
     if (!this.symbol) {
       this.getSymbol().then((symbol) => {
         this.symbol = symbol
-        console.log('updateSymbol')
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       }).catch((err) => console.log(err))
     }
     if (!this.name) {
       this.getName().then((name) => {
         this.name = name
-        console.log('name')
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       }).catch((err) => console.log(err))
     }
-    if (_web3.eth.accounts && this.account !== _web3.eth.accounts[0]) {
-      this.account = _web3.eth.accounts[0]
-      console.log('updateAccount')
-      window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-    }
-    this.account && this.balanceOf().then(balance => {
-      if (balance.toNumber() !== this.balance) {
-        this.balance = balance.toNumber()
-        console.log('updateBalance')
+    _web3.eth.getAccounts((error, accounts) => {
+      if (error) throw new Error(error)
+      if (accounts.length && this.account !== accounts[0]) {
+        this.account = accounts[0]
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       }
-    }).catch((err) => console.log(err))
+      this.account && this.balanceOf().then(balance => {
+        if (balance.toNumber() !== this.balance) {
+          this.balance = balance.toNumber()
+          window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+        }
+      }).catch((err) => console.log(err))
+    })
   }
 
   setContract () {
@@ -106,8 +115,8 @@ class Clover extends Reversi {
   }
 
   getPastEvents () {
-    this.deploy().then((instance) => {
-      instance.Registered({}, {fromBlock: this.genesisBlock}).get((error, result) => {
+    return this.deploy().then((instance) => {
+      return instance.Registered({}, {fromBlock: this.genesisBlock}).get((error, result) => {
         if (error) {
           this.error = 'need-metamask'
           this.resetConnection()
@@ -115,30 +124,30 @@ class Clover extends Reversi {
           this.error = false
           window.dispatchEvent(new CustomEvent('eventsRegistered', {detail: result}))
         }
-        console.log('RegisteredUpdate')
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-      })
-      instance.newCloverName({}, {fromBlock: this.genesisBlock}).get((error, result) => {
-        if (error) {
-          this.error = 'need-metamask'
-          this.resetConnection()
-        } else {
-          this.error = false
-          window.dispatchEvent(new CustomEvent('newClovernameEvents', {detail: result}))
-        }
-        console.log('newcloverNameUpdate')
-        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-      })
-      instance.newUserName({}, {fromBlock: this.genesisBlock}).get((error, result) => {
-        if (error) {
-          this.error = 'need-metamask'
-          this.resetConnection()
-        } else {
-          this.error = false
-          window.dispatchEvent(new CustomEvent('newUsernameEvents', {detail: result}))
-        }
-        console.log('new userame update')
-        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+
+        return instance.newCloverName({}, {fromBlock: this.genesisBlock}).get((error, result) => {
+          if (error) {
+            this.error = 'need-metamask'
+            this.resetConnection()
+          } else {
+            this.error = false
+            window.dispatchEvent(new CustomEvent('newClovernameEvents', {detail: result}))
+          }
+          window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+        
+          return instance.newUserName({}, {fromBlock: this.genesisBlock}).get((error, result) => {
+            if (error) {
+              this.error = 'need-metamask'
+              this.resetConnection()
+            } else {
+              this.error = false
+              window.dispatchEvent(new CustomEvent('newUsernameEvents', {detail: result}))
+            }
+            window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+            return
+          })
+        })
       })
     })
   }
@@ -153,7 +162,6 @@ class Clover extends Reversi {
           this.error = false
           window.dispatchEvent(new CustomEvent('eventRegistered', {detail: result}))
         }
-        console.log('new registered update')
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       })
       instance.newCloverName({}, {fromBlock: 'latest'}).watch((error, result) => {
@@ -164,7 +172,6 @@ class Clover extends Reversi {
           this.error = false
           window.dispatchEvent(new CustomEvent('newClovernameEvent', {detail: result}))
         }
-        console.log('new clover name update')
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       })
       instance.newUserName({}, {fromBlock: 'latest'}).watch((error, result) => {
@@ -175,7 +182,6 @@ class Clover extends Reversi {
           this.error = false
           window.dispatchEvent(new CustomEvent('newUsernameEvent', {detail: result}))
         }
-        console.log('new username update')
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       })
     })
@@ -530,7 +536,6 @@ class Clover extends Reversi {
     if (this.error) throw new Error('Game is not valid')
     if (!this.complete) throw new Error('Game is not complete')
     if (!this.symmetrical) throw new Error('Game is not symmetrical')
-    console.log(new BN(this.byteBoard, 16).toNumber(), new BN(byteBoard, 16).toNumber(), new BN(this.byteBoard, 16).toNumber() !== new BN(byteBoard, 16).toNumber())
     if (new BN(this.byteBoard, 16).toNumber() !== new BN(byteBoard, 16).toNumber()) throw new Error('Not a valid ByteBoard')
     return this.cloverExists(byteBoard).then((exists) => {
       if (exists) throw new Error('Clover already exists')
@@ -647,7 +652,6 @@ class Clover extends Reversi {
   }
 
   formatGame2 (contractArray = []) {
-    console.log(contractArray)
     return {
       board: contractArray[0],
       arrayBoardRow: this.byteBoardToRowArray(contractArray[0]),
