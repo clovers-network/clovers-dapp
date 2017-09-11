@@ -1,10 +1,15 @@
 <template>
   <div>
     <div class="bg-gray white p2 md-p3 pre mono" v-text="address"></div>
-     <div class="p3">
-      <p class="h2" v-if='mine && username'>
-        <form class=' border-bottom fit' @submit.prevent="changeName()"><input class='input big fit' type="text" placeholder="Name" v-model="name"/></form>
-      </p>
+    <div class="p3">
+      <template v-if="mine">
+        <form class='border-bottom fit' @submit.prevent="changeName()">
+          <input class='input big fit' type="text" placeholder="Name" v-model="name"></input>
+        </form>
+      </template>
+      <template v-else>
+        <p class='h1' v-html="name"></p>
+      </template>
     </div>
     <div class="p2">
       <div v-if="myClovers" class="mt3 px2">
@@ -39,10 +44,13 @@
         console.log('users.clovers changed')
       },
       username () {
-        this.name = this.username.name
+        this.name = this.username
       }
     },
     computed: {
+      username () {
+        return this.user && this.user.name
+      },
       mine () {
         return this.address === this.account
       },
@@ -53,20 +61,18 @@
         return this.allUsers.find((u) => u.address === this.address)
       },
       myClovers () {
-        return this.user && this.user.clovers
-        .map((c) => this.allClovers.find((ac) => ac.board === c))
+        return this.user && this.user.clovers.map((c) => this.allClovers.find((ac) => ac.board === c))
       },
 
       ...mapGetters([
         'allUsers',
         'allClovers',
-        'username',
         'account',
         'clover'
       ])
     },
     mounted () {
-      this.name = this.username.name
+      this.name = this.username
     },
     methods: {
       changeName () {

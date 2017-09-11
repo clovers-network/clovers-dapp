@@ -11,5 +11,8 @@ export default {
     msg.id = msgId
     commit('ADD_MSG', msg)
     return msg.id
+  },
+  cloverExists ({commit, getters}, byteBoard) {
+    return getters.allClovers.findIndex((c) => c.board === byteBoard) > -1
   }
 }
