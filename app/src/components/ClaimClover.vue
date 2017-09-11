@@ -17,7 +17,7 @@
         </router-link>
       </div>
       <div v-else class="col-8 lg-col-7">
-        <!-- <div>
+<!--         <div>
           <input class="btn btn-outline py3 col-12 regular h3" v-model='movesString'>
         </div> -->
         <form @submit.prevent="trigger">
@@ -46,7 +46,6 @@
         </form>
       </div>
     </div>
-    <!-- <button @click.self="test()" class="btn btn-outline py3 col-12 regular h3">TEST</button> -->
   </div>
 </template>
 
@@ -119,13 +118,6 @@
         this.clover.playGameMovesString(this.movesString)
         this.clover.isSymmetrical()
         this.reward = this.clover.calcFindersFees(this.symmetries)
-      },
-      test () {
-        console.log('test')
-        this.clover.playGameMovesString(this.movesString)
-        this.clover.debugGame().then((res) => {
-          console.log(res)
-        })
       },
       trigger () {
         this.submitting = true

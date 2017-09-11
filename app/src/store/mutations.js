@@ -23,34 +23,37 @@ export default {
 
   MINED_CLOVER (state, clover) {
     state.cloversFound = state.cloversFound + 1
-    state.minedClovers.unshift(clover)
+    state.allMinedClovers.unshift(clover)
     if (window.localstorage) {
       window.localStorage.setItem(state.account + '_cloversFound', JSON.stringify(state.cloversFound))
     }
   },
   EXISTING_CLOVERS (state, clovers) {
-    state.minedClovers.push(...clovers)
+    state.allMinedClovers.push(...clovers)
   },
   CLAIMED_CLOVER (state, byteBoard) {
-    let i = state.minedClovers.findIndex(cl => cl.byteBoard === byteBoard)
-    // Object.assign(state.minedClovers[i], { claimed: new Date() })
-    let clover = state.minedClovers[i]
-    clover.claimed = new Date()
-    state.minedClovers.splice(i, 1, clover)
+    // let i = state.allMinedClovers.findIndex(cl => cl.byteBoard === byteBoard)
+    // // Object.assign(state.allMinedClovers[i], { claimed: new Date() })
+    // let clover = state.allMinedClovers[i]
+    // clover.claimed = new Date()
+    // state.allMinedClovers.splice(i, 1, clover)
+    // if (window.localstorage) {
+    //   window.localStorage.setItem(state.account + '_clovers', JSON.stringify(state.allMinedClovers))
+    // }
   },
   UPDATE_CLOVER_PRICE (state, { byteBoard, newVal }) {
-    let i = state.minedClovers.findIndex(cl => cl.byteBoard === byteBoard)
-    Object.assign(state.minedClovers[i], {startPrice: newVal})
+    let i = state.allMinedClovers.findIndex(cl => cl.byteBoard === byteBoard)
+    Object.assign(state.allMinedClovers[i], {startPrice: newVal})
   },
   REMOVE_MINED_CLOVER (state, { byteBoard }) {
-    let i = state.minedClovers.findIndex(cl => cl.byteBoard === byteBoard)
-    if (i > -1) state.minedClovers.splice(i, 1)
+    let i = state.allMinedClovers.findIndex(cl => cl.byteBoard === byteBoard)
+    if (i > -1) state.allMinedClovers.splice(i, 1)
   },
   UPDATE_CLOVER (state, clover) {
     state.clover = Object.assign(state.clover, clover)
   },
   STORED_CLOVERS (state, clovers) {
-    state.minedClovers = clovers
+    state.allMinedClovers = clovers
   },
   STORED_COUNT (state, total) {
     state.totalMined = total
@@ -59,8 +62,8 @@ export default {
     state.mineTime = duration
   },
   STORED_CLOVERS_FOUND (state, count) {
-    if (count < state.minedClovers.length) {
-      state.cloversFound = state.minedClovers.length
+    if (count < state.allMinedClovers.length) {
+      state.cloversFound = state.allMinedClovers.length
     }
     state.cloversFound = count
   },

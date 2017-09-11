@@ -3,16 +3,15 @@
     <div class="bg-green white p2 md-p3 flex flex-wrap intro-screen relative overflow-hidden items-center justify-center">
       <div class="center my3 px4 relative order-1">
         <div class="h1">
-          <clv class="no-border" :key="boardId" :byteBoard="reversi.byteBoard" :moveString="moveString"></clv>
+          <clv class="no-border" :key="boardId" :byteBoard="boardId" :moveString="moveString"></clv>
         </div>
         <symmetry :board="reversi"></symmetry>
       </div>
       <div class="order-0 md-right-align col-6 sm-col-3">
-
         <p class="h2">
-          <form v-if='mine' class='inline-block border-bottom' @submit.prevent="changeName()">
+          <form v-if='currentOwner' class='inline-block border-bottom' @submit.prevent="changeName()">
             <input class='input big align-right white' type="text" placeholder="Name" v-model="name"/></form>
-          <span v-else class="h1">{{name}}</span>
+          <span v-else class="h1" v-html="name"></span>
         </p>
         <div>
           Flips
@@ -45,9 +44,9 @@
         <template v-if="currentOwner">
           <p class="m0 px2 py1 border inline-block">It's yours 💯</p>
         </template>
-        <template v-else>
+        <template v-else-if="board">
           <a @click="flip" class="m0 px2 py1 border inline-block pointer white">
-            <span v-html="'Buy it from ' + ownerName"></span>
+            <span  v-html="'Buy it from ' + ownerName"></span>
             <span class="pl2 sending" v-if="flipping">✨</span>
           </a>
         </template>
@@ -56,6 +55,7 @@
 <!--       <p class="h2 center">
         <code>moves: <div v-for="chunk in visibleMoveString">{{chunk}}</div></code>
       </p> -->
+<!--     <button @click.self="test()" class="btn btn-outline py3 col-12 regular h3">TEST</button> -->
   </div>
 </template>
 
@@ -64,6 +64,7 @@
   import moment from 'moment'
   import Reversi from '@/assets/reversi'
   import Symmetry from '@/components/Symmetry'
+  import xss from 'xss'
 
   export default {
     name: 'clover',
@@ -77,10 +78,12 @@
     },
     methods: {
       test () {
-        this.clover.showGame2(this.board.first32Moves, this.board.lastMoves).then((res) => {
+        console.log('test')
+        console.log(this.boardId)
+        this.clover.cloverExists(this.boardId).then((res) => {
           console.log(res)
-        }).catch((error) => {
-          console.log('ERROR: ', error)
+        }).catch((err) => {
+          console.error(err)
         })
       },
       flip () {
@@ -98,22 +101,30 @@
           msg: 'Updating Name',
           type: 'progress'
         }).then((msgId) => {
-          this.clover.renameClover(this.boardId, this.name).then(() => {
-            this.selfDestructMsg({
-              msg: 'Updated name to ' + this.name,
-              type: 'success',
-              link: '/clovers/' + this.boardId
+          if (this.name === '' || this.name !== this.board.name) {
+            this.clover.renameClover(this.boardId, this.name).then(() => {
+              this.selfDestructMsg({
+                msg: 'Updated name to ' + xss(this.name),
+                type: 'success',
+                link: '/clovers/' + this.boardId
+              })
+              this.removeMessage(msgId)
+            }).catch((err) => {
+              console.error(err)
+              this.removeMessage(msgId)
+              this.selfDestructMsg({
+                msg: 'Error check logs',
+                type: 'error'
+              })
+              console.log(err)
             })
-            this.removeMessage(msgId)
-          }).catch((err) => {
-            console.error(err)
-            this.removeMessage(msgId)
+          } else {
             this.selfDestructMsg({
-              msg: 'Error check logs',
+              msg: this.name === '' || !this.name ? 'Clover name can\'t be empty' : 'Clover already named ' + xss(this.name),
               type: 'error'
             })
-            console.log(err)
-          })
+            this.removeMessage(msgId)
+          }
         })
       },
       init (byteBoard) {
@@ -142,9 +153,6 @@
       }
     },
     computed: {
-      mine () {
-        return this.board && this.ownerAddress === this.account
-      },
       board () {
         return this.boardId && this.allClovers.find(c => c.board === this.boardId)
       },

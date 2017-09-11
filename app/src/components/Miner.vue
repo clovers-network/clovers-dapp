@@ -45,10 +45,14 @@
         <div class="lh1 absolute top-0 left-0 mx2 mt3 z2 pointer p1">
           <a @click="deselect">❌</a>
         </div>
-        <claim-clover :clover-data="selectedClover" @claimed="claimed" @remove="remove"></claim-clover>
+        <claim-clover :clover-data="selectedClover" @remove="remove"></claim-clover>
       </div>
       <div v-if="clovers.length" :class="{'border-top': !selectedClover}"  class="p2 relative">
         <p class="h6 m0 pt1 silver absolute top-0">Mined clovers</p>
+        <!-- <p class="h6 m0 pt1 silver absolute top-0 right-0 mr1" >
+          <input v-if="enterManually" v-model="moves" placeholder="Enter Moves Manually">
+          <span class='pointer' @click="enterManually = !enterManually">⚙️</span>
+        </p> -->
         <div>
           <ul class="list-reset flex mxn1 nowrap overflow-auto items-center">
             <li @click="select(board)" v-for="board in newClovers" class="py1 px2 pointer h6" :class="isFocus(board)">
@@ -70,7 +74,7 @@
 </template>
 
 <script>
-  import { mapMutations, mapGetters } from 'vuex'
+  import { mapMutations, mapGetters, mapActions } from 'vuex'
   import CloverWorker from 'worker-loader!../assets/clover-worker'
   import Reversi from '../assets/reversi'
   import ClaimClover from '@/components/ClaimClover'
@@ -80,6 +84,8 @@
     name: 'miner',
     data () {
       return {
+        enterManually: false,
+        moves: null,
         miners: [],
         reversi: new Reversi(),
         customMoves: 'C4C5D6C7C6D3E6D7C2B3A2F5C8E3G5B6A5H5F6B1H4A4E7G7E2F7G6B7G8G4F4F3D8H7E8F2H8B5A7E1H3D2G2H2C1C3F1D1A1G1G3A6H6F8B2B8A3H1A8B4',
@@ -104,20 +110,15 @@
       }
     },
     computed: {
-      clovers: {
-        get () {
-          return this.$store.state.minedClovers
-        },
-        set (newVal) {
-          this.restoreMinedClovers(newVal)
-        }
+      clovers () {
+        return this.minedClovers
       },
       newClovers () {
         return this.clovers.filter(c => !c.claimed)
       },
       claimedClovers () {
         let claims = this.clovers.filter(c => c.claimed).sort((a, b) => {
-          return moment(b.claimed) - moment(a.claimed)
+          return b.claimed - a.claimed
         })
         if (this.limit) {
           return claims.slice(0, 5)
@@ -125,7 +126,7 @@
         return claims
       },
       cloversFound () {
-        return this.$store.state.cloversFound
+        return this.clovers.length - this.claimedClovers.length
       },
       mining: {
         get () {
@@ -177,10 +178,12 @@
         return moment.utc(this.mineTime * 1000).format('HH:mm:ss')
       },
 
-      ...mapGetters({
-        account: 'account',
-        clover: 'clover'
-      })
+      ...mapGetters([
+        'account',
+        'clover',
+        'minedClovers',
+        'balance'
+      ])
     },
     methods: {
       checkRead () {
@@ -193,15 +196,10 @@
       },
       getItem (key) {
         let res = window.localStorage.getItem(this.account + '_' + key)
-        return res && JSON.parse(res)
+        return res && res !== 'undefined' && JSON.parse(res)
       },
       setItem (key, val) {
         window.localStorage.setItem(this.account + '_' + key, JSON.stringify(val))
-      },
-      claimed (byteBoard) {
-        console.log('miner claimed:', byteBoard)
-        this.claimedClover(byteBoard)
-        this.setItem('clovers', this.clovers)
       },
       mine () {
         this.mining = true
@@ -237,9 +235,10 @@
           this.totalMined = data.hashRate
         }
         if ('movesString' in data) {
-          this.clover.cloverExists(data.byteBoard).then((exists) => {
+          // this.clover.cloverExists(data.byteBoard).then((exists) => {
+          this.cloverExists(data.byteBoard).then((exists) => {
             if (!exists) {
-              this.minedClover(data)
+              this.allMinedClover(data)
             }
           }).catch((err) => {
             console.log(err)
@@ -259,7 +258,7 @@
           this.setItem('mineTime', this.mineTime)
         }
         if (this.account) {
-          this.setItem('clovers', this.clovers)
+          this.setItem('clovers', this.$store.state.allMinedClovers)
           this.setItem('cloversFound', this.cloversFound)
         }
       },
@@ -277,26 +276,27 @@
       close () {
         this.$emit('close')
       },
-
+      ...mapActions([
+        'cloverExists'
+      ]),
       ...mapMutations({
         toggleMiner: 'TOGGLE_MINER',
         newHashRate: 'HASH_RATE',
         addMineTotal: 'MINE_INCREMENT',
         addMineTime: 'TIME_INCREMENT',
         changePower: 'CORE_COUNT',
-        minedClover: 'MINED_CLOVER',
+        allMinedClover: 'MINED_CLOVER',
         restoreMinedClovers: 'EXISTING_CLOVERS',
         storedClovers: 'STORED_CLOVERS',
         storedMineCount: 'STORED_COUNT',
         storedMineDuration: 'STORED_DURATION',
         storedCloversFound: 'STORED_CLOVERS_FOUND',
-        removeMinedClover: 'REMOVE_MINED_CLOVER',
-        claimedClover: 'CLAIMED_CLOVER'
+        removeMinedClover: 'REMOVE_MINED_CLOVER'
       })
     },
     mounted () {
       this.checkRead()
-      this.interval = setInterval(this.timer, 1000)
+      this.interval = setInterval(this.timer, 3000)
     },
     destroyed () {
       clearInterval(this.interval)

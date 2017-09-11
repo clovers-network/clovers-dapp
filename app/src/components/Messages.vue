@@ -5,13 +5,16 @@
     class='block btn p1 m1'
     @click="clickMessage(msg)" 
     :key="msg.id" 
-    v-for="msg in messages" 
-    v-html="msg.msg"></div>
+    v-for="msg in messages" >
+      <span v-html="escape(msg.msg)"></span>
+      <span class='sending px1' v-if="msg.type === 'progress'">✨</span>
+    </div>
   </div>
 </template>
 
 <script>
   import { mapGetters, mapMutations } from 'vuex'
+  import xss from 'xss'
 
   export default {
 
@@ -28,6 +31,9 @@
       })
     },
     methods: {
+      escape (msg) {
+        return xss(msg)
+      },
       clickMessage (msg) {
         if (msg.link) {
           console.log('go to:' + msg.link)
@@ -50,5 +56,6 @@
   }
 </script>
 
-<style lang="css" scoped>
+<style lang="scss" scoped>
+
 </style>

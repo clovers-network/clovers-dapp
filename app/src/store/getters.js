@@ -1,5 +1,7 @@
 import Clover from '../assets/clovers'
 
+import xss from 'xss'
+
 export default {
   clover: state => state.clover,
   error: state => state.clover.error,
@@ -14,6 +16,16 @@ export default {
   mining: state => state.mining,
   messages: state => state.messages,
   miningPower: state => state.miningPower,
+  minedClovers: (state, getters) => {
+    console.log('mined clovers calced')
+    return (state.allMinedClovers.length && state.allMinedClovers.map((c) => {
+      let clover = getters.allClovers && getters.allClovers.find((ac) => ac.board === '0x' + c.byteBoard)
+      if (clover) {
+        c.claimed = clover.created
+      }
+      return c
+    })) || []
+  },
   usernames: state => {
     console.log('user names calculated')
     let usernames = []
@@ -21,10 +33,10 @@ export default {
       let userKey = usernames.findIndex((user) => user.address === event.args.player)
       if (userKey > -1) {
         let username = usernames[userKey]
-        username.name = event.args.name
+        username.name = xss(event.args.name)
         usernames.splice(userKey, 1, username)
       } else {
-        usernames.push({address: event.args.player, name: event.args.name})
+        usernames.push({address: event.args.player, name: xss(event.args.name)})
       }
     })
     return usernames
@@ -36,10 +48,10 @@ export default {
       let cloverKey = clovernames.findIndex((clover) => clover.board === event.args.board)
       if (cloverKey > -1) {
         let clover = clovernames[cloverKey]
-        clover.name = event.args.name
+        clover.name = xss(event.args.name)
         clovernames.splice(cloverKey, 1, clover)
       } else {
-        clovernames.push({board: event.args.board, name: event.args.name})
+        clovernames.push({board: event.args.board, name: xss(event.args.name)})
       }
     })
     return clovernames
