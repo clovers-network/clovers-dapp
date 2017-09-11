@@ -252,7 +252,7 @@ class Clover extends Reversi {
       })
     })
   }
-  
+
 
   // contract write / transactions
 
@@ -395,7 +395,7 @@ class Clover extends Reversi {
 
   cloverExists (board = this.byteBoard) {
     return this.deploy().then((instance) => {
-      return instance.cloverExists(new BN(board, 16)).then((res) => true).catch((err) => false)
+      return instance.cloverExists(new BN(board, 16)).then((res) => res).catch((err) => false)
     })
   }
 

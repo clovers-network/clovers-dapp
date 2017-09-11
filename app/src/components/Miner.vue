@@ -63,7 +63,7 @@
             </li>
           </ul>
         </div>
-        <!-- <form @submit.prevent='submitCustom()'><input v-model='customMoves'></form> -->
+        <!-- <form @submit.prevent="checkExists()"><input v-model="customMoves"></form> -->
       </div>
     </div>
   </div>
@@ -183,6 +183,11 @@
       })
     },
     methods: {
+      checkExists () {
+        this.clover.cloverExists(this.customMoves).then((res) => {
+          console.log(res)
+        })
+      },
       checkRead () {
         if (this.hasStorage) {
           this.storedClovers(this.getItem('clovers') || [])
@@ -236,11 +241,12 @@
           this.hashRate = data.hashRate
           this.totalMined = data.hashRate
         }
-        if ('movesString' in data) {
+        if ('symmetrical' in data) {
           this.clover.cloverExists(data.byteBoard).then((exists) => {
-            if (!exists) {
-              this.minedClover(data)
-            }
+            // console.log('cloverExists', exists)
+            // if (!exists) {
+            this.minedClover(data)
+            // }
           }).catch((err) => {
             console.log(err)
           })
