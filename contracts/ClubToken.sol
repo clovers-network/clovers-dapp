@@ -176,8 +176,8 @@ contract ClubToken is StandardToken {
   mapping (bytes16 => Clover) public clovers;
   bytes16[] public cloverKeys;
 
-
-  function cloverExists(bytes16 b) public exists(b) constant{
+  function cloverExists(bytes16 b) public constant returns(bool){
+    return clovers[b].exists;
   }
 
   function getCloversCount() public constant returns(uint) {

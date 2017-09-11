@@ -58,7 +58,6 @@
       hideMainCloverList () {
         return this.$route.meta.hideMainCloverList
       },
-
       ...mapGetters({
         account: 'account',
         clover: 'clover',

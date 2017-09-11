@@ -33,7 +33,8 @@
     "vue-router": "^2.3.1",
     "vuex": "^2.3.1",
     "vuex-router-sync": "^4.1.2",
-    "web3": "^0.18.4"
+    "web3": "^0.18.4",
+    "xss": "^0.3.4"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.2",
