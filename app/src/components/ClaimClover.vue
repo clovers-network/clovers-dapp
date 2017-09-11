@@ -124,7 +124,7 @@
         this.clover.startPrice = this.flipPrice
         this.clover.playGameMovesString(this.movesString)
         this.addMessage({
-          msg: 'Large TXs take time, please be patient',
+          msg: 'Validating Clover, please be patient',
           type: 'progress'
         }).then((msgId) => {
           this.clover.register().then((res) => {

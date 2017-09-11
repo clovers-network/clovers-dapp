@@ -87,14 +87,39 @@
         })
       },
       flip () {
-        this.flipping = true
-        this.clover.flipClover(this.boardId).then((res) => {
-          this.flipping = false
-          console.log(res)
-        }).catch((err) => {
-          this.flipping = false
-          console.log(err.toString())
-        })
+        if (parseInt(this.price) > this.balance) {
+          this.selfDestructMsg({
+            msg: 'Insufficient Funds',
+            type: 'error'
+          })
+        } else {
+          this.flipping = true
+          let boardName = JSON.parse(JSON.stringify(this.board.name))
+          let link = '/clovers/' + JSON.parse(JSON.stringify(this.board.board))
+          this.addMessage({
+            msg: 'Flipping Clover ' + boardName,
+            type: 'progress'
+          }).then((msgId) => {
+            this.clover.flipClover(this.boardId).then((res) => {
+              // console.log(res)
+              this.removeMessage(msgId)
+              this.flipping = false
+              this.selfDestructMsg({
+                msg: 'Successfully flipped ' + boardName,
+                type: 'success',
+                link
+              })
+            }).catch((err) => {
+              console.error(err)
+              this.removeMessage(msgId)
+              this.flipping = false
+              this.selfDestructMsg({
+                msg: 'Error flipping Clover (check log)',
+                type: 'error'
+              })
+            })
+          })
+        }
       },
       changeName () {
         this.addMessage({
@@ -102,7 +127,7 @@
           type: 'progress'
         }).then((msgId) => {
           if (this.name === '' || this.name !== this.board.name) {
-            let link = '/clovers/' + this.board.board
+            let link = '/clovers/' + JSON.parse(JSON.stringify(this.board.board))
             this.clover.renameClover(this.boardId, this.name).then(() => {
               this.selfDestructMsg({
                 msg: 'Updated name to ' + xss(this.name),
@@ -218,6 +243,7 @@
       },
 
       ...mapGetters([
+        'balance',
         'account',
         'clover',
         'usernames',
