@@ -133,7 +133,7 @@
         let multiply = idx
         let paid = -parseInt(this.flipEvents[idx].args.lastPaidAmount)
         let max = Math.min(multiply, 3)
-        console.log('um', paid, max)
+
         return paid + (Math.abs(paid) * max)
       },
       eventTime (int) {
@@ -283,7 +283,7 @@
       },
       calcFinderEarnings () {
         let max = Math.min(this.flippers, 3)
-        let firstPaid = this.flipEvents[this.flippers - 1].args.lastPaidAmount
+        let firstPaid = this.flipEvents.length ? this.flipEvents[this.flippers - 1].args.lastPaidAmount : 0
         return parseInt(this.findersFee) + (firstPaid * max)
       },
       owner () {
