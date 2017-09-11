@@ -1,11 +1,11 @@
 <template>
   <div class="p2">
     <div v-if="allClovers.length" class="mt2 px2">
-      <div>
+      <div class="hide">
         <form
           class="border-bottom inline-block my1"
           @submit.prevent="search">
-          <input class="input hide" v-model="search" placeholder="search">
+          <input class="input" v-model="search" placeholder="search">
         </form>
       </div>
       <div class="center mb3">
@@ -18,7 +18,7 @@
       </div>
       <div>
         <span
-        class='btn btn-outline mb1 orange'
+        class="btn btn-outline mb1 orange"
         @click="limit = amount"
         v-for="amount in limits"
         :class="{'bg-red': limit === amount}"
@@ -26,11 +26,11 @@
       </div>
       <div>
         <button
-        class='btn btn-outline mb1 blue'
-        :disabled='!prevPossible'
+        class="btn btn-outline mb1 blue"
+        :disabled="!prevPossible"
         @click="paged--">Previous</button><button
-        class='btn btn-outline mb1 blue'
-        :disabled='!nextPossible'
+        class="btn btn-outline mb1 blue"
+        :disabled="!nextPossible"
         @click="paged++">Next</button>
       </div>
       <div>
@@ -49,9 +49,7 @@
   import { mapGetters } from 'vuex'
 
   export default {
-
     name: 'CloverList',
-
     data () {
       return {
         paged: 1,
@@ -128,8 +126,6 @@
         if (i !== this.sortableIndex) return 'silver'
         return {
           gray: true,
-          // 'bg-blue': this.asc,
-          // 'bg-red': !this.asc,
           asc: this.asc,
           desc: !this.asc
         }
@@ -151,10 +147,12 @@
   .asc:after {
     color: var(--green);
     content: '\002193';
+    padding-left: .3em;
   }
 
   .desc:after {
     color: var(--green);
     content: '\002191';
+    padding-left: .3em;
   }
 </style>
