@@ -3,20 +3,8 @@
     <app-header></app-header>
     <main>
       <router-view></router-view>
-      <!-- <div v-if="!hideMainCloverList" class="p2">
-        <div v-if="allClovers.length" class="mt3 px2">
-          <span class='btn' v-if="prevPossible" @click="paged--">Previous</span>
-          Page {{ paged }} of {{ pagedTotal }}
-          <span class='btn' v-if="nextPossible" @click="paged++">Next</span>
-          <ul class="list-reset flex flex-wrap mxn2">
-            <li v-for="board in cloversSorted" :key="board.board" class="px2 mb3">
-              <clover-grid-item :board="board"></clover-grid-item>
-            </li>
-          </ul>
-        </div>
-      </div> -->
     </main>
-    <clover-list></clover-list>
+    <clover-list v-if="!hideMainCloverList"></clover-list>
     <messages></messages>
   </div>
 </template>
