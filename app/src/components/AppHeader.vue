@@ -7,9 +7,9 @@
         </li>
         <li class="inline-block mr2">Latest</li>
         <li class="inline-block mr2">
-          <router-link :to="'/users/' + username.address" class="white" v-html="'Wallet &nbsp; ' + userName"></router-link>
+          <router-link :to="'/users/' + (username.address || '')" class="white" v-html="'Wallet &nbsp;' + (userName || '')"></router-link>
         </li>
-        <li class="inline-block  ml4 white"></li>
+        <li class="inline-block  ml4 white">&nbsp;</li>
       </ul>
       <p class="m0 pr3">
         <span>{{ cloversFound }}</span>

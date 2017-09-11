@@ -93,6 +93,7 @@
         }
       },
       ...mapGetters({
+        notRinkeby: 'notRinkeby',
         symmetries: 'symmetries',
         clover: 'clover'
       })
@@ -120,6 +121,15 @@
         this.reward = this.clover.calcFindersFees(this.symmetries)
       },
       trigger () {
+        if (this.notRinkeby) {
+          this.selfDestructMsg({
+            msg: 'Please join the Rinkeby Network using MetaMask or Mist Browser',
+            link: 'https://metamask.io/',
+            type: 'error'
+          })
+          return
+        }
+
         this.submitting = true
         this.clover.startPrice = this.flipPrice
         this.clover.playGameMovesString(this.movesString)

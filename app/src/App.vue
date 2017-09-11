@@ -4,16 +4,18 @@
     <main>
       <router-view></router-view>
     </main>
-    <clover-list v-if="!hideMainCloverList"></clover-list>
+    <instructions v-if="notRinkeby"></instructions>
+    <clover-list v-if="!hideMainCloverList || !notRinkeby"></clover-list>
     <messages></messages>
   </div>
 </template>
 
 <script>
   import AppHeader from '@/components/AppHeader'
+  import Instructions from '@/components/Instructions'
   import CloverList from '@/components/CloverList'
   import Messages from '@/components/Messages'
-  import { mapGetters, mapMutations } from 'vuex'
+  import { mapGetters, mapMutations, mapActions } from 'vuex'
 
   export default {
     name: 'app',
@@ -22,6 +24,13 @@
         sortBy: null,
         paged: 1,
         limit: 20
+      }
+    },
+    watch: {
+      notRinkeby () {
+        if (this.$route.path !== '/' && this.notRinkeby) {
+          this.$router.push('/')
+        }
       }
     },
     computed: {
@@ -47,12 +56,16 @@
         return this.$route.meta.hideMainCloverList
       },
       ...mapGetters({
+        notRinkeby: 'notRinkeby',
         account: 'account',
         clover: 'clover',
         allClovers: 'allClovers'
       })
     },
     methods: {
+      ...mapActions([
+        'selfDestructMsg'
+      ]),
       ...mapMutations({
         updateClover: 'UPDATE_CLOVER',
         registerEvent: 'ADD_REGISTERED_EVENT',
@@ -64,7 +77,21 @@
       })
     },
     mounted () {
+      setTimeout(() => {
+        if (this.allClovers.length === 0 && !this.notRinkeby) {
+          this.selfDestructMsg({
+            msg: 'Waiting to receive data from the blockchain',
+            type: 'progress'
+          })
+        }
+      }, 3000)
+      if (this.$route.path !== '/' && this.notRinkeby) {
+        this.$router.push('/')
+      }
       this.clover.initWeb3()
+      setTimeout(() => {
+        this.clover.initWeb3()
+      }, 5000)
       window.addEventListener('updateCloverObject', (e) => {
         this.updateClover(e.detail)
       }, false)
@@ -98,7 +125,7 @@
       window.removeEventListener('Event', 'eventNewCloverName')
       window.removeEventListener('Event', 'eventsNewCloverName')
     },
-    components: { AppHeader, CloverList, Messages }
+    components: { AppHeader, CloverList, Messages, Instructions }
   }
 </script>
 
