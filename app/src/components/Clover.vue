@@ -53,16 +53,42 @@
           </template>
         </div>
       </div>
-      <div class="center p2">
-        <a class="silver">show clover history</a>
+      <div class="center pt2 relative">
+        <div>
+          <a @click="toggleHistory" class="silver inline-block pointer">{{ historyToggleText }}</a>
+        </div>
       </div>
     </div>
-    <div v-if="showHistory" class="p2">
-      <div class="max-width-2 mx-auto">
-        <ul class="list-reset">
-          <li>1</li>
-          <li>2</li>
-        </ul>
+    <div v-if="showHistory" class="p2 border-bottom border-silver">
+      <div class="max-width-3 mx-auto">
+        <table class="col-12 my2">
+          <thead class="mb2">
+            <tr>
+              <th class="regular left-align silver h5">When</th>
+              <th class="regular left-align silver h5">User</th>
+              <th class="regular left-align silver h5">Cost</th>
+              <th class="regular left-align silver h5">Earnings</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(event, idx) in flipEvents" :class="{silver: idx > 2}" class="h3">
+              <td>{{ eventTime(event.args.modified) }}</td>
+              <td>
+                <router-link :to="userLink(event.args.newOwner)" class="underline color-inherit">{{ userName(event.args.newOwner) }}</router-link>
+              </td>
+              <td>{{ cost(event.args, idx) }}</td>
+              <td>{{ calcEarnings(idx) }} &clubs;</td>
+            </tr>
+            <tr class="h3" :class="{silver: flippers > 2}">
+              <td>{{ created }}</td>
+              <td>
+                <router-link :to="userLink(founder.address)" class="underline color-inherit">{{ userName(founder.address) }}</router-link>
+              </td>
+              <td>0 &clubs;</td>
+              <td>{{ calcFinderEarnings }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
     <!-- <p class="h2 center">
@@ -87,7 +113,7 @@
         name: '',
         reversi: new Reversi(),
         flipping: false,
-        showHistory: true
+        showHistory: false
       }
     },
     methods: {
@@ -99,6 +125,25 @@
         }).catch((err) => {
           console.error(err)
         })
+      },
+      cost (args, idx) {
+        return args.lastPaidAmount && parseInt(args.lastPaidAmount).toLocaleString() + ' ♣'
+      },
+      calcEarnings (idx) {
+        let multiply = idx
+        let paid = -parseInt(this.flipEvents[idx].args.lastPaidAmount)
+        let max = Math.min(multiply, 3)
+        console.log('um', paid, max)
+        return paid + (Math.abs(paid) * max)
+      },
+      eventTime (int) {
+        return moment(int * 1000).fromNow()
+      },
+      userLink (address) {
+        return `/users/${address}`
+      },
+      userName (address) {
+        return address.substring(0, 8) + '...'
       },
       flip () {
         if (parseInt(this.price) > this.balance) {
@@ -177,6 +222,9 @@
         this.reversi.byteBoardPopulateBoard()
         this.reversi.isSymmetrical()
       },
+      toggleHistory () {
+        this.showHistory = !this.showHistory
+      },
 
       ...mapActions([
         'addMessage',
@@ -193,6 +241,11 @@
       }
     },
     computed: {
+      flipEvents () {
+        return this.$store.state.registeredEvents.filter((e) => {
+          return e.args.board === this.boardId && !e.args.newBoard
+        }).reverse()
+      },
       board () {
         return this.boardId && this.allClovers.find(c => c.board === this.boardId)
       },
@@ -228,6 +281,11 @@
       founderAddress () {
         return this.founder && this.founder.address
       },
+      calcFinderEarnings () {
+        let max = Math.min(this.flippers, 3)
+        let firstPaid = this.flipEvents[this.flippers - 1].args.lastPaidAmount
+        return parseInt(this.findersFee) + (firstPaid * max)
+      },
       owner () {
         return this.board && this.board.previousOwners && this.board.previousOwners[this.board.previousOwners.length - 1]
       },
@@ -244,7 +302,7 @@
         return this.reversi.byteBoardToRowArray(this.boardId)
       },
       created () {
-        return this.board && moment(this.board.created * 1000).format('MMMM Do YYYY, h:mm:ss a')
+        return this.board && moment(this.board.created * 1000).fromNow()
       },
       modified () {
         return this.board && moment(this.board.modified * 1000).format('MMMM Do YYYY, h:mm:ss a')
@@ -254,6 +312,9 @@
       },
       findersFee () {
         return this.board && parseInt(this.board.findersFee).toLocaleString()
+      },
+      historyToggleText () {
+        return this.showHistory ? 'hide clover history' : 'show clover history'
       },
 
       ...mapGetters([
