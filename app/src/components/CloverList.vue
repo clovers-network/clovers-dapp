@@ -1,36 +1,36 @@
 <template>
   <div class="p2">
-    <div v-if="allClovers.length" class="mt3 px2">
+    <div v-if="allClovers.length" class="mt2 px2">
       <div>
-      <form 
-      class='border-bottom inline-block my1'
-      @submit.prevent="search">
-      <input class='input' v-model="search" placeholder="search">
-      </form>
+        <form
+          class="border-bottom inline-block my1"
+          @submit.prevent="search">
+          <input class="input hide" v-model="search" placeholder="search">
+        </form>
       </div>
-      <div>
-        <span 
-        @click='clickSort(i)'
+      <div class="center mb3">
+        <span
+        @click="clickSort(i)"
         :class="sortableClass(i)"
-        class='btn btn-outline mb1 green' 
+        class="inline-block mx2 pointer no-select"
         v-html="sort"
-        v-for='sort, i in sortable'></span>
+        v-for="sort, i in sortable"></span>
       </div>
       <div>
-        <span 
-        class='btn btn-outline mb1 orange' 
-        @click="limit = amount" 
-        v-for="amount in limits" 
+        <span
+        class='btn btn-outline mb1 orange'
+        @click="limit = amount"
+        v-for="amount in limits"
         :class="{'bg-red': limit === amount}"
         v-html="amount"></span>
       </div>
       <div>
-        <button 
-        class='btn btn-outline mb1 blue' 
-        :disabled='!prevPossible' 
-        @click="paged--">Previous</button><button 
-        class='btn btn-outline mb1 blue' 
-        :disabled='!nextPossible' 
+        <button
+        class='btn btn-outline mb1 blue'
+        :disabled='!prevPossible'
+        @click="paged--">Previous</button><button
+        class='btn btn-outline mb1 blue'
+        :disabled='!nextPossible'
         @click="paged++">Next</button>
       </div>
       <div>
@@ -125,10 +125,11 @@
         return c.previousOwners.length === 1 ? c.lastPaidAmount : (c.lastPaidAmount * 2)
       },
       sortableClass (i) {
-        if (i !== this.sortableIndex) return
+        if (i !== this.sortableIndex) return 'silver'
         return {
-          'bg-blue': this.asc,
-          'bg-red': !this.asc,
+          gray: true,
+          // 'bg-blue': this.asc,
+          // 'bg-red': !this.asc,
           asc: this.asc,
           desc: !this.asc
         }
@@ -144,5 +145,16 @@
   }
 </script>
 
-<style lang="css" scoped>
+<style>
+  @import '../style/settings';
+
+  .asc:after {
+    color: var(--green);
+    content: '\002193';
+  }
+
+  .desc:after {
+    color: var(--green);
+    content: '\002191';
+  }
 </style>
