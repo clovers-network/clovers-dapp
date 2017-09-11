@@ -102,11 +102,12 @@
           type: 'progress'
         }).then((msgId) => {
           if (this.name === '' || this.name !== this.board.name) {
+            let link = '/clovers/' + this.board.board
             this.clover.renameClover(this.boardId, this.name).then(() => {
               this.selfDestructMsg({
                 msg: 'Updated name to ' + xss(this.name),
                 type: 'success',
-                link: '/clovers/' + this.boardId
+                link
               })
               this.removeMessage(msgId)
             }).catch((err) => {

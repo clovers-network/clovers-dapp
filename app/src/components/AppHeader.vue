@@ -37,6 +37,11 @@
         showMiner: false
       }
     },
+    watch: {
+      '$route.fullPath': function () {
+        this.showMiner = false
+      }
+    },
     methods: {
       toggleMinePanel () {
         this.showMiner = !this.showMiner
