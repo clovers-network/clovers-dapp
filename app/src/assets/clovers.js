@@ -252,7 +252,7 @@ class Clover extends Reversi {
       })
     })
   }
-  
+
 
   // contract write / transactions
 

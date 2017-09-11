@@ -76,10 +76,10 @@
         return (this.reward || 100) + ' ♧'
       },
       claimDate () {
-        return moment(this.cloverData.claimed).fromNow()
+        return moment(this.cloverData.claimed * 1000).fromNow()
       },
       removeDate () {
-        return moment(this.cloverData.removed).fromNow()
+        return moment(this.cloverData.removed * 1000).fromNow()
       },
       flipPrice: {
         get () {
