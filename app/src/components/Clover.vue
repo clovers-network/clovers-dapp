@@ -1,61 +1,74 @@
 <template>
   <div>
-    <div class="bg-green white p2 md-p3 flex flex-wrap intro-screen relative overflow-hidden items-center justify-center">
-      <div class="center my3 px4 relative order-1">
-        <div class="h1">
-          <clv class="no-border" :key="boardId" :byteBoard="boardId" :moveString="moveString"></clv>
+    <div class="bg-green white p2 md-p3 intro-screen relative overflow-hidden">
+      <div class="flex flex-wrap items-center justify-center">
+        <div class="center my3 px4 relative order-1">
+          <div class="h1">
+            <clv class="no-border" :key="boardId" :byteBoard="boardId" :moveString="moveString"></clv>
+          </div>
+          <symmetry :board="reversi"></symmetry>
         </div>
-        <symmetry :board="reversi"></symmetry>
+        <div class="order-0 md-right-align col-6 sm-col-3">
+          <p class="h2">
+            <form v-if='currentOwner' class='inline-block border-bottom' @submit.prevent="changeName()">
+              <input class='input big align-right white' type="text" placeholder="Name" v-model="name"/></form>
+            <span v-else class="h1" v-html="name"></span>
+          </p>
+          <div>
+            Flips
+            <p class="h2">
+              {{ flippers }} &orarr;
+            </p>
+          </div>
+          <div>
+            Current price
+            <p class="h2">
+              {{ price }} &clubs;
+            </p>
+          </div>
+        </div>
+        <div class="order-2 col-6 sm-col-3">
+          <div>
+            Discovered by
+            <p class="h2">
+              <router-link :to="'/users/' + founderAddress" v-html="founderName" class="white"></router-link></code>
+            </p>
+          </div>
+          <div>
+            Original mining reward
+            <p class="h2">
+              {{ findersFee }} &clubs;
+            </p>
+          </div>
+        </div>
+        <div class="col-12 order-3 center mt4 mb2">
+          <template v-if="currentOwner">
+            <p class="m0 px2 py1 border inline-block">It's yours 💯</p>
+          </template>
+          <template v-else-if="board">
+            <a @click="flip" class="m0 px2 py1 border inline-block pointer white">
+              <span  v-html="'Buy it from ' + ownerName"></span>
+              <span class="pl2 sending" v-if="flipping">✨</span>
+            </a>
+          </template>
+        </div>
       </div>
-      <div class="order-0 md-right-align col-6 sm-col-3">
-        <p class="h2">
-          <form v-if='currentOwner' class='inline-block border-bottom' @submit.prevent="changeName()">
-            <input class='input big align-right white' type="text" placeholder="Name" v-model="name"/></form>
-          <span v-else class="h1" v-html="name"></span>
-        </p>
-        <div>
-          Flips
-          <p class="h2">
-            {{ flippers }} &orarr;
-          </p>
-        </div>
-        <div>
-          Current price
-          <p class="h2">
-            {{ price }} &clubs;
-          </p>
-        </div>
-      </div>
-      <div class="order-2 col-6 sm-col-3">
-        <div>
-          Discovered by
-          <p class="h2">
-            <router-link :to="'/users/' + founderAddress" v-html="founderName" class="white"></router-link></code>
-          </p>
-        </div>
-        <div>
-          Original mining reward
-          <p class="h2">
-            {{ findersFee }} &clubs;
-          </p>
-        </div>
-      </div>
-      <div class="col-12 order-3 center mt4 mb2">
-        <template v-if="currentOwner">
-          <p class="m0 px2 py1 border inline-block">It's yours 💯</p>
-        </template>
-        <template v-else-if="board">
-          <a @click="flip" class="m0 px2 py1 border inline-block pointer white">
-            <span  v-html="'Buy it from ' + ownerName"></span>
-            <span class="pl2 sending" v-if="flipping">✨</span>
-          </a>
-        </template>
+      <div class="center p2">
+        <a class="silver">show clover history</a>
       </div>
     </div>
-<!--       <p class="h2 center">
+    <div v-if="showHistory" class="p2">
+      <div class="max-width-2 mx-auto">
+        <ul class="list-reset">
+          <li>1</li>
+          <li>2</li>
+        </ul>
+      </div>
+    </div>
+    <!-- <p class="h2 center">
         <code>moves: <div v-for="chunk in visibleMoveString">{{chunk}}</div></code>
-      </p> -->
-<!--     <button @click.self="test()" class="btn btn-outline py3 col-12 regular h3">TEST</button> -->
+    </p> -->
+    <!-- <button @click.self="test()" class="btn btn-outline py3 col-12 regular h3">TEST</button> -->
   </div>
 </template>
 
@@ -73,7 +86,8 @@
         nameNotClicked: true,
         name: '',
         reversi: new Reversi(),
-        flipping: false
+        flipping: false,
+        showHistory: true
       }
     },
     methods: {
