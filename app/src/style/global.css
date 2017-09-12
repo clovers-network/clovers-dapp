@@ -161,21 +161,23 @@ hr {
   .row {
     line-height: 0;
   }
-
   .active-clover & {
     box-shadow: 0 0 0 .4em;
+  }
+  &.no-bg {
+    background-color: transparent !important;
   }
   &.w-b {
     background-color: var(--black);
     border: 1px solid var(--white);
-    &:hover .t-b {
+    &:hover:not(.no-hover) .t-b {
       border: 1px solid var(--white);
     }
   }
   &.w-w {
     background-color: var(--white);
     border: 1px solid var(--black);
-    &:hover .t-w {
+    &:hover:not(.no-hover) .t-w {
       border: 1px solid var(--black);
     }
   }
