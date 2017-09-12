@@ -29,7 +29,7 @@ Vue.component('clover-icon', CloverIcon)
 Vue.component('clover-grid-item', CloverGridItem)
 
 Vue.config.productionTip = false
-
+Vue.config.devtools = true
 sync(store, router)
 
 /* eslint-disable no-new */
