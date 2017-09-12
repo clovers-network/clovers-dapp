@@ -37,7 +37,7 @@
           <div>
             Original mining reward
             <p class="h2">
-              {{ findersFee }} &clubs;
+              {{ findersFee.toLocaleString() }} &clubs;
             </p>
           </div>
         </div>
@@ -89,7 +89,7 @@
                 <router-link :to="userLink(founder.address)" class="underline color-inherit">{{ userName(founder.address) }}</router-link>
               </td>
               <td>0 &clubs;</td>
-              <td>{{ calcFinderEarnings }}</td>
+              <td>{{ calcFinderEarnings.toLocaleString() }} &clubs;</td>
             </tr>
           </tbody>
         </table>
@@ -320,7 +320,7 @@
         return this.account && this.owner && (this.account === this.owner.address)
       },
       findersFee () {
-        return this.board && parseInt(this.board.findersFee).toLocaleString()
+        return this.board && parseInt(this.board.findersFee)
       },
       historyToggleText () {
         return this.showHistory ? 'hide clover history' : 'show clover history'

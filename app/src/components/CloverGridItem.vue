@@ -1,6 +1,6 @@
 <template>
   <router-link :to="link" tag="div" class="pointer gridItem">
-    <div class="center silver mb2" v-text="timeAgo"></div>
+    <div class="center silver mb2 h5" v-text="timeAgo"></div>
     <!-- <div class="center silver mb2">by {{board.previousOwners[0]}}</div> -->
     <div>
       <clv :no-click="true" :byteBoard="board.board"></clv>
