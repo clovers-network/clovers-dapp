@@ -150,17 +150,6 @@
 </script>
 
 <style>
-  @import '../style/settings';
 
-  .asc:after {
-    color: var(--green);
-    content: '\002193';
-    padding-left: .3em;
-  }
 
-  .desc:after {
-    color: var(--green);
-    content: '\002191';
-    padding-left: .3em;
-  }
 </style>
