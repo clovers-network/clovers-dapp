@@ -1,7 +1,7 @@
 <template>
-  <div @click='playAnimate()' class="clover nowrap pointer" :class="winner">
+  <div @click="playAnimate()" class="clover nowrap pointer" :class="winner">
     <div v-if="displayString">
-      <svg-path :animation="false" :moveString="displayString"></svg-path>
+      <svg-text :animation="false" :moveString="displayString"></svg-text>
     </div>
     <div v-for="row in board" class="row">
       <span v-for="tile in row" :class="tileMap[tile]"></span>
@@ -10,7 +10,7 @@
 </template>
 <script>
   import Reversi from '../assets/reversi'
-  import SvgPath from './TextPath'
+  import SvgText from './SvgText'
 
   export default {
     name: 'Clv',
@@ -115,7 +115,7 @@
       }
     },
     components: {
-      SvgPath
+      SvgText
     }
   }
 </script>
