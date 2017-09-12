@@ -12,6 +12,9 @@ export default {
   username: (state, getters) => {
     return getters.usernames.find((u) => u.address === getters.account) || {address: getters.account, name: getters.account}
   },
+  registeredEvents: state => state.registeredEvents,
+  usernameEvents: state => state.usernameEvents,
+  clovernameEvents: state => state.clovernameEvents,
   balance: state => state.clover.balance,
   hashRate: state => state.hashRate,
   mining: state => state.mining,

@@ -34,6 +34,18 @@ a {
   transition: all var(--anim-timing-medium);
 }
 
+.asc:after {
+  color: var(--green);
+  content: '\002193';
+  padding-left: .3em;
+}
+
+.desc:after {
+  color: var(--green);
+  content: '\002191';
+  padding-left: .3em;
+}
+
 .mt3-5 {
   margin-top: 3.5rem;
 }
@@ -155,6 +167,9 @@ hr {
   display: inline-block;
   z-index:0;
   position: relative;
+  &.small-clover {
+
+  }
   &.no-border {
     border: 0px !important;
   }
