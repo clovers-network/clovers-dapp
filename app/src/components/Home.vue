@@ -1,12 +1,12 @@
 <template>
   <div>
     <div class="bg-green white p2 md-p3 flex flex-column intro-screen relative overflow-hidden">
-      <div class="center h2">
+      <div class="center h2 my1">
         <p class="max-width-3 mx-auto">
           <a href="" class="white underline">Clovers</a> are Visual Digital Assets generated with the game <a class="white underline" href="https://en.wikipedia.org/wiki/Reversi" target="_blank">Reversi</a> as Proof-of-Work and rewarded in ERC20 <a href="https://rinkeby.etherscan.io/token/0xcc0604514f71b8d39e13315d59f4115702b42646" target="_blank" class="white underline">Club Tokens</a>
         </p>
       </div>
-      <div class="center my2 relative">
+      <div class="center my3 relative">
         <div class="h1">
           <clv class="no-border no-bg no-hover" :moveString="this.heart"></clv>
         </div>
