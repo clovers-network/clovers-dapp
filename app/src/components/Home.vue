@@ -3,17 +3,20 @@
     <div class="bg-green white p2 md-p3 flex flex-column intro-screen relative overflow-hidden">
       <div class="center h2">
         <p class="max-width-3 mx-auto">
-          <u>Clovers</u> is the first board-game proof-of-work aesthetic cryptocurrency mountain-range pyramid scheme<sup>&trade;</sup>
+          <a href="" class="white underline">Clovers</a> are Visual Digital Assets generated with the game <a class="white underline" href="https://en.wikipedia.org/wiki/Reversi" target="_blank">Reversi</a> as Proof-of-Work and rewarded in ERC20 <a href="https://rinkeby.etherscan.io/token/0xcc0604514f71b8d39e13315d59f4115702b42646" target="_blank" class="white underline">Club Tokens</a>
         </p>
       </div>
       <div class="center my2 relative">
         <div class="h1">
-          <clv class='no-border' :moveString="this.heart"></clv>
+          <clv class='no-border no-bg no-hover' :moveString="this.heart"></clv>
         </div>
       </div>
     </div>
-    <div class="bg-gray white p2 md-p3">
-      toolbarz
+    <div class="bg-gray white p2 md-p3 flex justify-around">
+      <div>{{allClovers.length}} Clovers Claimed</div>
+      <div>{{symmetries.RotSym}} Rotational</div>
+      <div>{{symmetries.XYSym + symmetries.XnYSym}} Diagonal</div>
+      <div>{{symmetries.X0Sym + symmetries.Y0Sym}} Perpindicular</div>
     </div>
   </div>
 </template>
@@ -37,7 +40,9 @@
 
       ...mapGetters([
         'balance',
-        'clover'
+        'clover',
+        'allClovers',
+        'symmetries'
       ])
     }
   }

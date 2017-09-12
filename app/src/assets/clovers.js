@@ -13,7 +13,7 @@ class Clover extends Reversi {
     this.notRinkeby = false
     this.error = false
     this.genesisBlock = 858317
-    this.address = '0xee262da86309e4bec8504ba1af9e337b67fd49cb'
+    this.address = '0xcc0604514f71b8d39e13315d59f4115702b42646'
     this.ClubToken = null
     this.account = null
     this.name = null

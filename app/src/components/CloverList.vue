@@ -1,46 +1,48 @@
 <template>
   <div class="p2">
-    <div v-if="allClovers.length" class="mt3 px2">
-      <div>
-      <form 
-      class='border-bottom inline-block my1'
-      @submit.prevent="search">
-      <input class='input' v-model="search" placeholder="search">
-      </form>
+    <div v-if="allClovers.length" class="mt2 px2">
+      <div class="hide">
+        <form
+          class="border-bottom inline-block my1"
+          @submit.prevent="search">
+          <input class="input" v-model="search" placeholder="search">
+        </form>
       </div>
-      <div>
-        <span 
-        @click='clickSort(i)'
+      <div class="center mb3">
+        <span
+        @click="clickSort(i)"
         :class="sortableClass(i)"
-        class='btn btn-outline mb1 green' 
+        class="inline-block mx2 pointer no-select"
         v-html="sort"
-        v-for='sort, i in sortable'></span>
+        v-for="sort, i in sortable"></span>
       </div>
-      <div>
-        <span 
-        class='btn btn-outline mb1 orange' 
-        @click="limit = amount" 
-        v-for="amount in limits" 
-        :class="{'bg-red': limit === amount}"
-        v-html="amount"></span>
-      </div>
-      <div>
-        <button 
-        class='btn btn-outline mb1 blue' 
-        :disabled='!prevPossible' 
-        @click="paged--">Previous</button><button 
-        class='btn btn-outline mb1 blue' 
-        :disabled='!nextPossible' 
-        @click="paged++">Next</button>
-      </div>
-      <div>
-        <span>Page {{paged}} of {{pagedTotal}}</span>
-      </div>
-      <ul class="list-reset flex flex-wrap mxn2">
+      
+      <ul class="list-reset flex flex-wrap mxn2 center justify-center">
         <li v-for="board in cloversSliced" :key="board.board" class="px2 mb3">
           <clover-grid-item :by-flip="sortableIndex == 1 || sortableIndex == 3" :key="board.board" :board="board"></clover-grid-item>
         </li>
       </ul>
+      <div class="hide">
+        <span
+        class="btn btn-outline mb1 orange"
+        @click="limit = amount"
+        v-for="amount in limits"
+        :class="{'bg-red': limit === amount}"
+        v-html="amount"></span>
+      </div>
+      <div class="center" :class="{hide: pagedTotal === 1}">
+        <button
+        class="btn btn-outline mb1 blue"
+        :disabled="!prevPossible"
+        @click="paged--">←</button>
+        <button
+        class="btn btn-outline mb1 blue"
+        :disabled="!nextPossible"
+        @click="paged++">→</button>
+      </div>
+      <div class="center"  :class="{hide: pagedTotal === 1}">
+        <span>{{paged}} / {{pagedTotal}}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -49,13 +51,11 @@
   import { mapGetters } from 'vuex'
 
   export default {
-
     name: 'CloverList',
-
     data () {
       return {
         paged: 1,
-        limit: 10,
+        limit: 50,
         limits: [5, 10, 20, 50, 100],
         asc: true,
         sortableIndex: 0,
@@ -125,10 +125,9 @@
         return c.previousOwners.length === 1 ? c.lastPaidAmount : (c.lastPaidAmount * 2)
       },
       sortableClass (i) {
-        if (i !== this.sortableIndex) return
+        if (i !== this.sortableIndex) return 'silver'
         return {
-          'bg-blue': this.asc,
-          'bg-red': !this.asc,
+          gray: true,
           asc: this.asc,
           desc: !this.asc
         }
@@ -144,5 +143,18 @@
   }
 </script>
 
-<style lang="css" scoped>
+<style>
+  @import '../style/settings';
+
+  .asc:after {
+    color: var(--green);
+    content: '\002193';
+    padding-left: .3em;
+  }
+
+  .desc:after {
+    color: var(--green);
+    content: '\002191';
+    padding-left: .3em;
+  }
 </style>
