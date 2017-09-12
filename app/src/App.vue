@@ -5,7 +5,7 @@
       <router-view></router-view>
     </main>
     <instructions v-if="notRinkeby"></instructions>
-    <clover-list v-if="!hideMainCloverList || !notRinkeby"></clover-list>
+    <clover-list v-if="!hideMainCloverList || notRinkeby"></clover-list>
     <messages></messages>
   </div>
 </template>

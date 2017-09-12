@@ -7,7 +7,7 @@ import store from './store'
 import router from './router'
 
 router.beforeEach((to, from, next) => {
-  if (store.getters.notRinkeby && to.path !== '/') {
+  if (store.getters.notRinkeby && (to.path !== '/' || to.path !== '/about')) {
     next('/')
   } else {
     next()
