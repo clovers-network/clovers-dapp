@@ -23,39 +23,55 @@ class Clover extends Reversi {
     this.registeredEvents = []
     this.events = events
     this.findersFee = this.startPrice = 0
+    this.retryConnection= false
+    this.readOnly = false
   }
 
   // Connections
 
   initWeb3 () {
     web3 = self && self.web3
+    console.log(web3)
+    console.log(this.retryConnection)
     let web3Provider
     if (web3) {
       // Use Mist/MetaMask's provider
       web3Provider = web3.currentProvider
-      _web3 = new Web3(web3Provider)
-      _web3.version.getNetwork((err, netId) => {
-        switch (netId) {
-          case '4':
-            this.setAccountInterval()
-            this.getPastEvents().then(() => {
-              this.watchFutureEvents()
-            })
-            break
-          default:
-            this.notRinkeby = true
-            window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-        }
-      })
-    } else {
+
+    } else if (!this.retryConnection){
       this.resetConnection()
       setTimeout(() => {
         this.initWeb3()
       }, 1000)
+      this.retryConnection = true
+    } else {
+      console.log('reset')
+      this.readOnly = true
+      window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
       // web3Provider = new Web3.providers.HttpProvider('https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d')
-      // web3Provider = new Web3.providers.HttpProvider('http://localhost:8545')
+      web3Provider = new Web3.providers.HttpProvider('http://45.55.195.197:8545')
     }
+      _web3 = new Web3(web3Provider)
+      console.log(_web3)
+      _web3.version.getNetwork((err, netId) => {
+        console.log(err, netId)
+        if (!err) {
+          switch (netId) {
+            case '4':
+              break
+            default:
+              this.notRinkeby = true
+              window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+          }
+        } 
+        if (!this.notRinkeby) {
+          this.setAccountInterval()
+          this.getPastEvents().then(() => {
+            this.watchFutureEvents()
+          })
+        }
+      })
   }
 
   resetConnection () {

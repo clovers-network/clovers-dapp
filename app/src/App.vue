@@ -1,17 +1,19 @@
 <template>
-  <div id="app" class='mt3-5'>
+  <div id="app" class='mt3-5 pb4'>
     <app-header></app-header>
     <main>
       <router-view></router-view>
     </main>
     <instructions v-if="notRinkeby"></instructions>
     <clover-list v-if="!hideMainCloverList || notRinkeby"></clover-list>
+    <foot></foot>
     <messages></messages>
   </div>
 </template>
 
 <script>
   import AppHeader from '@/components/AppHeader'
+  import Foot from '@/components/Foot'
   import Instructions from '@/components/Instructions'
   import CloverList from '@/components/CloverList'
   import Messages from '@/components/Messages'
@@ -23,10 +25,18 @@
       return {
         sortBy: null,
         paged: 1,
-        limit: 20
+        limit: 20,
+        rebuildChat: false
       }
     },
     watch: {
+      '$route.fullPath': () => {
+        console.log('rebuild')
+        this.rebuildChat = true
+        setTimeout(() => {
+          this.rebuildChat = false
+        }, 1000)
+      },
       notRinkeby () {
         if (this.$route.path !== '/' && this.notRinkeby) {
           this.$router.push('/')
@@ -125,11 +135,14 @@
       window.removeEventListener('Event', 'eventNewCloverName')
       window.removeEventListener('Event', 'eventsNewCloverName')
     },
-    components: { AppHeader, CloverList, Messages, Instructions }
+    components: { AppHeader, CloverList, Messages, Instructions, Foot }
   }
 </script>
 
 <style >
   @import './style/imports';
   @import './style/global';
+  #app {
+    position:relative;
+  }
 </style>
