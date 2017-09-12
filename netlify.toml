@@ -1,0 +1,4 @@
+[build]
+  base    = "app"
+  publish = "dist/"
+  command = "npm run build"
