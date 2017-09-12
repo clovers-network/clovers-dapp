@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import About from '@/components/About'
+import Activity from '@/components/Activity'
 import Home from '@/components/Home'
 import Clover from '@/components/Clover'
 import User from '@/components/User'
@@ -26,6 +27,11 @@ export default new Router({
       path: '/clovers/:board',
       name: 'Clover',
       component: Clover
+    },
+    {
+      path: '/activity',
+      name: 'Activity',
+      component: Activity
     },
     {
       path: '/users/:address',
