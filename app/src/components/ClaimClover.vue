@@ -17,7 +17,7 @@
         </router-link>
       </div>
       <div v-else class="col-8 lg-col-7">
-<!--         <div>
+        <!-- <div>
           <input class="btn btn-outline py3 col-12 regular h3" v-model='movesString'>
         </div> -->
         <form @submit.prevent="trigger">
@@ -52,8 +52,9 @@
 <script>
   import moment from 'moment'
   import { mapActions, mapGetters, mapMutations } from 'vuex'
-  import SvgText from '@/components/TextPath'
+  import SvgText from '@/components/SvgText'
   import Reversi from '../assets/reversi'
+
   export default {
     name: 'claim-clover',
     data () {
