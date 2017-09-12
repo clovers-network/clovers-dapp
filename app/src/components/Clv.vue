@@ -1,7 +1,7 @@
 <template>
   <div @click="playAnimate()" class="clover nowrap pointer" :class="winner">
-    <div v-if="displayString">
-      <svg-text :animation="false" :moveString="displayString"></svg-text>
+    <div v-if="displayString && !noMoves">
+      <svg-text :fill="textColor" :animation="false" :moveString="displayString"></svg-text>
     </div>
     <div v-for="row in board" class="row">
       <span v-for="tile in row" :class="tileMap[tile]"></span>
@@ -44,8 +44,7 @@
         return this.animatedBoard || this.rowArray || (this.byteBoard && this.reversi.byteBoardToRowArray(this.byteBoard)) || (this.moveString && this.reversi.playGameMovesString(this.moveString).byteBoardToRowArray())
       },
       winner () {
-        if (!this.board) return
-        if (!this.stop) return
+        if (!this.board || !this.stop) return 'bg-green'
         let w = 0
         let b = 0
         this.board.forEach((r) => r.forEach((t) => {
@@ -73,7 +72,10 @@
         }
         this.animator.clearAttrs()
         this.animator.moves = this.animator.stringMovesToArrayMoves(moves)
-        this.playMoves(0)
+        this.animatedBoard = this.animator.rowBoard
+        setTimeout(() => {
+          this.playMoves(0)
+        }, this.speed * 5)
       },
       playMoves (moveKey = 0) {
         if (!this.animator.playMove(moveKey) && !this.stop) {
@@ -81,7 +83,7 @@
           this.animatedBoard = this.animator.rowBoard
           setTimeout(() => {
             this.playMoves(moveKey + 1)
-          }, 60)
+          }, this.speed)
         } else {
           this.stop = true
           this.animatedBoard = null
@@ -89,6 +91,18 @@
       }
     },
     props: {
+      speed: {
+        type: Number,
+        default: 60
+      },
+      textColor: {
+        type: String,
+        default: 'white'
+      },
+      noMoves: {
+        type: Boolean,
+        default: false
+      },
       noClick: {
         type: Boolean,
         default: false

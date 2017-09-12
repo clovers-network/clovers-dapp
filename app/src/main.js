@@ -13,6 +13,9 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+router.afterEach((to, from, next) => {
+  if (ga) ga('send', 'pageview')
+})
 
 import BN from 'bignumber.js'
 Object.defineProperty(Vue.prototype, '$BN', { value: BN })
