@@ -1,61 +1,100 @@
 <template>
   <div>
-    <div class="bg-green white p2 md-p3 flex flex-wrap intro-screen relative overflow-hidden items-center justify-center">
-      <div class="center my3 px4 relative order-1">
-        <div class="h1">
-          <clv class="no-border" :key="boardId" :byteBoard="boardId" :moveString="moveString"></clv>
+    <div class="bg-green white p2 md-p3 intro-screen relative overflow-hidden">
+      <div class="flex flex-wrap items-center justify-center">
+        <div class="center my3 px4 relative order-1">
+          <div class="h1">
+            <clv class="no-border" :key="boardId" :byteBoard="boardId" :moveString="moveString"></clv>
+          </div>
+          <symmetry :board="reversi"></symmetry>
         </div>
-        <symmetry :board="reversi"></symmetry>
+        <div class="order-0 md-right-align col-6 sm-col-3">
+          <p class="h2">
+            <form v-if='currentOwner' class='inline-block border-bottom' @submit.prevent="changeName()">
+              <input class='input big align-right white' type="text" placeholder="Name" v-model="name"/></form>
+            <span v-else class="h1" v-html="name"></span>
+          </p>
+          <div>
+            Flips
+            <p class="h2">
+              {{ flippers }} &orarr;
+            </p>
+          </div>
+          <div>
+            Current price
+            <p class="h2">
+              {{ price }} &clubs;
+            </p>
+          </div>
+        </div>
+        <div class="order-2 col-6 sm-col-3">
+          <div>
+            Discovered by
+            <p class="h2">
+              <router-link :to="'/users/' + founderAddress" v-html="founderName" class="white"></router-link></code>
+            </p>
+          </div>
+          <div>
+            Original mining reward
+            <p class="h2">
+              {{ findersFee }} &clubs;
+            </p>
+          </div>
+        </div>
+        <div class="col-12 order-3 center mt4 mb2">
+          <template v-if="currentOwner">
+            <p class="m0 px2 py1 border inline-block">It's yours 💯</p>
+          </template>
+          <template v-else-if="board">
+            <a @click="flip" class="m0 px2 py1 border inline-block pointer white">
+              <span  v-html="'Buy it from ' + ownerName"></span>
+              <span class="pl2 sending" v-if="flipping">✨</span>
+            </a>
+          </template>
+        </div>
       </div>
-      <div class="order-0 md-right-align col-6 sm-col-3">
-        <p class="h2">
-          <form v-if='currentOwner' class='inline-block border-bottom' @submit.prevent="changeName()">
-            <input class='input big align-right white' type="text" placeholder="Name" v-model="name"/></form>
-          <span v-else class="h1" v-html="name"></span>
-        </p>
+      <div class="center pt2 relative">
         <div>
-          Flips
-          <p class="h2">
-            {{ flippers }} &orarr;
-          </p>
+          <a @click="toggleHistory" class="silver inline-block pointer">{{ historyToggleText }}</a>
         </div>
-        <div>
-          Current price
-          <p class="h2">
-            {{ price }} &clubs;
-          </p>
-        </div>
-      </div>
-      <div class="order-2 col-6 sm-col-3">
-        <div>
-          Discovered by
-          <p class="h2">
-            <router-link :to="'/users/' + founderAddress" v-html="founderName" class="white"></router-link></code>
-          </p>
-        </div>
-        <div>
-          Original mining reward
-          <p class="h2">
-            {{ findersFee }} &clubs;
-          </p>
-        </div>
-      </div>
-      <div class="col-12 order-3 center mt4 mb2">
-        <template v-if="currentOwner">
-          <p class="m0 px2 py1 border inline-block">It's yours 💯</p>
-        </template>
-        <template v-else-if="board">
-          <a @click="flip" class="m0 px2 py1 border inline-block pointer white">
-            <span  v-html="'Buy it from ' + ownerName"></span>
-            <span class="pl2 sending" v-if="flipping">✨</span>
-          </a>
-        </template>
       </div>
     </div>
-<!--       <p class="h2 center">
+    <div v-if="showHistory" class="p2 border-bottom border-silver">
+      <div class="max-width-3 mx-auto">
+        <table class="col-12 my2">
+          <thead class="mb2">
+            <tr>
+              <th class="regular left-align muted h5">When</th>
+              <th class="regular left-align muted h5">User</th>
+              <th class="regular left-align muted h5">Cost</th>
+              <th class="regular left-align muted h5">Earnings</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(event, idx) in flipEvents" :class="{muted: idx > 2}" class="h3">
+              <td>{{ eventTime(event.args.modified) }}</td>
+              <td>
+                <router-link :to="userLink(event.args.newOwner)" class="underline color-inherit">{{ userName(event.args.newOwner) }}</router-link>
+              </td>
+              <td>{{ cost(event.args, idx) }}</td>
+              <td>{{ calcEarnings(idx) }} &clubs;</td>
+            </tr>
+            <tr class="h3" :class="{muted: flippers > 2}">
+              <td>{{ created }}</td>
+              <td>
+                <router-link :to="userLink(founder.address)" class="underline color-inherit">{{ userName(founder.address) }}</router-link>
+              </td>
+              <td>0 &clubs;</td>
+              <td>{{ calcFinderEarnings }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- <p class="h2 center">
         <code>moves: <div v-for="chunk in visibleMoveString">{{chunk}}</div></code>
-      </p> -->
-<!--     <button @click.self="test()" class="btn btn-outline py3 col-12 regular h3">TEST</button> -->
+    </p> -->
+    <!-- <button @click.self="test()" class="btn btn-outline py3 col-12 regular h3">TEST</button> -->
   </div>
 </template>
 
@@ -73,7 +112,8 @@
         nameNotClicked: true,
         name: '',
         reversi: new Reversi(),
-        flipping: false
+        flipping: false,
+        showHistory: false
       }
     },
     methods: {
@@ -85,6 +125,27 @@
         }).catch((err) => {
           console.error(err)
         })
+      },
+      cost (args, idx) {
+        return args.lastPaidAmount && parseInt(args.lastPaidAmount).toLocaleString() + ' ♣'
+      },
+      calcEarnings (idx) {
+        let multiply = idx
+        let paid = -parseInt(this.flipEvents[idx].args.lastPaidAmount)
+        let max = Math.min(multiply, 3)
+
+        return paid + (Math.abs(paid) * max)
+      },
+      eventTime (int) {
+        return moment(int * 1000).fromNow()
+      },
+      userLink (address) {
+        return `/users/${address}`
+      },
+      userName (address) {
+        let username = this.usernames.find((u) => u.address === address)
+        username = username ? username.name : address
+        return username.length > 8 ? username.substring(0, 8) + '...' : username
       },
       flip () {
         console.log(this.price, this.balance, parseInt(this.price) > this.balance)
@@ -164,6 +225,9 @@
         this.reversi.byteBoardPopulateBoard()
         this.reversi.isSymmetrical()
       },
+      toggleHistory () {
+        this.showHistory = !this.showHistory
+      },
       ...mapActions([
         'addMessage',
         'selfDestructMsg'
@@ -179,6 +243,11 @@
       }
     },
     computed: {
+      flipEvents () {
+        return this.$store.state.registeredEvents.filter((e) => {
+          return e.args.board === this.boardId && !e.args.newBoard
+        }).reverse()
+      },
       board () {
         return this.boardId && this.allClovers.find(c => c.board === this.boardId)
       },
@@ -217,6 +286,11 @@
       founderAddress () {
         return this.founder && this.founder.address
       },
+      calcFinderEarnings () {
+        let max = Math.min(this.flippers, 3)
+        let firstPaid = this.flipEvents.length ? this.flipEvents[this.flippers - 1].args.lastPaidAmount : 0
+        return parseInt(this.findersFee) + (firstPaid * max)
+      },
       owner () {
         return this.board && this.board.previousOwners && this.board.previousOwners[this.board.previousOwners.length - 1]
       },
@@ -233,7 +307,7 @@
         return this.reversi.byteBoardToRowArray(this.boardId)
       },
       created () {
-        return this.board && moment(this.board.created * 1000).format('MMMM Do YYYY, h:mm:ss a')
+        return this.board && moment(this.board.created * 1000).fromNow()
       },
       modified () {
         return this.board && moment(this.board.modified * 1000).format('MMMM Do YYYY, h:mm:ss a')
@@ -243,6 +317,9 @@
       },
       findersFee () {
         return this.board && parseInt(this.board.findersFee).toLocaleString()
+      },
+      historyToggleText () {
+        return this.showHistory ? 'hide clover history' : 'show clover history'
       },
 
       ...mapGetters([
