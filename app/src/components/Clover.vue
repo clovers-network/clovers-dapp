@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="bg-green white p2 md-p3 intro-screen relative overflow-hidden">
+    <div class="bg-green white p2 md-p3 intro-screen relative">
       <div class="flex flex-wrap items-center justify-center">
         <div class="center my3 px4 relative order-1">
           <div class="h1">
@@ -56,6 +56,10 @@
       <div class="center pt2 relative">
         <div>
           <a @click="toggleHistory" class="silver inline-block pointer">{{ historyToggleText }}</a>
+        </div>
+        <div @click="toggleHistory" class="absolute bg-orange pointer circle h1 toggle-history">
+          <span v-if="!showHistory" class="material-icons">keyboard_arrow_down</span>
+          <span v-else class="material-icons">keyboard_arrow_up</span>
         </div>
       </div>
     </div>
@@ -338,3 +342,14 @@
     components: { Symmetry }
   }
 </script>
+
+<style>
+  .toggle-history {
+    box-shadow: 0px 2px 5px 1px rgba(0, 0, 0, .2);
+    left: 50%;
+    line-height: 1;
+    margin-top: .6rem;
+    padding: 7px 5px 0px;
+    transform: translateX(-50%);
+  }
+</style>
