@@ -8,15 +8,15 @@
       </div>
       <div class="center my2 relative">
         <div class="h1">
-          <clv class='no-border no-bg no-hover' :moveString="this.heart"></clv>
+          <clv class="no-border no-bg no-hover" :moveString="this.heart"></clv>
         </div>
       </div>
     </div>
     <div class="bg-gray white p2 md-p3 flex justify-around">
-      <div>{{allClovers.length}} Clovers Claimed</div>
-      <div>{{symmetries.RotSym}} Rotational</div>
-      <div>{{symmetries.XYSym + symmetries.XnYSym}} Diagonal</div>
-      <div>{{symmetries.X0Sym + symmetries.Y0Sym}} Perpindicular</div>
+      <div>{{ allClovers.length }} Clovers Claimed</div>
+      <div>{{ symmetries.RotSym }} Rotational</div>
+      <div>{{ symmetries.XYSym + symmetries.XnYSym }} Diagonal</div>
+      <div>{{ symmetries.X0Sym + symmetries.Y0Sym }} Perpindicular</div>
     </div>
   </div>
 </template>

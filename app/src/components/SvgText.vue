@@ -11,7 +11,7 @@
 
 <script>
   export default {
-    name: 'text-path',
+    name: 'svg-text',
     props: {
       moveString: String,
       animation: {

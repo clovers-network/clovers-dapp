@@ -8,7 +8,7 @@
           <input class="input" v-model="search" placeholder="search">
         </form>
       </div>
-      <div class="center mb3">
+      <div class="center mb4 mt4">
         <span
         @click="clickSort(i)"
         :class="sortableClass(i)"
@@ -16,7 +16,7 @@
         v-html="sort"
         v-for="sort, i in sortable"></span>
       </div>
-      
+
       <ul class="list-reset flex flex-wrap mxn2 center justify-center">
         <li v-for="board in cloversSliced" :key="board.board" class="px2 mb3">
           <clover-grid-item :by-flip="sortableIndex == 0 || sortableIndex == 3" :key="board.board" :board="board"></clover-grid-item>
