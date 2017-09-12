@@ -134,11 +134,11 @@
         return args.lastPaidAmount && parseInt(args.lastPaidAmount).toLocaleString() + ' ♣'
       },
       calcEarnings (idx) {
-        let multiply = idx
         let paid = -parseInt(this.flipEvents[idx].args.lastPaidAmount)
-        let max = Math.min(multiply, 3)
+        let max = Math.min(idx, 2)
+        let earned = (Math.abs(paid) * (max * max))
 
-        return paid + (Math.abs(paid) * max)
+        return paid + earned
       },
       eventTime (int) {
         return moment(int * 1000).fromNow()
@@ -291,7 +291,7 @@
         return this.founder && this.founder.address
       },
       calcFinderEarnings () {
-        let max = Math.min(this.flippers, 3)
+        let max = Math.min(this.flippers, 2)
         let firstPaid = this.flipEvents.length ? this.flipEvents[this.flippers - 1].args.lastPaidAmount : 0
         return parseInt(this.findersFee) + (firstPaid * max)
       },
