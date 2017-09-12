@@ -19,7 +19,7 @@
       
       <ul class="list-reset flex flex-wrap mxn2 center justify-center">
         <li v-for="board in cloversSliced" :key="board.board" class="px2 mb3">
-          <clover-grid-item :by-flip="sortableIndex == 1 || sortableIndex == 3" :key="board.board" :board="board"></clover-grid-item>
+          <clover-grid-item :by-flip="sortableIndex == 0 || sortableIndex == 3" :key="board.board" :board="board"></clover-grid-item>
         </li>
       </ul>
       <div class="hide">
@@ -59,13 +59,19 @@
         limits: [5, 10, 20, 50, 100],
         asc: true,
         sortableIndex: 0,
-        sortable: ['Date Found', 'Date Flipped', 'Current Price', 'Times Flipped'],
+        sortable: ['Date Flipped', 'Date Found', 'Current Price', 'Times Flipped'],
         search: null
       }
     },
     watch: {
       limit () {
         this.paged = 1
+      }
+    },
+    props: {
+      filter: {
+        type: String,
+        default: null
       }
     },
     computed: {
@@ -91,27 +97,27 @@
         return this.allClovers.sort((a, b) => {
           switch (this.sortableIndex) {
             case (0):
-              return this.asc ? b.created - a.created : a.created - b.created
-            case (1):
               return this.asc ? b.modified - a.modified : a.modified - b.modified
+            case (1):
+              return this.asc ? b.created - a.created : a.created - b.created
             case (2):
               return this.asc ? this.currPrice(b) - this.currPrice(a) : this.currPrice(a) - this.currPrice(b)
             case (3):
               return this.asc ? b.previousOwners.length - a.previousOwners.length : a.previousOwners.length - b.previousOwners.length
           }
         }).filter((c) => {
-          if (!this.search) return c
+          if (!this.search && !this.filter) return c
           return c.previousOwners.slice(-1).filter((p) => {
-            return (p.name && p.name.search(this.search) > -1) || p.address.search(this.search) > -1
+            return (p.name && p.name.search(this.search || this.filter) > -1) || p.address.search(this.search || this.filter) > -1
           }).length || // owner
           c.previousOwners.slice(0, 1).filter((p) => {
-            return (p.name && p.name.search(this.search) > -1) || p.address.search(this.search) > -1
+            return (p.name && p.name.search(this.search || this.filter) > -1) || p.address.search(this.search || this.filter) > -1
           }).length || // founder
-          c.name && c.name.search(this.search) > -1 || // board name
-          c.first32Moves.search(this.search) > -1 || // moves
-          c.first32Moves.search(this.search) > -1 || // moves
-          c.lastMoves.search(this.search) > -1 || // moves
-          c.board.search(this.search) > -1 // board
+          c.name && c.name.search(this.search || this.filter) > -1 || // board name
+          c.first32Moves.search(this.search || this.filter) > -1 || // moves
+          c.first32Moves.search(this.search || this.filter) > -1 || // moves
+          c.lastMoves.search(this.search || this.filter) > -1 || // moves
+          c.board.search(this.search || this.filter) > -1 // board
         })
       },
       ...mapGetters([

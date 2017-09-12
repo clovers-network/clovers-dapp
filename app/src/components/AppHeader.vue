@@ -5,7 +5,8 @@
         <li class="inline-block mr2">
           <router-link to="/" class="white">Clovers</router-link>
         </li>
-        <li class="inline-block mr2">Latest</li>
+        <li class="inline-block mr2">
+          <router-link to="/about" class="white">About</router-link></li>
         <li class="inline-block mr2">
           <router-link :to="'/users/' + (username.address || '')" class="white" v-html="'Wallet &nbsp;' + (userName || '')"></router-link>
         </li>

@@ -1,6 +1,8 @@
 <template>
   <div>
-    <div class="bg-gray white p2 md-p3 pre mono" v-text="address"></div>
+    <div class="bg-gray white p2 md-p3 pre mono" >
+      <a class="white underline" target="_blank" :href="'https://rinkeby.etherscan.io/token/0xcc0604514f71b8d39e13315d59f4115702b42646?a=' + address">{{address}}</a>
+    </div>
     <div class="p3">
       <template v-if="mine">
         <form class='border-bottom fit' @submit.prevent="changeName()">
@@ -13,11 +15,7 @@
     </div>
     <div class="p2">
       <div v-if="myClovers" class="mt3 px2">
-        <ul class="list-reset flex flex-wrap mxn2">
-          <li v-for="board in myClovers" :key="board.board" class="px2 mb3">
-            <clover-grid-item :board="board"></clover-grid-item>
-          </li>
-        </ul>
+        <clover-list :filter="address"></clover-list>
       </div>
     </div>
   </div>
@@ -25,6 +23,7 @@
 
 <script>
   import { mapMutations, mapGetters, mapActions } from 'vuex'
+  import CloverList from '@/components/CloverList'
 
   export default {
     name: 'User',
@@ -100,6 +99,7 @@
       ...mapMutations({
         removeMessage: 'REMOVE_MSG'
       })
-    }
+    },
+    components: {CloverList}
   }
 </script>
