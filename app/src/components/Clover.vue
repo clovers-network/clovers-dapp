@@ -87,14 +87,15 @@
         })
       },
       flip () {
-        if (parseInt(this.price) > this.balance) {
+        console.log(this.price, this.balance, parseInt(this.price) > this.balance)
+        if (!this.balance || parseInt(this.price) > this.balance) {
           this.selfDestructMsg({
             msg: 'Insufficient Funds',
             type: 'error'
           })
         } else {
           this.flipping = true
-          let boardName = JSON.parse(JSON.stringify(this.board.name))
+          let boardName = JSON.parse(JSON.stringify(this.board.name || this.board.board))
           let link = '/clovers/' + JSON.parse(JSON.stringify(this.board.board))
           this.addMessage({
             msg: 'Flipping Clover ' + boardName,
@@ -163,7 +164,6 @@
         this.reversi.byteBoardPopulateBoard()
         this.reversi.isSymmetrical()
       },
-
       ...mapActions([
         'addMessage',
         'selfDestructMsg'
@@ -201,9 +201,12 @@
       price () {
         if (!this.boardId || !this.board) return 0
         if (!this.flippers) {
-          return this.board.lastPaidAmount.toLocaleString()
+          return this.board.lastPaidAmount
         }
-        return (this.board.lastPaidAmount * 2).toLocaleString()
+        return this.board.lastPaidAmount * 2
+      },
+      priceComma () {
+        return this.price.toLocaleString()
       },
       founder () {
         return this.board && this.board.previousOwners && this.board.previousOwners[0]
