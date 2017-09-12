@@ -2,7 +2,7 @@
   <div class="absolute text-path">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
       <path id="circle" fill="transparent" d="M123.71,122.73A249.21,249.21,0,0,1,300,50c138.07,0,250,111.93,250,250S438.07,550,300,550,50,438.07,50,300c0-68.75,25.4-128.62,70.31-173.81"/>
-      <text width="600" fill="white" font-size="1.3em">
+      <text width="600" :fill="fill" font-size="1.3em">
         <textPath xlink:href="#circle">{{ displayString }}</textPath>
       </text>
     </svg>
@@ -17,6 +17,10 @@
       animation: {
         type: Boolean,
         default: false
+      },
+      fill: {
+        type: String,
+        default: 'white'
       }
     },
     data () {

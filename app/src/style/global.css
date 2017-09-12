@@ -160,16 +160,14 @@ hr {
 }
 
 .clover {
-  transition: background 500ms ease;
+  transition: background 500ms ease, border 500ms ease;
   background-color: var(--green);
   border-radius: 50%;
   padding: 1.6em;
   display: inline-block;
   z-index:0;
   position: relative;
-  &.small-clover {
 
-  }
   &.no-border {
     border: 0px !important;
   }
@@ -199,8 +197,11 @@ hr {
   &.w-t {
     background-color: var(--silver);
   }
-  &:hover {
+  &.bg-green {
+    background-color: var(--green);
+    border: 1px solid var(--green);
   }
+
 }
 
 .t-b, .t-w, .t-n {
@@ -230,13 +231,19 @@ hr {
   opacity: .5;
 }
 
-.zig-zag {
+.zig-zag, .zig-zag-white {
 
-  &:before {
+  &:not(.zig-zag-white)::before {
     background: linear-gradient(-150deg, var(--black) 16px, transparent 0), linear-gradient(150deg, var(--black) 16px, transparent 0);
-    background-position: bottom left;
-    background-repeat: repeat-x;
-    background-size: 32px 32px;
+  }
+  &.zig-zag-white::before {
+    background: linear-gradient(-150deg, var(--white) 16px, transparent 0), linear-gradient(150deg, var(--white) 16px, transparent 0);
+  }
+
+  &::before {
+    background-position: bottom left !important;
+    background-repeat: repeat-x !important;
+    background-size: 32px 32px !important;
     content: " ";
     display: block;
     height: 32px;
@@ -246,11 +253,19 @@ hr {
     width: 100%;
   }
 
-  &:after {
+
+
+  &:not(.zig-zag-white)::after {
     background: linear-gradient(-30deg, var(--black) 16px, transparent 0), linear-gradient(30deg, var(--black) 16px, transparent 0);
-    background-position: bottom left;
-    background-repeat: repeat-x;
-    background-size: 32px 32px;
+  }
+  &.zig-zag-white::after {
+    background: linear-gradient(-30deg, var(--white) 16px, transparent 0), linear-gradient(30deg, var(--white) 16px, transparent 0);
+  }
+  &::after {
+
+    background-position: bottom left !important;
+    background-repeat: repeat-x !important;
+    background-size: 32px 32px !important;
     bottom: 0;
     content: " ";
     display: block;
