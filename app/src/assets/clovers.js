@@ -546,6 +546,7 @@ class Clover extends Reversi {
   }
 
   flipClover (board = this.byteBoard) {
+    console.log(board)
     return this.cloverExists(board).then((exists) => {
       if (!exists) throw new Error('Clover doesn\'t exists')
       return this.deploy().then((instance) => {
