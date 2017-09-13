@@ -94,6 +94,7 @@
         }
       },
       ...mapGetters({
+        readOnly: 'readOnly',
         notRinkeby: 'notRinkeby',
         symmetries: 'symmetries',
         clover: 'clover'
@@ -122,9 +123,9 @@
         this.reward = this.clover.calcFindersFees(this.symmetries)
       },
       trigger () {
-        if (this.notRinkeby) {
+        if (this.notRinkeby || this.readOnly) {
           this.selfDestructMsg({
-            msg: 'Please join the Rinkeby Network using MetaMask or Mist Browser',
+            msg: 'Please connect to the Rinkeby Network using MetaMask or Mist Browser',
             link: 'https://metamask.io/',
             type: 'error'
           })
