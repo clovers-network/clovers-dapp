@@ -184,6 +184,7 @@ class Clover extends Reversi {
           this.resetConnection()
         } else {
           this.error = false
+          console.log(result.length && result[0].args.newOwner)
           if (result.length && result[0].args.newOwner !== '0x') {
             window.dispatchEvent(new CustomEvent('eventRegistered', {detail: JSON.parse(JSON.stringify(result))}))
           }
