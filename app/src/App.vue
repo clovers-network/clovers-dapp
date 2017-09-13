@@ -4,7 +4,7 @@
     <main>
       <router-view></router-view>
     </main>
-    <instructions v-if="notRinkeby"></instructions>
+    <instructions @seen="seenit()" v-if="notRinkeby || readOnly && !seen"></instructions>
     <clover-list v-if="!hideMainCloverList || notRinkeby"></clover-list>
     <foot></foot>
     <messages></messages>
@@ -25,7 +25,8 @@
       return {
         sortBy: null,
         paged: 1,
-        limit: 20
+        limit: 20,
+        seen: false
       }
     },
     watch: {
@@ -58,6 +59,7 @@
         return this.$route.meta.hideMainCloverList
       },
       ...mapGetters({
+        readOnly: 'readOnly',
         notRinkeby: 'notRinkeby',
         account: 'account',
         clover: 'clover',
@@ -65,6 +67,9 @@
       })
     },
     methods: {
+      seenit () {
+        this.seen = true
+      },
       ...mapActions([
         'selfDestructMsg'
       ]),

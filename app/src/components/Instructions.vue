@@ -1,6 +1,6 @@
 <template>
-  <div class='fixed top-0 bottom-0 left-0 right-0 p3 '>
-  <div class='align-middle align-center m4 p3 bg-white border-white max-width-3 mx-auto'>
+  <div @click.self="seen()" class='pointer z4 bg-darken-4 fixed top-0 bottom-0 left-0 right-0 p3 '>
+  <div class='no-pointer align-middle border border-silver align-center m4 p3 bg-white border-white max-width-3 mx-auto'>
       <div class='h1 mb2'>Not Connected to Clovers Network</div>
       <div class='h3 mb2'>To use the Clovers Dapp please connect to the <a href="https://www.rinkeby.io/" target="_blank">Rinkeby</a> test Network using the browser plugin <a target="_blank" href="https://metamask.io/">MetaMask</a> or the <a href="https://github.com/ethereum/mist/releases" target="_blank">Mist Browser</a>.</div>
       <div >
@@ -22,6 +22,11 @@
     data () {
       return {
 
+      }
+    },
+    methods: {
+      seen () {
+        this.$emit('seen')
       }
     }
   }

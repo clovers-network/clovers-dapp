@@ -3,6 +3,8 @@ import clubTokenArtifacts from '../../../build/contracts/ClubToken.json'
 import contract from 'truffle-contract'
 import Web3 from 'web3'
 import Reversi from './reversi'
+
+const ProviderEngine = require('web3-provider-engine/index.js')
 const ZeroClientProvider = require('web3-provider-engine/zero.js')
 
 let web3 = self && self.web3

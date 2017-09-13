@@ -1,6 +1,6 @@
 <template>
-  <div>
-  <ul>
+  <div class="my4">
+  <ul class="max-width-3 mx-auto">
   <li v-for="user in allUsers">
   <router-link :to="'/users/' + user.address">
     {{user.address}} — {{filter(user.name)}} — {{uniqued(user.clovers).length}} ✤ Flipped and Claimed

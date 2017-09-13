@@ -448,6 +448,10 @@ input:disabled,
   cursor: pointer;
 }
 
+.no-pointer {
+  cursor: default;
+}
+
 .no-select {
   user-select: none;
 }
