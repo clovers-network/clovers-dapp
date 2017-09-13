@@ -33,6 +33,9 @@
     },
     mounted () {
       this.displayString = this.moveString
+      if (this.autoPlay) {
+        this.playAnimate()
+      }
     },
     watch: {
       moveString () {
@@ -91,6 +94,10 @@
       }
     },
     props: {
+      autoPlay: {
+        type: Boolean,
+        default: false
+      },
       speed: {
         type: Number,
         default: 60

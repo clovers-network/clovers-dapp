@@ -5,6 +5,7 @@ import Activity from '@/components/Activity'
 import Home from '@/components/Home'
 import Clover from '@/components/Clover'
 import User from '@/components/User'
+import Users from '@/components/Users'
 Vue.use(Router)
 
 export default new Router({
@@ -32,6 +33,11 @@ export default new Router({
       path: '/activity',
       name: 'Activity',
       component: Activity
+    },
+    {
+      path: '/users/',
+      name: 'Users',
+      component: Users
     },
     {
       path: '/users/:address',

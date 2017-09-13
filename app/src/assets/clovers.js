@@ -3,6 +3,7 @@ import clubTokenArtifacts from '../../../build/contracts/ClubToken.json'
 import contract from 'truffle-contract'
 import Web3 from 'web3'
 import Reversi from './reversi'
+const ZeroClientProvider = require('web3-provider-engine/zero.js')
 
 let web3 = self && self.web3
 let _web3 = false
@@ -20,7 +21,8 @@ class Clover extends Reversi {
     this.symbol = null
     this.balance = 0
     this.accountInterval = null
-    this.registeredEvents = []
+    this.manualCloverCallComplete = false
+    this.allClovers = []
     this.events = events
     this.findersFee = this.startPrice = 0
     this.retryConnection= false
@@ -31,31 +33,33 @@ class Clover extends Reversi {
 
   initWeb3 () {
     web3 = self && self.web3
-    console.log(web3)
-    console.log(this.retryConnection)
-    let web3Provider
+    let web3Provider = false
     if (web3) {
       // Use Mist/MetaMask's provider
       web3Provider = web3.currentProvider
 
     } else if (!this.retryConnection){
+      this.retryConnection = true
       this.resetConnection()
       setTimeout(() => {
         this.initWeb3()
       }, 1000)
-      this.retryConnection = true
     } else {
-      console.log('reset')
       this.readOnly = true
       window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
       // web3Provider = new Web3.providers.HttpProvider('https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d')
-      web3Provider = new Web3.providers.HttpProvider('http://45.55.195.197:8545')
+      // web3Provider = new Web3.providers.HttpProvider('http://45.55.195.197:8545')
+    
+      web3Provider = ZeroClientProvider({
+        getAccounts: function(){},
+        rpcUrl: 'https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d',
+      })
     }
+
+    if (web3Provider) {
       _web3 = new Web3(web3Provider)
-      console.log(_web3)
       _web3.version.getNetwork((err, netId) => {
-        console.log(err, netId)
         if (!err) {
           switch (netId) {
             case '4':
@@ -72,6 +76,7 @@ class Clover extends Reversi {
           })
         }
       })
+    }
   }
 
   resetConnection () {
@@ -82,7 +87,7 @@ class Clover extends Reversi {
   setAccountInterval () {
     this.accountInterval = this.accountInterval || setInterval(() => {
       this.checkAccount()
-    }, 3000)
+    }, 60000)
   }
 
   stopAccountInterval () {
@@ -132,17 +137,20 @@ class Clover extends Reversi {
 
   getPastEvents () {
     return this.deploy().then((instance) => {
-      return instance.Registered({}, {fromBlock: this.genesisBlock}).get((error, result) => {
+      return instance.Registered({x: null}, {fromBlock: this.genesisBlock}).get((error, result) => {
         if (error) {
           this.error = 'need-metamask'
           this.resetConnection()
         } else {
           this.error = false
-          window.dispatchEvent(new CustomEvent('eventsRegistered', {detail: result}))
+
+          if (result.length && result[0].args.newOwner !== '0x') {
+            window.dispatchEvent(new CustomEvent('eventsRegistered', {detail: JSON.parse(JSON.stringify(result))}))
+          }
         }
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
 
-        return instance.newCloverName({}, {fromBlock: this.genesisBlock}).get((error, result) => {
+        return instance.newCloverName({x: null}, {fromBlock: this.genesisBlock}).get((error, result) => {
           if (error) {
             this.error = 'need-metamask'
             this.resetConnection()
@@ -152,7 +160,7 @@ class Clover extends Reversi {
           }
           window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
         
-          return instance.newUserName({}, {fromBlock: this.genesisBlock}).get((error, result) => {
+          return instance.newUserName({x: null}, {fromBlock: this.genesisBlock}).get((error, result) => {
             if (error) {
               this.error = 'need-metamask'
               this.resetConnection()
@@ -170,17 +178,19 @@ class Clover extends Reversi {
 
   watchFutureEvents () {
     this.deploy().then((instance) => {
-      instance.Registered({}, {fromBlock: 'latest'}).watch((error, result) => {
+      instance.Registered({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
         if (error) {
           this.error = 'need-metamask'
           this.resetConnection()
         } else {
           this.error = false
-          window.dispatchEvent(new CustomEvent('eventRegistered', {detail: result}))
+          if (result.length && result[0].args.newOwner !== '0x') {
+            window.dispatchEvent(new CustomEvent('eventRegistered', {detail: JSON.parse(JSON.stringify(result))}))
+          }
         }
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       })
-      instance.newCloverName({}, {fromBlock: 'latest'}).watch((error, result) => {
+      instance.newCloverName({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
         if (error) {
           this.error = 'need-metamask'
           this.resetConnection()
@@ -190,7 +200,7 @@ class Clover extends Reversi {
         }
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       })
-      instance.newUserName({}, {fromBlock: 'latest'}).watch((error, result) => {
+      instance.newUserName({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
         if (error) {
           this.error = 'need-metamask'
           this.resetConnection()
@@ -429,6 +439,28 @@ class Clover extends Reversi {
     })
   }
 
+  callCloversManually () {
+    return this.getCloversCount.then((count) => {
+      return this.iterateClovers(0, count).then(() => {
+        this.manualCloverCallComplete = true
+        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+      })
+    })
+  }
+
+  iterateClovers (i, length) {
+    if (i < length) {
+      i++
+      return this.getCloverByKey(i).then((clover) => {
+        this.allClovers.push(clover)
+        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+        return this.iterateClovers(i, length)
+      })
+    } else {
+      return
+    }
+  }
+
   // contract read only / calls
 
   cloverExists (board = this.byteBoard) {
@@ -562,7 +594,6 @@ class Clover extends Reversi {
   }
 
   flipClover (board = this.byteBoard) {
-    console.log(board)
     return this.cloverExists(board).then((exists) => {
       if (!exists) throw new Error('Clover doesn\'t exists')
       return this.deploy().then((instance) => {
