@@ -42,23 +42,23 @@
         </div>
       </header>
       <div v-if="selectedClover" class="relative">
-        <div class="lh1 absolute top-0 left-0 mx2 mt3 z2 pointer p1">
-          <a @click="deselect">❌</a>
+        <div class="h4 absolute top-0 left-0 mx0 z3 pointer px2 pt3">
+          <a class='p2 lh1' @click="deselect">❌</a>
         </div>
         <claim-clover :clover-data="selectedClover" @remove="remove"></claim-clover>
       </div>
-      <div v-if="clovers.length" :class="{'border-top': !selectedClover}"  class="p2 relative">
+      <div  v-if="clovers.length" :class="{'border-top': !selectedClover}"  class="p2 relative">
         <p class="h6 m0 pt1 silver absolute top-0">Mined clovers</p>
         <!-- <p class="h6 m0 pt1 silver absolute top-0 right-0 mr1" >
           <input v-if="enterManually" v-model="moves" placeholder="Enter Moves Manually">
           <span class='pointer' @click="enterManually = !enterManually">⚙️</span>
         </p> -->
         <div>
-          <ul class="list-reset flex mxn1 nowrap overflow-auto items-center">
-            <li @click="select(board)" v-for="board in newClovers" class="py1 px2 pointer h6" :class="isFocus(board)">
+          <ul ref="cloverList" class="list-reset flex mxn1 nowrap overflow-auto items-center">
+            <li ref="clover" @click="select(board)" v-for="board in newClovers" class="py1 px2 pointer h6 newClover" :class="isFocus(board)">
               <clv :no-click='true' :key="board.movesString" :byteBoard="board.byteBoard"></clv>
             </li>
-            <li @click="select(board)" v-for="board in claimedClovers" class="py1 px2 pointer h6 claimed" :class="isFocus(board)">
+            <li ref="clover" @click="select(board)" v-for="board in claimedClovers" class="py1 px2 pointer h6 claimed" :class="isFocus(board)">
               <clv :no-click='true' :key="board.movesString" :byteBoard="board.byteBoard"></clv>
             </li>
             <li>
@@ -110,6 +110,12 @@
       }
     },
     computed: {
+      newBoardKey () {
+        return this.newClovers.findIndex((c) => c.byteBoard === this.selectedClover.byteBoard)
+      },
+      claimedBoardKey () {
+        return this.claimedClovers.findIndex((c) => c.byteBoard === this.selectedClover.byteBoard)
+      },
       clovers () {
         return this.minedClovers
       },
@@ -186,6 +192,48 @@
       ])
     },
     methods: {
+      scrollBoards (inc) {
+        this.$nextTick(() => {
+          let selectedClover = this.$refs.clover.find((c) => c.classList.contains('active-clover'))
+          if (!selectedClover) return
+          this.$refs.cloverList.scrollLeft = selectedClover.offsetLeft
+        })
+      },
+      swapBoard (inc) {
+        if (this.newBoardKey > -1) {
+          if (this.newClovers.length > (this.newBoardKey + inc) && (this.newBoardKey + inc) >= 0) {
+            this.selectedClover = this.newClovers[this.newBoardKey + inc]
+          } else if (this.claimedClovers.length) {
+            this.selectedClover = inc > 0 ? this.claimedClovers[0] : this.claimedClovers[this.claimedClovers.length - 1]
+          } else if (this.newClovers.length) {
+            this.selectedClover = inc > 0 ? this.newClovers[0] : this.newClovers[this.newClovers.length - 1]
+          }
+        } else if (this.claimedBoardKey > -1) {
+          if (this.claimedClovers.length > (this.claimedBoardKey + inc) && (this.claimedBoardKey + inc) >= 0) {
+            this.selectedClover = this.claimedClovers[this.claimedBoardKey + inc]
+          } else if (this.newClovers.length) {
+            this.selectedClover = inc > 0 ? this.newClovers[0] : this.newClovers[this.newClovers.length - 1]
+          } else if (this.claimedClovers.length) {
+            this.selectedClover = inc > 0 ? this.claimedClovers[0] : this.claimedClovers[this.claimedClovers.length - 1]
+          }
+        }
+        this.scrollBoards(inc)
+      },
+      nextBoard () {
+        this.swapBoard(1)
+      },
+      previousBoard () {
+        this.swapBoard(-1)
+      },
+      checkKey (e) {
+        if (e.keyCode === 39) {
+          e.preventDefault()
+          this.nextBoard()
+        } else if (e.keyCode === 37) {
+          e.preventDefault()
+          this.previousBoard()
+        }
+      },
       checkExists () {
         this.clover.cloverExists(this.customMoves).then((res) => {
           console.log(res)
@@ -240,7 +288,6 @@
           this.totalMined = data.hashRate
         }
         if ('symmetrical' in data) {
-          console.log(data)
           // this.clover.cloverExists(data.byteBoard).then((exists) => {
           this.cloverExists(data.byteBoard).then((exists) => {
             if (!exists) {
@@ -303,9 +350,11 @@
     mounted () {
       this.checkRead()
       this.interval = setInterval(this.timer, 3000)
+      window.addEventListener('keydown', this.checkKey)
     },
     destroyed () {
       clearInterval(this.interval)
+      window.removeEventListener('keydown', this.checkKey)
     },
     components: { ClaimClover }
   }

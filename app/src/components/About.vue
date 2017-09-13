@@ -74,7 +74,7 @@
           <div class="h2 mt3">
             A Note on Gas Prices</div>
           <div class="h4 my2 mb4">
-            You may notice that the transaction of claiming a Clover on this contract is slow and very expensive (~4,000,000 Wei). While Reversi is a simple game to program and measures have been taken to reduce the cost, looping through 60 moves is still a costly operation on the EVM. For that reason we are using the Rinkeby Network until gas prices are lowered, Ethermint's Venus network is available, or a sufficient validation method can be enabled using an Oracle. Until then please be patient with the transaction times and stock up on free Rinkeby Ether from their faucet. For More info check out the <a href="https://github.com/okwme/clovers/" target="_blank">repo</a>.
+            You may notice that the transaction of claiming a Clover on this contract is slow and very expensive (~5,000,000 Wei). While Reversi is a simple game to program and measures have been taken to reduce the cost, looping through 60 moves is still a costly operation on the EVM. For that reason we are using the Rinkeby Network until gas prices are lowered, Ethermint's Venus network is available, or a sufficient validation method can be enabled using an Oracle. Until then please be patient with the transaction times and stock up on free Rinkeby Ether from their faucet. For More info check out the <a href="https://github.com/okwme/clovers/" target="_blank">repo</a>.
           </div>
         </div>
       </div>

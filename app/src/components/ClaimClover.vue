@@ -8,11 +8,14 @@
           </div>
         </template>
       </div>
+      <div class="mx3 relative flex-auto ">&nbsp;
+        <symmetry :horizontal="false" :board="reversi"></symmetry>
+      </div>
       <div v-if="cloverData.removed" class="px3 flex-auto">
         <p class="h1 m0 lh1">🗑 Removed {{ removeDate }}</p>
       </div>
       <div v-else-if="cloverData.claimed" class="px3 flex-auto">
-        <router-link :to="'/clovers/' + cloverData.byteBoard">
+        <router-link :to="'/clovers/0x' + cloverData.byteBoard">
           <p class="h1 m0 lh1 white">✨ Claimed {{ claimDate }}</p>
         </router-link>
       </div>
@@ -53,6 +56,7 @@
   import moment from 'moment'
   import { mapActions, mapGetters, mapMutations } from 'vuex'
   import SvgText from '@/components/SvgText'
+  import Symmetry from '@/components/Symmetry'
   import Reversi from '../assets/reversi'
 
   export default {
@@ -136,7 +140,7 @@
         this.clover.startPrice = this.flipPrice
         this.clover.playGameMovesString(this.movesString)
         this.addMessage({
-          msg: 'Validating Clover, please be patient',
+          msg: 'Validating Clover on the Blockchain',
           type: 'progress'
         }).then((msgId) => {
           this.clover.register().then((res) => {
@@ -176,6 +180,6 @@
         claimedClover: 'CLAIMED_CLOVER'
       })
     },
-    components: { SvgText }
+    components: { SvgText, Symmetry }
   }
 </script>
