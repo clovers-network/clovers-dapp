@@ -89,6 +89,7 @@
       },
 
       ...mapGetters({
+        allClovers: 'allClovers',
         username: 'username',
         tokenName: 'name',
         tokenSymbol: 'symbol',
