@@ -16,7 +16,9 @@
     </div>
 
     <div v-if="allClovers.length" class="mt2 px2">
-      
+
+
+
       <div class="hide">
         <form
           class="border-bottom inline-block my1"
@@ -24,14 +26,32 @@
           <input class="input" v-model="search" placeholder="search">
         </form>
       </div>
-      <div class="center mb4 mt4">
-        <span
-        @click="clickSort(i)"
-        :class="sortableClass(i)"
-        class="inline-block mx2 pointer no-select"
-        v-html="sort"
-        v-for="sort, i in sortable"></span>
-      </div>
+
+
+       <div class=" max-width-4 mx-auto flex justify-between align-middle py3" >
+          <div class=" " :class="{hide: pagedTotal === 1}">
+            <button
+            class="btn btn-outline mb1 blue"
+            :disabled="!prevPossible"
+            @click="paged--">←</button>&nbsp;
+          </div>
+
+        <div class="">
+          <span
+          @click="clickSort(i)"
+          :class="sortableClass(i)"
+          class="inline-block mx2 pointer no-select"
+          v-html="sort"
+          v-for="sort, i in sortable"></span>
+        </div>
+
+          <div class=" " :class="{hide: pagedTotal === 1}">
+            <button
+            class="btn btn-outline mb1 blue"
+            :disabled="!nextPossible"
+            @click="paged++">→</button>&nbsp;
+          </div>
+        </div>
 
       <ul class="list-reset max-width-5 mx-auto flex flex-wrap mxn2 center justify-center">
         <li v-for="board in cloversSliced" :key="board.board" class="px2 mb3">
@@ -85,7 +105,7 @@
     data () {
       return {
         paged: 1,
-        limit: 24,
+        limit: 18,
         limits: [5, 10, 20, 50, 100],
         asc: true,
         sortableIndex: 0,

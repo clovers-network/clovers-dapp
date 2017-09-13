@@ -63,7 +63,6 @@
     name: 'claim-clover',
     data () {
       return {
-        submitting: false,
         byteBoard: null,
         movesString: null,
         reward: null,
@@ -78,6 +77,9 @@
       }
     },
     computed: {
+      submitting () {
+        return this.cloverData && this.submittingBoards.findIndex((c) => c === this.cloverData.byteBoard) > -1
+      },
       rewardTxt () {
         return (this.reward || 100) + ' ♧'
       },
@@ -88,6 +90,7 @@
         return moment(this.cloverData.removed * 1000).fromNow()
       },
       ...mapGetters({
+        submittingBoards: 'submittingBoards',
         readOnly: 'readOnly',
         notRinkeby: 'notRinkeby',
         symmetries: 'symmetries',
@@ -127,30 +130,29 @@
           return
         }
 
-        this.submitting = true
         this.clover.startPrice = this.flipPrice
         this.clover.playGameMovesString(this.movesString)
         this.addMessage({
           msg: 'Validating Clover on the Blockchain',
           type: 'progress'
         }).then((msgId) => {
+          let byteBoard = this.clover.byteBoard
+          this.addToSubmittingList(byteBoard)
           this.clover.register().then((res) => {
-            console.log('res', res)
-            this.claimedClover(this.clover.byteBoard)
-            this.submitting = false
-            console.log('claim returned')
+            this.removeFromSubmittingList(byteBoard)
+            this.claimedClover(byteBoard)
             this.removeMessage(msgId)
             this.selfDestructMsg({
-              msg: 'Clover 0x' + this.clover.byteBoard + ' Claimed',
-              link: '/clovers/0x' + this.clover.byteBoard,
+              msg: 'Clover 0x' + byteBoard + ' Claimed',
+              link: '/clovers/0x' + byteBoard,
               type: 'success'
             })
           }).catch((err) => {
             console.error(err)
-            this.submitting = false
+            this.removeFromSubmittingList(byteBoard)
             this.removeMessage(msgId)
             this.selfDestructMsg({
-              msg: 'Error Claiming 0x' + this.clover.byteBoard + ' (check logs)',
+              msg: 'Error Claiming 0x' + byteBoard + ' (check logs)',
               type: 'error'
             })
           })
@@ -168,7 +170,10 @@
       ...mapMutations({
         updateCloverPrice: 'UPDATE_CLOVER_PRICE',
         removeMessage: 'REMOVE_MSG',
-        claimedClover: 'CLAIMED_CLOVER'
+        claimedClover: 'CLAIMED_CLOVER',
+        addToSubmittingList: 'SUBMITTED_CLOVER',
+        removeFromSubmittingList: 'SUBMITTED_CLOVER_DONE'
+
       })
     },
     components: { SvgText, Symmetry }

@@ -364,7 +364,7 @@
         return this.board && this.board.previousOwners && this.board.previousOwners[this.board.previousOwners.length - 1]
       },
       ownerName () {
-        return this.owner && xss(this.owner.name.length > 7 ? this.owner.name.slice(0, 7) + '&hellip;' : this.owner.name)
+        return this.owner && xss(this.owner.name.length > 9 ? this.owner.name.slice(0, 9) + '&hellip;' : this.owner.name)
       },
       ownerAddress () {
         return this.owner && this.owner.address

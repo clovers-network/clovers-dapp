@@ -25,7 +25,8 @@ const state = {
   registeredEvents: [],
   usernameEvents: [],
   clovernameEvents: [],
-  messages: []
+  messages: [],
+  submittingBoards: []
 }
 
 export default new Vuex.Store({

@@ -1,4 +1,15 @@
 export default {
+  SUBMITTED_CLOVER (state, byteBoard) {
+    state.submittingBoards.push(byteBoard)
+  },
+  SUBMITTED_CLOVER_DONE (state, byteBoard) {
+    let boardKey = state.submittingBoards.findIndex((b) => b === byteBoard)
+    if (boardKey > -1) {
+      state.submittingBoards.splice(boardKey, 1)
+    } else {
+      console.error('Board not found in submitting list', byteBoard)
+    }
+  },
   NOT_RINKEBY (state) {
     state.notRinkeby = true
   },
