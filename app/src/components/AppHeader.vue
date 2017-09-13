@@ -77,7 +77,7 @@
     },
     computed: {
       userName () {
-        return this.username && this.username.name && (this.username.name.length > 7 ? this.username.name.slice(0, 7) + '&hellip;' : this.username.name)
+        return this.username && this.username.name && (this.username.name.length > 9 ? this.username.name.slice(0, 9) + '&hellip;' : this.username.name)
       },
       mineText () {
         if (!this.mining) return 'Miner stopped'

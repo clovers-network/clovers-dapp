@@ -3,6 +3,7 @@ import Clover from '../assets/clovers'
 import xss from 'xss'
 
 export default {
+  submittingBoards: state => state.submittingBoards,
   clover: state => state.clover,
   readOnly: state => state.clover.readOnly,
   notRinkeby: state => state.clover.notRinkeby,

@@ -7,11 +7,11 @@
     <!-- <div class="center silver mb2">by {{board.previousOwners[0]}}</div> -->
     <div>
       <div class='relative'>
-        <div class=' h6 absolute top-0  right-0 mxn3 gridItemBadge z2'>
+        <div class=' h6 absolute top-0  right-0 mxn3 gridItemBadge z1'>
           <div v-if="badgeClass.multiple" class="px1 mb1 py1 bg-red rounded multipleBagde">{{badgeClass.count}}x Sym</div>
         </div>
 
-        <div class=' h6 absolute bottom-0  right-0 mxn3 gridItemBadge z2'>
+        <div class=' h6 absolute bottom-0  right-0 mxn3 gridItemBadge z1'>
           <div v-if="badgeClass[mostRare.name]" class="px1 py1 bg-green rounded rareBadge" :class="mostRare.name + 'Badge'">Rare</div>
         </div>
         <clv :no-click="true" :byteBoard="board.board"></clv>
@@ -83,7 +83,7 @@
       },
       boardOwner () {
         let owner = this.board.previousOwners && this.board.previousOwners[ this.board.previousOwners.length - 1 ].name
-        return owner && 'Owned By: ' + (owner.length > 7 ? owner.slice(0, 7) + '&hellip;' : owner)
+        return owner && 'Owned By: ' + (owner.length > 9 ? owner.slice(0, 9) + '&hellip;' : owner)
       },
       findersFee () {
         // this.reversi.byteBoard = this.board.board
