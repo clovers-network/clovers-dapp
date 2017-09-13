@@ -1,6 +1,14 @@
 <template>
-  <div class="p2">
+  <div class="">
+    <div class="bg-white border-top border-bottom border-silver black pb2 md-p3 flex justify-around">
+      <div class="center" v-for="sym in symTypes" >
+        <div class='px1'>{{symmetries[sym]}} x</div>
+        <div :class="sym" class="symmetry-type"></div>
+        <div>{{symValues[sym]}} ♧</div>
+      </div>
+    </div>
     <div v-if="allClovers.length" class="mt2 px2">
+      
       <div class="hide">
         <form
           class="border-bottom inline-block my1"
@@ -49,16 +57,16 @@
 
 <script>
   import { mapGetters } from 'vuex'
-
   export default {
     name: 'CloverList',
     data () {
       return {
         paged: 1,
-        limit: 50,
+        limit: 24,
         limits: [5, 10, 20, 50, 100],
         asc: true,
         sortableIndex: 0,
+        symTypes: ['RotSym', 'Y0Sym', 'X0Sym', 'XYSym', 'XnYSym'],
         sortable: ['Date Flipped', 'Date Found', 'Current Price', 'Times Flipped'],
         search: null
       }
@@ -75,6 +83,15 @@
       }
     },
     computed: {
+      symValues () {
+        return {
+          RotSym: this.clover.calcFindersFees(this.symmetries, true),
+          Y0Sym: this.clover.calcFindersFees(this.symmetries, false, true),
+          X0Sym: this.clover.calcFindersFees(this.symmetries, false, false, true),
+          XYSym: this.clover.calcFindersFees(this.symmetries, false, false, false, true),
+          XnYSym: this.clover.calcFindersFees(this.symmetries, false, false, false, false, true)
+        }
+      },
       pagedTotal () {
         return Math.floor(this.cloversSorted.length / this.limit) + (this.cloversSorted.length % this.limit && 1)
       },
@@ -121,9 +138,11 @@
         })
       },
       ...mapGetters([
+        'clover',
         'allClovers',
         'usernames',
-        'clovernames'
+        'clovernames',
+        'symmetries'
       ])
     },
     methods: {
@@ -131,7 +150,7 @@
         return c.previousOwners.length === 1 ? c.lastPaidAmount : (c.lastPaidAmount * 2)
       },
       sortableClass (i) {
-        if (i !== this.sortableIndex) return 'silver'
+        if (i !== this.sortableIndex) return 'muted'
         return {
           gray: true,
           asc: this.asc,

@@ -1,8 +1,11 @@
 <template>
   <div>
-    <div class="bg-gray white p2 md-p3 pre mono" >
+    <div class=" h2 bg-gray white p2 md-p3 pre mono" >
       <a class="white underline" target="_blank" :href="'https://rinkeby.etherscan.io/token/0xcc0604514f71b8d39e13315d59f4115702b42646?a=' + address">{{address}}</a>
+          <div class='h1 right'>{{balanceFormatted}} ♧</div>
+
     </div>
+    <activity :address="address"></activity>
     <div class="p3">
       <template v-if="mine">
         <form class='border-bottom fit' @submit.prevent="changeName()">
@@ -24,12 +27,14 @@
 <script>
   import { mapMutations, mapGetters, mapActions } from 'vuex'
   import CloverList from '@/components/CloverList'
+  import Activity from '@/components/Activity'
 
   export default {
     name: 'User',
     data () {
       return {
-        name: null
+        name: null,
+        balance: null
       }
     },
     watch: {
@@ -47,6 +52,9 @@
       }
     },
     computed: {
+      balanceFormatted () {
+        return this.balance && this.balance.toString().split('"').join('').toLocaleString()
+      },
       username () {
         return this.user && this.user.name
       },
@@ -73,6 +81,9 @@
     },
     mounted () {
       this.name = this.username
+      this.clover.balanceOf(this.address).then((amount) => {
+        this.balance = amount
+      })
     },
     methods: {
       changeName () {
@@ -109,6 +120,6 @@
         removeMessage: 'REMOVE_MSG'
       })
     },
-    components: {CloverList}
+    components: {CloverList, Activity}
   }
 </script>

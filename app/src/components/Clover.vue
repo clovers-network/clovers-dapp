@@ -72,7 +72,7 @@
         </div>
       </div>
     </div>
-    <div :class="{'expanded-500': showHistory}" class=" expandable border-bottom border-silver">
+    <div :class="{'expanded-500': showHistory}" class=" expandable ">
       <div class="p2 ">
         <div class="max-width-3 mx-auto">
           <table class="col-12 my2">
@@ -88,7 +88,7 @@
               <tr v-for="(event, idx) in flipEvents" :class="{muted: idx > 2}" class="h3">
                 <td>{{ eventTime(event.args.modified) }}</td>
                 <td>
-                  <router-link :to="userLink(event.args.newOwner)" class="underline color-inherit">{{ userName(event.args.newOwner) }}</router-link>
+                  <router-link :to="userLink(event.args.newOwner)" class=" color-inherit">{{ userName(event.args.newOwner) }}</router-link>
                 </td>
                 <td>{{ cost(event.args, idx) }}</td>
                 <td>{{ calcEarnings(idx) }} &clubs;</td>
@@ -96,7 +96,7 @@
               <tr class="h3" :class="{muted: flippers > 2}">
                 <td>{{ created }}</td>
                 <td>
-                  <router-link :to=" (founder && userLink(founder.address)) || ''" class="underline color-inherit">{{ (founder && userName(founder.address)) || '' }}</router-link>
+                  <router-link :to=" (founder && userLink(founder.address)) || ''" class=" color-inherit">{{ (founder && userName(founder.address)) || '' }}</router-link>
                 </td>
                 <td>0 &clubs;</td>
                 <td>{{ calcFinderEarnings && calcFinderEarnings.toLocaleString() }} &clubs;</td>

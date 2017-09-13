@@ -17,18 +17,20 @@
       <p class="m0 pr3">
 
         <span class='relative'>
-        <span class='absolute  bg-red px1 py0 h4 right-0 mr3 rounded' v-if="symmsSinceOpened" >{{symmsSinceOpened}}&nbsp;<clover-icon width="14" height="14"></clover-icon></span>
         {{ cloversFound }}</span>
         <clover-icon width="14" height="14"></clover-icon>
       </p>
       <p class="m0 pr3">
         <span id="balance" :class="{white: balance !== '0', red: balance === '0'}">{{ balanceString }}</span> {{ tokenSymbol }}
       </p>
-      <p @click="toggleMinePanel" class="m0 py2 px3 pointer no-select bg-black white">
+      <p @click="toggleMinePanel" class="relative m0 py2 px3 pointer no-select bg-black white">
         {{ mineText }}
+        <span class='mt1 top-0 absolute  bg-red px1 py0 h4 left-0 mln2-5 circle py1' v-if="symmsSinceOpened" >{{symmsSinceOpened}}&nbsp;<clover-icon width="14" height="14"></clover-icon></span>
       </p>
     </header>
-    <miner :show-miner="showMiner" v-show="showMiner" @close="toggleMinePanel"></miner>
+    <miner :show-miner="showMiner" v-show="showMiner" @close="toggleMinePanel">
+
+    </miner>
   </div>
 </template>
 

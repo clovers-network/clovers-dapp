@@ -19,8 +19,8 @@
     <div class="bg-gray white p2 md-p3 flex justify-around">
       <div>{{ allClovers.length }} Clovers Claimed</div>
       <div>{{ symmetries.RotSym }} Rotational</div>
-      <div>{{ symmetries.XYSym + symmetries.XnYSym }} Diagonal</div>
       <div>{{ symmetries.X0Sym + symmetries.Y0Sym }} Perpindicular</div>
+      <div>{{ symmetries.XYSym + symmetries.XnYSym }} Diagonal</div>
     </div>
   </div>
 </template>
@@ -41,7 +41,6 @@
         this.clover.playGameMovesString(this.heart)
         return this.clover.byteBoardToRowArray()
       },
-
       ...mapGetters([
         'balance',
         'clover',

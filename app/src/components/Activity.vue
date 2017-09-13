@@ -11,56 +11,70 @@
           Block Number
         </span>
       </div>
-      <div class="center " :class="{hide: pagedTotal === 1}">
-        <button
-        class="btn btn-outline mb1 blue"
-        :disabled="!prevPossible"
-        @click="paged--">←</button>
-        <button
-        class="btn btn-outline mb1 blue"
-        :disabled="!nextPossible"
-        @click="paged++">→</button>
+      <div class="mx-auto border border-silver p3" style="height:500px">
+        <ul class="m0 p0 mb3 pb1">
+          <li class="mb1 table">
+          <div class="h4 table">
+            <span v-if="currentBlock" class="align-middle table-cell green">Current Block {{currentBlock}}</span>&nbsp;
+          </div>
+          </li>
+          <li
+           class='mb1  table' v-for="activity in pagedActivity">
+            <div class='h4  table' v-if="activity.event === 'Registered'">
+              <span class="align-middle table-cell"> Block {{activity.blockNumber}} —</span>
+              <router-link class="align-middle table-cell px1" :to="'/clovers/' + activity.args.board">
+                <clv :key="activity.args.board" class=' small-clover no-hover' :no-click="true" :byteBoard="activity.args.board"></clv>
+              </router-link>
+              <span  class="align-middle table-cell" v-if="activity.args.newBoard"> claimed by </span>
+              <span  class="align-middle table-cell" v-else> flipped by </span>
+              <router-link class="align-middle table-cell px1" :to="'/users/' + activity.args.newOwner">
+                <span   v-html="getName(activity.args.newOwner)"></span>
+              </router-link>
+              <span  class="align-middle table-cell" v-if="activity.args.newBoard">for {{parseInt(activity.args.findersFee)}} ♧ with initial price {{parseInt(activity.args.lastPaidAmount)}} ♧</span>
+              <span  class="align-middle table-cell" v-else>for {{parseInt(activity.args.lastPaidAmount)}} ♧</span>
+            </div>
+            <div class='h4  table my2' v-else-if="activity.event === 'newUserName'">
+              <span class="align-middle table-cell"> Block {{activity.blockNumber}} —</span>
+              <router-link class="align-middle table-cell px1" :to="'/users/' + activity.args.player">
+                <span  v-html="activity.args.player.slice(0,8) + '&hellip;'"></span>
+              </router-link>
+              <span class="align-middle table-cell"> changed their name to</span>
+              <span class="align-middle table-cell px1">{{filter(activity.args.name)}}</span>
+            </div>
+            <div class='h4  table' v-else-if="activity.event === 'newCloverName'">
+              <span class="align-middle table-cell"> Block {{activity.blockNumber}} —</span>
+              <router-link class="align-middle table-cell px1" :to="'/clovers/' + activity.args.board">
+                <clv :key="activity.args.board" class=' small-clover no-hover' :no-click="true" :byteBoard="activity.args.board"></clv>
+              </router-link>
+              <span class="align-middle table-cell"> renamed </span>
+              <span class="align-middle table-cell px1">{{filter(activity.args.name)}}</span>
+            </div>
+            <div v-else>
+              <pre>{{activity}}</pre>
+            </div>
+          </li>
+        </ul>
+
+        <div class="flex justify-between align-middle" >
+          <div class=" " :class="{hide: pagedTotal === 1}">
+            <button
+            class="btn btn-outline mb1 blue"
+            :disabled="!prevPossible"
+            @click="paged--">←</button>&nbsp;
+          </div>
+
+          <div class="center mb2"  :class="{hide: pagedTotal === 1}">
+            <span>{{paged}} / {{pagedTotal}}</span>
+          </div>
+
+          <div class=" " :class="{hide: pagedTotal === 1}">
+            <button
+            class="btn btn-outline mb1 blue"
+            :disabled="!nextPossible"
+            @click="paged++">→</button>&nbsp;
+          </div>
+        </div>
       </div>
-      <div class="center mb2"  :class="{hide: pagedTotal === 1}">
-        <span>{{paged}} / {{pagedTotal}}</span>
-      </div>
-      <ul class="mx-auto border border-silver p3">
-        <li
-         class='mb1  table' v-for="activity in pagedActivity">
-          <div class='h4  table' v-if="activity.event === 'Registered'">
-            <span class="align-middle table-cell"> Block {{activity.blockNumber}} —</span>
-            <router-link class="align-middle table-cell px1" :to="'/clovers/' + activity.args.board">
-              <clv :key="activity.args.board" class=' small-clover no-hover' :no-click="true" :byteBoard="activity.args.board"></clv>
-            </router-link>
-            <span  class="align-middle table-cell" v-if="activity.args.newBoard"> claimed by </span>
-            <span  class="align-middle table-cell" v-else> flipped by </span>
-            <router-link class="align-middle table-cell px1" :to="'/users/' + activity.args.newOwner">
-              <span   v-html="getName(activity.args.newOwner)"></span>
-            </router-link>
-            <span  class="align-middle table-cell" v-if="activity.args.newBoard">for {{parseInt(activity.args.findersFee)}} ♧ with initial price {{parseInt(activity.args.lastPaidAmount)}} ♧</span>
-            <span  class="align-middle table-cell" v-else>for {{parseInt(activity.args.lastPaidAmount)}} ♧</span>
-          </div>
-          <div class='h4  table my2' v-else-if="activity.event === 'newUserName'">
-            <span class="align-middle table-cell"> Block {{activity.blockNumber}} —</span>
-            <router-link class="align-middle table-cell px1" :to="'/users/' + activity.args.player">
-              <span  v-html="activity.args.player.slice(0,8) + '&hellip;'"></span>
-            </router-link>
-            <span class="align-middle table-cell"> changed their name to</span>
-            <span class="align-middle table-cell px1">{{filter(activity.args.name)}}</span>
-          </div>
-          <div class='h4  table' v-else-if="activity.event === 'newCloverName'">
-            <span class="align-middle table-cell"> Block {{activity.blockNumber}} —</span>
-            <router-link class="align-middle table-cell px1" :to="'/clovers/' + activity.args.board">
-              <clv :key="activity.args.board" class=' small-clover no-hover' :no-click="true" :byteBoard="activity.args.board"></clv>
-            </router-link>
-            <span class="align-middle table-cell"> renamed </span>
-            <span class="align-middle table-cell px1">{{filter(activity.args.name)}}</span>
-          </div>
-          <div v-else>
-            <pre>{{activity}}</pre>
-          </div>
-        </li>
-      </ul>
       
     </div>
   </div>
@@ -77,7 +91,35 @@
       return {
         paged: 1,
         limit: 5,
-        asc: false
+        asc: false,
+        interval: null,
+        currentBlock: null
+      }
+    },
+    props: {
+      address: {
+        type: String,
+        default: null
+      }
+    },
+    mounted () {
+      this.interval = setInterval(this.checkBlock, 5000)
+    },
+    destroyed () {
+      clearInterval(this.interval)
+    },
+    methods: {
+      checkBlock () {
+        this.clover.currentBlock().then((block) => {
+          this.currentBlock = block.number
+        })
+      },
+      filter (word) {
+        return xss(word)
+      },
+      getName (address) {
+        let user = this.allUsers.find((u) => u.address === address)
+        return user && user.name || address
       }
     },
     computed: {
@@ -112,27 +154,25 @@
       allActivity () {
         return this.registeredEvents.map((r) => {
           return r
+        }).filter((r) => {
+          return !this.address || r.args.newOwner === this.address
         }).concat(...this.usernameEvents.map((u) => {
           return u
+        }).filter((u) => {
+          return !this.address || u.args.player === this.address
         })).concat(...this.clovernameEvents.map((c) => {
           return c
+        }).filter((c) => {
+          return !this.address || c.address === this.address
         }))
       },
       ...mapGetters([
+        'clover',
         'registeredEvents',
         'usernameEvents',
         'clovernameEvents',
         'allUsers'
       ])
-    },
-    methods: {
-      filter (word) {
-        return xss(word)
-      },
-      getName (address) {
-        let user = this.allUsers.find((u) => u.address === address)
-        return user && user.name || address
-      }
     }
   }
 </script>

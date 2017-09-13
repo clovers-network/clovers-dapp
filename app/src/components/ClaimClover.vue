@@ -67,7 +67,8 @@
         byteBoard: null,
         movesString: null,
         reward: null,
-        reversi: new Reversi()
+        reversi: new Reversi(),
+        flipPrice: 100
       }
     },
     props: {
@@ -85,17 +86,6 @@
       },
       removeDate () {
         return moment(this.cloverData.removed * 1000).fromNow()
-      },
-      flipPrice: {
-        get () {
-          return this.cloverData.startPrice || 100
-        },
-        set (newVal) {
-          this.updateCloverPrice({
-            newVal,
-            byteBoard: this.byteBoard
-          })
-        }
       },
       ...mapGetters({
         readOnly: 'readOnly',
@@ -125,6 +115,7 @@
         this.clover.playGameMovesString(this.movesString)
         this.clover.isSymmetrical()
         this.reward = this.clover.calcFindersFees(this.symmetries)
+        this.flipPrice = this.reward
       },
       trigger () {
         if (this.notRinkeby || this.readOnly) {

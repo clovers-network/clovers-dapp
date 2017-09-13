@@ -30,7 +30,7 @@
   }
 </script>
 
-<style>
+<style lang="scss">
   .all-symmetries {
     left: 50%;
     margin-top: 2em;

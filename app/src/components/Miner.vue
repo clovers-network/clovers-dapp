@@ -264,6 +264,7 @@
         this.miningPower = this.miners.length
       },
       stop () {
+        console.log('stop')
         if (this.miners.length) {
           let removed = this.miners.pop()
           removed.postMessage('stop')
@@ -277,6 +278,8 @@
         }
       },
       stopAll () {
+        console.log('stop all')
+        this.stop()
         while (this.miners.length > 0) {
           this.stop()
         }

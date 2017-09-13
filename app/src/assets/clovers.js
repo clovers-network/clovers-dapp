@@ -218,6 +218,15 @@ class Clover extends Reversi {
     return this.ClubToken.deployed()
   }
 
+  currentBlock () {
+    return new Promise((resolve, reject) => {
+      _web3.eth.getBlock('latest', (error, results) => {
+        if (error) reject(error)
+        resolve(results)
+      })
+    })
+  }
+
   // Token
 
   // contract read only / calls
