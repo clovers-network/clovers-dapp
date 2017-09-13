@@ -34,6 +34,7 @@
     "vuex": "^2.3.1",
     "vuex-router-sync": "^4.1.2",
     "web3": "^0.18.4",
+    "web3-provider-engine": "^13.2.9",
     "xss": "^0.3.4"
   },
   "devDependencies": {

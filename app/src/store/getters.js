@@ -4,6 +4,7 @@ import xss from 'xss'
 
 export default {
   clover: state => state.clover,
+  readOnly: state => state.clover.readOnly,
   notRinkeby: state => state.clover.notRinkeby,
   error: state => state.clover.error,
   name: state => state.clover.name,
@@ -84,6 +85,11 @@ export default {
   },
   allClovers: (state, getters) => {
     console.log('all clovers calculated')
+    if (getters.clover.allClovers.length) {
+      return getters.clover.allClovers.map((c) => {
+        return c
+      })
+    }
     let clovers = []
     JSON.parse(JSON.stringify(state.registeredEvents))
     .forEach((e) => {

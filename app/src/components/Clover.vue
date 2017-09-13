@@ -37,7 +37,7 @@
           <div>
             Original mining reward
             <p class="h2">
-              {{ findersFee.toLocaleString() }} &clubs;
+              {{ findersFee && findersFee.toLocaleString() }} &clubs;
             </p>
           </div>
         </div>
@@ -89,7 +89,7 @@
                 <router-link :to="userLink(founder.address)" class="underline color-inherit">{{ userName(founder.address) }}</router-link>
               </td>
               <td>0 &clubs;</td>
-              <td>{{ calcFinderEarnings.toLocaleString() }} &clubs;</td>
+              <td>{{ calcFinderEarnings && calcFinderEarnings.toLocaleString() }} &clubs;</td>
             </tr>
           </tbody>
         </table>
@@ -188,6 +188,14 @@
         }
       },
       changeName () {
+        if (this.readOnly) {
+          this.selfDestructMsg({
+            msg: 'Please connect to the Rinkeby Network using MetaMask or Mist Browser',
+            link: 'https://metamask.io/',
+            type: 'error'
+          })
+          return
+        }
         this.addMessage({
           msg: 'Updating Name',
           type: 'progress'
@@ -279,7 +287,7 @@
         return this.board.lastPaidAmount * 2
       },
       priceComma () {
-        return this.price.toLocaleString()
+        return this.price && this.price.toLocaleString()
       },
       founder () {
         return this.board && this.board.previousOwners && this.board.previousOwners[0]

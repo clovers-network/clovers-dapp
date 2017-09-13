@@ -64,6 +64,7 @@
       },
 
       ...mapGetters([
+        'readOnly',
         'allUsers',
         'allClovers',
         'account',
@@ -75,6 +76,14 @@
     },
     methods: {
       changeName () {
+        if (this.readOnly) {
+          this.selfDestructMsg({
+            msg: 'Please connect to the Rinkeby Network using MetaMask or Mist Browser',
+            link: 'https://metamask.io/',
+            type: 'error'
+          })
+          return
+        }
         this.addMessage({msg: 'Updating Name', type: 'progress'}).then((msgId) => {
           this.clover.changeName(this.name).then(() => {
             this.removeMessage(msgId)

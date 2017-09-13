@@ -144,5 +144,6 @@
   @import './style/global';
   #app {
     position:relative;
+    min-height:100vh;
   }
 </style>
