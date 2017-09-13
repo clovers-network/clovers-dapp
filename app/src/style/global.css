@@ -154,6 +154,50 @@ hr {
 }
 
 /* #APP STUFF */
+.white {
+  ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    color: var(--white);
+    opacity: 0.8;
+  }
+  ::-moz-placeholder { /* Firefox 19+ */
+    color: var(--white);
+    opacity: 0.8;
+  }
+  :-ms-input-placeholder { /* IE 10+ */
+    color: var(--white);
+    opacity: 0.8;
+  }
+  :-moz-placeholder { /* Firefox 18- */
+    color: var(--white);
+    opacity: 0.8;
+  }
+}
+.expandable, .expandable-500 {
+  transition: max-height 800ms ease;
+  max-height:0px;
+  overflow: hidden;
+  &.expandable-500 {
+    transition: max-height 500ms ease !important;
+  }
+  &.expanded-2000 {
+    max-height:2000px;
+    overflow: auto;
+  }
+  &.expanded-1000 {
+    max-height:1000px;
+    overflow: auto;
+  }
+  &.expanded-500 {
+    max-height:500px;
+    overflow: auto;
+  }
+}
+.material-icons {
+  transition: all ease 500ms;
+}
+.rotate-180 {
+  transform: Rotate(180DEG);
+}
 
 .gridItem {
   max-width:12em;
