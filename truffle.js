@@ -10,7 +10,7 @@
 // var Web3 = require("web3");
 
 // // Get our mnemonic and create an hdwallet
-// var mnemonic = "correct hover crystal skill brass similar lock bone salon joke caught error";
+// var mnemonic = "jhsgdfhja sdfhja sdfhjks fjahsgd fasdgfka sdhjkfga sdfghj ";
 // var hdwallet = hdkey.fromMasterSeed(bip39.mnemonicToSeed(mnemonic));
 
 // // Get the first account using the standard hd path.
@@ -52,7 +52,7 @@
 
 
 // engine.start(); // Required by the provider engine.
-// // // 0xe5cbb625166a97e5acae1927cedf6efee08d5930fd091e561df8281028a407de
+
 module.exports = {
   networks: {
     // rinkeby: {

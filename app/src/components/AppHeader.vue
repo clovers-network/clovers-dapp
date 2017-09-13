@@ -15,7 +15,10 @@
         <li class="inline-block  ml4 white">&nbsp;</li>
       </ul>
       <p class="m0 pr3">
-        <span>{{ cloversFound }}</span>
+
+        <span class='relative'>
+        <span class='absolute  bg-red px1 py0 h4 right-0 mr3 rounded' v-if="symmsSinceOpened" >{{symmsSinceOpened}}&nbsp;<clover-icon width="14" height="14"></clover-icon></span>
+        {{ cloversFound }}</span>
         <clover-icon width="14" height="14"></clover-icon>
       </p>
       <p class="m0 pr3">
@@ -37,15 +40,35 @@
     name: 'header',
     data () {
       return {
-        showMiner: false
+        showMiner: false,
+        symmsSinceOpened: 0
       }
+    },
+    mounted () {
+      window.addEventListener('keyup', this.checkEsc)
+    },
+    destroyed () {
+      window.removeEventListener('keyup', this.checkEsc)
     },
     watch: {
       '$route.fullPath': function () {
         this.showMiner = false
+      },
+      cloversFound () {
+        if (this.allClovers && this.allClovers.length > 0) {
+          this.symmsSinceOpened++
+        }
+      },
+      showMiner () {
+        this.symmsSinceOpened = 0
       }
     },
     methods: {
+      checkEsc (e) {
+        if (e.keyCode === 27) {
+          this.showMiner = false
+        }
+      },
       toggleMinePanel () {
         this.showMiner = !this.showMiner
       }

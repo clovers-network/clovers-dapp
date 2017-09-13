@@ -1,6 +1,6 @@
 <template>
-  <ul class="absolute list-reset all-symmetries">
-    <li v-for="sym in symmetries" :class="sym" class="symmetry-type inline-block"></li>
+  <ul :class="{absolute:horizontal, 'all-symmetries': horizontal}" class=" list-reset ">
+    <li v-for="sym in symmetries" :class="[sym, {'inline-block': horizontal}]" class="symmetry-type"></li>
   </ul>
 </template>
 
@@ -11,6 +11,10 @@
       board: {
         type: Object,
         required: true
+      },
+      horizontal: {
+        type: Boolean,
+        default: true
       }
     },
     computed: {
@@ -39,6 +43,7 @@
     line-height: 0;
     margin: .4em;
     padding: .8em;
+    width:1em;
   }
 
   .XnYSym {

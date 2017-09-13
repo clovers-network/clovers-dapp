@@ -25,18 +25,10 @@
       return {
         sortBy: null,
         paged: 1,
-        limit: 20,
-        rebuildChat: false
+        limit: 20
       }
     },
     watch: {
-      '$route.fullPath': () => {
-        console.log('rebuild')
-        this.rebuildChat = true
-        setTimeout(() => {
-          this.rebuildChat = false
-        }, 1000)
-      },
       notRinkeby () {
         if (this.$route.path !== '/' && this.notRinkeby) {
           this.$router.push('/')
