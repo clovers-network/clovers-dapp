@@ -1,6 +1,10 @@
 <template>
   <div>
     <div class="bg-green white p2 md-p3 intro-screen relative">
+      <div class='pointer h2 absolute top-0 right-0 mr3 mt3'>
+        <i @click="copy('link')" class="material-icons mr1">link</i>
+        <i @click="copy('moves')" class="material-icons">content_copy</i>
+      </div>
       <div class="flex flex-wrap items-center justify-center">
         <div class="center my3 px4 relative order-1">
           <div class="h1">
@@ -22,9 +26,15 @@
           </div>
           <div>
             Current price
+            <!-- <p v-if="!currentOwner || flippers" class="h2"> -->
             <p class="h2">
               {{ price }} &clubs;
             </p>
+            <!-- Not ready until contract is re-deployed with events for price change -->
+            <!-- <p v-else class="h2">
+            <form class='inline-block border-bottom' @submit.prevent="changePrice()"><input
+            class='input big align-right white' type="number" step="1" placeholder="New Price" v-model="newPrice"></form>
+            </p> -->
           </div>
         </div>
         <div class="order-2 col-6 sm-col-3">
@@ -58,41 +68,42 @@
           <a @click="toggleHistory" class="silver inline-block pointer">{{ historyToggleText }}</a>
         </div>
         <div @click="toggleHistory" class="absolute bg-orange pointer circle h1 toggle-history">
-          <span v-if="!showHistory" class="material-icons">keyboard_arrow_down</span>
-          <span v-else class="material-icons">keyboard_arrow_up</span>
+          <span class="material-icons" :class="{'rotate-180': showHistory}">keyboard_arrow_down</span>
         </div>
       </div>
     </div>
-    <div v-if="showHistory" class="p2 border-bottom border-silver">
-      <div class="max-width-3 mx-auto">
-        <table class="col-12 my2">
-          <thead class="mb2">
-            <tr>
-              <th class="regular left-align muted h5">When</th>
-              <th class="regular left-align muted h5">User</th>
-              <th class="regular left-align muted h5">Cost</th>
-              <th class="regular left-align muted h5">Earnings</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(event, idx) in flipEvents" :class="{muted: idx > 2}" class="h3">
-              <td>{{ eventTime(event.args.modified) }}</td>
-              <td>
-                <router-link :to="userLink(event.args.newOwner)" class="underline color-inherit">{{ userName(event.args.newOwner) }}</router-link>
-              </td>
-              <td>{{ cost(event.args, idx) }}</td>
-              <td>{{ calcEarnings(idx) }} &clubs;</td>
-            </tr>
-            <tr class="h3" :class="{muted: flippers > 2}">
-              <td>{{ created }}</td>
-              <td>
-                <router-link :to="userLink(founder.address)" class="underline color-inherit">{{ userName(founder.address) }}</router-link>
-              </td>
-              <td>0 &clubs;</td>
-              <td>{{ calcFinderEarnings && calcFinderEarnings.toLocaleString() }} &clubs;</td>
-            </tr>
-          </tbody>
-        </table>
+    <div :class="{'expanded-500': showHistory}" class=" expandable border-bottom border-silver">
+      <div class="p2 ">
+        <div class="max-width-3 mx-auto">
+          <table class="col-12 my2">
+            <thead class="mb2">
+              <tr>
+                <th class="regular left-align muted h5">When</th>
+                <th class="regular left-align muted h5">User</th>
+                <th class="regular left-align muted h5">Cost</th>
+                <th class="regular left-align muted h5">Earnings</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(event, idx) in flipEvents" :class="{muted: idx > 2}" class="h3">
+                <td>{{ eventTime(event.args.modified) }}</td>
+                <td>
+                  <router-link :to="userLink(event.args.newOwner)" class="underline color-inherit">{{ userName(event.args.newOwner) }}</router-link>
+                </td>
+                <td>{{ cost(event.args, idx) }}</td>
+                <td>{{ calcEarnings(idx) }} &clubs;</td>
+              </tr>
+              <tr class="h3" :class="{muted: flippers > 2}">
+                <td>{{ created }}</td>
+                <td>
+                  <router-link :to=" (founder && userLink(founder.address)) || ''" class="underline color-inherit">{{ (founder && userName(founder.address)) || '' }}</router-link>
+                </td>
+                <td>0 &clubs;</td>
+                <td>{{ calcFinderEarnings && calcFinderEarnings.toLocaleString() }} &clubs;</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
     <!-- <p class="h2 center">
@@ -108,6 +119,7 @@
   import Reversi from '@/assets/reversi'
   import Symmetry from '@/components/Symmetry'
   import xss from 'xss'
+  import copier from 'copy-to-clipboard'
 
   export default {
     name: 'clover',
@@ -117,10 +129,54 @@
         name: '',
         reversi: new Reversi(),
         flipping: false,
-        showHistory: false
+        showHistory: false,
+        newPrice: null
       }
     },
     methods: {
+      copy (type) {
+        let msg = ''
+        if (type === 'moves') {
+          if (!this.moveString) return
+          copier(this.moveString)
+          msg = 'Game moves copied to your clipboard'
+        } else if (type === 'link') {
+          copier('https://clovers.network/clovers/' + this.boardId)
+          msg = 'Clover\'s URL copied to your clipboard'
+        } else { return }
+        this.selfDestructMsg({
+          msg,
+          type: 'success'
+        })
+      },
+      setPrice () {
+        this.newPrice = this.price
+      },
+      changePrice () {
+        let boardString = JSON.stringify(this.boardId)
+        let newPrice = JSON.stringify(this.newPrice).split('"').join('')
+        this.addMessage({
+          msg: 'Updating Price to ' + newPrice + ' ♧',
+          type: 'progress'
+        }).then((msgId) => {
+          this.clover.changeStartPrice(this.boardId, this.newPrice).then((res) => {
+            this.removeMessage(msgId)
+            this.selfDestructMsg({
+              msg: 'Clover price changed to ' + newPrice + ' ♧',
+              type: 'success',
+              link: '/clovers/' + boardString
+            })
+          }).catch((err) => {
+            console.error(err)
+            this.removeMessage(msgId)
+            this.selfDestructMsg({
+              msg: 'Error changing price (see log)',
+              type: 'error',
+              link: '/clovers/' + boardString
+            })
+          })
+        })
+      },
       test () {
         console.log('test')
         console.log(this.boardId)
@@ -149,10 +205,9 @@
       userName (address) {
         let username = this.usernames.find((u) => u.address === address)
         username = username ? username.name : address
-        return username.length > 8 ? username.substring(0, 8) + '...' : username
+        return xss(username.length > 8 ? username.substring(0, 8) + '...' : username)
       },
       flip () {
-        console.log(this.price, this.balance, parseInt(this.price) > this.balance)
         if (!this.balance || parseInt(this.price) > this.balance) {
           this.selfDestructMsg({
             msg: 'Insufficient Funds',
@@ -252,6 +307,7 @@
     watch: {
       board () {
         this.init(this.$route.params.board)
+        this.setPrice()
       }
     },
     computed: {
@@ -293,7 +349,7 @@
         return this.board && this.board.previousOwners && this.board.previousOwners[0]
       },
       founderName () {
-        return this.founder && (this.founder.name.length > 21 ? this.founder.name.slice(0, 21) + '&hellip;' : this.founder.name)
+        return this.founder && xss(this.founder.name.length > 21 ? this.founder.name.slice(0, 21) + '&hellip;' : this.founder.name)
       },
       founderAddress () {
         return this.founder && this.founder.address
@@ -307,7 +363,7 @@
         return this.board && this.board.previousOwners && this.board.previousOwners[this.board.previousOwners.length - 1]
       },
       ownerName () {
-        return this.owner && (this.owner.name.length > 7 ? this.owner.name.slice(0, 7) + '&hellip;' : this.owner.name)
+        return this.owner && xss(this.owner.name.length > 7 ? this.owner.name.slice(0, 7) + '&hellip;' : this.owner.name)
       },
       ownerAddress () {
         return this.owner && this.owner.address
@@ -346,6 +402,7 @@
     mounted () {
       const { board } = this.$route.params
       this.init(board)
+      this.setPrice()
     },
     components: { Symmetry }
   }

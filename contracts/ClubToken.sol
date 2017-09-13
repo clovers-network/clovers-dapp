@@ -10,7 +10,7 @@ contract ClubToken is StandardToken {
   // Token Contract
 
   uint256 public decimals = 0;
-  uint256 public INITIAL_SUPPLY = 1000000; // zero decimals
+  uint256 public INITIAL_SUPPLY = 0; // zero decimals
   uint256 payMultiplier = 100;
   uint256 Symmetricals;
   uint256 RotSym;
@@ -220,6 +220,7 @@ contract ClubToken is StandardToken {
   function changeStartPrice(bytes16 board, uint256 startPrice) public exists(board) {
     if(clovers[board].previousOwners[0] != msg.sender) revert();
     if(clovers[board].previousOwners.length > 1) revert();
+    Registered(msg.sender, startPrice, board, true, clovers[board].first32Moves, clovers[board].lastMoves, now, clovers[board].findersFee);
     clovers[board].lastPaidAmount = startPrice;
   }
 
