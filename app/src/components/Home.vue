@@ -16,12 +16,7 @@
         </div>
       </div>
     </div>
-    <div class="bg-gray white p2 md-p3 flex justify-around">
-      <div>{{ allClovers.length }} Clovers Claimed</div>
-      <div>{{ symmetries.RotSym }} Rotational</div>
-      <div>{{ symmetries.X0Sym + symmetries.Y0Sym }} Perpindicular</div>
-      <div>{{ symmetries.XYSym + symmetries.XnYSym }} Diagonal</div>
-    </div>
+    
   </div>
 </template>
 
@@ -53,7 +48,6 @@
 
 <style>
   .intro-screen {
-    box-shadow: 0px 4px 7px 1px rgba(0, 0, 0, .2);
 
     .clover {
       display: inline-block;

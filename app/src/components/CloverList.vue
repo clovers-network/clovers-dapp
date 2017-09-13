@@ -1,12 +1,20 @@
 <template>
   <div class="">
-    <div class="bg-white border-top border-bottom border-silver black pb2 md-p3 flex justify-around">
+    <div class="bg-green  white pb2 md-p3 flex justify-around">
       <div class="center" v-for="sym in symTypes" >
         <div class='px1'>{{symmetries[sym]}} x</div>
         <div :class="sym" class="symmetry-type"></div>
         <div>{{symValues[sym]}} ♧</div>
       </div>
     </div>
+
+    <div class="bg-gray white p2 md-p3 flex justify-around shadow-bottom">
+      <div>{{ allClovers.length }} Clovers Claimed</div>
+      <div>{{ symmetries.RotSym }} Rotational</div>
+      <div>{{ symmetries.X0Sym + symmetries.Y0Sym }} Perpindicular</div>
+      <div>{{ symmetries.XYSym + symmetries.XnYSym }} Diagonal</div>
+    </div>
+
     <div v-if="allClovers.length" class="mt2 px2">
       
       <div class="hide">
@@ -25,9 +33,12 @@
         v-for="sort, i in sortable"></span>
       </div>
 
-      <ul class="list-reset flex flex-wrap mxn2 center justify-center">
+      <ul class="list-reset max-width-5 mx-auto flex flex-wrap mxn2 center justify-center">
         <li v-for="board in cloversSliced" :key="board.board" class="px2 mb3">
           <clover-grid-item :by-flip="sortableIndex == 0 || sortableIndex == 3" :key="board.board" :board="board"></clover-grid-item>
+        </li>
+        <li class="list-reset flex flex-wrap mxn2 center justify-center" v-if="cloversSliced.length === 0">Go claim some Clovers...
+
         </li>
       </ul>
       <div class="hide">
@@ -38,19 +49,31 @@
         :class="{'bg-red': limit === amount}"
         v-html="amount"></span>
       </div>
-      <div class="center" :class="{hide: pagedTotal === 1}">
-        <button
-        class="btn btn-outline mb1 blue"
-        :disabled="!prevPossible"
-        @click="paged--">←</button>
-        <button
-        class="btn btn-outline mb1 blue"
-        :disabled="!nextPossible"
-        @click="paged++">→</button>
-      </div>
-      <div class="center"  :class="{hide: pagedTotal === 1}">
-        <span>{{paged}} / {{pagedTotal}}</span>
-      </div>
+
+
+
+
+
+         <div class=" max-width-4 mx-auto flex justify-between align-middle" >
+          <div class=" " :class="{hide: pagedTotal === 1}">
+            <button
+            class="btn btn-outline mb1 blue"
+            :disabled="!prevPossible"
+            @click="paged--">←</button>&nbsp;
+          </div>
+
+          <div class="center mb2"  :class="{hide: pagedTotal === 0}">
+            <span>{{paged}} / {{pagedTotal}}</span>
+          </div>
+
+          <div class=" " :class="{hide: pagedTotal === 1}">
+            <button
+            class="btn btn-outline mb1 blue"
+            :disabled="!nextPossible"
+            @click="paged++">→</button>&nbsp;
+          </div>
+        </div>
+
     </div>
   </div>
 </template>
@@ -168,7 +191,9 @@
   }
 </script>
 
-<style>
-
+<style lang="scss">
+.shadow-bottom {
+  box-shadow: 0px 4px 7px 1px rgba(0, 0, 0, .2);
+}
 
 </style>

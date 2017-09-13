@@ -1,9 +1,8 @@
 <template>
-  <div class="">
+  <div class="bg-green">
     <div class="max-width-3 mx-auto p1 ">
-      <div class="h1 my3">
-        Activity</div>
-      <div class="center mb3">
+      <div class="center py3 px3 mt3 bg-white flex justify-between">
+        <div class="h4 ">Event Logs<span v-if="address"> for {{address}}</span></div>
         <span
         @click="asc = !asc"
         :class="sortableClass"
@@ -11,7 +10,7 @@
           Block Number
         </span>
       </div>
-      <div class="mx-auto border border-silver p3" style="height:500px">
+      <div class="mx-auto border border-silver p3 bg-white mb3" style="height:500px">
         <ul class="m0 p0 mb3 pb1">
           <li class="mb1 table">
           <div class="h4 table">
@@ -52,6 +51,9 @@
             <div v-else>
               <pre>{{activity}}</pre>
             </div>
+          </li>
+          <li class="mb1  table" v-if="pagedActivity.length === 0">
+            <div>Go claim some Clover...</div>
           </li>
         </ul>
 

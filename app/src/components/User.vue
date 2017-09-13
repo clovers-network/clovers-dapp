@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div class="">
     <div class=" h2 bg-gray white p2 md-p3 pre mono" >
-      <a class="white underline" target="_blank" :href="'https://rinkeby.etherscan.io/token/0xcc0604514f71b8d39e13315d59f4115702b42646?a=' + address">{{address}}</a>
-          <div class='h1 right'>{{balanceFormatted}} ♧</div>
-
+      <div class="max-width-3 mx-auto">
+        <a class="  white underline" target="_blank" :href="'https://rinkeby.etherscan.io/token/0xcc0604514f71b8d39e13315d59f4115702b42646?a=' + address">{{address}}</a>
+        <div class='h1 right'>{{balanceFormatted}} ♧</div>
+      </div>
     </div>
-    <activity :address="address"></activity>
-    <div class="p3">
+    <div class="p3 max-width-3 mx-auto">
       <template v-if="mine">
         <form class='border-bottom fit' @submit.prevent="changeName()">
           <input class='input big fit' type="text" placeholder="Name" v-model="name"></input>
@@ -16,11 +16,10 @@
         <p class='h1' v-html="name"></p>
       </template>
     </div>
-    <div class="p2">
-      <div v-if="myClovers" class="mt3 px2">
-        <clover-list :filter="address"></clover-list>
-      </div>
-    </div>
+
+    <activity :address="address"></activity>
+    <clover-list :filter="address"></clover-list>
+
   </div>
 </template>
 

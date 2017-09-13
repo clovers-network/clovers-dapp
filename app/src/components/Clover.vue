@@ -106,6 +106,7 @@
         </div>
       </div>
     </div>
+    <div class="bg-green py2">&nbsp;</div>
     <!-- <p class="h2 center">
         <code>moves: <div v-for="chunk in visibleMoveString">{{chunk}}</div></code>
     </p> -->
