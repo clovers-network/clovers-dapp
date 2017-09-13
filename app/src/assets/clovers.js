@@ -56,7 +56,6 @@ class Clover extends Reversi {
         rpcUrl: 'https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d',
       })
     }
-
     if (web3Provider) {
       _web3 = new Web3(web3Provider)
       _web3.version.getNetwork((err, netId) => {
@@ -68,8 +67,9 @@ class Clover extends Reversi {
               this.notRinkeby = true
               window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
           }
-        } 
+        }
         if (!this.notRinkeby) {
+          this.checkAccount()
           this.setAccountInterval()
           this.getPastEvents().then(() => {
             this.watchFutureEvents()
@@ -87,7 +87,7 @@ class Clover extends Reversi {
   setAccountInterval () {
     this.accountInterval = this.accountInterval || setInterval(() => {
       this.checkAccount()
-    }, 60000)
+    }, 1000)
   }
 
   stopAccountInterval () {
