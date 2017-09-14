@@ -464,6 +464,32 @@ input:disabled,
   min-width: var(--width-0);
 }
 
+img.illustration {
+  width: 80%;
+  min-width: 600px;
+  max-width: 800px;
+}
+
+.hover-flip-h, .hover-flip-v, .hover-flip-diag, .hover-flip-rotate {
+  transition: transform 0.4s ease-in-out;
+}
+
+.hover-flip-h:hover {
+  transform: scaleY(-1);
+}
+
+.hover-flip-v:hover {
+  transform: scaleX(-1);
+}
+
+.hover-flip-diag:hover {
+  transform: rotate3d(45,45,0,180deg);
+}
+
+.hover-flip-rotate:hover {
+  transform: rotate3d(0,0,1,180deg);
+}
+
 
 /* ANIMATION */
 

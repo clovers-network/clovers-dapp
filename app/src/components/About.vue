@@ -9,19 +9,19 @@
       <div class="my4 pt3">A valid Clover must possess one or more symmetries</div>
       <div class="flex justify-around h5">
         <div>
-          <clv class=" small-clover " :speed="120" :no-moves="true" moveString="F5D6C3D3C4F4F6F3E6E7D7G6D8C5C6C7C8F7G8B6A5B5B4A4A3A6A7C2H6B3G5B7A2E8F8G4H3H5E2E3H4F1F2G3C1D2E1D1G1G2H1H2A8B2A1B1B8G7H8H7"></clv>
+          <clv class="hover-flip-h small-clover " :speed="120" :no-moves="true" moveString="F5D6C3D3C4F4F6F3E6E7D7G6D8C5C6C7C8F7G8B6A5B5B4A4A3A6A7C2H6B3G5B7A2E8F8G4H3H5E2E3H4F1F2G3C1D2E1D1G1G2H1H2A8B2A1B1B8G7H8H7"></clv>
           <div class="mt2">Horizontal</div>
         </div>
         <div>
-          <clv class=" small-clover " :speed="120" :no-moves="true" moveString="F5F6E6F4E3C5C4C3D3F2B4A4E2F3D2C1D1E1G5H5F1G1C2B1D6C6G4H4B3A2A3G2A1B2H1B5A5A6B6H2G3H3A7B7H6G6H7G7G8H8F8E8F7E7D8C8B8A8C7D7"></clv>
+          <clv class="hover-flip-v small-clover " :speed="120" :no-moves="true" moveString="F5F6E6F4E3C5C4C3D3F2B4A4E2F3D2C1D1E1G5H5F1G1C2B1D6C6G4H4B3A2A3G2A1B2H1B5A5A6B6H2G3H3A7B7H6G6H7G7G8H8F8E8F7E7D8C8B8A8C7D7"></clv>
           <div class="mt2">Vertical</div>
         </div>
         <div>
-          <clv class=" small-clover " :speed="120" :no-moves="true"  moveString="F5F6E6F4E3C5C4D3C3F2E2D7G3D6B5F3G4E1D2C6E7E8G5G6F7H6F8D8D1C7B6G8H5H4C8B8G7A4A6B3B4A7A8H8F1H7A2C1B1C2B7A3A5B2H3H2G1H1G2"></clv>
+          <clv class="hover-flip-diag small-clover " :speed="120" :no-moves="true"  moveString="F5F6E6F4E3C5C4D3C3F2E2D7G3D6B5F3G4E1D2C6E7E8G5G6F7H6F8D8D1C7B6G8H5H4C8B8G7A4A6B3B4A7A8H8F1H7A2C1B1C2B7A3A5B2H3H2G1H1G2"></clv>
           <div class="mt2">Diagonal</div>
         </div>
         <div>
-          <clv class=" small-clover " :speed="120" :no-moves="true"  moveString="F5D6C5F4E3C4E6B6D3E2C2F2C3B3D2E1D1F7G4F3G3G6G5C1C6C7E7F8D7H6E8F6H4D8C8H3G8H5B4A5B8B5G1F1B1B2A2A3A1G7H8A6B7H7A7A8G2H2H1A4"></clv>
+          <clv class="hover-flip-rotate small-clover " :speed="120" :no-moves="true"  moveString="F5D6C5F4E3C4E6B6D3E2C2F2C3B3D2E1D1F7G4F3G3G6G5C1C6C7E7F8D7H6E8F6H4D8C8H3G8H5B4A5B8B5G1F1B1B2A2A3A1G7H8A6B7H7A7A8G2H2H1A4"></clv>
           <div class="mt2">Rotational</div>
         </div>
       </div>
@@ -49,7 +49,7 @@
       </div>
       <div class="my4 py4">On the <span class="underline">Flip Market</span>, the two previous buyers each receive a portion of the sale value</div>
       <div class="my4  pb4 center">
-        <img src="/static/flip-diagram.svg">
+        <img src="/static/flip-diagram.svg" class="illustration">
       </div>
     </div>
     <div class="wide">
