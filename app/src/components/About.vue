@@ -37,9 +37,11 @@
       <div class="my4">When claiming your Clover, you can also choose its starting price on the <span class="underline">Flip Market</span></div>
     </div>
     <div class="bg-dark-gray white px2 py4 zig-zag-white relative ">
-      <div class="max-width-5 mx-auto flex justify-around">
-        <img class="pl2" src="/static/left.png">
-        <img class="pr2" src="/static/right.png">
+      <div class="max-width-3 mx-auto flex justify-around">
+        <div>
+          <clv class="small-clover mt1 bg-green no-hover no-border" :speed="120" :no-moves="true"  moveString="D3E3F4G5F3F2G3D2E6C4C3C2B4D6F5G2C5B5C6B3G4E7D7E8G6H3H4H5F6F7"></clv>
+        </div>
+        <img class="pr2" src="/static/about-flip-right.svg" style="height: 200px;">
       </div>
     </div>
     <div class="h2 max-width-4 center mx-auto">
