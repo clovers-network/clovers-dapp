@@ -3,7 +3,6 @@ import clubTokenArtifacts from '../../../build/contracts/ClubToken.json'
 import contract from 'truffle-contract'
 import Web3 from 'web3'
 import Reversi from './reversi'
-
 const ProviderEngine = require('web3-provider-engine/index.js')
 const ZeroClientProvider = require('web3-provider-engine/zero.js')
 
@@ -29,6 +28,8 @@ class Clover extends Reversi {
     this.findersFee = this.startPrice = 0
     this.retryConnection= false
     this.readOnly = false
+    this.eventsComplete = false
+    this.connected = false
   }
 
   // Connections
@@ -62,6 +63,7 @@ class Clover extends Reversi {
       _web3 = new Web3(web3Provider)
       _web3.version.getNetwork((err, netId) => {
         if (!err) {
+          console.log('network ', netId)
           switch (netId) {
             case '4':
               break
@@ -70,7 +72,8 @@ class Clover extends Reversi {
               window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
           }
         }
-        if (!this.notRinkeby) {
+        if (!this.notRinkeby && !this.connected) {
+          this.connected = true
           this.checkAccount()
           this.setAccountInterval()
           this.getPastEvents().then(() => {
@@ -137,44 +140,68 @@ class Clover extends Reversi {
     })
   }
 
-  getPastEvents () {
-    return this.deploy().then((instance) => {
-      return instance.Registered({x: null}, {fromBlock: this.genesisBlock}).get((error, result) => {
-        if (error) {
-          this.error = 'need-metamask'
-          this.resetConnection()
-        } else {
-          this.error = false
-
-          if (result.length && result[0].args.newOwner !== '0x') {
-            window.dispatchEvent(new CustomEvent('eventsRegistered', {detail: JSON.parse(JSON.stringify(result))}))
-          }
-        }
+  getPastEvents (depth = 0, limit = 50000) {
+    console.log('get past events')
+    return this.currentBlock().then((currentBlock) => {
+      console.log(currentBlock)
+      if (currentBlock.number - (limit * depth) >= this.genesisBlock) {
+        this.eventsComplete = false
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-
-        return instance.newCloverName({x: null}, {fromBlock: this.genesisBlock}).get((error, result) => {
-          if (error) {
-            this.error = 'need-metamask'
-            this.resetConnection()
-          } else {
-            this.error = false
-            window.dispatchEvent(new CustomEvent('newClovernameEvents', {detail: result}))
-          }
-          window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-        
-          return instance.newUserName({x: null}, {fromBlock: this.genesisBlock}).get((error, result) => {
+        return this.deploy().then((instance) => {
+          let fromBlock = this.genesisBlock + (limit * depth)
+          let toBlock = this.genesisBlock + (limit * (depth + 1))
+          console.log('from:', fromBlock)
+          console.log('to:', toBlock)
+          return instance.Registered({x: null}, {
+            fromBlock,
+            toBlock
+          }).get((error, result) => {
             if (error) {
               this.error = 'need-metamask'
               this.resetConnection()
             } else {
               this.error = false
-              window.dispatchEvent(new CustomEvent('newUsernameEvents', {detail: result}))
+
+              if (result.length && result[0].args.newOwner !== '0x') {
+                window.dispatchEvent(new CustomEvent('eventsRegistered', {detail: JSON.parse(JSON.stringify(result))}))
+              }
             }
             window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-            return
+
+            return instance.newCloverName({x: null}, {
+              fromBlock,
+              toBlock
+            }).get((error, result) => {
+              if (error) {
+                this.error = 'need-metamask'
+                this.resetConnection()
+              } else {
+                this.error = false
+                window.dispatchEvent(new CustomEvent('newClovernameEvents', {detail: result}))
+              }
+              window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+            
+              return instance.newUserName({x: null}, {
+                fromBlock,
+                toBlock
+              }).get((error, result) => {
+                if (error) {
+                  this.error = 'need-metamask'
+                  this.resetConnection()
+                } else {
+                  this.error = false
+                  window.dispatchEvent(new CustomEvent('newUsernameEvents', {detail: result}))
+                }
+                window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+                return this.getPastEvents(depth + 1)
+              })
+            })
           })
         })
-      })
+      } else {
+        this.eventsComplete = true
+        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+      }
     })
   }
 

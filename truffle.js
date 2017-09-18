@@ -68,12 +68,12 @@ module.exports = {
       from: '0xcDE232e835330daFA2Ebc629219BbF4fc92cfa24',
       gas: 4700000
     },
-    // ethermint: {
-    //   host: "0.0.0.0",
-    //   port: 8545,
-    //   network_id: "*",
-    //   from: '0x7eFf122b94897EA5b0E2A9abf47B86337FAfebdC'
-    // },
+    ethermint: {
+      host: "0.0.0.0",
+      port: 8545,
+      network_id: "*",
+      from: '0x7eFf122b94897EA5b0E2A9abf47B86337FAfebdC'
+    },
     development: {
       host: "localhost",
       port: 8546,

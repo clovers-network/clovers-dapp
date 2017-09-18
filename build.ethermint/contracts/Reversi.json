@@ -1,0 +1,37 @@
+{
+  "contract_name": "Reversi",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "showColors",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint8"
+        },
+        {
+          "name": "",
+          "type": "uint8"
+        },
+        {
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "payable": false,
+      "type": "function"
+    }
+  ],
+  "unlinked_binary": "0x6060604052341561000f57600080fd5b5b60a58061001e6000396000f300606060405263ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416632f07d8578114603c575b600080fd5b6042606d565b60405160ff938416815291831660208301529091166040808301919091526060909101905180910390f35b6003600160025b9091925600a165627a7a72305820e89f6abea44c2921276b5b8b184a509f09c87bd87165e2a22c12b038bd1ecc8a0029",
+  "networks": {
+    "1": {
+      "events": {},
+      "links": {},
+      "address": "0x5388e9b1da39dd44906c4d466656541d29f342ad",
+      "updated_at": 1505719015523
+    }
+  },
+  "schema_version": "0.0.5",
+  "updated_at": 1505719015523
+}
