@@ -464,6 +464,41 @@ input:disabled,
   min-width: var(--width-0);
 }
 
+img.illustration {
+  width: 80%;
+  min-width: 600px;
+  max-width: 800px;
+}
+
+.hover-flip-h, .hover-flip-v, .hover-flip-diag, .hover-flip-rotate {
+image-rendering: optimizeSpeed;             /*                     */
+image-rendering: -moz-crisp-edges;          /* Firefox             */
+image-rendering: -o-crisp-edges;            /* Opera               */
+image-rendering: -webkit-optimize-contrast; /* Chrome (and Safari) */
+image-rendering: optimize-contrast;         /* CSS3 Proposed       */
+-ms-interpolation-mode: nearest-neighbor;   /* IE8+                */
+}
+
+.hover-flip-h.active {
+  transition: transform 0.4s ease-in-out;
+  transform: scaleY(-1);
+}
+
+.hover-flip-v.active {
+  transition: transform 0.4s ease-in-out;
+  transform: scaleX(-1);
+}
+
+.hover-flip-diag.active {
+  transition: transform 0.4s ease-in-out;
+  transform: rotate3d(45,45,0,360deg);
+}
+
+.hover-flip-rotate.active {
+  transition: transform 0.4s ease-in-out;
+  transform: rotate3d(0,0,1,360deg);
+}
+
 
 /* ANIMATION */
 
