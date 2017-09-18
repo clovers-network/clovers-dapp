@@ -248,6 +248,20 @@
         }
       },
       getItem (key) {
+        if (key === 'clovers') {
+          let clovers = []
+          let emptyNames = ['null', 'undefined', '0x0']
+          for (let i in emptyNames) {
+            let emptyName = emptyNames[i]
+            let res = window.localStorage.getItem(emptyName + '_clovers')
+            if (res) clovers = clovers.concat(JSON.parse(res))
+          }
+          if (this.account) {
+            let res = window.localStorage.getItem(this.account + '_' + key)
+            if (res) clovers = clovers.concat(JSON.parse(res))
+          }
+          return clovers.filter((thing, index, self) => self.findIndex((t) => { return t.byteBoard === thing.byteBoard }) === index)
+        }
         let res = window.localStorage.getItem(this.account + '_' + key)
         return res && res !== 'undefined' && JSON.parse(res)
       },
@@ -313,10 +327,8 @@
           this.setItem('totalMined', this.totalMined)
           this.setItem('mineTime', this.mineTime)
         }
-        if (this.account) {
-          this.setItem('clovers', this.$store.state.allMinedClovers)
-          this.setItem('cloversFound', this.cloversFound)
-        }
+        this.setItem('clovers', this.$store.state.allMinedClovers)
+        this.setItem('cloversFound', this.cloversFound)
       },
       isFocus (board) {
         if (!this.selectedClover) return false
