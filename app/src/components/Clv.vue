@@ -1,5 +1,5 @@
 <template>
-  <div @click="playAnimate()" class="clover nowrap pointer" :class="winner">
+  <div ref='body' @mouseenter="activate()" @click="playAnimate()" class="clover nowrap pointer" :class="winner">
     <div v-if="displayString && !noMoves">
       <svg-text :fill="textColor" :animation="false" :moveString="displayString"></svg-text>
     </div>
@@ -16,6 +16,7 @@
     name: 'Clv',
     data () {
       return {
+        isActive: false,
         stop: true,
         reversi: new Reversi(),
         animator: new Reversi(),
@@ -54,10 +55,23 @@
           b += t === 'b' && 1
           w += t === 'w' && 1
         }))
-        return b > w ? 'w-b' : (w > b ? 'w-w' : 'w-t')
+        return {
+          'w-b': b > w,
+          'w-w': w > b,
+          'w-t': w === b,
+          'active': this.isActive
+        }
       }
     },
     methods: {
+      activate () {
+        if (this.isActive) return
+        console.log('activate')
+        this.isActive = true
+        setTimeout(() => {
+          this.isActive = false
+        }, 1000)
+      },
       playAnimate () {
         if (this.noClick) return
         this.stop = !this.stop
