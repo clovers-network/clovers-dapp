@@ -63,7 +63,6 @@ class Clover extends Reversi {
       _web3 = new Web3(web3Provider)
       _web3.version.getNetwork((err, netId) => {
         if (!err) {
-          console.log('network ', netId)
           switch (netId) {
             case '4':
               break
@@ -141,17 +140,13 @@ class Clover extends Reversi {
   }
 
   getPastEvents (depth = 0, limit = 50000) {
-    console.log('get past events')
     return this.currentBlock().then((currentBlock) => {
-      console.log(currentBlock)
       if (currentBlock.number - (limit * depth) >= this.genesisBlock) {
         this.eventsComplete = false
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
         return this.deploy().then((instance) => {
           let fromBlock = this.genesisBlock + (limit * depth)
           let toBlock = this.genesisBlock + (limit * (depth + 1))
-          console.log('from:', fromBlock)
-          console.log('to:', toBlock)
           return instance.Registered({x: null}, {
             fromBlock,
             toBlock
