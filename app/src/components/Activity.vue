@@ -121,7 +121,9 @@
       },
       getName (address) {
         let user = this.allUsers.find((u) => u.address === address)
-        return user && user.name || address
+        user = user && user.name || address
+        if (user.length > 9) user = user.slice(0, 9) + '&hellip;'
+        return user
       }
     },
     computed: {

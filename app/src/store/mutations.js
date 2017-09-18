@@ -86,21 +86,21 @@ export default {
     if (rIndex < 0) state.registeredEvents.push(event)
   },
   ADD_REGISTERED_EVENTS (state, events) {
-    state.registeredEvents = events
+    state.registeredEvents.push(...events)
   },
   ADD_USERNAME_EVENT (state, event) {
     let rIndex = state.usernameEvents.findIndex((e) => e.transactionHash === event.transactionHash)
     if (rIndex < 0) state.usernameEvents.push(event)
   },
   ADD_USERNAME_EVENTS (state, events) {
-    state.usernameEvents = events
+    state.usernameEvents.push(...events)
   },
   ADD_CLOVERNAME_EVENT (state, event) {
     let rIndex = state.clovernameEvents.findIndex((e) => e.transactionHash === event.transactionHash)
     if (rIndex < 0) state.clovernameEvents.push(event)
   },
   ADD_CLOVERNAME_EVENTS (state, events) {
-    state.clovernameEvents = events
+    state.clovernameEvents.push(...events)
   },
   ADD_MSG (state, msg) {
     state.messages.push(msg)

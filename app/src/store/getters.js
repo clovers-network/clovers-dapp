@@ -85,6 +85,7 @@ export default {
     return {Symmetricals, RotSym, X0Sym, Y0Sym, XYSym, XnYSym, PayMultiplier: 100}
   },
   allClovers: (state, getters) => {
+    if (!getters.clover.eventsComplete) return []
     console.log('all clovers calculated')
     if (getters.clover.allClovers.length) {
       return getters.clover.allClovers.map((c) => {
@@ -93,6 +94,13 @@ export default {
     }
     let clovers = []
     JSON.parse(JSON.stringify(state.registeredEvents))
+    .sort((a, b) => {
+      let first = a
+      let second = b
+      let returnVal = first.blockNumber === second.blockNumber ? parseInt(first.args.modified) - parseInt(second.args.modified) : parseInt(first.blockNumber) - parseInt(second.blockNumber)
+      // console.log(first, second, returnVal)
+      return returnVal
+    })
     .forEach((e) => {
       if (e.event !== 'Registered') return
       if (e.args.newBoard) {
@@ -115,6 +123,8 @@ export default {
           clover.previousOwners.push(e.args.newOwner)
           clovers.splice(cloverKey, 1, clover)
         } else {
+          console.log(e.args.board)
+          console.log(clovers.map((cl) => cl.board))
           console.error('Registered Event for board not yet in array', e)
         }
       }
