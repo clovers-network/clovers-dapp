@@ -139,7 +139,7 @@ class Clover extends Reversi {
     })
   }
 
-  getPastEvents (depth = 0, limit = 50000) {
+  getPastEvents (depth = 0, limit = 150000) {
     return this.currentBlock().then((currentBlock) => {
       if (currentBlock.number - (limit * depth) >= this.genesisBlock) {
         this.eventsComplete = false
@@ -147,6 +147,7 @@ class Clover extends Reversi {
         return this.deploy().then((instance) => {
           let fromBlock = this.genesisBlock + (limit * depth)
           let toBlock = this.genesisBlock + (limit * (depth + 1))
+          console.log(fromBlock, toBlock)
           return instance.Registered({x: null}, {
             fromBlock,
             toBlock
