@@ -1,7 +1,8 @@
 <template>
   <div class="overflow-hidden">
-    <header class="fixed z3 top-0 left-0 right-0 flex bg-purple items-center white">
-      <ul class="list-reset px2 py1 my0 flex-auto">
+    <header class="fixed justify-end z3 top-0 left-0 right-0 flex bg-purple items-center white">
+      <div class="only-mobile cursor mx2 h2 " @click="toggleMenu()"><i class="material-icons">menu</i></div>
+      <ul id="menu-list" class="bg-purple list-reset px2 py1 my0 flex-auto" :class="{showMenu:showMenu}">
         <li class="inline-block mr2">
           <router-link to="/" class="white">Clovers</router-link>
         </li>
@@ -43,7 +44,8 @@
     data () {
       return {
         showMiner: false,
-        symmsSinceOpened: 0
+        symmsSinceOpened: 0,
+        showMenu: false
       }
     },
     mounted () {
@@ -66,6 +68,9 @@
       }
     },
     methods: {
+      toggleMenu () {
+        this.showMenu = !this.showMenu
+      },
       checkEsc (e) {
         if (e.keyCode === 27) {
           this.showMiner = false
@@ -103,3 +108,31 @@
     components: { Miner }
   }
 </script>
+<style lang="scss" >
+.only-mobile {
+  display: none;
+}
+@media only screen and (max-width: 768px) {
+    body {
+      font-size:14px;
+    }
+    #app {margin-top:3em;}
+    .only-mobile {
+      display: inherit;
+    }
+   #menu-list {
+    position:fixed;
+    width:100%;
+    left:0px;
+    top:53px;
+    transform: translateX(-100%);
+    transition: transform ease 500ms;
+    &.showMenu {
+      transform: translateX(0%);
+    }
+    li {
+      display:block;  
+    }
+   }
+}
+</style>

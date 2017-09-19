@@ -8,7 +8,7 @@
       </div>
     </div>
 
-    <div class="bg-gray white p2 md-p3 flex justify-around shadow-bottom">
+    <div id="break-up" class="bg-gray white p2 md-p3 flex justify-around shadow-bottom">
       <div>{{ allClovers.length }} Clovers Claimed</div>
       <div>{{ symmetries.RotSym }} Rotational</div>
       <div>{{ symmetries.X0Sym + symmetries.Y0Sym }} Perpindicular</div>
@@ -215,5 +215,13 @@
 .shadow-bottom {
   box-shadow: 0px 4px 7px 1px rgba(0, 0, 0, .2);
 }
-
+  @media only screen and (max-width: 768px) {
+  #break-up {
+    flex-wrap:wrap;
+    > * {
+      text-align: center;
+      width:100%;
+    }
+  }
+}
 </style>

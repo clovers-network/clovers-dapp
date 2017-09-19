@@ -85,7 +85,7 @@ export default {
     return {Symmetricals, RotSym, X0Sym, Y0Sym, XYSym, XnYSym, PayMultiplier: 100}
   },
   allClovers: (state, getters) => {
-    if (!getters.clover.eventsComplete) return []
+    // if (!getters.clover.eventsComplete) return []
     console.log('all clovers calculated')
     if (getters.clover.allClovers.length) {
       return getters.clover.allClovers.map((c) => {

@@ -1,6 +1,6 @@
 <template>
   <div class="bg-dark-gray white px2 py4 zig-zag relative">
-    <div class="flex items-center justify-between">
+    <div id='claim-outer' class="flex items-center justify-between">
       <div class="relative mx3">
         <template v-if='byteBoard'>
           <div class="h2">
@@ -24,12 +24,12 @@
           <input class="btn btn-outline py3 col-12 regular h3" v-model='movesString'>
         </div> -->
         <form @submit.prevent="trigger">
-          <div class="mb2 flex flex-wrap">
-            <div class="col-6 px3">
+          <div id="submit-form" class="mb2 flex flex-wrap">
+            <div  class="col-6 px3 ">
               <label class="block right-align h2">You will receive</label>
               <input class="input big white right-align" disabled :value="rewardTxt">
             </div>
-            <div class="col-6 px3">
+            <div class="col-6 px3 ">
               <label class="block right-align h2">List on flip market for</label>
               <div class="flex content-stretch items-center border-bottom">
                 <input class="input big white right-align" style="padding-right:0" type="number" v-model="flipPrice">
@@ -179,3 +179,22 @@
     components: { SvgText, Symmetry }
   }
 </script>
+<style lang="scss">
+@media only screen and (max-width: 768px) {
+  #claim-outer {
+    flex-wrap: wrap;
+    li {
+      margin:auto;
+    }
+    * {
+      text-align:center !important;
+    }
+    > * {
+      width:100%;
+      #submit-form > * {
+        width:100%;
+      }
+    }
+  }
+}
+</style>

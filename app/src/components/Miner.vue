@@ -1,7 +1,7 @@
 <template>
   <div >
     <div class="bg-darken-4 fixed top-0 left-0 right-0 bottom-0 z2 pointer" @click="close"></div>
-    <div class="bg-black z1 fixed left-0 right-0 white absolute col-12 overflow-hidden z2">
+    <div id="miner" class="bg-black z1 fixed left-0 right-0 white absolute col-12 overflow-auto z2">
       <header class="p2 flex flex-wrap items-center mxn1">
         <div class="py1 px2 min-width-1">
           <p class="m0 h6">Time spent mining</p>
@@ -375,3 +375,9 @@
   }
 
 </script>
+<style lang="scss">
+  #miner {
+    max-height:calc(100vh - 56px);
+    overflow:auto;
+  }
+</style>

@@ -84,6 +84,7 @@
       })
     },
     mounted () {
+      console.log('mounted')
       setTimeout(() => {
         if (this.allClovers.length === 0 && !this.notRinkeby) {
           this.selfDestructMsg({

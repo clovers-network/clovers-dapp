@@ -30,6 +30,7 @@ class Clover extends Reversi {
     this.readOnly = false
     this.eventsComplete = false
     this.connected = false
+    this.registeredEventsCount = 0
   }
 
   // Connections
@@ -139,7 +140,7 @@ class Clover extends Reversi {
     })
   }
 
-  getPastEvents (depth = 0, limit = 150000) {
+  getPastEvents (depth = 0, limit = 200000) {
     return this.currentBlock().then((currentBlock) => {
       if (currentBlock.number - (limit * depth) >= this.genesisBlock) {
         this.eventsComplete = false
@@ -159,6 +160,7 @@ class Clover extends Reversi {
               this.error = false
 
               if (result.length && result[0].args.newOwner !== '0x') {
+                this.registeredEventsCount += result.length
                 window.dispatchEvent(new CustomEvent('eventsRegistered', {detail: JSON.parse(JSON.stringify(result))}))
               }
             }

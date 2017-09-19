@@ -1,69 +1,71 @@
 <template>
   <div>
-    <div class="bg-green white p2 md-p3 intro-screen relative">
-      <div class='pointer h2 absolute top-0 right-0 mr3 mt3'>
-        <i @click="copy('link')" class="material-icons mr1">link</i>
-        <i @click="copy('moves')" class="material-icons">content_copy</i>
+    <div class="bg-green white md-p3 intro-screen relative ">
+      <div class="p2 overflow-hidden">
+        <div class='pointer h2 absolute top-0 right-0 mr3 mt3'>
+          <i @click="copy('link')" class="material-icons mr1">link</i>
+          <i @click="copy('moves')" class="material-icons">content_copy</i>
+        </div>
+        <div class="flex flex-wrap items-center justify-center">
+          <div class="center my3 px4 relative order-1 ">
+            <div class="h1">
+              <clv class="no-border" :key="boardId" :byteBoard="boardId" :moveString="moveString"></clv>
+            </div>
+            <symmetry id='sym' :board="reversi"></symmetry>
+          </div>
+          <div class="order-0 md-right-align col-6 sm-col-3">
+            <p class="h2">
+              <form v-if='currentOwner' class='inline-block border-bottom' @submit.prevent="changeName()">
+                <input class='input big align-right white' type="text" placeholder="Name" v-model="name"/></form>
+              <span v-else class="h1" v-html="name"></span>
+            </p>
+            <div>
+              Flips
+              <p class="h2">
+                {{ flippers }} &orarr;
+              </p>
+            </div>
+            <div>
+              Current price
+              <!-- <p v-if="!currentOwner || flippers" class="h2"> -->
+              <p class="h2">
+                {{ price }} &clubs;
+              </p>
+              <!-- Not ready until contract is re-deployed with events for price change -->
+              <!-- <p v-else class="h2">
+              <form class='inline-block border-bottom' @submit.prevent="changePrice()"><input
+              class='input big align-right white' type="number" step="1" placeholder="New Price" v-model="newPrice"></form>
+              </p> -->
+            </div>
+          </div>
+          <div class="order-2 col-6 sm-col-3">
+            <div>
+              Discovered by
+              <p class="h2">
+                <router-link :to="'/users/' + founderAddress" v-html="founderName" class="white"></router-link></code>
+              </p>
+            </div>
+            <div>
+              Original mining reward
+              <p class="h2">
+                {{ findersFee && findersFee.toLocaleString() }} &clubs;
+              </p>
+            </div>
+          </div>
+          <div class="col-12 order-3 center mt4 mb2">
+            <template v-if="currentOwner">
+              <p class="m0 px2 py1 border inline-block">It's yours 💯</p>
+            </template>
+            <template v-else-if="board">
+              <a @click="flip" class="m0 px2 py1 border inline-block pointer white">
+                <span  v-html="'Buy it from ' + ownerName"></span>
+                <span class="pl2 sending" v-if="flipping">✨</span>
+              </a>
+            </template>
+          </div>
+        </div>
       </div>
-      <div class="flex flex-wrap items-center justify-center">
-        <div class="center my3 px4 relative order-1">
-          <div class="h1">
-            <clv class="no-border" :key="boardId" :byteBoard="boardId" :moveString="moveString"></clv>
-          </div>
-          <symmetry :board="reversi"></symmetry>
-        </div>
-        <div class="order-0 md-right-align col-6 sm-col-3">
-          <p class="h2">
-            <form v-if='currentOwner' class='inline-block border-bottom' @submit.prevent="changeName()">
-              <input class='input big align-right white' type="text" placeholder="Name" v-model="name"/></form>
-            <span v-else class="h1" v-html="name"></span>
-          </p>
-          <div>
-            Flips
-            <p class="h2">
-              {{ flippers }} &orarr;
-            </p>
-          </div>
-          <div>
-            Current price
-            <!-- <p v-if="!currentOwner || flippers" class="h2"> -->
-            <p class="h2">
-              {{ price }} &clubs;
-            </p>
-            <!-- Not ready until contract is re-deployed with events for price change -->
-            <!-- <p v-else class="h2">
-            <form class='inline-block border-bottom' @submit.prevent="changePrice()"><input
-            class='input big align-right white' type="number" step="1" placeholder="New Price" v-model="newPrice"></form>
-            </p> -->
-          </div>
-        </div>
-        <div class="order-2 col-6 sm-col-3">
-          <div>
-            Discovered by
-            <p class="h2">
-              <router-link :to="'/users/' + founderAddress" v-html="founderName" class="white"></router-link></code>
-            </p>
-          </div>
-          <div>
-            Original mining reward
-            <p class="h2">
-              {{ findersFee && findersFee.toLocaleString() }} &clubs;
-            </p>
-          </div>
-        </div>
-        <div class="col-12 order-3 center mt4 mb2">
-          <template v-if="currentOwner">
-            <p class="m0 px2 py1 border inline-block">It's yours 💯</p>
-          </template>
-          <template v-else-if="board">
-            <a @click="flip" class="m0 px2 py1 border inline-block pointer white">
-              <span  v-html="'Buy it from ' + ownerName"></span>
-              <span class="pl2 sending" v-if="flipping">✨</span>
-            </a>
-          </template>
-        </div>
-      </div>
-      <div class="center pt2 relative">
+      <div class="center py2 relative">
         <div>
           <a @click="toggleHistory" class="silver inline-block pointer">{{ historyToggleText }}</a>
         </div>
@@ -417,5 +419,10 @@
     margin-top: .6rem;
     padding: 7px 5px 0px;
     transform: translateX(-50%);
+  }
+  @media only screen and (max-width: 768px) {
+    #sym {
+      position:relative;
+    }
   }
 </style>
