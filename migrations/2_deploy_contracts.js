@@ -1,11 +1,11 @@
+var Oracle = artifacts.require("./Oracle.sol");
 var Reversi = artifacts.require("./Reversi.sol");
 var ClubToken = artifacts.require("./ClubToken.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(Reversi).then(function () {
-    return deployer.deploy(ClubToken).then(function (instance) {
-
+  return deployer.deploy(Oracle).then(function () {
+    return deployer.deploy(Reversi).then(function () {
+      return deployer.deploy(ClubToken, Oracle.address);
     });
   });
-  console.log('ADDRESS CHANGE CLOVER')
 };

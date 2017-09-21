@@ -63,9 +63,11 @@ class Clover extends Reversi {
     if (web3Provider) {
       _web3 = new Web3(web3Provider)
       _web3.version.getNetwork((err, netId) => {
+        console.log(netId)
         if (!err) {
           switch (netId) {
             case '4':
+            case '1506031948115':
               break
             default:
               this.notRinkeby = true
@@ -328,6 +330,7 @@ class Clover extends Reversi {
 
   balanceOf (account = this.account) {
     return this.deploy().then((instance) => {
+      return new BN(0)
       return instance.balanceOf(account)
     })
   }
@@ -340,6 +343,8 @@ class Clover extends Reversi {
 
   getSymbol () {
     return this.deploy().then((instance) => {
+      return '?'
+      console.log(instance)
       return instance.symbol()
     })
   }
@@ -611,9 +616,7 @@ class Clover extends Reversi {
     return this.cloverExists(board).then((exists) => {
       if (!exists) throw new Error('Clover doesn\'t exist')
       return this.deploy().then((instance) => {
-        return instance.getCloverOwner(new BN(board, 16)).then((owner) => {
-          return this.formatOwner(owner)
-        })
+        return instance.getCloverOwner(new BN(board, 16))
       })
     })
   }
@@ -622,18 +625,14 @@ class Clover extends Reversi {
     return this.cloverExists(board).then((exists) => {
       if (!exists) throw new Error('Clover doesn\'t exist')
       return this.deploy().then((instance) => {
-        return instance.getCloverOwnerAtKeyByBoard(new BN(board, 16), new BN(ownerKey, 10)).then((owner) => {
-          return this.formatOwner(owner)
-        })
+        return instance.getCloverOwnerAtKeyByBoard(new BN(board, 16), new BN(ownerKey, 10))
       })
     })
   }
 
   getCloverOwnerAtKeyByBoardKey (boardKey = 0, ownerKey = 0) {
     return this.deploy().then((instance) => {
-      return instance.getCloverOwnerAtKeyByBoardKey(new BN(boardKey, 10), new BN(ownerKey, 10)).then((owner) => {
-        return this.formatOwner(owner)
-      })
+      return instance.getCloverOwnerAtKeyByBoardKey(new BN(boardKey, 10), new BN(ownerKey, 10))
     })
   }
 
@@ -707,14 +706,6 @@ class Clover extends Reversi {
   }
 
   // formatting
-
-  formatOwner (contractArray = new Array(5)) {
-    return {
-      byteBoard: contractArray[0],
-      arrayBoardRow: this.byteBoardToRowArray(contractArray[0]),
-      owner: contractArray[1]
-    }
-  }
 
   formatClover (contractArray = new Array(5)) {
     return {

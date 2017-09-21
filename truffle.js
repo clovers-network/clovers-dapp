@@ -77,8 +77,8 @@ module.exports = {
     development: {
       host: "localhost",
       port: 8546,
-      network_id: "*", // Match any network id
-      gas: 8000000
+      network_id: 666, // Match any network id
+      gas: 10000000
     },
   },
   // rpc: {

@@ -2,12 +2,26 @@ pragma solidity ^0.4.13;
 
 import "zeppelin-solidity/contracts/token/StandardToken.sol";
 import "./Reversi.sol";
-import "./oraclizeAPI.sol";
+import "./Oracle.sol";
 
+
+/// @title Clover
+/// @author Billy Rennekamp
 
 contract ClubToken is StandardToken {
 
-  // Token Contract
+  function ClubToken(address oracleAddress) {
+    oracle = Oracle(oracleAddress);
+    totalSupply = INITIAL_SUPPLY;
+    balances[msg.sender] = INITIAL_SUPPLY;
+    admins[msg.sender] = true;
+    adminKeys.push(msg.sender);
+    owner = msg.sender;
+  }
+
+  // Club Token
+
+  Oracle oracle;
 
   uint256 public decimals = 0;
   uint256 public INITIAL_SUPPLY = 0; // zero decimals
@@ -22,26 +36,15 @@ contract ClubToken is StandardToken {
   address public owner;
   string public name = "ClubToken";
   string public symbol = "♧";
-  bytes32 oracleHash;
-
-
-
-  function ClubToken(bytes32 endpoint) {
-    validationEndpoint = endpoint
-    totalSupply = INITIAL_SUPPLY;
-    balances[msg.sender] = INITIAL_SUPPLY;
-    admins[msg.sender] = true;
-    adminKeys.push(msg.sender);
-    owner = msg.sender;
-  }
 
 
   // Modifiers
 
   modifier onlyOwner { if (msg.sender != owner) revert(); _; }
   modifier onlyAdmin { if (!admins[msg.sender]) revert(); _; }
-  modifier doesNotExist(bytes16 b) { if (clovers[b].exists) revert(); _; }
-  modifier exists(bytes16 b) { if (!clovers[b].exists) revert(); _; }
+  modifier doesNotExist(bytes16 b) { if (clovers[b].exists || !clovers[b].validated) revert(); _; }
+  modifier exists(bytes16 b) { if (!clovers[b].exists && clovers[b].validated) revert(); _; }
+  modifier onlyOracle() {if (msg.sender != address(oracle)) revert(); _; }
 
 
 
@@ -58,25 +61,24 @@ contract ClubToken is StandardToken {
   mapping(address => bool) admins;
   address[] public adminKeys;
 
-  function getBalance(address someone) public constant returns(uint) {
-    return balances[someone];
+  // Public & Constant
+
+  /// @notice Gets balance
+  /// @dev 
+  /// @param _someone Address of the account balance requested
+  /// @return uint balance of address
+
+  function getBalance(address _someone) public constant returns(uint) {
+    return balances[_someone];
   }
 
-  function myAddress () public constant returns (address) {
+  function myAddress () public constant returns(address) {
     return msg.sender;
   }
 
-  function isAdmin () public constant returns (bool) {
+  function isAdmin () public constant returns(bool) {
     return admins[msg.sender];
   }  
-
-  function adminLen () public constant returns (uint256) {
-    return adminKeys.length;
-  } 
-
-  function adminAt (uint256 key) public constant returns (address) {
-    return adminKeys[key];
-  }
 
   function getTallys() public constant returns(uint256, uint256, uint256, uint256, uint256, uint256, uint256) {
     return (Symmetricals, RotSym, Y0Sym, X0Sym, XYSym, XnYSym, payMultiplier);
@@ -111,10 +113,7 @@ contract ClubToken is StandardToken {
   mapping(address => Player) public players;
   address[] public playerKeys;
 
-  function changeName (string name) {
-    if (bytes(name).length > nameLength) revert();
-    newUserName(msg.sender, name);
-  }
+  // Public & Constant
 
   function listPlayerCount() public constant returns(uint) {
     return playerKeys.length;
@@ -140,9 +139,19 @@ contract ClubToken is StandardToken {
     return players[player].cloverKeys[cloverKey];
   }
 
-  function playerOwnsClover(address player, bytes16 board) public constant returns (bool) {
+  function playerOwnsClover(address player, bytes16 board) public constant returns(bool) {
     return players[player].clovers[board];
   }
+
+  // Public & Transactional
+
+  function changeName (string name) public {
+    if (bytes(name).length > nameLength) revert();
+    newUserName(msg.sender, name);
+  }
+
+
+  // Internal & Transactional
 
   function addCloverToPlayer (bytes16 board) internal {
     if (!players[msg.sender].clovers[board]) {
@@ -150,14 +159,6 @@ contract ClubToken is StandardToken {
       players[msg.sender].cloverKeys.push(board);
     }
     players[msg.sender].currentCount += 1;
-  }
-
-  function addCloverToPlayerExplicit (bytes16 board, address player) internal {
-    if (!players[player].clovers[board]) {
-      players[player].clovers[board] = true;
-      players[player].cloverKeys.push(board);
-    }
-    players[player].currentCount += 1;
   }
 
   function registerPlayer() internal {
@@ -186,8 +187,18 @@ contract ClubToken is StandardToken {
   mapping (bytes16 => Clover) public clovers;
   bytes16[] public cloverKeys;
 
-  function cloverExists(bytes16 b) public constant returns(bool){
-    return clovers[b].exists;
+  // Public & Constant
+
+  function cloverValid(bytes16 b) public constant returns(bool) {
+    return clovers[b].validated;
+  }
+
+  function cloverExistsUnvalidated(bytes16 b) public constant returns(bool) {
+    return clovers[b].exists && !cloverValid(b);
+  }
+
+  function cloverExists(bytes16 b) public constant returns(bool) {
+    return clovers[b].exists && cloverValid(b);
   }
 
   function getCloversCount() public constant returns(uint) {
@@ -199,26 +210,32 @@ contract ClubToken is StandardToken {
     return getClover(board);
   }
 
-  function getClover (bytes16 board) public exists(board) constant returns(bytes16, uint lastPaidAmount, uint ownersLength, address lastOwner, bytes28 first32Moves, bytes28 lastMoves) {
+  function getClover (bytes16 board) public constant exists(board) returns(bytes16, uint lastPaidAmount, uint ownersLength, address lastOwner, bytes28 first32Moves, bytes28 lastMoves) {
     return (board, clovers[board].lastPaidAmount, clovers[board].previousOwners.length, clovers[board].previousOwners[clovers[board].previousOwners.length - 1], clovers[board].first32Moves, clovers[board].lastMoves);
   }
 
-  function getCloverOwnersLength(bytes16 board) public exists(board) constant returns(uint256) {
+  function getCloverOwnersLength(bytes16 board) public constant exists(board) returns(uint256) {
     return clovers[board].previousOwners.length;
   }
 
-  function getCloverOwner(bytes16 board) public exists(board) constant returns(bytes16, address previousOwner) {
-    return (board, clovers[board].previousOwners[ clovers[board].previousOwners.length - 1 ] );
+  function getCloverOwner(bytes16 board) public constant exists(board) returns(address previousOwner) {
+    return clovers[board].previousOwners[ clovers[board].previousOwners.length - 1 ];
   }
 
-  function getCloverOwnerAtKeyByBoard(bytes16 board, uint ownerKey) public exists(board) constant returns(bytes16, address previousOwner) {
-    return (board, clovers[board].previousOwners[ownerKey]);
+  function getCloverOwnerAtKeyByBoard(bytes16 board, uint ownerKey) public constant exists(board) returns(address previousOwner) {
+    return clovers[board].previousOwners[ownerKey];
   }
 
-  function getCloverOwnerAtKeyByBoardKey(uint boardKey, uint ownerKey) public constant returns(bytes16, address previousOwner) {
+  function getCloverOwnerAtKeyByBoardKey(uint boardKey, uint ownerKey) public constant returns(address previousOwner) {
     bytes16 board = cloverKeys[boardKey];
-    if(!clovers[board].exists) revert();
-    return (board, clovers[board].previousOwners[ownerKey]);
+    if(!cloverExists(board)) revert();
+    return clovers[board].previousOwners[ownerKey];
+  }
+
+  // Public & Transactional
+
+  function deleteClover (bytes16 board) public onlyOracle() {
+    delete clovers[board];
   }
 
   function renameClover(bytes16 board, string name) public exists(board) {
@@ -236,19 +253,16 @@ contract ClubToken is StandardToken {
 
   function mineClover(bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public {
     Reversi.Game memory game = Reversi.playGame(first32Moves, lastMoves);
-    // Game memory game = playGame(first32Moves, lastMoves);
     saveGame(game, startPrice);
   }
 
-  function adminMineClover (bytes28 first32Moves, bytes28 lastMoves, bytes16 board, uint startPrice) public doesNotExist(board) onlyAdmin() returns(uint boardKey) {
+  function adminMineClover (bytes28 first32Moves, bytes28 lastMoves, bytes16 board, uint startPrice) public doesNotExist(board) onlyAdmin() {
     registerPlayer();
     addCloverToPlayer(game.board);
     Reversi.Game memory game;
-    // Game memory game;
     game.board = board;
 
     game = Reversi.isSymmetrical(game);
-    // game = isSymmetrical(game);
     if (game.symmetrical) {
       clovers[board].findersFee = findersFee(game);
       balances[msg.sender] += clovers[board].findersFee;
@@ -264,10 +278,10 @@ contract ClubToken is StandardToken {
     clovers[board].modified = now;
     clovers[board].validated = true;
     Registered(msg.sender, startPrice, board, true, first32Moves, lastMoves, now, clovers[board].findersFee);
-    return cloverKeys.push(board);
+    cloverKeys.push(board);
   }
 
-  function flipClover (bytes16 b) exists(b) public{
+  function flipClover (bytes16 b) exists(b) public {
     // every clover asset is for sale determined on an initial start price
     // if that clover is purchased, the proceeds are divided evenly among the last two buyers
     // cant flip board you currently own
@@ -297,13 +311,13 @@ contract ClubToken is StandardToken {
 
 
   // Game Management
-  //
+
   // see ./Reversi.sol for playGame(), isSymmetrical() and Game struct
 
+  // Public & Constant
 
   function gameIsValid(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bool) {
     Reversi.Game memory game = Reversi.playGame(first32Moves, lastMoves);
-    // Game memory game = playGame(first32Moves, lastMoves);
     if (game.error) return false;
     if (!game.complete) return false;
     if (!game.symmetrical) return false;
@@ -312,57 +326,51 @@ contract ClubToken is StandardToken {
 
   function gameExists(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bool) {
     Reversi.Game memory game = Reversi.playGame(first32Moves, lastMoves);
-    // Game memory game = playGame(first32Moves, lastMoves);
     if (game.error) revert();
     if (!game.complete) revert();
-    return clovers[game.board].exists;
+    return cloverExists(game.board);
   }
 
-  function debugGame(bytes28 first32Moves, bytes28 lastMoves) public{
-    Reversi.Game memory game = Reversi.playGame(first32Moves, lastMoves);
-    // Game memory game = playGame(first32Moves, lastMoves);
-  }
   function showGame(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym) {
     Reversi.Game memory game = Reversi.playGame(first32Moves, lastMoves);
-    // Game memory game = playGame(first32Moves, lastMoves);
     return returnGame(game);
   }
 
   function showGame2(bytes28 first32Moves, bytes28 lastMoves) public constant returns(bytes16 board, uint8 blackScore, uint8 whiteScore, uint8 currentPlayer, uint8 moveKey) {
     Reversi.Game memory game = Reversi.playGame(first32Moves, lastMoves);
-    // Game memory game = playGame(first32Moves, lastMoves);
     return (game.board, game.blackScore, game.whiteScore, game.currentPlayer, game.moveKey);
   }
 
-
   function getSymmetry(bytes16 b) public constant returns(bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym) {
     Reversi.Game memory game;
-    // Game memory game;
     game.board = b;
     game = Reversi.isSymmetrical(game);
-    // game = isSymmetrical(game);
     return returnGame(game);
   }
 
   function getFindersFee(bytes16 b) public constant returns(uint256) {
     Reversi.Game memory game;
-    // Game memory game;
     game.board = b;
     game = Reversi.isSymmetrical(game);
-    // game = isSymmetrical(game);
     return findersFee(game);
   }
 
-  function returnGame(Reversi.Game game) internal returns(bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym){
-  // function returnGame(Game game) internal returns(bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym){
+  // Public & Transactional
+
+  function debugGame(bytes28 first32Moves, bytes28 lastMoves) public {
+    Reversi.Game memory game = Reversi.playGame(first32Moves, lastMoves);
+  }
+
+  // Internal & Transactional
+
+  function returnGame(Reversi.Game game) internal returns(bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym) {
     return (game.error, game.complete, game.symmetrical, game.RotSym, game.Y0Sym, game.X0Sym, game.XYSym, game.XnYSym);
   }
 
-  function saveGame(Reversi.Game game, uint256 startPrice) internal returns(uint){
-  // function saveGame(Game game, uint256 startPrice) internal returns(uint){
+  function saveGame(Reversi.Game game, uint256 startPrice) internal {
     if (game.error) revert();
     if (!game.complete) revert();
-    if (clovers[game.board].exists) revert();
+    if (cloverExists(game.board)) revert();
     
     registerPlayer();
     addCloverToPlayer(game.board);
@@ -381,11 +389,10 @@ contract ClubToken is StandardToken {
       addToSymmTallys(game);
     }
     Registered(msg.sender, startPrice, game.board, true, game.first32Moves, game.lastMoves, now, clovers[game.board].findersFee);
-    return cloverKeys.push(game.board);
+    cloverKeys.push(game.board);
   }
 
   function addToSymmTallys (Reversi.Game game) internal {
-  // function addToSymmTallys (Game game) internal {
     if (game.symmetrical) Symmetricals += 1;
     if (game.RotSym) RotSym += 1;
     if (game.Y0Sym) Y0Sym += 1;
@@ -395,7 +402,6 @@ contract ClubToken is StandardToken {
   }
 
   function findersFee (Reversi.Game game) internal constant returns(uint256) {
-  // function findersFee (Game game) internal constant returns(uint256) {
     uint256 base = 0;
 
     if (game.RotSym) base = base.add( payMultiplier.mul( Symmetricals + 1 ).div( RotSym + 1 ) );
@@ -409,95 +415,32 @@ contract ClubToken is StandardToken {
 
 
 
-  // Oraclize Management
+  // Oracle Management
 
-  function claimClover (bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) internal {
+  // Public & Transactional
+
+  function oracleAddClover (bytes16 board, address player) public onlyOracle() {
     registerPlayer();
-
-    Clover storage clover;
-    clover.first32Moves = first32Moves;
-    clover.lastMoves = lastMoves;
-    clover.lastPaidAmount = startPrice;
-    clover.exists = true;
-
-    clover.previousOwners.push(msg.sender);
-
-    Game memory game;
-    game.board = board;
-    clover.findersFee = findersFee(game);
-
-    clovers[board] = clover;
-  }
-
-  mapping (bytes32=>bytes16) validIds;
-
-  function __callback(bytes32 myid, bool valid) {
-    if (uint8 (validIds[myid]) == 0) revert();
-    if (msg.sender != oraclize_cbAddress()) revert();
-    if (!valid) {
-      delete clovers[board];
-    } else {
-      bytes16 board = validIds[myid];
-      address player = clovers[board].previousOwners[0];
-      if (!clovers[board].exists) revert();
-      if (clovers[board].validated) revert();
-      delete validIds[myid];
-
-      addCloverToPlayerExplicit(board, player);
-
-      balances[player] += clovers[board].findersFee;
-      clovers[board].validated = valid;
-
-      cloverKeys.push(board);  
-      Registered(player, clovers[board].lastPaidAmount, board, true, clovers[board].first32Moves, clovers[board].lastMoves, now, clovers[board].findersFee);
+    if (!players[player].clovers[board]) {
+      players[player].clovers[board] = true;
+      players[player].cloverKeys.push(board);
     }
+    players[player].currentCount += 1;
+
+    balances[player] += clovers[board].findersFee;
+    clovers[board].validated = true;
+
+    cloverKeys.push(board);  
+    Registered(player, clovers[board].lastPaidAmount, board, true, clovers[board].first32Moves, clovers[board].lastMoves, now, clovers[board].findersFee);
   }
 
-
-  function setOracleHash(string endpoint) public onlyAdmin() {
-    oracleHash = sha3(endpoint);
+  function claimClover (bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public onlyOracle() {
+    clovers[board].findersFee = getFindersFee(board);
+    clovers[board].first32Moves = first32Moves;
+    clovers[board].lastMoves = lastMoves;
+    clovers[board].lastPaidAmount = startPrice;
+    clovers[board].exists = true;
+    clovers[board].previousOwners.push(msg.sender);
   }
-
-  function verifyGame(bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice, string endpoint, string payload) payable {
-    if (sha3(endpoint) != oracleHash) revert();
-    if (oraclize_getPrice("URL") > this.balance) {
-        newOraclizeQuery("No");
-    } else {
-        // newOraclizeQuery("Please Wait");
-        bytes32 queryId = oraclize_query("URL", strConcat(endpoint, payload));
-        validIds[queryId] = board;
-        claimClover(board, first32Moves, lastMoves, startPrice);
-    }
-  }
-
-  function strConcat(string _a, string _b, string _c, string _d, string _e) internal returns (string) {
-      bytes memory _ba = bytes(_a);
-      bytes memory _bb = bytes(_b);
-      bytes memory _bc = bytes(_c);
-      bytes memory _bd = bytes(_d);
-      bytes memory _be = bytes(_e);
-      string memory abcde = new string(_ba.length + _bb.length + _bc.length + _bd.length + _be.length);
-      bytes memory babcde = bytes(abcde);
-      uint k = 0;
-      for (uint i = 0; i < _ba.length; i++) babcde[k++] = _ba[i];
-      for (i = 0; i < _bb.length; i++) babcde[k++] = _bb[i];
-      for (i = 0; i < _bc.length; i++) babcde[k++] = _bc[i];
-      for (i = 0; i < _bd.length; i++) babcde[k++] = _bd[i];
-      for (i = 0; i < _be.length; i++) babcde[k++] = _be[i];
-      return string(babcde);
-  }
-
-  function strConcat(string _a, string _b, string _c, string _d) internal returns (string) {
-      return strConcat(_a, _b, _c, _d, "");
-  }
-
-  function strConcat(string _a, string _b, string _c) internal returns (string) {
-      return strConcat(_a, _b, _c, "", "");
-  }
-
-  function strConcat(string _a, string _b) internal returns (string) {
-      return strConcat(_a, _b, "", "", "");
-  }
-
 
 }

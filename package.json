@@ -16,7 +16,7 @@
     "bip39": "2.3.1",
     "ethereumjs-testrpc": "^4.1.1",
     "ethereumjs-wallet": "0.6.0",
-    "truffle": "3.4.5",
+    "truffle": "@beta",
     "web3": "0.18.2",
     "web3-provider-engine": "8.6.1",
     "zeppelin-solidity": "^1.2.0"
