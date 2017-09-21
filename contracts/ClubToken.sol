@@ -2,7 +2,7 @@ pragma solidity ^0.4.13;
 
 import "zeppelin-solidity/contracts/token/StandardToken.sol";
 import "./Reversi.sol";
-// import "./oraclizeAPI.sol";
+import "./oraclizeAPI.sol";
 
 
 contract ClubToken is StandardToken {
@@ -22,10 +22,12 @@ contract ClubToken is StandardToken {
   address public owner;
   string public name = "ClubToken";
   string public symbol = "♧";
+  bytes32 oracleHash;
 
 
 
-  function ClubToken() {
+  function ClubToken(bytes32 endpoint) {
+    validationEndpoint = endpoint
     totalSupply = INITIAL_SUPPLY;
     balances[msg.sender] = INITIAL_SUPPLY;
     admins[msg.sender] = true;
@@ -48,7 +50,7 @@ contract ClubToken is StandardToken {
   event newUserName(address player, string name);
   event newCloverName(bytes16 board, string name);
   event Registered(address newOwner, uint256 lastPaidAmount, bytes16 board, bool newBoard, bytes28 first32Moves, bytes28 lastMoves, uint256 modified, uint256 findersFee);
-
+  event newOraclizeQuery(string message);
 
 
   // Contract Administration
@@ -150,6 +152,14 @@ contract ClubToken is StandardToken {
     players[msg.sender].currentCount += 1;
   }
 
+  function addCloverToPlayerExplicit (bytes16 board, address player) internal {
+    if (!players[player].clovers[board]) {
+      players[player].clovers[board] = true;
+      players[player].cloverKeys.push(board);
+    }
+    players[player].currentCount += 1;
+  }
+
   function registerPlayer() internal {
     if (!players[msg.sender].exists) {
       players[msg.sender].exists = true;
@@ -170,7 +180,7 @@ contract ClubToken is StandardToken {
     uint256 created;
     uint256 modified;
     address[] previousOwners;
-    // bool validated;
+    bool validated;
   }
 
   mapping (bytes16 => Clover) public clovers;
@@ -252,6 +262,7 @@ contract ClubToken is StandardToken {
     clovers[board].exists = true;
     clovers[board].created = now;
     clovers[board].modified = now;
+    clovers[board].validated = true;
     Registered(msg.sender, startPrice, board, true, first32Moves, lastMoves, now, clovers[board].findersFee);
     return cloverKeys.push(board);
   }
@@ -362,6 +373,7 @@ contract ClubToken is StandardToken {
     clovers[game.board].exists = true;
     clovers[game.board].created = now;
     clovers[game.board].modified = now;
+    clovers[game.board].validated = true;
     if (game.symmetrical) {
       clovers[game.board].findersFee = findersFee(game);
       balances[msg.sender] += clovers[game.board].findersFee;
@@ -396,141 +408,96 @@ contract ClubToken is StandardToken {
   }
 
 
-  // // Oraclize Management
+
+  // Oraclize Management
+
+  function claimClover (bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) internal {
+    registerPlayer();
+
+    Clover storage clover;
+    clover.first32Moves = first32Moves;
+    clover.lastMoves = lastMoves;
+    clover.lastPaidAmount = startPrice;
+    clover.exists = true;
+
+    clover.previousOwners.push(msg.sender);
+
+    Game memory game;
+    game.board = board;
+    clover.findersFee = findersFee(game);
+
+    clovers[board] = clover;
+  }
+
+  mapping (bytes32=>bytes16) validIds;
+
+  function __callback(bytes32 myid, bool valid) {
+    if (uint8 (validIds[myid]) == 0) revert();
+    if (msg.sender != oraclize_cbAddress()) revert();
+    if (!valid) {
+      delete clovers[board];
+    } else {
+      bytes16 board = validIds[myid];
+      address player = clovers[board].previousOwners[0];
+      if (!clovers[board].exists) revert();
+      if (clovers[board].validated) revert();
+      delete validIds[myid];
+
+      addCloverToPlayerExplicit(board, player);
+
+      balances[player] += clovers[board].findersFee;
+      clovers[board].validated = valid;
+
+      cloverKeys.push(board);  
+      Registered(player, clovers[board].lastPaidAmount, board, true, clovers[board].first32Moves, clovers[board].lastMoves, now, clovers[board].findersFee);
+    }
+  }
 
 
-  // function claimClover (bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public {
-  //   registerPlayer();
+  function setOracleHash(string endpoint) public onlyAdmin() {
+    oracleHash = sha3(endpoint);
+  }
 
-  //   Clover storage clover;
-  //   clover.first32Moves = first32Moves;
-  //   clover.lastMoves = lastMoves;
-  //   clover.lastPaidAmount = startPrice;
-  //   clover.exists = true;
+  function verifyGame(bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice, string endpoint, string payload) payable {
+    if (sha3(endpoint) != oracleHash) revert();
+    if (oraclize_getPrice("URL") > this.balance) {
+        newOraclizeQuery("No");
+    } else {
+        // newOraclizeQuery("Please Wait");
+        bytes32 queryId = oraclize_query("URL", strConcat(endpoint, payload));
+        validIds[queryId] = board;
+        claimClover(board, first32Moves, lastMoves, startPrice);
+    }
+  }
 
+  function strConcat(string _a, string _b, string _c, string _d, string _e) internal returns (string) {
+      bytes memory _ba = bytes(_a);
+      bytes memory _bb = bytes(_b);
+      bytes memory _bc = bytes(_c);
+      bytes memory _bd = bytes(_d);
+      bytes memory _be = bytes(_e);
+      string memory abcde = new string(_ba.length + _bb.length + _bc.length + _bd.length + _be.length);
+      bytes memory babcde = bytes(abcde);
+      uint k = 0;
+      for (uint i = 0; i < _ba.length; i++) babcde[k++] = _ba[i];
+      for (i = 0; i < _bb.length; i++) babcde[k++] = _bb[i];
+      for (i = 0; i < _bc.length; i++) babcde[k++] = _bc[i];
+      for (i = 0; i < _bd.length; i++) babcde[k++] = _bd[i];
+      for (i = 0; i < _be.length; i++) babcde[k++] = _be[i];
+      return string(babcde);
+  }
 
-  //   clover.previousOwners.push(msg.sender);
+  function strConcat(string _a, string _b, string _c, string _d) internal returns (string) {
+      return strConcat(_a, _b, _c, _d, "");
+  }
 
-  //   clover.validated = false; // redundant
+  function strConcat(string _a, string _b, string _c) internal returns (string) {
+      return strConcat(_a, _b, _c, "", "");
+  }
 
-  //   Game memory game;
-  //   game.board = board;
-  //   clover.findersFee = findersFee(game);
-
-  //   clovers[board] = clover;
-
-  // }
-
-  // // = "json(https://api.infura.io/v1/jsonrpc/rinkeby/eth_call?to="
-  // string validateEndpoint = "json(https://api.infura.io/v1/jsonrpc/rinkeby/eth_call?to=";
-  // mapping(bytes32=>bytes16) validIds;
-
-  // function updateValidateEndpoint (string endpoint) public onlyAdmin() {
-  //   validateEndpoint = endpoint;
-  // }
-
-  // function __callback(bytes32 myid, bool valid, bytes proof) {
-  //   if (uint8 (validIds[myid]) == 0) throw;
-  //   if (msg.sender != oraclize_cbAddress()) revert();
-  //   if (!valid) revert();
-  //   bytes16 board = validIds[myid];
-  //   address player = clovers[board].previousOwners[0];
-  //   if (!clovers[board].exists) revert();
-  //   if (clovers[board].validated) revert();
-  //   delete validIds[myid];
-
-
-  //   addCloverToPlayerExplicit(board, player);
-
-  //   balances[player] += clovers[board].findersFee;
-  //   clovers[board].validated = valid;
-
-  //   cloverKeys.push(board);  
-  //   Registered(player, clovers[board].lastPaidAmount, board);
-  // }
-
-  // function returnAddress() public constant returns(address) {
-  //   return this;
-  // }
-
-  // function buildString(bytes28 first32Moves, bytes28 lastMoves) public constant returns(string) {
-  //   string query2 = addressToString(address(this));
-  //   // string memory query3 = "&data=";
-  //   // string memory func = bytes32ToString(bytes32(bytes4(sha3("gameIsValid(bytes28,bytes28)"))));
-  //   // string memory param1 = bytes32ToString(bytes32(first32Moves));
-  //   // string memory param2 = bytes32ToString(bytes32(lastMoves));
-  //   // string memory closing = ").result";
-
-  //   return query2;//strConcat(strConcat(validateEndpoint, query2, query3, func, param1), param2, closing);
-
-  // }
-
-  // function verifyGame(bytes16 board, bytes28 first32Moves, bytes28 lastMoves) payable {
-  //   if (oraclize_getPrice("URL") > this.balance) {
-  //       // newOraclizeQuery("Oraclize query was NOT sent, please add some ETH to cover for the query fee");
-  //   } else {
-
-  //       // newOraclizeQuery("Oraclize query was sent, standing by for the answer..");
-  //       bytes32 queryId = oraclize_query("URL", buildString(first32Moves, lastMoves));
-  //       validIds[queryId] = board;
-  //   }
-  // }
-
-  // function addressToString(address x) returns (string) {
-  //     bytes memory b = new bytes(20);
-  //     for (uint i = 0; i < 20; i++)
-  //       b[i] = byte(uint8(uint256(x) / (2**(8*(19 - i)))));
-  //     return string(b);
-  // }
-  // function bytes32ToString (bytes32 data) constant returns (string) {
-  //   bytes memory bytesString = new bytes(32);
-  //   for (uint j=0; j<32; j++) {
-  //     byte char = byte(bytes32(uint(data) * 2 ** (8 * j)));
-  //     if (char != 0) {
-  //       bytesString[j] = char;
-  //     }
-  //   }
-  //   return string(bytesString);
-  // }
-  // function bytes4ToString (bytes4 data) constant returns (string) {
-  //   bytes memory bytesString = new bytes(4);
-  //   for (uint j=0; j<4; j++) {
-  //     byte char = byte(bytes4(uint(data) * 2 ** (8 * j)));
-  //     if (char != 0) {
-  //       bytesString[j] = char;
-  //     }
-  //   }
-  //   return string(bytesString);
-  // }
-
-  // function strConcat(string _a, string _b, string _c, string _d, string _e) internal returns (string) {
-  //     bytes memory _ba = bytes(_a);
-  //     bytes memory _bb = bytes(_b);
-  //     bytes memory _bc = bytes(_c);
-  //     bytes memory _bd = bytes(_d);
-  //     bytes memory _be = bytes(_e);
-  //     string memory abcde = new string(_ba.length + _bb.length + _bc.length + _bd.length + _be.length);
-  //     bytes memory babcde = bytes(abcde);
-  //     uint k = 0;
-  //     for (uint i = 0; i < _ba.length; i++) babcde[k++] = _ba[i];
-  //     for (i = 0; i < _bb.length; i++) babcde[k++] = _bb[i];
-  //     for (i = 0; i < _bc.length; i++) babcde[k++] = _bc[i];
-  //     for (i = 0; i < _bd.length; i++) babcde[k++] = _bd[i];
-  //     for (i = 0; i < _be.length; i++) babcde[k++] = _be[i];
-  //     return string(babcde);
-  // }
-
-  // function strConcat(string _a, string _b, string _c, string _d) internal returns (string) {
-  //     return strConcat(_a, _b, _c, _d, "");
-  // }
-
-  // function strConcat(string _a, string _b, string _c) internal returns (string) {
-  //     return strConcat(_a, _b, _c, "", "");
-  // }
-
-  // function strConcat(string _a, string _b) internal returns (string) {
-  //     return strConcat(_a, _b, "", "", "");
-  // }
+  function strConcat(string _a, string _b) internal returns (string) {
+      return strConcat(_a, _b, "", "", "");
+  }
 
 
 }

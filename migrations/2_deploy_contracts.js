@@ -3,7 +3,9 @@ var ClubToken = artifacts.require("./ClubToken.sol");
 
 module.exports = function(deployer) {
   deployer.deploy(Reversi).then(function () {
-    return deployer.deploy(ClubToken);
+    return deployer.deploy(ClubToken).then(function (instance) {
+
+    });
   });
   console.log('ADDRESS CHANGE CLOVER')
 };

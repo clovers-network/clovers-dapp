@@ -15,7 +15,7 @@ class Clover extends Reversi {
     this.notRinkeby = false
     this.error = false
     this.genesisBlock = 858317
-    this.address = '0xcc0604514f71b8d39e13315d59f4115702b42646'
+    this.address = null
     this.ClubToken = null
     this.account = null
     this.name = null
@@ -125,6 +125,23 @@ class Clover extends Reversi {
           window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
         }
       }).catch((err) => console.log(err))
+    })
+  }
+
+  deploy () {
+    if (!this.ClubToken) this.setContract()
+    return this.ClubToken.deployed().then((instance) => {
+      this.address = instance.address
+      return instance
+    })
+  }
+
+  currentBlock () {
+    return new Promise((resolve, reject) => {
+      _web3.eth.getBlock('latest', (error, results) => {
+        if (error) reject(error)
+        resolve(results)
+      })
     })
   }
 
@@ -240,23 +257,74 @@ class Clover extends Reversi {
     })
   }
 
-  deploy () {
-    if (!this.ClubToken) this.setContract()
-    return this.ClubToken.deployed()
-  }
 
-  currentBlock () {
-    return new Promise((resolve, reject) => {
-      _web3.eth.getBlock('latest', (error, results) => {
-        if (error) reject(error)
-        resolve(results)
+
+  // Oracle
+
+  // contract write / transactions
+
+  setOracleHash () {
+    return this.isAdmin().then((isAdmin) => {
+      if (!isAdmin) throw new Error('Not Admin')
+      return this.getOracleEndpoint().then((endpoint) => {
+        return this.deploy.then((instance) => {
+          return instance.setOracleHash(endpoint, {from: this.account})
+        })
       })
     })
   }
 
+  verifyGame (board = this.byteBoard, first32Moves = this.first32Moves, lastMoves = this.lastMoves) {
+    return this.getOracleEndpoint.then((endpoint) => {
+      let payload = this.getOraclePayload(first32Moves, lastMoves)
+      return this.deploy().then((instance) => {
+        return instance.verifyGame(new BN(board, 16), new BN(first32Moves), new BN(first32Moves), new BN(lastMoves), endpoint, payload)
+      })
+    })
+  }
+
+  // utils
+
+  getOracleEndpoint () {
+    return this.deploy().then((instance) => {
+      let validateEndpoint = 'json(https://api.infura.io/v1/jsonrpc/rinkeby/eth_call?to='
+      let address = instance.address + '&data='
+      let functionName = _web3.utils.sha3('gameIsValid(bytes28,bytes28)')
+      functionName = _web3.utils.hexToBytes(functionName).slice(0,4).join('')
+      functionName = _web3.utils.bytesToHex(functionName)
+      return validateEndpoint + address + '&data=' + functionName
+    })
+  }
+
+  sha3 (string) {
+    return _web3.utils.sha3(string)
+  }
+
+  getOraclePayload (first32Moves = this.first32Moves, lastMoves = this.lastMoves) {
+    first32Moves = this.removeHexPrefix(first32Moves)
+    lastMoves = this.removeHexPrefix(lastMoves)
+    return this.padLeft(first32Moves, (32 * 2)) + this.padLeft(lastMoves, (32 * 2)) + ').result'
+  }
+
+  padLeft (string, desiredLength) {
+      let padding = desiredLength - string.length
+      if (padding <= 0) return string
+      padding = new Array(padding)
+      padding = padding.fill('0').join('')
+      return padding + string
+  }
+
+  removeHexPrefix (hex) {
+    return hex.slice(0, 2) === '0x' ? hex.slice(2) : hex
+  }
+
+
+
+
   // Token
 
   // contract read only / calls
+
 
   balanceOf (account = this.account) {
     return this.deploy().then((instance) => {
