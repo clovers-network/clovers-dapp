@@ -17,7 +17,17 @@ contract Oracle is usingOraclize {
 
   // Modifiers
 
-  modifier onlyOwner { if (msg.sender != owner) revert(); _; }
+  modifier onlyOwner { if (msg.sender != owner || msg.sender != address(clubToken)) revert(); _; }
+
+  // Public & Constant
+
+  function getClubTokenAddress () public constant returns(address) {
+    return address(clubToken);
+  }
+
+  function getOracleHash () public constant returns(bytes32) {
+    return oracleHash;
+  }
 
   // Public & Transactional
 

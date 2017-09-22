@@ -24,8 +24,8 @@ contract ClubToken is StandardToken {
   Oracle oracle;
 
   uint256 public decimals = 0;
-  uint256 public INITIAL_SUPPLY = 0; // zero decimals
-  uint256 payMultiplier = 100;
+  uint256 public INITIAL_SUPPLY = 1;
+  uint256 payMultiplier = 10;
   uint256 Symmetricals;
   uint256 RotSym;
   uint256 Y0Sym;
@@ -42,7 +42,7 @@ contract ClubToken is StandardToken {
 
   modifier onlyOwner { if (msg.sender != owner) revert(); _; }
   modifier onlyAdmin { if (!admins[msg.sender]) revert(); _; }
-  modifier doesNotExist(bytes16 b) { if (clovers[b].exists || !clovers[b].validated) revert(); _; }
+  modifier doesNotExist(bytes16 b) { if (clovers[b].exists && clovers[b].validated) revert(); _; }
   modifier exists(bytes16 b) { if (!clovers[b].exists && clovers[b].validated) revert(); _; }
   modifier onlyOracle() {if (msg.sender != address(oracle)) revert(); _; }
 
@@ -417,7 +417,25 @@ contract ClubToken is StandardToken {
 
   // Oracle Management
 
+  // Public & Constant
+
+  function getClubTokenAddress () public constant returns(address) {
+    return oracle.getClubTokenAddress();
+  }
+
+  function getOracleHash () public constant returns(bytes32) {
+    return oracle.getOracleHash()
+  }
+
   // Public & Transactional
+
+  function setClubToken () public onlyAdmin() {
+    oracle.ClubToken(this);
+  }
+
+  function setOracleHash (string endpoint) public onlyAdmin() {
+    oracle.setOracleHash(endpoint);
+  }
 
   function oracleAddClover (bytes16 board, address player) public onlyOracle() {
     registerPlayer();

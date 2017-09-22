@@ -76,6 +76,7 @@ class Clover extends Reversi {
         }
         if (!this.notRinkeby && !this.connected) {
           this.connected = true
+          this.checkOracle()
           this.checkAccount()
           this.setAccountInterval()
           this.getPastEvents().then(() => {
@@ -99,6 +100,36 @@ class Clover extends Reversi {
 
   stopAccountInterval () {
     clearInterval(this.accountInterval)
+  }
+
+  checkOrace () {
+    this.checkOracleContract().then(() => {
+      this.checkOracleHash()
+    })
+  }
+
+  checkOracleContract () {
+    console.log('checkOracleContract')
+    return this.getClubTokenAddress().then((address) => {
+      console.log('contract address on file', address)
+      if (address !== this.address) {
+        return this.setClubToken()
+      } else {
+        return
+      }
+    })
+  }
+
+  checkOracleHash () {
+    console.log('checkOracleHash')
+    return this.getOracleHash().then((hash) => {
+      console.log(hash)
+      if (hash.toNumber(10) === 0) {
+        return this.setOracleHash()
+      } else {
+        return
+      }
+    })
   }
 
   checkAccount () {
@@ -263,7 +294,30 @@ class Clover extends Reversi {
 
   // Oracle
 
+  // contract read / calls
+
+  getClubTokenAddress () {
+    return this.deploy().then((instance) => {
+      instance.getClubTokenAddress()
+    })
+  }
+
+  getOracleHash () {
+    return this.deploy().then((instance) => {
+      instance.getOracleHash()
+    })
+  }
+
   // contract write / transactions
+
+  setClubToken () {
+    return this.isAdmin().then((isAdmin) => {
+      if (!isAdmin) throw new Error('Not Admin')
+      return this.deploy().then((instance) => {
+        instance.setClubToken({from: this.address})
+      })
+    })
+  }
 
   setOracleHash () {
     return this.isAdmin().then((isAdmin) => {
@@ -330,7 +384,6 @@ class Clover extends Reversi {
 
   balanceOf (account = this.account) {
     return this.deploy().then((instance) => {
-      return new BN(0)
       return instance.balanceOf(account)
     })
   }
@@ -343,7 +396,6 @@ class Clover extends Reversi {
 
   getSymbol () {
     return this.deploy().then((instance) => {
-      return '?'
       console.log(instance)
       return instance.symbol()
     })
@@ -574,7 +626,7 @@ class Clover extends Reversi {
 
   cloverExists (board = this.byteBoard) {
     return this.deploy().then((instance) => {
-      return instance.cloverExists.call(new BN(board, 16))
+      return instance.cloverExists(new BN(board, 16))
     })
   }
 
