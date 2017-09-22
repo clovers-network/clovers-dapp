@@ -33,7 +33,7 @@
             <button
             class="btn btn-outline mb1 blue"
             :disabled="!prevPossible"
-            @click="paged--">←</button>&nbsp;
+            @click="chPage(-1)">←</button>&nbsp;
           </div>
 
         <div class="">
@@ -49,11 +49,11 @@
             <button
             class="btn btn-outline mb1 blue"
             :disabled="!nextPossible"
-            @click="paged++">→</button>&nbsp;
+            @click="chPage(1)">→</button>&nbsp;
           </div>
         </div>
 
-      <ul class="list-reset max-width-5 mx-auto flex flex-wrap mxn2 center justify-center">
+      <ul ref="cloverList" class="list-reset max-width-5 mx-auto flex flex-wrap mxn2 center justify-center">
         <li v-for="board in cloversSliced" :key="board.board" class="px2 mb3">
           <clover-grid-item :by-flip="sortableIndex == 0 || sortableIndex == 3" :key="board.board" :board="board"></clover-grid-item>
         </li>
@@ -79,7 +79,7 @@
             <button
             class="btn btn-outline mb1 blue"
             :disabled="!prevPossible"
-            @click="paged--">←</button>&nbsp;
+            @click="chPage(-1)">←</button>&nbsp;
           </div>
 
           <div class="center mb2"  :class="{hide: pagedTotal === 0}">
@@ -90,7 +90,7 @@
             <button
             class="btn btn-outline mb1 blue"
             :disabled="!nextPossible"
-            @click="paged++">→</button>&nbsp;
+            @click="chPage(1)">→</button>&nbsp;
           </div>
         </div>
 
@@ -108,7 +108,7 @@
         limit: 18,
         limits: [5, 10, 20, 50, 100],
         asc: true,
-        sortableIndex: 0,
+        sortableIndex: 3,
         symTypes: ['RotSym', 'Y0Sym', 'X0Sym', 'XYSym', 'XnYSym'],
         sortable: ['Date Flipped', 'Date Found', 'Current Price', 'Times Flipped'],
         search: null
@@ -189,6 +189,12 @@
       ])
     },
     methods: {
+      chPage (amount) {
+        window.scrollTo(0, this.$refs.cloverList.offsetTop - 150)
+        this.$nextTick(() => {
+          this.paged += amount
+        })
+      },
       currPrice (c) {
         return c.previousOwners.length === 1 ? c.lastPaidAmount : (c.lastPaidAmount * 2)
       },
