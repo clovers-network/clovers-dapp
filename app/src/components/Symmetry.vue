@@ -1,5 +1,5 @@
 <template>
-  <ul :class="{absolute:horizontal, 'all-symmetries': horizontal}" class=" list-reset ">
+  <ul :class="{absolute:absolute, 'all-symmetries': horizontal}" class=" list-reset ">
     <li v-for="sym in symmetries" :class="[sym, {'inline-block': horizontal}]" class="symmetry-type"></li>
   </ul>
 </template>
@@ -15,6 +15,10 @@
       horizontal: {
         type: Boolean,
         default: true
+      },
+      absolute: {
+        type: Boolean,
+        default: true
       }
     },
     computed: {
@@ -23,6 +27,9 @@
         let types = ['RotSym', 'Y0Sym', 'X0Sym', 'XYSym', 'XnYSym']
         for (let key in this.board) {
           if (types.includes(key) && this.board[key]) list.push(key)
+        }
+        if (!list.length) {
+
         }
         return list
       }
@@ -35,6 +42,7 @@
     left: 50%;
     margin-top: 2em;
     transform: translateX(-50%);
+    text-align:center;
   }
 
   .symmetry-type {

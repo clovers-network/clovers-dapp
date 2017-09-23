@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-dark-gray white px2 py4 zig-zag relative">
+  <div class="bg-dark-gray white px2 py3 zig-zag relative">
     <div id='claim-outer' class="flex items-center justify-between">
       <div class="relative mx3">
         <template v-if='byteBoard'>
@@ -7,9 +7,6 @@
             <clv class='no-border' :moveString="movesString" :byteBoard="byteBoard"></clv>
           </div>
         </template>
-      </div>
-      <div class="mx3 relative flex-auto ">&nbsp;
-        <symmetry :horizontal="false" :board="reversi"></symmetry>
       </div>
       <div v-if="cloverData.removed" class="px3 flex-auto">
         <p class="h1 m0 lh1">🗑 Removed {{ removeDate }}</p>

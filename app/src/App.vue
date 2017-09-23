@@ -140,6 +140,14 @@
 <style >
   @import './style/imports';
   @import './style/global';
+
+  .h7{
+    font-size: 0.6rem;
+  }
+  .h8{
+    font-size: 0.5rem;
+  }
+
   #app {
     position:relative;
     min-height:100vh;
