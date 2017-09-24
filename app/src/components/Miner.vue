@@ -122,7 +122,6 @@
       clovers () {
         return this.minedClovers.map((c) => {
           if (typeof c.X0Sym !== 'undefined') return c
-          console.log('hier')
           this.reversi.board = c.board
           Object.assign(this.reversi, c)
           this.reversi.isSymmetrical()
