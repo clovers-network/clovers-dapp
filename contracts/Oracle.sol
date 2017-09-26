@@ -17,7 +17,7 @@ contract Oracle is usingOraclize {
 
   // Modifiers
 
-  modifier onlyOwner { if (msg.sender != owner || msg.sender != address(clubToken)) revert(); _; }
+  modifier onlyOwner { if (!(msg.sender == owner || msg.sender == address(clubToken))) revert(); _; }
 
   // Public & Constant
 
@@ -25,11 +25,33 @@ contract Oracle is usingOraclize {
     return address(clubToken);
   }
 
+  function getOwner () public constant returns(address) {
+    return owner;
+  }
+
+  function getSender () public constant returns(address) {
+    return msg.sender;
+  }
+
+  function confirmHash (string endpoint) public constant returns(bool) {
+    return sha3(endpoint) == oracleHash;
+  }
+
   function getOracleHash () public constant returns(bytes32) {
     return oracleHash;
   }
 
+  function isOwner () public constant onlyOwner() returns(bool) {
+    return true;
+  }
+
+  function notOwner () public constant returns(bool) {
+    return !(msg.sender == owner || msg.sender == address(clubToken));
+  }
+
   // Public & Transactional
+
+  function deposit() public payable {}
 
   function setClubToken (address clubTokenAddress) public onlyOwner() {
     clubToken = ClubToken(clubTokenAddress);
@@ -39,7 +61,7 @@ contract Oracle is usingOraclize {
     oracleHash = sha3(endpoint);
   }
 
-  function verifyGame(bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice, string endpoint, string payload) public payable {
+  function mineClover(bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice, string endpoint, string payload) public {
     if (sha3(endpoint) != oracleHash || uint(oracleHash) == 0) revert();
     if (oraclize_getPrice("URL") > this.balance) {
         // newOraclizeQuery("Contract Out Of Money");

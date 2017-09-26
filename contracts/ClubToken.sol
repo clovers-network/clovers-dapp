@@ -251,6 +251,10 @@ contract ClubToken is StandardToken {
     clovers[board].lastPaidAmount = startPrice;
   }
 
+  function oracleMineClover(bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice, string endpoint, string payload) public {
+    oracle.mineClover(board, first32Moves, lastMoves, startPrice, endpoint, payload);
+  }
+
   function mineClover(bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public {
     Reversi.Game memory game = Reversi.playGame(first32Moves, lastMoves);
     saveGame(game, startPrice);
@@ -424,13 +428,17 @@ contract ClubToken is StandardToken {
   }
 
   function getOracleHash () public constant returns(bytes32) {
-    return oracle.getOracleHash()
+    return oracle.getOracleHash();
   }
 
   // Public & Transactional
 
+  function deposit () public payable {
+    oracle.deposit();
+  }
+
   function setClubToken () public onlyAdmin() {
-    oracle.ClubToken(this);
+    oracle.setClubToken(this);
   }
 
   function setOracleHash (string endpoint) public onlyAdmin() {
