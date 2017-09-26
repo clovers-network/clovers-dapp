@@ -3,6 +3,8 @@ import clubTokenArtifacts from '../../../build/contracts/ClubToken.json'
 import contract from 'truffle-contract'
 import Web3 from 'web3'
 import Reversi from './reversi'
+import utils from 'web3-utils'
+
 const ProviderEngine = require('web3-provider-engine/index.js')
 const ZeroClientProvider = require('web3-provider-engine/zero.js')
 
@@ -14,7 +16,7 @@ class Clover extends Reversi {
     super()
     this.notRinkeby = false
     this.error = false
-    this.genesisBlock = 858317
+    this.genesisBlock = 955232
     this.address = null
     this.ClubToken = null
     this.account = null
@@ -102,9 +104,9 @@ class Clover extends Reversi {
     clearInterval(this.accountInterval)
   }
 
-  checkOrace () {
-    this.checkOracleContract().then(() => {
-      this.checkOracleHash()
+  checkOracle () {
+    return this.checkOracleContract().then(() => {
+      return this.checkOracleHash()
     })
   }
 
@@ -114,8 +116,6 @@ class Clover extends Reversi {
       console.log('contract address on file', address)
       if (address !== this.address) {
         return this.setClubToken()
-      } else {
-        return
       }
     })
   }
@@ -124,7 +124,7 @@ class Clover extends Reversi {
     console.log('checkOracleHash')
     return this.getOracleHash().then((hash) => {
       console.log(hash)
-      if (hash.toNumber(10) === 0) {
+      if (hash && new BN(hash, 16).toNumber(10) === 0) {
         return this.setOracleHash()
       } else {
         return
@@ -298,13 +298,13 @@ class Clover extends Reversi {
 
   getClubTokenAddress () {
     return this.deploy().then((instance) => {
-      instance.getClubTokenAddress()
+      return instance.getClubTokenAddress()
     })
   }
 
   getOracleHash () {
     return this.deploy().then((instance) => {
-      instance.getOracleHash()
+      return instance.getOracleHash()
     })
   }
 
@@ -320,21 +320,12 @@ class Clover extends Reversi {
   }
 
   setOracleHash () {
+    console.log('setOracleHash')
     return this.isAdmin().then((isAdmin) => {
       if (!isAdmin) throw new Error('Not Admin')
-      return this.getOracleEndpoint().then((endpoint) => {
-        return this.deploy.then((instance) => {
-          return instance.setOracleHash(endpoint, {from: this.account})
-        })
-      })
-    })
-  }
-
-  verifyGame (board = this.byteBoard, first32Moves = this.first32Moves, lastMoves = this.lastMoves) {
-    return this.getOracleEndpoint.then((endpoint) => {
-      let payload = this.getOraclePayload(first32Moves, lastMoves)
+      let endpoint = this.getOracleEndpoint()
       return this.deploy().then((instance) => {
-        return instance.verifyGame(new BN(board, 16), new BN(first32Moves), new BN(first32Moves), new BN(lastMoves), endpoint, payload)
+        return instance.setOracleHash(endpoint, {from: this.account})
       })
     })
   }
@@ -342,14 +333,13 @@ class Clover extends Reversi {
   // utils
 
   getOracleEndpoint () {
-    return this.deploy().then((instance) => {
-      let validateEndpoint = 'json(https://api.infura.io/v1/jsonrpc/rinkeby/eth_call?to='
-      let address = instance.address + '&data='
-      let functionName = _web3.utils.sha3('gameIsValid(bytes28,bytes28)')
-      functionName = _web3.utils.hexToBytes(functionName).slice(0,4).join('')
-      functionName = _web3.utils.bytesToHex(functionName)
-      return validateEndpoint + address + '&data=' + functionName
-    })
+    let validateEndpoint = 'json(https://api.infura.io/v1/jsonrpc/rinkeby/eth_call?to='
+    let address = this.address + '&data='
+    let functionName = utils.sha3('gameIsValid(bytes28,bytes28)')
+    functionName = utils.hexToBytes(functionName)
+    functionName = functionName.slice(0,4)
+    functionName = utils.bytesToHex(functionName)
+    return (validateEndpoint + address + '&data=' + functionName)
   }
 
   sha3 (string) {
@@ -359,15 +349,7 @@ class Clover extends Reversi {
   getOraclePayload (first32Moves = this.first32Moves, lastMoves = this.lastMoves) {
     first32Moves = this.removeHexPrefix(first32Moves)
     lastMoves = this.removeHexPrefix(lastMoves)
-    return this.padLeft(first32Moves, (32 * 2)) + this.padLeft(lastMoves, (32 * 2)) + ').result'
-  }
-
-  padLeft (string, desiredLength) {
-      let padding = desiredLength - string.length
-      if (padding <= 0) return string
-      padding = new Array(padding)
-      padding = padding.fill('0').join('')
-      return padding + string
+    return utils.padLeft(first32Moves, (32 * 2)) + utils.padLeft(lastMoves, (32 * 2)) + ').result'
   }
 
   removeHexPrefix (hex) {
@@ -396,7 +378,6 @@ class Clover extends Reversi {
 
   getSymbol () {
     return this.deploy().then((instance) => {
-      console.log(instance)
       return instance.symbol()
     })
   }
@@ -593,7 +574,8 @@ class Clover extends Reversi {
           if (isAdmin) {
             return this.adminMineClover(byteFirst32Moves, byteLastMoves, byteBoard, startPrice)
           } else {
-            return this.mineClover(byteFirst32Moves, byteLastMoves, startPrice)
+            return this.oracleMineClover(byteBoard, byteFirst32Moves, byteLastMoves, startPrice)
+            // return this.mineClover(byteFirst32Moves, byteLastMoves, startPrice)
           }
         })
       })
@@ -745,6 +727,16 @@ class Clover extends Reversi {
       return this.deploy().then((instance) => {
         return instance.adminMineClover(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), new BN(byteBoard, 16), new BN(startPrice, 10), {from: this.account}).then(() => byteBoard)
       })
+    })
+  }
+
+  oracleMineClover(board = this.board, first32Moves = this.byteFirst32Moves, lastMoves = this.byteLastMoves, startPrice = 100) {
+    let endpoint = this.getOracleEndpoint()
+    let payload = this.getOraclePayload(first32Moves, lastMoves)
+    console.log(endpoint)
+    console.log(payload)
+    return this.deploy().then((instance) => {
+      return instance.oracleMineClover(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), endpoint, payload, {from: this.account})
     })
   }
 
