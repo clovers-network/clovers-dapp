@@ -54,6 +54,7 @@ contract ClubToken is StandardToken {
   event newCloverName(bytes16 board, string name);
   event Registered(address newOwner, uint256 lastPaidAmount, bytes16 board, bool newBoard, bytes28 first32Moves, bytes28 lastMoves, uint256 modified, uint256 findersFee);
   event newOraclizeQuery(string message);
+  event newOraclizeSubmit(uint8 level);
 
 
   // Contract Administration
@@ -252,7 +253,10 @@ contract ClubToken is StandardToken {
   }
 
   function oracleMineClover(bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice, string endpoint, string payload) public {
-    oracle.mineClover(board, first32Moves, lastMoves, startPrice, endpoint, payload);
+    oracle.mineClover1(board, first32Moves, lastMoves, startPrice, endpoint, payload);
+  }
+  function oracleMineClover2(bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice, string payload) public {
+    oracle.mineClover2(board, first32Moves, lastMoves, startPrice, payload);
   }
 
   function mineClover(bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public {

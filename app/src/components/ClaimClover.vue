@@ -136,9 +136,12 @@
           msg: 'Validating Clover on the Blockchain',
           type: 'progress'
         }).then((msgId) => {
+          console.log('HIER')
           let byteBoard = this.clover.byteBoard
           this.addToSubmittingList(byteBoard)
           this.clover.register().then((res) => {
+            console.log('HIER')
+            console.log(res)
             this.removeFromSubmittingList(byteBoard)
             this.claimedClover(byteBoard)
             this.removeMessage(msgId)

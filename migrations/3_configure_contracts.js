@@ -15,11 +15,17 @@ module.exports = function(deployer, helper, accounts) {
 };
 
 function getOracleEndpoint () {
-    let validateEndpoint = 'json(https://api.infura.io/v1/jsonrpc/rinkeby/eth_call?to='
-    let address = ClubToken.address + '&data='
+    let validateEndpoint = 'json(https://api.infura.io/v1/jsonrpc/rinkeby).result'
+    
     let functionName = utils.sha3('gameIsValid(bytes28,bytes28)')
     functionName = utils.hexToBytes(functionName)
     functionName = functionName.slice(0,4)
     functionName = utils.bytesToHex(functionName)
-    return validateEndpoint + address + '&data=' + functionName
+
+    let endpoint = '{"jsonrpc":"2.0","id":1,"method":"eth_call","params":[{"to":"' + ClubToken.address + '","data":"' + functionName
+    // let payload = '00000000d9b7774f9af573c5d69d4996a971f147dfac39f7e9f37785891dfee500000000bd9bb7ed12e559bfcaad69b5f04fa1061438927fc681167470000000'
+    // let closing = '"},"latest"]}'
+
+
+    return endpoint
 }

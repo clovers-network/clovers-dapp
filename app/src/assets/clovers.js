@@ -1,5 +1,6 @@
 import BN from 'bignumber.js'
 import clubTokenArtifacts from '../../../build/contracts/ClubToken.json'
+import oracleArtifacts from '../../../build/contracts/Oracle.json'
 import contract from 'truffle-contract'
 import Web3 from 'web3'
 import Reversi from './reversi'
@@ -16,7 +17,7 @@ class Clover extends Reversi {
     super()
     this.notRinkeby = false
     this.error = false
-    this.genesisBlock = 955232
+    this.genesisBlock = 990329
     this.address = null
     this.ClubToken = null
     this.account = null
@@ -65,7 +66,6 @@ class Clover extends Reversi {
     if (web3Provider) {
       _web3 = new Web3(web3Provider)
       _web3.version.getNetwork((err, netId) => {
-        console.log(netId)
         if (!err) {
           switch (netId) {
             case '4':
@@ -182,6 +182,8 @@ class Clover extends Reversi {
     if (!_web3) this.initWeb3()
     this.ClubToken = contract(clubTokenArtifacts)
     this.ClubToken.setProvider(_web3.currentProvider)
+    this.Oracle = contract(oracleArtifacts)
+    this.Oracle.setProvider(_web3.currentProvider)
   }
 
   stopEvents () {
@@ -241,7 +243,26 @@ class Clover extends Reversi {
                   window.dispatchEvent(new CustomEvent('newUsernameEvents', {detail: result}))
                 }
                 window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-                return this.getPastEvents(depth + 1)
+                return this.Oracle.deployed().then((instance) => {
+                  instance.newOraclizeQuery({x: null}, {fromBlock, toBlock}).get((error, result) => {
+                    if (error) {
+                      this.error = 'need-metamask'
+                      this.resetConnection()
+                    } else {
+                      this.error = false
+                      console.log('ORACLE', result)
+                      instance.newOraclizeUintQuery({x: null}, {fromBlock, toBlock}).get((error, result) => {
+                        if (error) {
+                          this.error = 'need-metamask'
+                          this.resetConnection()
+                        } else {
+                          console.log('ORACLEuint', result)
+                          return this.getPastEvents(depth + 1)
+                        }
+                      })
+                    }
+                  })
+                })
               })
             })
           })
@@ -261,6 +282,7 @@ class Clover extends Reversi {
           this.resetConnection()
         } else {
           this.error = false
+          console.log(result)
           if (result && result.args.newOwner !== '0x') {
             window.dispatchEvent(new CustomEvent('eventRegistered', {detail: JSON.parse(JSON.stringify(result))}))
           }
@@ -286,6 +308,27 @@ class Clover extends Reversi {
           window.dispatchEvent(new CustomEvent('newUsernameEvent', {detail: result}))
         }
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+      })
+    })
+    this.Oracle.deployed().then((instance) => {
+      instance.newOraclizeQuery({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
+        if (error) {
+          this.error = 'need-metamask'
+          this.resetConnection()
+        } else {
+          this.error = false
+          console.log('ORACLE LIVE')
+          console.log(result)
+        }
+      })
+      instance.newOraclizeUintQuery({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
+        if (error) {
+          this.error = 'need-metamask'
+          this.resetConnection()
+        } else {
+          console.log('ORACLEuint LIVE')
+          console.log(result)
+        }
       })
     })
   }
@@ -332,24 +375,42 @@ class Clover extends Reversi {
 
   // utils
 
+  hashFunction (functionName) {
+    functionName = utils.sha3(functionName)
+    functionName = utils.hexToBytes(functionName)
+    functionName = functionName.slice(0,4)
+    functionName = utils.bytesToHex(functionName)
+    return functionName
+  }
+
   getOracleEndpoint () {
-    let validateEndpoint = 'json(https://api.infura.io/v1/jsonrpc/rinkeby/eth_call?to='
-    let address = this.address + '&data='
+    let validateEndpoint = 'json(https://api.infura.io/v1/jsonrpc/rinkeby).result'
+    
     let functionName = utils.sha3('gameIsValid(bytes28,bytes28)')
     functionName = utils.hexToBytes(functionName)
     functionName = functionName.slice(0,4)
     functionName = utils.bytesToHex(functionName)
-    return (validateEndpoint + address + '&data=' + functionName)
-  }
+
+    let endpoint = '{"jsonrpc":"2.0","id":1,"method":"eth_call","params":[{"to":"' + this.address + '","data":"' + functionName
+
+    return endpoint
+}
 
   sha3 (string) {
     return _web3.utils.sha3(string)
   }
 
   getOraclePayload (first32Moves = this.first32Moves, lastMoves = this.lastMoves) {
+
     first32Moves = this.removeHexPrefix(first32Moves)
     lastMoves = this.removeHexPrefix(lastMoves)
-    return utils.padLeft(first32Moves, (32 * 2)) + utils.padLeft(lastMoves, (32 * 2)) + ').result'
+
+    first32Moves = utils.padRight(first32Moves, (32 * 2))
+    lastMoves = utils.padRight(lastMoves, (32 * 2))
+
+    // let payload = '00000000d9b7774f9af573c5d69d4996a971f147dfac39f7e9f37785891dfee500000000bd9bb7ed12e559bfcaad69b5f04fa1061438927fc681167470000000'
+    let closing = '"},"latest"]} '
+    return  first32Moves + lastMoves + closing
   }
 
   removeHexPrefix (hex) {
@@ -574,6 +635,7 @@ class Clover extends Reversi {
           if (isAdmin) {
             return this.adminMineClover(byteFirst32Moves, byteLastMoves, byteBoard, startPrice)
           } else {
+            console.log('hier')
             return this.oracleMineClover(byteBoard, byteFirst32Moves, byteLastMoves, startPrice)
             // return this.mineClover(byteFirst32Moves, byteLastMoves, startPrice)
           }
@@ -606,6 +668,16 @@ class Clover extends Reversi {
 
   // contract read only / calls
 
+  cloverValid (board = this.byteBoard) {
+    return this.deploy().then((instance) => {
+      return instance.cloverValid(new BN(board, 16))
+    })
+  }
+  cloverExistsUnvalidated (board = this.byteBoard) {
+    return this.deploy().then((instance) => {
+      return instance.cloverExistsUnvalidated(new BN(board, 16))
+    })
+  }
   cloverExists (board = this.byteBoard) {
     return this.deploy().then((instance) => {
       return instance.cloverExists(new BN(board, 16))
@@ -735,8 +807,9 @@ class Clover extends Reversi {
     let payload = this.getOraclePayload(first32Moves, lastMoves)
     console.log(endpoint)
     console.log(payload)
-    return this.deploy().then((instance) => {
-      return instance.oracleMineClover(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), endpoint, payload, {from: this.account})
+    return this.Oracle.deployed().then((instance) => {
+      return instance.mineClover1(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), endpoint, payload, {from: this.account})
+      // return instance.oracleMineClover2(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), payload, {from: this.account})
     })
   }
 
@@ -772,7 +845,7 @@ class Clover extends Reversi {
 
   gameIsValid (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     return this.deploy().then((instance) => {
-      return instance.gameIsValid(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16))
+      return instance.gameIsValid(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), {from: this.account})
     })
   }
 
@@ -804,7 +877,7 @@ class Clover extends Reversi {
 
   showGame (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     return this.deploy().then((instance) => {
-      return instance.showGameConstant(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
+      return instance.showGame(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
         return this.formatGame(result)
       })
     })
