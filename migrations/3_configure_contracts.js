@@ -4,7 +4,7 @@ var utils = require('web3-utils')
 
 module.exports = function(deployer, helper, accounts) {
   return Oracle.deployed().then(function (instance) {
-    return instance.deposit({from: accounts[0], value: utils.toBN(utils.toWei(0.1))}).then(() => {
+    return instance.deposit({from: accounts[0], value: utils.toBN(utils.toWei(0.01))}).then(() => {
       return instance.setClubToken(ClubToken.address, {from: accounts[0]}).then(() => {
         return instance.setOracleHash(getOracleEndpoint(), {from: accounts[0]})
       })

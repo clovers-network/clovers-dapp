@@ -253,11 +253,12 @@ contract ClubToken is StandardToken {
   }
 
   function oracleMineClover(bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice, string endpoint, string payload) public {
-    oracle.mineClover1(board, first32Moves, lastMoves, startPrice, endpoint, payload);
+    oracle.mineClover1(board, msg.sender, endpoint, payload);
+    claimClover(board, first32Moves, lastMoves, startPrice);
   }
-  function oracleMineClover2(bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice, string payload) public {
-    oracle.mineClover2(board, first32Moves, lastMoves, startPrice, payload);
-  }
+  // function oracleMineClover2(bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice, string payload) public {
+  //   oracle.mineClover2(board, first32Moves, lastMoves, startPrice, payload);
+  // }
 
   function mineClover(bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public {
     Reversi.Game memory game = Reversi.playGame(first32Moves, lastMoves);
@@ -464,12 +465,14 @@ contract ClubToken is StandardToken {
     Registered(player, clovers[board].lastPaidAmount, board, true, clovers[board].first32Moves, clovers[board].lastMoves, now, clovers[board].findersFee);
   }
 
-  function claimClover (bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public onlyOracle() {
+  function claimClover (bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public doesNotExist(board) {
+    delete clovers[board];
     clovers[board].findersFee = getFindersFee(board);
     clovers[board].first32Moves = first32Moves;
     clovers[board].lastMoves = lastMoves;
     clovers[board].lastPaidAmount = startPrice;
     clovers[board].exists = true;
+    clovers[board].validated = false;
     clovers[board].previousOwners.push(msg.sender);
   }
 

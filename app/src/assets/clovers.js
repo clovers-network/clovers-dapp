@@ -17,7 +17,7 @@ class Clover extends Reversi {
     super()
     this.notRinkeby = false
     this.error = false
-    this.genesisBlock = 990329
+    this.genesisBlock = 1000000
     this.address = null
     this.ClubToken = null
     this.account = null
@@ -251,14 +251,23 @@ class Clover extends Reversi {
                     } else {
                       this.error = false
                       console.log('ORACLE', result)
+
                       instance.newOraclizeUintQuery({x: null}, {fromBlock, toBlock}).get((error, result) => {
                         if (error) {
                           this.error = 'need-metamask'
                           this.resetConnection()
                         } else {
                           console.log('ORACLEuint', result)
-                          return this.getPastEvents(depth + 1)
-                        }
+
+                          instance.newOraclizeByteQuery({x: null}, {fromBlock, toBlock}).get((error, result) => {
+                            if (error) {
+                              this.error = 'need-metamask'
+                              this.resetConnection()
+                            } else {
+                              console.log('ORACLEbyte', result)
+                              return this.getPastEvents(depth + 1)
+                            }
+                          })                        }
                       })
                     }
                   })
@@ -330,6 +339,15 @@ class Clover extends Reversi {
           console.log(result)
         }
       })
+      instance.newOraclizeByteQuery({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
+        if (error) {
+          this.error = 'need-metamask'
+          this.resetConnection()
+        } else {
+          console.log('ORACLEbyte LIVE')
+          console.log(result)
+        }
+      })
     })
   }
 
@@ -384,7 +402,7 @@ class Clover extends Reversi {
   }
 
   getOracleEndpoint () {
-    let validateEndpoint = 'json(https://api.infura.io/v1/jsonrpc/rinkeby).result'
+    let validateEndpoint = 'json(https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d).result'
     
     let functionName = utils.sha3('gameIsValid(bytes28,bytes28)')
     functionName = utils.hexToBytes(functionName)
@@ -805,10 +823,13 @@ class Clover extends Reversi {
   oracleMineClover(board = this.board, first32Moves = this.byteFirst32Moves, lastMoves = this.byteLastMoves, startPrice = 100) {
     let endpoint = this.getOracleEndpoint()
     let payload = this.getOraclePayload(first32Moves, lastMoves)
+    console.log(board)
     console.log(endpoint)
     console.log(payload)
-    return this.Oracle.deployed().then((instance) => {
-      return instance.mineClover1(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), endpoint, payload, {from: this.account})
+    return this.deploy().then((instance) => {
+
+      // return instance.claimClover(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), {from: this.account})
+      return instance.oracleMineClover(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), endpoint, payload, {from: this.account})
       // return instance.oracleMineClover2(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), payload, {from: this.account})
     })
   }
