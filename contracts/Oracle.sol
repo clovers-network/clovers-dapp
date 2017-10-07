@@ -12,8 +12,6 @@ contract Oracle is usingOraclize {
   ClubToken clubToken;
   
   event newOraclizeQuery(string message);
-  event newOraclizeUintQuery(uint8 level);
-  event newOraclizeByteQuery(bytes1 b);
 
   struct Claim {
     bytes16 board;
@@ -92,10 +90,7 @@ contract Oracle is usingOraclize {
         newOraclizeQuery("Contract Out Of Money");
         clubToken.deleteClover(board);
     } else {
-        newOraclizeQuery("Contract Validating Game");
         string memory foo = strConcat(endpoint, payload);
-        newOraclizeQuery(infura);
-        newOraclizeQuery(foo);
         bytes32 queryId = oraclize_query("URL", infura, foo);
         validIds[queryId].board = board;
         validIds[queryId].player = player;
@@ -117,36 +112,16 @@ contract Oracle is usingOraclize {
   // }
 
   function __callback(bytes32 myid, string result) {
-    newOraclizeQuery(result);
-    newOraclizeUintQuery(1);
-    if (uint8(validIds[myid].board) == 0) {
-      newOraclizeUintQuery(11);
-    } else {
-
-      if (msg.sender != oraclize_cbAddress()) {
-        newOraclizeUintQuery(12);
-      } else {
-
+    if (uint8(validIds[myid].board) != 0) {
+      if (msg.sender == oraclize_cbAddress()) {
         bytes16 board = validIds[myid].board;
         address player = validIds[myid].player;
-
-        newOraclizeUintQuery(3);
-        newOraclizeByteQuery(bytes(result)[31]);
-        newOraclizeByteQuery(bytes(result)[32]);
-        newOraclizeByteQuery(bytes(result)[64]);
-        newOraclizeByteQuery(bytes(result)[65]);
         if (bytes(result)[65] != 0x31) {
-          newOraclizeUintQuery(4);
           clubToken.deleteClover(board);
         } else {
-          newOraclizeUintQuery(5);
-          if (!clubToken.cloverExistsUnvalidated(board)) {
-            newOraclizeUintQuery(13);
-          } else {
-            newOraclizeUintQuery(7);
-            // delete validIds[myid];
-            // clubToken.oracleAddClover(board, player);
-            // newOraclizeUintQuery(8);
+          if (clubToken.cloverExistsUnvalidated(board)) {
+            delete validIds[myid];
+            clubToken.oracleAddClover(board, player);
           }
         }
       }

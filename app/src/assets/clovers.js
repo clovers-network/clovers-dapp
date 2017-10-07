@@ -252,23 +252,23 @@ class Clover extends Reversi {
                       this.error = false
                       console.log('ORACLE', result)
 
-                      instance.newOraclizeUintQuery({x: null}, {fromBlock, toBlock}).get((error, result) => {
-                        if (error) {
-                          this.error = 'need-metamask'
-                          this.resetConnection()
-                        } else {
-                          console.log('ORACLEuint', result)
+                      // instance.newOraclizeUintQuery({x: null}, {fromBlock, toBlock}).get((error, result) => {
+                      //   if (error) {
+                      //     this.error = 'need-metamask'
+                      //     this.resetConnection()
+                      //   } else {
+                      //     console.log('ORACLEuint', result)
 
-                          instance.newOraclizeByteQuery({x: null}, {fromBlock, toBlock}).get((error, result) => {
-                            if (error) {
-                              this.error = 'need-metamask'
-                              this.resetConnection()
-                            } else {
-                              console.log('ORACLEbyte', result)
-                              return this.getPastEvents(depth + 1)
-                            }
-                          })                        }
-                      })
+                      //     instance.newOraclizeByteQuery({x: null}, {fromBlock, toBlock}).get((error, result) => {
+                      //       if (error) {
+                      //         this.error = 'need-metamask'
+                      //         this.resetConnection()
+                      //       } else {
+                      //         console.log('ORACLEbyte', result)
+                      //         return this.getPastEvents(depth + 1)
+                      //       }
+                      //     })                        }
+                      // })
                     }
                   })
                 })
@@ -320,31 +320,15 @@ class Clover extends Reversi {
       })
     })
     this.Oracle.deployed().then((instance) => {
-      instance.newOraclizeQuery({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
+      console.log('initiate live oracles')
+      instance.newOraclizeQuery({}, {fromBlock: 'latest'}).watch((error, result) => {
+        console.log(error, result)
         if (error) {
           this.error = 'need-metamask'
           this.resetConnection()
         } else {
           this.error = false
           console.log('ORACLE LIVE')
-          console.log(result)
-        }
-      })
-      instance.newOraclizeUintQuery({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
-        if (error) {
-          this.error = 'need-metamask'
-          this.resetConnection()
-        } else {
-          console.log('ORACLEuint LIVE')
-          console.log(result)
-        }
-      })
-      instance.newOraclizeByteQuery({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
-        if (error) {
-          this.error = 'need-metamask'
-          this.resetConnection()
-        } else {
-          console.log('ORACLEbyte LIVE')
           console.log(result)
         }
       })

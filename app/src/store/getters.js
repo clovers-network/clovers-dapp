@@ -104,16 +104,38 @@ export default {
     .forEach((e) => {
       if (e.event !== 'Registered') return
       if (e.args.newBoard) {
-        clovers.push({
-          board: e.args.board,
-          first32Moves: e.args.first32Moves,
-          lastMoves: e.args.lastMoves,
-          lastPaidAmount: parseInt(e.args.lastPaidAmount),
-          previousOwners: [e.args.newOwner],
-          created: parseInt(e.args.modified),
-          modified: parseInt(e.args.modified),
-          findersFee: parseInt(e.args.findersFee)
-        })
+        if (e.args.validated) {
+          let cloverKey = clovers.findIndex((c) => c.board === e.args.board)
+          if (cloverKey > -1) {
+            let clover = clovers[cloverKey]
+            clover.validated = true
+            clovers.splice(cloverKey, 1, clover)
+          } else {
+            clovers.push({
+              board: e.args.board,
+              first32Moves: e.args.first32Moves,
+              lastMoves: e.args.lastMoves,
+              lastPaidAmount: parseInt(e.args.lastPaidAmount),
+              previousOwners: [e.args.newOwner],
+              created: parseInt(e.args.modified),
+              modified: parseInt(e.args.modified),
+              findersFee: parseInt(e.args.findersFee),
+              validated: true
+            })
+          }
+        } else {
+          clovers.push({
+            board: e.args.board,
+            first32Moves: e.args.first32Moves,
+            lastMoves: e.args.lastMoves,
+            lastPaidAmount: parseInt(e.args.lastPaidAmount),
+            previousOwners: [e.args.newOwner],
+            created: parseInt(e.args.modified),
+            modified: parseInt(e.args.modified),
+            findersFee: parseInt(e.args.findersFee),
+            validated: false
+          })
+        }
       } else {
         let cloverKey = clovers.findIndex((c) => c.board === e.args.board)
         if (cloverKey > -1) {

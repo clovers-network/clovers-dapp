@@ -52,7 +52,7 @@ contract ClubToken is StandardToken {
 
   event newUserName(address player, string name);
   event newCloverName(bytes16 board, string name);
-  event Registered(address newOwner, uint256 lastPaidAmount, bytes16 board, bool newBoard, bytes28 first32Moves, bytes28 lastMoves, uint256 modified, uint256 findersFee);
+  event Registered(address newOwner, uint256 lastPaidAmount, bytes16 board, bool newBoard, bytes28 first32Moves, bytes28 lastMoves, uint256 modified, uint256 findersFee, bool validated);
   event newOraclizeQuery(string message);
   event newOraclizeSubmit(uint8 level);
 
@@ -169,12 +169,20 @@ contract ClubToken is StandardToken {
     }
   }
 
+  function registerPlayerExplicit(address player) internal {
+    if (!players[player].exists) {
+      players[player].exists = true;
+      playerKeys.push(player);
+    }
+  }
+
 
 
   // Clover Management
 
   struct Clover {
     bool exists;
+    bool validated;
     bytes28 first32Moves;
     bytes28 lastMoves;
     uint256 lastPaidAmount;
@@ -182,7 +190,6 @@ contract ClubToken is StandardToken {
     uint256 created;
     uint256 modified;
     address[] previousOwners;
-    bool validated;
   }
 
   mapping (bytes16 => Clover) public clovers;
@@ -248,7 +255,7 @@ contract ClubToken is StandardToken {
   function changeStartPrice(bytes16 board, uint256 startPrice) public exists(board) {
     if(clovers[board].previousOwners[0] != msg.sender) revert();
     if(clovers[board].previousOwners.length > 1) revert();
-    Registered(msg.sender, startPrice, board, true, clovers[board].first32Moves, clovers[board].lastMoves, now, clovers[board].findersFee);
+    Registered(msg.sender, startPrice, board, true, clovers[board].first32Moves, clovers[board].lastMoves, now, clovers[board].findersFee, true);
     clovers[board].lastPaidAmount = startPrice;
   }
 
@@ -286,7 +293,7 @@ contract ClubToken is StandardToken {
     clovers[board].created = now;
     clovers[board].modified = now;
     clovers[board].validated = true;
-    Registered(msg.sender, startPrice, board, true, first32Moves, lastMoves, now, clovers[board].findersFee);
+    Registered(msg.sender, startPrice, board, true, first32Moves, lastMoves, now, clovers[board].findersFee, true);
     cloverKeys.push(board);
   }
 
@@ -315,7 +322,7 @@ contract ClubToken is StandardToken {
     clovers[b].previousOwners.push(msg.sender);
     clovers[b].lastPaidAmount = nextPrice;
     clovers[b].modified = now;
-    Registered(msg.sender, nextPrice, b, false, clovers[b].first32Moves, clovers[b].lastMoves, clovers[b].modified, clovers[b].findersFee);
+    Registered(msg.sender, nextPrice, b, false, clovers[b].first32Moves, clovers[b].lastMoves, clovers[b].modified, clovers[b].findersFee, true);
   }
 
 
@@ -397,7 +404,7 @@ contract ClubToken is StandardToken {
       totalSupply += clovers[game.board].findersFee;
       addToSymmTallys(game);
     }
-    Registered(msg.sender, startPrice, game.board, true, game.first32Moves, game.lastMoves, now, clovers[game.board].findersFee);
+    Registered(msg.sender, startPrice, game.board, true, game.first32Moves, game.lastMoves, now, clovers[game.board].findersFee, true);
     cloverKeys.push(game.board);
   }
 
@@ -450,19 +457,41 @@ contract ClubToken is StandardToken {
     oracle.setOracleHash(endpoint);
   }
 
-  function oracleAddClover (bytes16 board, address player) public onlyOracle() {
-    registerPlayer();
+  function checkOracle () returns(address) {
+    return address(oracle);
+  }
+
+  function isOracle () returns(bool) {
+    return msg.sender == address(oracle);
+  }
+
+  // struct Player {
+  //   bool exists;
+  //   uint currentCount;
+  //   bytes16[] cloverKeys;
+  //   mapping(bytes16 => bool) clovers;
+  // }
+
+  // mapping(address => Player) public players;
+  // address[] public playerKeys;
+
+  function oracleAddClover (bytes16 board, address player) public  onlyOracle() {
+    // registerPlayerExplicit(player);
     if (!players[player].clovers[board]) {
-      players[player].clovers[board] = true;
-      players[player].cloverKeys.push(board);
+      newUserName(player, 'false');
+      // players[player].clovers[board] = true;
+      // players[player].cloverKeys.push(board);
+    } else {
+      newUserName(player, 'true');
     }
     players[player].currentCount += 1;
 
     balances[player] += clovers[board].findersFee;
     clovers[board].validated = true;
+    clovers[board].previousOwners.push(player);
 
     cloverKeys.push(board);  
-    Registered(player, clovers[board].lastPaidAmount, board, true, clovers[board].first32Moves, clovers[board].lastMoves, now, clovers[board].findersFee);
+    Registered(player, clovers[board].lastPaidAmount, board, true, clovers[board].first32Moves, clovers[board].lastMoves, now, clovers[board].findersFee, true);
   }
 
   function claimClover (bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice) public doesNotExist(board) {
@@ -473,7 +502,7 @@ contract ClubToken is StandardToken {
     clovers[board].lastPaidAmount = startPrice;
     clovers[board].exists = true;
     clovers[board].validated = false;
-    clovers[board].previousOwners.push(msg.sender);
+    Registered(msg.sender, clovers[board].lastPaidAmount, board, true, clovers[board].first32Moves, clovers[board].lastMoves, now, clovers[board].findersFee, false);
   }
 
 }
