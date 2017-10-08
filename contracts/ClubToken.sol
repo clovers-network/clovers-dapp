@@ -162,14 +162,11 @@ contract ClubToken is StandardToken {
     players[msg.sender].currentCount += 1;
   }
 
-  function registerPlayer() internal {
-    if (!players[msg.sender].exists) {
-      players[msg.sender].exists = true;
-      playerKeys.push(msg.sender);
-    }
+  function registerPlayer() {
+    registerPlayerExplicit(msg.sender);
   }
 
-  function registerPlayerExplicit(address player) internal {
+  function registerPlayerExplicit(address player) {
     if (!players[player].exists) {
       players[player].exists = true;
       playerKeys.push(player);
@@ -457,32 +454,11 @@ contract ClubToken is StandardToken {
     oracle.setOracleHash(endpoint);
   }
 
-  function checkOracle () returns(address) {
-    return address(oracle);
-  }
-
-  function isOracle () returns(bool) {
-    return msg.sender == address(oracle);
-  }
-
-  // struct Player {
-  //   bool exists;
-  //   uint currentCount;
-  //   bytes16[] cloverKeys;
-  //   mapping(bytes16 => bool) clovers;
-  // }
-
-  // mapping(address => Player) public players;
-  // address[] public playerKeys;
-
-  function oracleAddClover (bytes16 board, address player) public  onlyOracle() {
-    // registerPlayerExplicit(player);
+  function oracleAddClover (bytes16 board, address player) public onlyOracle() {
+    registerPlayerExplicit(player);
     if (!players[player].clovers[board]) {
-      newUserName(player, 'false');
-      // players[player].clovers[board] = true;
-      // players[player].cloverKeys.push(board);
-    } else {
-      newUserName(player, 'true');
+      players[player].clovers[board] = true;
+      players[player].cloverKeys.push(board);
     }
     players[player].currentCount += 1;
 

@@ -62,24 +62,28 @@ module.exports = {
     //   // gas: 4700000
     // },
     rinkeby: {
-      network_id: 4,    // Official rinkeby network id
-      host: "localhost", // Use our custom provider
-      port: 8545, // Use our custom provider
-      from: '0xcDE232e835330daFA2Ebc629219BbF4fc92cfa24',
-      gas: 6000000
-    },
-    ethermint: {
-      host: "0.0.0.0",
-      port: 8545,
-      network_id: "*",
-      from: '0x7eFf122b94897EA5b0E2A9abf47B86337FAfebdC'
-    },
-    development: {
+      network_id: 4,
       host: "localhost",
-      port: 8546,
-      network_id: 666, // Match any network id
-      gas: 10000000
+      port: 8545,
+      from: '0xcDE232e835330daFA2Ebc629219BbF4fc92cfa24'
     },
+    ropsten: {
+      network_id: 3,
+      host: "localhost",
+      port: 8545,
+      from: '0x59b809fd23B65b59D28229C3067bd26B09b80fca'
+    },
+    // ethermint: {
+    //   host: "0.0.0.0",
+    //   port: 8545,
+    //   network_id: "*",
+    //   from: '0x7eFf122b94897EA5b0E2A9abf47B86337FAfebdC'
+    // },
+    // development: {
+    //   host: "localhost",
+    //   port: 8546,
+    //   network_id: 666 // Match any network id
+    // },
   },
   // rpc: {
   //   // Use the default host and port when not using ropsten

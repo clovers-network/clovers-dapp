@@ -91,25 +91,11 @@ contract Oracle is usingOraclize {
         clubToken.deleteClover(board);
     } else {
         string memory foo = strConcat(endpoint, payload);
-        bytes32 queryId = oraclize_query("URL", infura, foo);
+        bytes32 queryId = oraclize_query("URL", infura, foo, 400000);
         validIds[queryId].board = board;
         validIds[queryId].player = player;
     }
   }
-
-  // function mineClover2(bytes16 board, bytes28 first32Moves, bytes28 lastMoves, uint256 startPrice, string payload) public returns(bool){
-  //   if (uint(sha3(prefix)) == 0 || uint(oracleHash) == 0) revert();
-  //   if (oraclize_getPrice("URL") > this.balance) {
-  //       newOraclizeQuery("Contract Out Of Money");
-  //       return false;
-  //   } else {
-  //       newOraclizeQuery("Contract Validating Game");
-  //       bytes32 queryId = oraclize_query("URL", infura, strConcat(prefix, payload), 3000000);
-  //       validIds[queryId] = board;
-  //       clubToken.claimClover(board, first32Moves, lastMoves, startPrice);
-  //       return true;
-  //   }
-  // }
 
   function __callback(bytes32 myid, string result) {
     if (uint8(validIds[myid].board) != 0) {
@@ -120,8 +106,8 @@ contract Oracle is usingOraclize {
           clubToken.deleteClover(board);
         } else {
           if (clubToken.cloverExistsUnvalidated(board)) {
-            delete validIds[myid];
             clubToken.oracleAddClover(board, player);
+            delete validIds[myid];
           }
         }
       }

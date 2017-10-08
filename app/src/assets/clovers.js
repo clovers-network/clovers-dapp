@@ -811,7 +811,7 @@ class Clover extends Reversi {
     console.log(endpoint)
     console.log(payload)
     return this.deploy().then((instance) => {
-
+      // return instance.registerPlayerExplicit(this.account, {from: this.account});
       // return instance.claimClover(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), {from: this.account})
       return instance.oracleMineClover(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), endpoint, payload, {from: this.account})
       // return instance.oracleMineClover2(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), payload, {from: this.account})
