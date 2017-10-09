@@ -22,7 +22,7 @@ contract Oracle is usingOraclize {
   bytes32 oracleHash;
   mapping (bytes32=>Claim) validIds;
   bytes32[] validIdKeys;
-  string infura = 'json(https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d).result';
+  // string infura = 'json(https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d).result';
   string prefix;
 
   // Modifiers
@@ -35,13 +35,13 @@ contract Oracle is usingOraclize {
     return oraclize_cbAddress();
   }
 
-  // function getValidIdKeysCount () public constant returns(uint) {
-  //   return validIdKeys.length;
-  // }
+  function getValidIdKeysCount () public constant returns(uint) {
+    return validIdKeys.length;
+  }
 
-  // function getValidIdAtKey (uint key) public constant returns(bytes16) {
-  //   return validIds[validIdKeys[key]];
-  // }
+  function getValidIdAtKey (uint key) public constant returns(bytes16, address) {
+    return (validIds[validIdKeys[key]].board, validIds[validIdKeys[key]].player);
+  }
 
   function getClubTokenAddress () public constant returns(address) {
     return address(clubToken);
@@ -79,19 +79,19 @@ contract Oracle is usingOraclize {
     clubToken = ClubToken(clubTokenAddress);
   }
 
-  function setOracleHash(string endpoint) public onlyOwner() {
-    prefix = endpoint;
-    oracleHash = sha3(endpoint);
+  function setOracleHash(bytes32 endpoint) public onlyOwner() {
+    oracleHash = endpoint;
   }
 
   function mineClover1(bytes16 board, address player, string endpoint, string payload) public onlyOwner(){
+    newOraclizeQuery("hits mineclover1");
     if (sha3(endpoint) != oracleHash || uint(oracleHash) == 0) revert();
     if (oraclize_getPrice("URL") > this.balance) {
         newOraclizeQuery("Contract Out Of Money");
         clubToken.deleteClover(board);
     } else {
-        string memory foo = strConcat(endpoint, payload);
-        bytes32 queryId = oraclize_query("URL", infura, foo, 400000);
+        newOraclizeQuery("Attempt Oracle");
+        bytes32 queryId = oraclize_query("URL", 'json(https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d).result', strConcat(endpoint, payload), 400000);
         validIds[queryId].board = board;
         validIds[queryId].player = player;
     }

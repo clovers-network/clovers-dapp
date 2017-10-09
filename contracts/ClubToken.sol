@@ -35,7 +35,7 @@ contract ClubToken is StandardToken {
   uint256 nameLength = 21;
   address public owner;
   string public name = "ClubToken";
-  string public symbol = "♧";
+  string public symbol = "♣︎";
 
 
   // Modifiers
@@ -53,8 +53,8 @@ contract ClubToken is StandardToken {
   event newUserName(address player, string name);
   event newCloverName(bytes16 board, string name);
   event Registered(address newOwner, uint256 lastPaidAmount, bytes16 board, bool newBoard, bytes28 first32Moves, bytes28 lastMoves, uint256 modified, uint256 findersFee, bool validated);
-  event newOraclizeQuery(string message);
-  event newOraclizeSubmit(uint8 level);
+  // event newOraclizeQuery(string message);
+  // event newOraclizeSubmit(uint8 level);
 
 
   // Contract Administration
@@ -162,9 +162,7 @@ contract ClubToken is StandardToken {
     players[msg.sender].currentCount += 1;
   }
 
-  function registerPlayer() {
-    registerPlayerExplicit(msg.sender);
-  }
+
 
   function registerPlayerExplicit(address player) {
     if (!players[player].exists) {
@@ -270,7 +268,7 @@ contract ClubToken is StandardToken {
   }
 
   function adminMineClover (bytes28 first32Moves, bytes28 lastMoves, bytes16 board, uint startPrice) public doesNotExist(board) onlyAdmin() {
-    registerPlayer();
+    registerPlayerExplicit(msg.sender);
     addCloverToPlayer(game.board);
     Reversi.Game memory game;
     game.board = board;
@@ -301,7 +299,7 @@ contract ClubToken is StandardToken {
     if (clovers[b].previousOwners[ clovers[b].previousOwners.length - 1 ] == msg.sender) revert();
     uint nextPrice = clovers[b].previousOwners.length == 1 ? clovers[b].lastPaidAmount : clovers[b].lastPaidAmount.mul(2);
     if (balances[msg.sender] < nextPrice) revert();
-    registerPlayer();
+    registerPlayerExplicit(msg.sender);
     for (uint8 i = 1; i < 3; i++) {
       if (i <= clovers[b].previousOwners.length) {
         uint256 lastOwnerKey = clovers[b].previousOwners.length - uint(i);
@@ -385,7 +383,8 @@ contract ClubToken is StandardToken {
     if (!game.complete) revert();
     if (cloverExists(game.board)) revert();
     
-    registerPlayer();
+    registerPlayerExplicit(msg.sender);
+
     addCloverToPlayer(game.board);
     clovers[game.board].first32Moves = game.first32Moves;
     clovers[game.board].lastMoves = game.lastMoves;
@@ -450,7 +449,7 @@ contract ClubToken is StandardToken {
     oracle.setClubToken(this);
   }
 
-  function setOracleHash (string endpoint) public onlyAdmin() {
+  function setOracleHash (bytes32 endpoint) public onlyAdmin() {
     oracle.setOracleHash(endpoint);
   }
 

@@ -8,9 +8,9 @@ import utils from 'web3-utils'
 
 const ProviderEngine = require('web3-provider-engine/index.js')
 const ZeroClientProvider = require('web3-provider-engine/zero.js')
+const FilterSubprovider = require('web3-provider-engine/subproviders/filters.js')
 
 let web3 = self && self.web3
-let _web3 = false
 class Clover extends Reversi {
 
   constructor (events = false) {
@@ -44,6 +44,8 @@ class Clover extends Reversi {
     if (web3) {
       // Use Mist/MetaMask's provider
       web3Provider = web3.currentProvider
+      // web3Provider = new ProviderEngine()
+      // web3Provider.addProvider(new FilterSubprovider())
 
     } else if (!this.retryConnection){
       this.retryConnection = true
@@ -64,12 +66,14 @@ class Clover extends Reversi {
       })
     }
     if (web3Provider) {
-      _web3 = new Web3(web3Provider)
-      _web3.version.getNetwork((err, netId) => {
+      web3 = new Web3(web3Provider)
+      web3.version.getNetwork((err, netId) => {
+        console.log(netId)
         if (!err) {
           switch (netId) {
+            case '3':
             case '4':
-            case '1506031948115':
+            case '666':
               break
             default:
               this.notRinkeby = true
@@ -90,7 +94,7 @@ class Clover extends Reversi {
   }
 
   resetConnection () {
-    _web3 = false
+    web3 = false
     this.ClubToken = false
   }
 
@@ -123,8 +127,10 @@ class Clover extends Reversi {
   checkOracleHash () {
     console.log('checkOracleHash')
     return this.getOracleHash().then((hash) => {
-      console.log(hash)
-      if (hash && new BN(hash, 16).toNumber(10) === 0) {
+      let hsh = new BN(hash, 16).toNumber(10)
+      let endpoint = this.getOracleEndpoint()
+      console.log(hash, endpoint, '0x9ba47857a924351e8e7627569697fc9c19de3cf05c4e0b363420e2b20b8078aa')
+      if (hash && hsh === 0 || hash !== endpoint) {
         return this.setOracleHash()
       } else {
         return
@@ -133,7 +139,7 @@ class Clover extends Reversi {
   }
 
   checkAccount () {
-    if (!_web3) this.initWeb3()
+    if (!web3) this.initWeb3()
     if (!this.symbol) {
       this.getSymbol().then((symbol) => {
         this.symbol = symbol
@@ -146,7 +152,7 @@ class Clover extends Reversi {
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
       }).catch((err) => console.log(err))
     }
-    _web3.eth.getAccounts((error, accounts) => {
+    web3.eth.getAccounts((error, accounts) => {
       if (error) throw new Error(error)
       if (accounts.length && this.account !== accounts[0]) {
         this.account = accounts[0]
@@ -171,7 +177,7 @@ class Clover extends Reversi {
 
   currentBlock () {
     return new Promise((resolve, reject) => {
-      _web3.eth.getBlock('latest', (error, results) => {
+      web3.eth.getBlock('latest', (error, results) => {
         if (error) reject(error)
         resolve(results)
       })
@@ -179,11 +185,11 @@ class Clover extends Reversi {
   }
 
   setContract () {
-    if (!_web3) this.initWeb3()
+    if (!web3) this.initWeb3()
     this.ClubToken = contract(clubTokenArtifacts)
-    this.ClubToken.setProvider(_web3.currentProvider)
+    this.ClubToken.setProvider(web3.currentProvider)
     this.Oracle = contract(oracleArtifacts)
-    this.Oracle.setProvider(_web3.currentProvider)
+    this.Oracle.setProvider(web3.currentProvider)
   }
 
   stopEvents () {
@@ -369,8 +375,14 @@ class Clover extends Reversi {
     return this.isAdmin().then((isAdmin) => {
       if (!isAdmin) throw new Error('Not Admin')
       let endpoint = this.getOracleEndpoint()
+      console.log(endpoint)
       return this.deploy().then((instance) => {
-        return instance.setOracleHash(endpoint, {from: this.account})
+        return instance.setOracleHash(endpoint, {from: this.account}).then((response) => {
+          console.log(response)
+          this.getOracleHash()
+        }).catch((error) => {
+          console.error(error)
+        })
       })
     })
   }
@@ -385,7 +397,7 @@ class Clover extends Reversi {
     return functionName
   }
 
-  getOracleEndpoint () {
+  getOracleEndpoint (encrypt = true) {
     let validateEndpoint = 'json(https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d).result'
     
     let functionName = utils.sha3('gameIsValid(bytes28,bytes28)')
@@ -395,11 +407,11 @@ class Clover extends Reversi {
 
     let endpoint = '{"jsonrpc":"2.0","id":1,"method":"eth_call","params":[{"to":"' + this.address + '","data":"' + functionName
 
-    return endpoint
+    return encrypt ? utils.sha3(endpoint) : endpoint
 }
 
   sha3 (string) {
-    return _web3.utils.sha3(string)
+    return web3.utils.sha3(string)
   }
 
   getOraclePayload (first32Moves = this.first32Moves, lastMoves = this.lastMoves) {
@@ -634,7 +646,7 @@ class Clover extends Reversi {
       if (exists) throw new Error('Board is already claimed')
       return this.isAdmin().then((isAdmin) => {
         return this.deploy().then((instance) => {
-          if (isAdmin) {
+          if (isAdmin == 'foo') {
             return this.adminMineClover(byteFirst32Moves, byteLastMoves, byteBoard, startPrice)
           } else {
             console.log('hier')
@@ -805,11 +817,11 @@ class Clover extends Reversi {
   }
 
   oracleMineClover(board = this.board, first32Moves = this.byteFirst32Moves, lastMoves = this.byteLastMoves, startPrice = 100) {
-    let endpoint = this.getOracleEndpoint()
+    let endpoint = this.getOracleEndpoint(false)
     let payload = this.getOraclePayload(first32Moves, lastMoves)
-    console.log(board)
-    console.log(endpoint)
-    console.log(payload)
+    this.getCloversCount().then((num) => {
+      console.log(num + ' clovers')
+    })
     return this.deploy().then((instance) => {
       // return instance.registerPlayerExplicit(this.account, {from: this.account});
       // return instance.claimClover(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), {from: this.account})

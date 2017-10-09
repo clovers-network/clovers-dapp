@@ -8,7 +8,7 @@
 `npm install`
 
 ### serve test network at localhost:8545 in a separate terminal
-`testrpc`
+`testrpc --i=666 --port=8546 --gasLimit=300000000000000`
 
 ### build and deploy contract onto network
 ````
@@ -32,7 +32,7 @@ truffle migrate
 `/Applications/Ethereum\ Wallet.app/Contents/MacOS/Ethereum\ Wallet --rpc /Users/billy/.rinkeby/geth.ipc`
 
 ### or ropsten
-`geth --datadir=/Users/billy/Library/Ethereum/testnet --cache=1024 --fast --testnet --networkid=4 --rinkeby --rpc --rpcapi db,eth,net,web3,personal --unlock="0xcDE232e835330daFA2Ebc629219BbF4fc92cfa24"  --bootnodes "enode://20c9ad97c081d63397d7b685a412227a40e23c8bdc6688c6f37e97cfbc22d2b4d1db1510d8f61e6a8866ad7f0e17c02b14182d37ea7c3c8b9c2683aeb6b733a1@52.169.14.227:30303,enode://6ce05930c72abc632c58e2e4324f7c7ea478cec0ed4fa2528982cf34483094e9cbc9216e7aa349691242576d552a2a56aaeae426c5303ded677ce455ba1acd9d@13.84.180.240:30303"`
+`geth --datadir=/Users/billy/Library/Ethereum/testnet  --fast --testnet --networkid=3 --rpc --rpcapi db,eth,net,web3,personal --unlock="0x59b809fd23B65b59D28229C3067bd26B09b80fca"  --bootnodes "enode://20c9ad97c081d63397d7b685a412227a40e23c8bdc6688c6f37e97cfbc22d2b4d1db1510d8f61e6a8866ad7f0e17c02b14182d37ea7c3c8b9c2683aeb6b733a1@52.169.14.227:30303,enode://6ce05930c72abc632c58e2e4324f7c7ea478cec0ed4fa2528982cf34483094e9cbc9216e7aa349691242576d552a2a56aaeae426c5303ded677ce455ba1acd9d@13.84.180.240:30303"`
 
 ### &
 `/Applications/Ethereum\ Wallet.app/Contents/MacOS/Ethereum\ Wallet --rpc /Users/billy/Library/Ethereum/testnet/geth.ipc`
