@@ -17,7 +17,7 @@ class Clover extends Reversi {
     super()
     this.notRinkeby = false
     this.error = false
-    this.genesisBlock = 1000000
+    this.genesisBlock = 0
     this.address = null
     this.ClubToken = null
     this.account = null
@@ -200,17 +200,22 @@ class Clover extends Reversi {
 
   getPastEvents (depth = 0, limit = 200000) {
     return this.currentBlock().then((currentBlock) => {
+      console.log(currentBlock.number)
       if (currentBlock.number - (limit * depth) >= this.genesisBlock) {
         this.eventsComplete = false
         window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
         return this.deploy().then((instance) => {
           let fromBlock = this.genesisBlock + (limit * depth)
           let toBlock = this.genesisBlock + (limit * (depth + 1))
+          if (toBlock > currentBlock.number) {
+            toBlock = currentBlock.number
+          }
           console.log(fromBlock, toBlock)
           return instance.Registered({x: null}, {
             fromBlock,
             toBlock
           }).get((error, result) => {
+            console.log(error, result)
             if (error) {
               this.error = 'need-metamask'
               this.resetConnection()
@@ -290,53 +295,55 @@ class Clover extends Reversi {
   }
 
   watchFutureEvents () {
-    this.deploy().then((instance) => {
-      instance.Registered({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
-        if (error) {
-          this.error = 'need-metamask'
-          this.resetConnection()
-        } else {
-          this.error = false
-          console.log(result)
-          if (result && result.args.newOwner !== '0x') {
-            window.dispatchEvent(new CustomEvent('eventRegistered', {detail: JSON.parse(JSON.stringify(result))}))
+    this.stopEvents().then(() => {
+      this.deploy().then((instance) => {
+        instance.Registered({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
+          if (error) {
+            this.error = 'need-metamask'
+            this.resetConnection()
+          } else {
+            this.error = false
+            console.log(result)
+            if (result && result.args.newOwner !== '0x') {
+              window.dispatchEvent(new CustomEvent('eventRegistered', {detail: JSON.parse(JSON.stringify(result))}))
+            }
           }
-        }
-        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+          window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+        })
+        instance.newCloverName({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
+          if (error) {
+            this.error = 'need-metamask'
+            this.resetConnection()
+          } else {
+            this.error = false
+            window.dispatchEvent(new CustomEvent('newClovernameEvent', {detail: result}))
+          }
+          window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+        })
+        instance.newUserName({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
+          if (error) {
+            this.error = 'need-metamask'
+            this.resetConnection()
+          } else {
+            this.error = false
+            window.dispatchEvent(new CustomEvent('newUsernameEvent', {detail: result}))
+          }
+          window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
+        })
       })
-      instance.newCloverName({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
-        if (error) {
-          this.error = 'need-metamask'
-          this.resetConnection()
-        } else {
-          this.error = false
-          window.dispatchEvent(new CustomEvent('newClovernameEvent', {detail: result}))
-        }
-        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-      })
-      instance.newUserName({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
-        if (error) {
-          this.error = 'need-metamask'
-          this.resetConnection()
-        } else {
-          this.error = false
-          window.dispatchEvent(new CustomEvent('newUsernameEvent', {detail: result}))
-        }
-        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-      })
-    })
-    this.Oracle.deployed().then((instance) => {
-      console.log('initiate live oracles')
-      instance.newOraclizeQuery({}, {fromBlock: 'latest'}).watch((error, result) => {
-        console.log(error, result)
-        if (error) {
-          this.error = 'need-metamask'
-          this.resetConnection()
-        } else {
-          this.error = false
-          console.log('ORACLE LIVE')
-          console.log(result)
-        }
+      this.Oracle.deployed().then((instance) => {
+        console.log('initiate live oracles')
+        instance.newOraclizeQuery({}, {fromBlock: 'latest'}).watch((error, result) => {
+          console.log(error, result)
+          if (error) {
+            this.error = 'need-metamask'
+            this.resetConnection()
+          } else {
+            this.error = false
+            console.log('ORACLE LIVE')
+            console.log(result)
+          }
+        })
       })
     })
   }
@@ -827,6 +834,17 @@ class Clover extends Reversi {
       // return instance.claimClover(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), {from: this.account})
       return instance.oracleMineClover(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), endpoint, payload, {from: this.account})
       // return instance.oracleMineClover2(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), payload, {from: this.account})
+    })
+  }
+
+  __callback(id) {
+    return this.Oracle.deployed().then((instance) => {
+      console.log(instance)
+      return instance.__callback(new BN(id, 16), '0x0000000000000000000000000000000000000000000000000000000000000001', {from: this.account}).then((result) => {
+        console.log('result', result)
+        return result
+        // getValidIdKeysCount
+      })
     })
   }
 

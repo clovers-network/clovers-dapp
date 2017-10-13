@@ -85,10 +85,10 @@ module.exports = {
     // },
     development: {
       host: "localhost",
-      port: 8546,
+      port: 8545,
       network_id: 666,
-      from: '0x59b809fd23B65b59D28229C3067bd26B09b80fca',
-      gas: 10000000
+      from: '0x5899c1651653e1e4a110cd45c7f4e9f576de0670',
+      gas: 7000000
     },
   },
   // rpc: {

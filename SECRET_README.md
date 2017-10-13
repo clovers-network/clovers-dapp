@@ -8,7 +8,10 @@
 `npm install`
 
 ### serve test network at localhost:8545 in a separate terminal
-`testrpc --i=666 --port=8546 --gasLimit=300000000000000`
+`testrpc  -m="correct hover crystal skill brass similar lock bone salon joke caught error" -i=666 --accounts 50`
+
+### oracle test net bridge
+`node bridge -a 49 --dev`
 
 ### build and deploy contract onto network
 ````

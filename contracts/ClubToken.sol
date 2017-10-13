@@ -24,7 +24,7 @@ contract ClubToken is StandardToken {
   Oracle oracle;
 
   uint256 public decimals = 0;
-  uint256 public INITIAL_SUPPLY = 1;
+  uint256 public INITIAL_SUPPLY = 1000000000;
   uint256 payMultiplier = 10;
   uint256 Symmetricals;
   uint256 RotSym;

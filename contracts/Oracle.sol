@@ -83,34 +83,43 @@ contract Oracle is usingOraclize {
     oracleHash = endpoint;
   }
 
-  function mineClover1(bytes16 board, address player, string endpoint, string payload) public onlyOwner(){
+  function mineClover1(bytes16 board, address player, string endpoint, string payload) public onlyOwner() returns(bytes32){
     newOraclizeQuery("hits mineclover1");
     if (sha3(endpoint) != oracleHash || uint(oracleHash) == 0) revert();
+    bytes32 queryId;
     if (oraclize_getPrice("URL") > this.balance) {
         newOraclizeQuery("Contract Out Of Money");
         clubToken.deleteClover(board);
     } else {
         newOraclizeQuery("Attempt Oracle");
-        bytes32 queryId = oraclize_query("URL", 'json(https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d).result', strConcat(endpoint, payload), 400000);
+        queryId = oraclize_query("URL", 'json(https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d).result', strConcat(endpoint, payload), 500000);
         validIds[queryId].board = board;
         validIds[queryId].player = player;
     }
+    return queryId;
   }
 
-  function __callback(bytes32 myid, string result) {
+  function __callback(bytes32 myid, string result) public{
+    newOraclizeQuery("callback called");
     if (uint8(validIds[myid].board) != 0) {
-      if (msg.sender == oraclize_cbAddress()) {
+      newOraclizeQuery("callback called 2");
+      // if (msg.sender == oraclize_cbAddress()) {
         bytes16 board = validIds[myid].board;
         address player = validIds[myid].player;
         if (bytes(result)[65] != 0x31) {
+          newOraclizeQuery("callback called 4");
           clubToken.deleteClover(board);
         } else {
+          newOraclizeQuery("callback called 5");
           if (clubToken.cloverExistsUnvalidated(board)) {
+            newOraclizeQuery("callback called 6");
             clubToken.oracleAddClover(board, player);
             delete validIds[myid];
           }
         }
-      }
+      // }
+    } else {
+      newOraclizeQuery("callback called 3");
     }
   }
 
