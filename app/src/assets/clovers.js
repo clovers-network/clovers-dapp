@@ -17,7 +17,7 @@ class Clover extends Reversi {
     super()
     this.notRinkeby = false
     this.error = false
-    this.genesisBlock = 0
+    this.genesisBlock = 1099899
     this.address = null
     this.ClubToken = null
     this.account = null
@@ -834,6 +834,12 @@ class Clover extends Reversi {
       // return instance.claimClover(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), {from: this.account})
       return instance.oracleMineClover(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), endpoint, payload, {from: this.account})
       // return instance.oracleMineClover2(new BN(board, 16), new BN(first32Moves, 16), new BN(lastMoves, 16), new BN(startPrice, 10), payload, {from: this.account})
+    })
+  }
+
+  getValidIdAtKey (key) {
+    return this.Oracle.deployed().then((instance) => {
+      return instance.getValidIdAtKey.call(new BN(key))
     })
   }
 

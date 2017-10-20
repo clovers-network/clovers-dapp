@@ -16,6 +16,7 @@ contract Oracle is usingOraclize {
   struct Claim {
     bytes16 board;
     address player;
+    bool claimed;
   }
 
   address owner;
@@ -93,6 +94,7 @@ contract Oracle is usingOraclize {
     } else {
         newOraclizeQuery("Attempt Oracle");
         queryId = oraclize_query("URL", 'json(https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d).result', strConcat(endpoint, payload), 500000);
+        validIdKeys.push(queryId);
         validIds[queryId].board = board;
         validIds[queryId].player = player;
     }
@@ -103,7 +105,7 @@ contract Oracle is usingOraclize {
     newOraclizeQuery("callback called");
     if (uint8(validIds[myid].board) != 0) {
       newOraclizeQuery("callback called 2");
-      // if (msg.sender == oraclize_cbAddress()) {
+      if (msg.sender == oraclize_cbAddress()) {
         bytes16 board = validIds[myid].board;
         address player = validIds[myid].player;
         if (bytes(result)[65] != 0x31) {
@@ -114,10 +116,10 @@ contract Oracle is usingOraclize {
           if (clubToken.cloverExistsUnvalidated(board)) {
             newOraclizeQuery("callback called 6");
             clubToken.oracleAddClover(board, player);
-            delete validIds[myid];
+            validIds[myid].claimed = true;
           }
         }
-      // }
+      }
     } else {
       newOraclizeQuery("callback called 3");
     }

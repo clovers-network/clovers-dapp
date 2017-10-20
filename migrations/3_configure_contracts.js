@@ -20,7 +20,7 @@ module.exports = function(deployer, helper, accounts) {
 };
 
 function getOracleEndpoint () {
-    let validateEndpoint = 'json(https://api.infura.io/v1/jsonrpc/rinkeby).result'
+    let validateEndpoint = 'json(https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d).result'
     
     let functionName = utils.sha3('gameIsValid(bytes28,bytes28)')
     functionName = utils.hexToBytes(functionName)
