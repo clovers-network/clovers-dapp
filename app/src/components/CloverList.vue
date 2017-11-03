@@ -11,7 +11,7 @@
     <div id="break-up" class="bg-gray white p2 md-p3 flex justify-around shadow-bottom">
       <div>{{ allClovers.length }} Clovers Claimed</div>
       <div>{{ symmetries.RotSym }} Rotational</div>
-      <div>{{ symmetries.X0Sym + symmetries.Y0Sym }} Perpindicular</div>
+      <div>{{ symmetries.X0Sym + symmetries.Y0Sym }} Perpendicular</div>
       <div>{{ symmetries.XYSym + symmetries.XnYSym }} Diagonal</div>
     </div>
 
