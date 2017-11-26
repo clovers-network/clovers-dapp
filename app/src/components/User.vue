@@ -2,7 +2,7 @@
   <div class="">
     <div class=" h2 bg-gray white p2 md-p3 pre mono" >
       <div class="max-width-3 mx-auto">
-        <a class="  white underline" target="_blank" :href="'https://rinkeby.etherscan.io/token/0xcc0604514f71b8d39e13315d59f4115702b42646?a=' + address">{{address}}</a>
+        <a :class="{small: address.length > 35}" class="  white underline" target="_blank" :href="'https://rinkeby.etherscan.io/token/0xcc0604514f71b8d39e13315d59f4115702b42646?a=' + address">{{address}}</a>
         <div class='h1 right'>{{balanceFormatted}} ♧</div>
       </div>
     </div>
@@ -46,6 +46,9 @@
       'user.clovers': function () {
         console.log('users.clovers changed')
       },
+      account () {
+        console.log('account changed')
+      },
       username () {
         this.name = this.username
       }
@@ -58,7 +61,8 @@
         return this.user && this.user.name
       },
       mine () {
-        return this.address === this.account
+        console.log(this.address, this.account)
+        return this.address && this.account && (this.address.toUpperCase() === this.account.toUpperCase())
       },
       address () {
         return this.$route.params.address
@@ -122,3 +126,8 @@
     components: {CloverList, Activity}
   }
 </script>
+<style  lang="scss" scoped>
+  .small{
+    font-size: 0.8em;
+  }
+</style>

@@ -88,11 +88,11 @@
             </thead>
             <tbody>
               <tr v-for="(event, idx) in flipEvents" :class="{muted: idx > 2}" class="h3">
-                <td>{{ eventTime(event.args.modified) }}</td>
+                <td>{{ eventTime(event.data.modified) }}</td>
                 <td>
-                  <router-link :to="userLink(event.args.newOwner)" class=" color-inherit">{{ userName(event.args.newOwner) }}</router-link>
+                  <router-link :to="userLink(event.data.newOwner)" class=" color-inherit">{{ userName(event.data.newOwner) }}</router-link>
                 </td>
-                <td>{{ cost(event.args, idx) }}</td>
+                <td>{{ cost(event.data, idx) }}</td>
                 <td>{{ calcEarnings(idx) }} &clubs;</td>
               </tr>
               <tr class="h3" :class="{muted: flippers > 2}">
@@ -117,7 +117,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions, mapMutations } from 'vuex'
+  import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
   import moment from 'moment'
   import Reversi from '@/assets/reversi'
   import Symmetry from '@/components/Symmetry'
@@ -189,11 +189,11 @@
           console.error(err)
         })
       },
-      cost (args, idx) {
-        return args.lastPaidAmount && parseInt(args.lastPaidAmount).toLocaleString() + ' ♣'
+      cost (data, idx) {
+        return data.lastPaidAmount && parseInt(data.lastPaidAmount).toLocaleString() + ' ♣'
       },
       calcEarnings (idx) {
-        let paid = -parseInt(this.flipEvents[idx].args.lastPaidAmount)
+        let paid = -parseInt(this.flipEvents[idx].data.lastPaidAmount)
         let max = Math.min(idx, 2)
         let earned = (Math.abs(paid) * (max * max))
 
@@ -206,7 +206,7 @@
         return `/users/${address}`
       },
       userName (address) {
-        let username = this.usernames.find((u) => u.address === address)
+        let username = this.users.find((u) => u.address === address)
         username = username ? username.name : address
         return xss(username.length > 8 ? username.substring(0, 8) + '...' : username)
       },
@@ -315,12 +315,12 @@
     },
     computed: {
       flipEvents () {
-        return this.$store.state.registeredEvents.filter((e) => {
-          return e.args.board === this.boardId && !e.args.newBoard
+        return this.registeredEvents.filter((e) => {
+          return e.data.board === this.boardId && !e.data.newBoard
         }).reverse()
       },
       board () {
-        return this.boardId && this.allClovers.find(c => c.board === this.boardId)
+        return this.allClovers && this.boardId && this.allClovers.find(c => c.board === this.boardId)
       },
       visibleMoveString () {
         if (!this.moveString) return
@@ -349,7 +349,10 @@
         return this.price && this.price.toLocaleString()
       },
       founder () {
-        return this.board && this.board.previousOwners && this.board.previousOwners[0]
+        let address = this.board && this.board.previousOwners && this.board.previousOwners[0]
+        if (!address) return ''
+        let founder = this.users.find((u) => u.address === address)
+        return founder || new Error('Couldn\'t find founder')
       },
       founderName () {
         return this.founder && xss(this.founder.name.length > 21 ? this.founder.name.slice(0, 21) + '&hellip;' : this.founder.name)
@@ -359,11 +362,14 @@
       },
       calcFinderEarnings () {
         let max = Math.min(this.flippers, 2)
-        let firstPaid = this.flipEvents.length ? this.flipEvents[this.flippers - 1].args.lastPaidAmount : 0
+        let firstPaid = this.flipEvents.length ? this.flipEvents[this.flippers - 1].data.lastPaidAmount : 0
         return parseInt(this.findersFee) + (firstPaid * max)
       },
       owner () {
-        return this.board && this.board.previousOwners && this.board.previousOwners[this.board.previousOwners.length - 1]
+        let address = this.board && this.board.previousOwners && this.board.previousOwners[this.board.previousOwners.length - 1]
+        if (!address) return ''
+        let owner = this.users.find((u) => u.address === address)
+        return owner || new Error('Couldn\'t find owner')
       },
       ownerName () {
         return this.owner && xss(this.owner.name.length > 9 ? this.owner.name.slice(0, 9) + '&hellip;' : this.owner.name)
@@ -392,14 +398,16 @@
       historyToggleText () {
         return this.showHistory ? 'hide clover history' : 'show clover history'
       },
-
+      ...mapState([
+        'users'
+      ]),
       ...mapGetters([
         'balance',
         'account',
         'clover',
-        'usernames',
         'allClovers',
-        'account'
+        'account',
+        'registeredEvents'
       ])
     },
     mounted () {

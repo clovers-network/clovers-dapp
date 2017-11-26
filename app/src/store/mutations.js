@@ -69,6 +69,15 @@ export default {
   STORED_CLOVERS (state, clovers) {
     state.allMinedClovers = clovers
   },
+  UPDATE_ALLCLOVERS (state, allClovers) {
+    state.allClovers = allClovers
+  },
+  UPDATE_LOGS (state, logs) {
+    state.logs = logs
+  },
+  UPDATE_USERS (state, users) {
+    state.users = users
+  },
   STORED_COUNT (state, total) {
     state.totalMined = total
   },

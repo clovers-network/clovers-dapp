@@ -168,10 +168,10 @@
         }).filter((c) => {
           if (!this.search && !this.filter) return c
           return c.previousOwners.slice(-1).filter((p) => {
-            return (p.name && p.name.search(this.search || this.filter) > -1) || p.address.search(this.search || this.filter) > -1
+            return p.search(this.search || this.filter) > -1
           }).length || // owner
           c.previousOwners.slice(0, 1).filter((p) => {
-            return (p.name && p.name.search(this.search || this.filter) > -1) || p.address.search(this.search || this.filter) > -1
+            return p.search(this.search || this.filter) > -1
           }).length || // founder
           c.name && c.name.search(this.search || this.filter) > -1 || // board name
           c.first32Moves.search(this.search || this.filter) > -1 || // moves

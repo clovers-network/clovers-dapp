@@ -76,9 +76,11 @@ class Clover extends Reversi {
           this.connected = true
           this.checkAccount()
           this.setAccountInterval()
-          this.getPastEvents().then(() => {
-            this.watchFutureEvents()
-          })
+          if (this.events) {
+            this.getPastEvents().then(() => {
+              this.watchFutureEvents()
+            })
+          }
         }
       })
     }
@@ -94,6 +96,7 @@ class Clover extends Reversi {
       this.checkAccount()
     }, 1000)
   }
+
 
   stopAccountInterval () {
     clearInterval(this.accountInterval)
