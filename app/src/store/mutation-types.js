@@ -17,7 +17,14 @@ export const TIME_INCREMENT = 'TIME_INCREMENT'
 export const CORE_COUNT = 'CORE_COUNT'
 
 export const UPDATE_ALLCLOVERS = 'UPDATE_ALLCLOVERS'
+export const ADD_LOG = 'ADD_LOG'
 export const UPDATE_LOGS = 'UPDATE_LOGS'
+
+export const ADD_USER = 'ADD_USER'
+export const UPDATE_USER = 'UPDATE_USER'
+export const ADD_CLOVER = 'ADD_CLOVER'
+export const UPDATE_CLOVER = 'UPDATE_CLOVER'
+
 export const UPDATE_USERS = 'UPDATE_USERS'
 export const MINED_CLOVER = 'MINED_CLOVER'
 export const EXISTING_CLOVERS = 'EXISTING_CLOVERS'

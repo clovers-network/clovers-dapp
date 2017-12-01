@@ -206,7 +206,7 @@
         return `/users/${address}`
       },
       userName (address) {
-        let username = this.users.find((u) => u.address === address)
+        let username = this.users.find((u) => u.address.toLowerCase() === address.toLowerCase())
         username = username ? username.name : address
         return xss(username.length > 8 ? username.substring(0, 8) + '...' : username)
       },
@@ -351,7 +351,7 @@
       founder () {
         let address = this.board && this.board.previousOwners && this.board.previousOwners[0]
         if (!address) return ''
-        let founder = this.users.find((u) => u.address === address)
+        let founder = this.users.find((u) => u.address.toLowerCase() === address.toLowerCase())
         return founder || new Error('Couldn\'t find founder')
       },
       founderName () {
@@ -362,13 +362,15 @@
       },
       calcFinderEarnings () {
         let max = Math.min(this.flippers, 2)
-        let firstPaid = this.flipEvents.length ? this.flipEvents[this.flippers - 1].data.lastPaidAmount : 0
+        console.log('' + this.flipEvents.length)
+        console.log('' + this.flippers)
+        let firstPaid = this.flipEvents.length && this.flippers ? this.flipEvents[this.flippers - 1].data.lastPaidAmount : 0
         return parseInt(this.findersFee) + (firstPaid * max)
       },
       owner () {
         let address = this.board && this.board.previousOwners && this.board.previousOwners[this.board.previousOwners.length - 1]
         if (!address) return ''
-        let owner = this.users.find((u) => u.address === address)
+        let owner = this.users.find((u) => u.address.toLowerCase() === address.toLowerCase())
         return owner || new Error('Couldn\'t find owner')
       },
       ownerName () {
@@ -390,7 +392,7 @@
         return this.board && moment(this.board.modified * 1000).format('MMMM Do YYYY, h:mm:ss a')
       },
       currentOwner () {
-        return this.account && this.owner && (this.account === this.owner.address)
+        return this.account && this.owner && (this.account.toLowerCase() === this.owner.address.toLowerCase())
       },
       findersFee () {
         return this.board && parseInt(this.board.findersFee)

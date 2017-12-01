@@ -75,7 +75,7 @@
         'setUpSocket'
       ]),
       ...mapMutations({
-        updateClover: 'UPDATE_CLOVER',
+        updateClover: 'UPDATE_CLOVER_OBJECT',
         registerEvent: 'ADD_REGISTERED_EVENT',
         registerEvents: 'ADD_REGISTERED_EVENTS',
         newUsernameEvent: 'ADD_USERNAME_EVENT',

@@ -209,6 +209,7 @@
       clickSort (i) {
         if (i !== this.sortableIndex) {
           this.sortableIndex = i
+          this.paged = 1
         } else {
           this.asc = !this.asc
         }

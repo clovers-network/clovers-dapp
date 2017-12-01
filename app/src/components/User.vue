@@ -68,7 +68,7 @@
         return this.$route.params.address
       },
       user () {
-        return this.allUsers.find((u) => u.address === this.address)
+        return this.allUsers.find((u) => u.address.toLowerCase() === this.address.toLowerCase())
       },
       myClovers () {
         return this.user && this.user.clovers.map((c) => this.allClovers.find((ac) => ac.board === c))

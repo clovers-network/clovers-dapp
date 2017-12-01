@@ -6,34 +6,64 @@
 //   socket.send('sup!')
 // })
 
-const WebSocket = require('ws')
+// const WebSocket = require('ws')
 
-const ws = new WebSocket('ws://localhost:3333')
+// const ws = new WebSocket('ws://localhost:3333')
 
-ws.on('open', function open () {
-  console.log('open')
-  ws.send('something')
-})
+// ws.on('open', function open () {
+//   console.log('open')
+//   ws.send('something')
+// })
 
-ws.on('message', function incoming (data) {
-  console.log(data)
-})
+// ws.on('message', function incoming (data) {
+//   console.log(data)
+// })
 
+import io from 'socket.io-client'
 export default {
   setUpSocket ({commit, dispatch}) {
-    // socket.on('data', (data) => {
-    //   console.log('data ')
-    //   console.log(JSON.parse(data))
-    //   data = JSON.parse(data)
-    //   if (data.type === 'init') {
-    //     console.log('hier!')
-    //     commit('UPDATE_ALLCLOVERS', data.clovers)
-    //     commit('UPDATE_LOGS', data.logs)
-    //     commit('UPDATE_USERS', data.users)
-    //   } else {
-    //     console.log('update data')
-    //   }
-    // })
+    console.log('set up socket')
+    const socket = io('http://178.62.219.122:3333')
+
+    socket.on('disconnect', () => {
+      console.log('disconnected')
+    })
+
+    socket.on('init', ({clovers, users, logs}) => {
+      console.log('got init')
+      commit('UPDATE_ALLCLOVERS', clovers)
+      commit('UPDATE_LOGS', logs)
+      commit('UPDATE_USERS', users)
+    })
+
+    socket.on('newUser', (user) => {
+      commit('ADD_USER', user)
+      console.log(user)
+    })
+    socket.on('updateUser', (user) => {
+      commit('UPDATE_USER', user)
+      console.log(user)
+    })
+    socket.on('newClover', (clover) => {
+      commit('ADD_CLOVER', clover)
+      console.log(clover)
+    })
+    socket.on('updateClover', (clover) => {
+      commit('UPDATE_CLOVER', clover)
+      console.log(clover)
+    })
+    socket.on('newUserName', (log) => {
+      console.log(log)
+      commit('ADD_LOG', log)
+    })
+    socket.on('newCloverName', (log) => {
+      console.log(log)
+      commit('ADD_LOG', log)
+    })
+    socket.on('Registered', (log) => {
+      console.log(log)
+      commit('ADD_LOG', log)
+    })
   },
   selfDestructMsg ({ commit }, msg) {
     let msgId = commit('ADD_MSG', msg)

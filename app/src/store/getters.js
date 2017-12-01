@@ -12,7 +12,8 @@ export default {
   symbol: state => state.clover.symbol,
   account: state => state.clover.account,
   username: (state, getters) => {
-    return getters.usernames.find((u) => u.address === getters.account) || {address: getters.account, name: getters.account}
+    console.log('username calculated')
+    return state.users.find((u) => getters.account && (u.address.toLowerCase() === getters.account.toLowerCase())) || {address: getters.account, name: getters.account}
   },
   registeredEvents: state => state.logs.filter(log => log.name === 'Registered'),
   usernameEvents: state => state.usernameEvents,
@@ -23,7 +24,7 @@ export default {
   messages: state => state.messages,
   miningPower: state => state.miningPower,
   minedClovers: (state, getters) => {
-    console.log('mined clovers calced')
+    console.log('mined clovers calculated')
     return (state.allMinedClovers.length && state.allMinedClovers.map((c) => {
       let clover = getters.allClovers && getters.allClovers.find((ac) => ac.board === '0x' + c.byteBoard)
       if (clover) {
@@ -33,6 +34,7 @@ export default {
     })) || []
   },
   usernames: state => {
+    console.log('usernames calculated')
     return []
     // console.log('user names calculated')
     // let usernames = []
@@ -49,6 +51,7 @@ export default {
     // return usernames
   },
   clovernames: state => {
+    console.log('clovernames calculated')
     return []
     // console.log('clover names calculated')
     // let clovernames = []
@@ -87,6 +90,7 @@ export default {
     return {Symmetricals, RotSym, X0Sym, Y0Sym, XYSym, XnYSym, PayMultiplier: 100}
   },
   allClovers: (state, getters) => {
+    console.log('allClovers calculated')
     return state.allClovers
     // // if (!getters.clover.eventsComplete) return []
     // console.log('all clovers calculated')
@@ -140,6 +144,7 @@ export default {
     // })
   },
   allUsers: (state, getters) => {
+    console.log('allClovers calculated')
     return state.users
     // console.log('all users calculated')
     // let users = []
