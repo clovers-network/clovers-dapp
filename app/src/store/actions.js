@@ -23,7 +23,7 @@ import io from 'socket.io-client'
 export default {
   setUpSocket ({commit, dispatch}) {
     console.log('set up socket')
-    const socket = io('http://178.62.219.122:3333')
+    const socket = io('http://api.clovers.network')
 
     socket.on('disconnect', () => {
       console.log('disconnected')

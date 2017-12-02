@@ -88,12 +88,14 @@ export default {
     }
   },
   ADD_CLOVER (state, clover) {
-    state.allMinedClovers.push(clover)
+    state.allClovers.push(clover)
   },
   UPDATE_CLOVER (state, clover) {
-    let cloverKey = state.allMinedClovers.findIndex((u) => u.board.toLowerCase() === clover.board.toLowerCase())
+    console.log('update clover')
+    let cloverKey = state.allClovers.findIndex((u) => u.board.toLowerCase() === clover.board.toLowerCase())
+    console.log(cloverKey)
     if (cloverKey > -1) {
-      state.allMinedClovers.splice(cloverKey, 1, clover)
+      state.allClovers.splice(cloverKey, 1, clover)
     }
   },
   UPDATE_USERS (state, users) {
