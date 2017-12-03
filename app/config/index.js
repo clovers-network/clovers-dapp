@@ -22,8 +22,9 @@ module.exports = {
     bundleAnalyzerReport: process.env.npm_config_report
   },
   dev: {
+    https: true,
     env: require('./dev.env'),
-    port: 8080,
+    port: 8081,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
