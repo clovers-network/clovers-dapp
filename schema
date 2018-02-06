@@ -1,0 +1,33 @@
+event newUserName(address player, string name);
+event newCloverName(bytes16 board, string name);
+event Registered(address newOwner, uint256 lastPaidAmount, bytes16 board, bool newBoard, bytes28 first32Moves, bytes28 lastMoves, uint256 modified, uint256 findersFee, bool validated);
+
+clovers
+  key:bytes16 board
+  bytes32 currentOwner
+  uint256 lastPaidAmount
+  bytes28 first32Moves
+  bytes28 lastMoves
+  uint256 modified
+  uint256 originalFee
+  bool validated
+  string name
+  bytes32[] previousOwners
+
+owners
+  key:bytes32 address
+  string name
+
+
+chats
+  key:string location
+    key:uniqid key
+    bytes32 address
+    string name
+    string message
+    uint256 datetime
+
+events
+  key:string type
+    bytes32 fromAddress
+    bytes16 clover

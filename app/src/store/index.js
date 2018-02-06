@@ -21,10 +21,10 @@ const state = {
   cloversFound: 0,
   mining: false,
   miningPower: 0,
+  allClovers: [],
+  users: [],
+  logs: [],
   allMinedClovers: [],
-  registeredEvents: [],
-  usernameEvents: [],
-  clovernameEvents: [],
   messages: [],
   submittingBoards: []
 }
