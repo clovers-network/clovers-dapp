@@ -42,7 +42,9 @@
         return name && (name.length > 9 ? name.slice(0, 9) + '&hellip;' : name)
       },
       boardOwner () {
-        let owner = this.board.previousOwners && this.board.previousOwners[ this.board.previousOwners.length - 1 ].name
+        let address = this.board.previousOwners && this.board.previousOwners[ this.board.previousOwners.length - 1 ]
+        let owner = this.allUsers.find((u) => u.address === address)
+        owner = owner && owner.address && owner.name || address
         return owner && 'Owned By: ' + (owner.length > 9 ? owner.slice(0, 9) + '&hellip;' : owner)
       },
       findersFee () {
@@ -72,7 +74,8 @@
         return 'Flipped ' + moment(this.board.modified * 1000).startOf('hour').fromNow()
       },
       ...mapGetters([
-        'symmetries'
+        'symmetries',
+        'allUsers'
       ])
     }
   }
