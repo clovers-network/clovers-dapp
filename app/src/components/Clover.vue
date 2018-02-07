@@ -17,7 +17,7 @@
             <p class="h2">
               <form v-if='currentOwner' class='inline-block border-bottom' @submit.prevent="changeName()">
                 <input class='input big align-right white' type="text" placeholder="Name" v-model="name"/></form>
-              <span v-else class="h1" v-html="name"></span>
+              <span v-else class="h1" v-html="trim(name, 16)"></span>
             </p>
             <div>
               Flips
@@ -137,6 +137,9 @@
       }
     },
     methods: {
+      trim (string, len = 8) {
+        return xss(string > len ? string.substring(0, len) + '...' : string)
+      },
       copy (type) {
         let msg = ''
         if (type === 'moves') {
@@ -189,8 +192,8 @@
           console.error(err)
         })
       },
-      cost (data, idx) {
-        return data.lastPaidAmount && parseInt(data.lastPaidAmount).toLocaleString() + ' ♣'
+      cost (args, idx) {
+        return args.lastPaidAmount && parseInt(args.lastPaidAmount).toLocaleString() + ' ♣'
       },
       calcEarnings (idx) {
         let paid = -parseInt(this.flipEvents[idx].data.lastPaidAmount)
@@ -206,7 +209,7 @@
         return `/users/${address}`
       },
       userName (address) {
-        let username = this.users.find((u) => u.address.toLowerCase() === address.toLowerCase())
+        let username = this.usernames.find((u) => u.address === address)
         username = username ? username.name : address
         return xss(username.length > 8 ? username.substring(0, 8) + '...' : username)
       },
@@ -315,12 +318,12 @@
     },
     computed: {
       flipEvents () {
-        return this.registeredEvents.filter((e) => {
-          return e.data.board === this.boardId && !e.data.newBoard
+        return this.logs.filter((e) => {
+          return e.name === 'Registered' && e.data.board === this.boardId && !e.data.newBoard
         }).reverse()
       },
       board () {
-        return this.allClovers && this.boardId && this.allClovers.find(c => c.board === this.boardId)
+        return this.boardId && this.allClovers.find(c => c.board === this.boardId)
       },
       visibleMoveString () {
         if (!this.moveString) return
@@ -350,9 +353,7 @@
       },
       founder () {
         let address = this.board && this.board.previousOwners && this.board.previousOwners[0]
-        if (!address) return ''
-        let founder = this.users.find((u) => u.address.toLowerCase() === address.toLowerCase())
-        return founder || new Error('Couldn\'t find founder')
+        return this.users.find(u => u.address === address)
       },
       founderName () {
         return this.founder && xss(this.founder.name.length > 21 ? this.founder.name.slice(0, 21) + '&hellip;' : this.founder.name)
@@ -362,16 +363,12 @@
       },
       calcFinderEarnings () {
         let max = Math.min(this.flippers, 2)
-        console.log('' + this.flipEvents.length)
-        console.log('' + this.flippers)
-        let firstPaid = this.flipEvents.length && this.flippers ? this.flipEvents[this.flippers - 1].data.lastPaidAmount : 0
+        let firstPaid = this.flipEvents.length ? this.flipEvents[this.flippers - 1].data.lastPaidAmount : 0
         return parseInt(this.findersFee) + (firstPaid * max)
       },
       owner () {
         let address = this.board && this.board.previousOwners && this.board.previousOwners[this.board.previousOwners.length - 1]
-        if (!address) return ''
-        let owner = this.users.find((u) => u.address.toLowerCase() === address.toLowerCase())
-        return owner || new Error('Couldn\'t find owner')
+        return this.users.find(u => u.address === address)
       },
       ownerName () {
         return this.owner && xss(this.owner.name.length > 9 ? this.owner.name.slice(0, 9) + '&hellip;' : this.owner.name)
@@ -392,7 +389,7 @@
         return this.board && moment(this.board.modified * 1000).format('MMMM Do YYYY, h:mm:ss a')
       },
       currentOwner () {
-        return this.account && this.owner && (this.account.toLowerCase() === this.owner.address.toLowerCase())
+        return this.account && this.owner && (this.account === this.owner.address)
       },
       findersFee () {
         return this.board && parseInt(this.board.findersFee)
@@ -401,15 +398,16 @@
         return this.showHistory ? 'hide clover history' : 'show clover history'
       },
       ...mapState([
-        'users'
+        'users',
+        'logs'
       ]),
       ...mapGetters([
         'balance',
         'account',
         'clover',
+        'usernames',
         'allClovers',
-        'account',
-        'registeredEvents'
+        'account'
       ])
     },
     mounted () {

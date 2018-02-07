@@ -145,7 +145,7 @@ export default {
     // })
   },
   allUsers: (state, getters) => {
-    console.log('allClovers calculated')
+    console.log('allUsers calculated')
     return state.users
     // console.log('all users calculated')
     // let users = []
