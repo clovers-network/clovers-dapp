@@ -16,9 +16,7 @@
     </div>
 
     <div v-if="allClovers.length" class="mt2 px2">
-
-
-
+      <email />
       <div class="hide">
         <form
           class="border-bottom inline-block my1"
@@ -74,34 +72,37 @@
 
 
 
-         <div class=" max-width-4 mx-auto flex justify-between align-middle" >
-          <div class=" " :class="{hide: pagedTotal === 1}">
-            <button
-            class="btn btn-outline mb1 blue"
-            :disabled="!prevPossible"
-            @click="chPage(-1)">←</button>&nbsp;
-          </div>
-
-          <div class="center mb2"  :class="{hide: pagedTotal === 0}">
-            <span>{{paged}} / {{pagedTotal}}</span>
-          </div>
-
-          <div class=" " :class="{hide: pagedTotal === 1}">
-            <button
-            class="btn btn-outline mb1 blue"
-            :disabled="!nextPossible"
-            @click="chPage(1)">→</button>&nbsp;
-          </div>
+       <div class=" max-width-4 mx-auto flex justify-between align-middle pb4" >
+        <div class=" " :class="{hide: pagedTotal === 1}">
+          <button
+          class="btn btn-outline mb1 blue"
+          :disabled="!prevPossible"
+          @click="chPage(-1)">←</button>&nbsp;
         </div>
+
+        <div class="center mb2"  :class="{hide: pagedTotal === 0}">
+          <span>{{paged}} / {{pagedTotal}}</span>
+        </div>
+
+        <div class=" " :class="{hide: pagedTotal === 1}">
+          <button
+          class="btn btn-outline mb1 blue"
+          :disabled="!nextPossible"
+          @click="chPage(1)">→</button>&nbsp;
+        </div>
+      </div>
 
     </div>
   </div>
 </template>
 
 <script>
+  import Email from '@/components/Email'
+
   import { mapGetters } from 'vuex'
   export default {
     name: 'CloverList',
+    components: { Email },
     data () {
       return {
         paged: 1,

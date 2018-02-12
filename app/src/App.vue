@@ -13,6 +13,7 @@
 
 <script>
   import AppHeader from '@/components/AppHeader'
+
   import Foot from '@/components/Foot'
   import Instructions from '@/components/Instructions'
   import CloverList from '@/components/CloverList'

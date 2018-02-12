@@ -16,7 +16,6 @@
         </div>
       </div>
     </div>
-    
   </div>
 </template>
 
@@ -46,7 +45,8 @@
   }
 </script>
 
-<style>
+<style lang="scss">
+
   .intro-screen {
 
     .clover {
