@@ -389,7 +389,10 @@
         return this.board && moment(this.board.modified * 1000).format('MMMM Do YYYY, h:mm:ss a')
       },
       currentOwner () {
-        return this.account && this.owner && (this.account === this.owner.address)
+        console.log(this.account ? 'account' : 'not account')
+        console.log(this.owner ? 'owner' : 'not owner')
+        console.log(this.account === this.owner.address ? 'account == owner' : 'not account == owner', this.account, this.owner.address)
+        return this.account && this.owner && (this.account.toLowerCase() === this.owner.address.toLowerCase())
       },
       findersFee () {
         return this.board && parseInt(this.board.findersFee)

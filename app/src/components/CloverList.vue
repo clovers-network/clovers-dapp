@@ -109,7 +109,7 @@
         limit: 18,
         limits: [5, 10, 20, 50, 100],
         asc: true,
-        sortableIndex: 3,
+        sortableIndex: 0,
         symTypes: ['RotSym', 'Y0Sym', 'X0Sym', 'XYSym', 'XnYSym'],
         sortable: ['Date Flipped', 'Date Found', 'Current Price', 'Times Flipped'],
         search: null
