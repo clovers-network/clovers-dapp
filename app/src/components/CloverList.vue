@@ -99,7 +99,7 @@
 <script>
   import Email from '@/components/Email'
 
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapState } from 'vuex'
   export default {
     name: 'CloverList',
     components: { Email },
@@ -181,9 +181,11 @@
           c.board.search(this.search || this.filter) > -1 // board
         })
       },
+      ...mapState([
+        'allClovers'
+      ]),
       ...mapGetters([
         'clover',
-        'allClovers',
         'usernames',
         'clovernames',
         'symmetries'

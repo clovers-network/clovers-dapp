@@ -18,7 +18,7 @@
   import Instructions from '@/components/Instructions'
   import CloverList from '@/components/CloverList'
   import Messages from '@/components/Messages'
-  import { mapGetters, mapMutations, mapActions } from 'vuex'
+  import { mapGetters, mapMutations, mapActions, mapState } from 'vuex'
 
   export default {
     name: 'app',
@@ -59,12 +59,14 @@
       hideMainCloverList () {
         return this.$route.meta.hideMainCloverList
       },
+      ...mapState([
+        'allClovers'
+      ]),
       ...mapGetters({
         readOnly: 'readOnly',
         notRinkeby: 'notRinkeby',
         account: 'account',
-        clover: 'clover',
-        allClovers: 'allClovers'
+        clover: 'clover'
       })
     },
     methods: {
@@ -96,6 +98,7 @@
         this.clover.initWeb3()
       }, 5000)
       window.addEventListener('updateCloverObject', (e) => {
+        console.log('updateClover')
         this.updateClover(e.detail)
       }, false)
       // window.addEventListener('eventRegistered', (e) => {

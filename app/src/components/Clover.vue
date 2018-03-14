@@ -311,7 +311,11 @@
       })
     },
     watch: {
+      allClovers () {
+        console.log('ALL CLOVERS CHANGED!!')
+      },
       board () {
+        console.log('board changed')
         this.init(this.$route.params.board)
         this.setPrice()
       }
@@ -323,6 +327,7 @@
         }).reverse()
       },
       board () {
+        console.log('this board is')
         return this.boardId && this.allClovers.find(c => c.board === this.boardId)
       },
       visibleMoveString () {
@@ -353,6 +358,7 @@
       },
       founder () {
         let address = this.board && this.board.previousOwners && this.board.previousOwners[0]
+        console.log('founder address:', address)
         return this.users.find(u => u.address === address)
       },
       founderName () {
@@ -377,6 +383,7 @@
         return this.owner && this.owner.address
       },
       boardId () {
+        console.log('boardId changed')
         return this.$route.params.board
       },
       boardArray () {
@@ -389,9 +396,9 @@
         return this.board && moment(this.board.modified * 1000).format('MMMM Do YYYY, h:mm:ss a')
       },
       currentOwner () {
-        console.log(this.account ? 'account' : 'not account')
-        console.log(this.owner ? 'owner' : 'not owner')
-        console.log(this.account === this.owner.address ? 'account == owner' : 'not account == owner', this.account, this.owner.address)
+        // console.log(this.account ? 'account' : 'not account')
+        // console.log(this.owner ? 'owner' : 'not owner')
+        // console.log(this.account === this.owner.address ? 'account == owner' : 'not account == owner', this.account, this.owner.address)
         return this.account && this.owner && (this.account.toLowerCase() === this.owner.address.toLowerCase())
       },
       findersFee () {
@@ -402,6 +409,7 @@
       },
       ...mapState([
         'users',
+        'allClovers',
         'logs'
       ]),
       ...mapGetters([
@@ -409,7 +417,6 @@
         'account',
         'clover',
         'usernames',
-        'allClovers',
         'account'
       ])
     },

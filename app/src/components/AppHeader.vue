@@ -36,7 +36,7 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapState } from 'vuex'
   import Miner from '@/components/Miner'
 
   export default {
@@ -95,8 +95,10 @@
         return parseInt(this.balance).toLocaleString()
       },
 
+      ...mapState([
+        'allClovers'
+      ]),
       ...mapGetters({
-        allClovers: 'allClovers',
         username: 'username',
         tokenName: 'name',
         tokenSymbol: 'symbol',

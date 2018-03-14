@@ -24,7 +24,7 @@
 </template>
 
 <script>
-  import { mapMutations, mapGetters, mapActions } from 'vuex'
+  import { mapMutations, mapGetters, mapActions, mapState } from 'vuex'
   import CloverList from '@/components/CloverList'
   import Activity from '@/components/Activity'
 
@@ -74,10 +74,12 @@
         return this.user && this.user.clovers.map((c) => this.allClovers.find((ac) => ac.board === c))
       },
 
+      ...mapState([
+        'allClovers'
+      ]),
       ...mapGetters([
         'readOnly',
         'allUsers',
-        'allClovers',
         'account',
         'clover'
       ])

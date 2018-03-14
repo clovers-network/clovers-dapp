@@ -70,6 +70,7 @@ export default {
   },
   symmetries: (state, getters) => {
     console.log('symmetries calculated')
+    // return {Symmetricals: 0, RotSym: 0, X0Sym: 0, Y0Sym: 0, XYSym: 0, XnYSym: 0, PayMultiplier: 100}
     let Symmetricals = 0
     let RotSym = 0
     let X0Sym = 0
@@ -77,7 +78,8 @@ export default {
     let XYSym = 0
     let XnYSym = 0
     let reversi = new Clover()
-    getters.allClovers.forEach((clover) => {
+    for (let i = 0; i < getters.allClovers.length; i++) {
+      let clover = getters.allClovers[i]
       reversi.byteBoard = clover.board
       reversi.byteBoardPopulateBoard()
       reversi.isSymmetrical()
@@ -87,7 +89,7 @@ export default {
       Y0Sym += reversi.Y0Sym
       XYSym += reversi.XYSym
       XnYSym += reversi.XnYSym
-    })
+    }
     return {Symmetricals, RotSym, X0Sym, Y0Sym, XYSym, XnYSym, PayMultiplier: 100}
   },
   allClovers: (state, getters) => {
