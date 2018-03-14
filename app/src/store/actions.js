@@ -23,8 +23,8 @@ import io from 'socket.io-client'
 export default {
   setUpSocket ({commit, dispatch}) {
     console.log('set up socket')
-    // const socket = io('//api.clovers.network')
-    const socket = io('//localhost:3333')
+    const socket = io('//api.clovers.network')
+    // const socket = io('//localhost:3333')
 
     socket.on('disconnect', () => {
       console.log('disconnected')
