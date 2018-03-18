@@ -9,7 +9,7 @@
     <div class="p3 max-width-3 mx-auto">
       <template v-if="mine">
         <form class='border-bottom fit' @submit.prevent="changeName()">
-          <input class='input big fit' type="text" placeholder="Name" v-model="name"></input>
+          <input class='input big fit' type="text" placeholder="Name" v-model="name">
         </form>
       </template>
       <template v-else>
@@ -37,9 +37,6 @@
       }
     },
     watch: {
-      allUsers () {
-        console.log('all Users changed')
-      },
       user () {
         console.log('user changed')
       },
@@ -68,18 +65,18 @@
         return this.$route.params.address
       },
       user () {
-        return this.allUsers.find((u) => u.address.toLowerCase() === this.address.toLowerCase())
+        return this.users.find((u) => u.address.toLowerCase() === this.address.toLowerCase())
       },
       myClovers () {
         return this.user && this.user.clovers.map((c) => this.allClovers.find((ac) => ac.board === c))
       },
 
       ...mapState([
-        'allClovers'
+        'allClovers',
+        'users'
       ]),
       ...mapGetters([
         'readOnly',
-        'allUsers',
         'account',
         'clover'
       ])

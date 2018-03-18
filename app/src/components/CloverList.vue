@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <div class="bg-green  white pb2 md-p3 flex justify-around">
-      <div class="center" v-for="sym in symTypes" >
+      <div class="center" v-for="(sym, i) in symTypes" :key="i">
         <div class='px1'>{{symmetries[sym]}} x</div>
         <div :class="sym" class="symmetry-type"></div>
         <div>{{symValues[sym]}} ♧</div>
@@ -25,7 +25,6 @@
         </form>
       </div>
 
-
        <div class=" max-width-4 mx-auto flex justify-between align-middle py3" >
           <div class=" " :class="{hide: pagedTotal === 1}">
             <button
@@ -40,7 +39,8 @@
           :class="sortableClass(i)"
           class="inline-block mx2 pointer no-select"
           v-html="sort"
-          v-for="sort, i in sortable"></span>
+          :key="i"
+          v-for="(sort, i) in sortable"></span>
         </div>
 
           <div class=" " :class="{hide: pagedTotal === 1}">
@@ -63,16 +63,12 @@
         <span
         class="btn btn-outline mb1 orange"
         @click="limit = amount"
-        v-for="amount in limits"
+        v-for="(amount, i) in limits"
+        :key="i"
         :class="{'bg-red': limit === amount}"
         v-html="amount"></span>
       </div>
-
-
-
-
-
-       <div class=" max-width-4 mx-auto flex justify-between align-middle pb4" >
+      <div class=" max-width-4 mx-auto flex justify-between align-middle pb4" >
         <div class=" " :class="{hide: pagedTotal === 1}">
           <button
           class="btn btn-outline mb1 blue"
@@ -155,7 +151,7 @@
         return this.cloversSorted.slice(this.startSlice, this.endSlice)
       },
       cloversSorted () {
-        return this.allClovers.sort((a, b) => {
+        return this.allClovers.slice(0).sort((a, b) => {
           switch (this.sortableIndex) {
             case (0):
               return this.asc ? b.modified - a.modified : a.modified - b.modified
@@ -186,8 +182,6 @@
       ]),
       ...mapGetters([
         'clover',
-        'usernames',
-        'clovernames',
         'symmetries'
       ])
     },

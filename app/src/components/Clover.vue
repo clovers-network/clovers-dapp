@@ -14,11 +14,11 @@
             <symmetry id='sym' :board="reversi"></symmetry>
           </div>
           <div class="order-0 md-right-align col-6 sm-col-3">
-            <p class="h2">
+            <span class="h2">
               <form v-if='currentOwner' class='inline-block border-bottom' @submit.prevent="changeName()">
                 <input class='input big align-right white' type="text" placeholder="Name" v-model="name"/></form>
               <span v-else class="h1" v-html="trim(name, 16)"></span>
-            </p>
+            </span>
             <div>
               Flips
               <p class="h2">
@@ -42,7 +42,7 @@
             <div>
               Discovered by
               <p class="h2">
-                <router-link :to="'/users/' + founderAddress" v-html="founderName" class="white"></router-link></code>
+                <router-link :to="'/users/' + founderAddress" v-html="founderName" class="white"></router-link>
               </p>
             </div>
             <div>
@@ -87,7 +87,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(event, idx) in flipEvents" :class="{muted: idx > 2}" class="h3">
+              <tr v-for="(event, idx) in flipEvents" :key="idx" :class="{muted: idx > 2}" class="h3">
                 <td>{{ eventTime(event.data.modified) }}</td>
                 <td>
                   <router-link :to="userLink(event.data.newOwner)" class=" color-inherit">{{ userName(event.data.newOwner) }}</router-link>
@@ -209,7 +209,7 @@
         return `/users/${address}`
       },
       userName (address) {
-        let username = this.usernames.find((u) => u.address === address)
+        let username = this.users.find((u) => u.address === address)
         username = username ? username.name : address
         return xss(username.length > 8 ? username.substring(0, 8) + '...' : username)
       },
@@ -416,7 +416,6 @@
         'balance',
         'account',
         'clover',
-        'usernames',
         'account'
       ])
     },

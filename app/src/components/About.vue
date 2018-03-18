@@ -114,8 +114,6 @@
      -moz-box-shadow:    inset 0 0 20px rgba(0, 0, 0, .2);
    -webkit-box-shadow: inset 0 0 20px rgba(0, 0, 0, .2);
    box-shadow:        inset 0px 0px 20px rgba(0, 0, 0, .2);
-
-
 }
 
 .wide {

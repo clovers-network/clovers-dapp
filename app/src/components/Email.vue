@@ -2,7 +2,7 @@
   <div class="sticky center z3" v-show="!success || !hide">
     <div class="max-width-2 bg-purple  inline-block mx-auto p2">
 
-      <form 
+      <form
       v-show="!success"
       @submit="success = true"
       action="https://billyrennekamp.us4.list-manage.com/subscribe/post?u=31bb13f30ace8a3f55fd90d3f&amp;id=aea3ef4627" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
@@ -11,7 +11,7 @@
         <input style="display: none;"  type="text" name="b_31bb13f30ace8a3f55fd90d3f_aea3ef4627" tabindex="-1" value="">
         <input style="display: none;" type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button">
       </form>
-      <div class='pointer h2 thankyou' v-if='success' v-html='thanks' 
+      <div class='pointer h2 thankyou' v-if='success' v-html='thanks'
       @click='hide = true'></div>
     </div>
   </div>

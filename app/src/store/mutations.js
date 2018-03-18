@@ -64,14 +64,12 @@ export default {
     if (i > -1) state.allMinedClovers.splice(i, 1)
   },
   UPDATE_CLOVER_OBJECT (state, clover) {
-    console.log('CLOVER OBJECT CHANGED')
     state.clover = Object.assign(state.clover, clover)
   },
   STORED_CLOVERS (state, clovers) {
     state.allMinedClovers = clovers
   },
   UPDATE_ALLCLOVERS (state, allClovers) {
-    console.log('add Clovers')
     state.allClovers = allClovers
   },
   UPDATE_LOGS (state, logs) {
@@ -81,30 +79,24 @@ export default {
     state.logs.push(log)
   },
   ADD_USER (state, user) {
-    console.log('add user')
     state.users.push(user)
   },
   UPDATE_USER (state, user) {
     let userKey = state.users.findIndex((u) => u.address.toLowerCase() === user.address.toLowerCase())
     if (userKey > -1) {
-      console.log('update user')
       state.users.splice(userKey, 1, user)
     }
   },
   ADD_CLOVER (state, clover) {
-    console.log('add single Clover')
     state.allClovers.push(clover)
   },
   UPDATE_CLOVER (state, clover) {
-    console.log('update clover')
     let cloverKey = state.allClovers.findIndex((u) => u.board.toLowerCase() === clover.board.toLowerCase())
-    console.log(cloverKey)
     if (cloverKey > -1) {
       state.allClovers.splice(cloverKey, 1, clover)
     }
   },
   UPDATE_USERS (state, users) {
-    console.log('set users')
     state.users = users
   },
   STORED_COUNT (state, total) {

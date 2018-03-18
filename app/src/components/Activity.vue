@@ -18,7 +18,8 @@
           </div>
           </li>
           <li
-           class='mb1  table' v-for="activity in pagedActivity">
+          :key="i"
+          class='mb1  table' v-for="(activity, i) in pagedActivity">
             <div class='h4  table' v-if="activity.name === 'Registered'">
               <span class="align-middle table-cell"> Block {{activity.blockNumber}} —</span>
               <router-link class="align-middle table-cell px1" :to="'/clovers/' + activity.data.board">
@@ -77,7 +78,6 @@
           </div>
         </div>
       </div>
-      
     </div>
   </div>
 </template>
@@ -120,7 +120,7 @@
         return xss(word)
       },
       getName (address) {
-        let user = this.allUsers.find((u) => u.address.toLowerCase() === address.toLowerCase())
+        let user = this.users.find((u) => u.address.toLowerCase() === address.toLowerCase())
         user = user && user.name || address
         if (user.length > 9) user = user.slice(0, 9) + '&hellip;'
         return user
@@ -144,7 +144,7 @@
         return this.paged < this.pagedTotal
       },
       sortedActivity () {
-        return this.allActivity.sort((a, b) => this.asc ? a.blockNumber - b.blockNumber : b.blockNumber - a.blockNumber)
+        return this.allActivity.slice(0).sort((a, b) => this.asc ? a.blockNumber - b.blockNumber : b.blockNumber - a.blockNumber)
       },
       startSlice () {
         return (this.paged - 1) * this.limit
@@ -169,10 +169,9 @@
           }
         })
       },
-      ...mapState(['logs']),
+      ...mapState(['logs', 'users']),
       ...mapGetters([
-        'clover',
-        'allUsers'
+        'clover'
       ])
     }
   }

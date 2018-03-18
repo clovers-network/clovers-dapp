@@ -40,7 +40,7 @@
   import Miner from '@/components/Miner'
 
   export default {
-    name: 'header',
+    name: 'AppHeader',
     data () {
       return {
         showMiner: false,
@@ -133,7 +133,7 @@
       transform: translateX(0%);
     }
     li {
-      display:block;  
+      display:block;
     }
    }
 }

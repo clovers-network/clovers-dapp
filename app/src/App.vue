@@ -54,7 +54,7 @@
         return this.limit * this.paged
       },
       cloversSorted () {
-        return this.allClovers.sort((a, b) => b.modified - a.modified).slice(this.startSlice, this.endSlice)
+        return this.allClovers.slice(0).sort((a, b) => b.modified - a.modified).slice(this.startSlice, this.endSlice)
       },
       hideMainCloverList () {
         return this.$route.meta.hideMainCloverList

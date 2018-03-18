@@ -1,8 +1,5 @@
 <template>
   <router-link :to="link" tag="div" class="pointer gridItem relative">
-
-          
-
     <div class="center muted mb2 h5" v-text="timeAgo"></div>
     <!-- <div class="center silver mb2">by {{board.previousOwners[0]}}</div> -->
     <div>
@@ -18,7 +15,7 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import { mapState, mapGetters } from 'vuex'
   import moment from 'moment'
   export default {
     name: 'clover-grid-item',
@@ -43,14 +40,9 @@
       },
       boardOwner () {
         let address = this.board.previousOwners && this.board.previousOwners[ this.board.previousOwners.length - 1 ]
-        let owner = this.allUsers.find((u) => u.address === address)
+        let owner = this.users.find((u) => u.address === address)
         owner = owner && owner.address && owner.name || address
         return owner && 'Owned By: ' + (owner.length > 9 ? owner.slice(0, 9) + '&hellip;' : owner)
-      },
-      findersFee () {
-        // this.reversi.byteBoard = this.board.board
-        // this.reversi.isSymmetrical()
-        // return this.clover.calcFindersFees(this.symmetries, ...this.reversi)
       },
       flippers () {
         return this.board && this.board.previousOwners && this.board.previousOwners.length - 1
@@ -73,9 +65,9 @@
       flipped () {
         return 'Flipped ' + moment(this.board.modified * 1000).startOf('hour').fromNow()
       },
+      ...mapState(['users']),
       ...mapGetters([
-        'symmetries',
-        'allUsers'
+        'symmetries'
       ])
     }
   }

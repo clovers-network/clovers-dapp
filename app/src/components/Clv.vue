@@ -1,6 +1,5 @@
 <template>
   <div ref='body' @mouseenter="activate()" @click="playAnimate()" class="clover nowrap pointer relative" :class="winner">
-    
     <div v-if="showFlags" :class="{h6: !compact, h7: compact}" class='center  absolute top-0  right-0 mxn3 gridItemBadge z1'>
       <div
       :class="{px1: !compact, py1: !compact}"
@@ -9,16 +8,16 @@
 
     <div v-if="showFlags" :class="{h6: !compact, h7: compact}" class='center absolute bottom-0  right-0 mxn3 gridItemBadge z1'>
       <div
-      v-if="badgeClass[mostRare.name]" 
-      class="px1 py1 bg-green rounded rareBadge" 
+      v-if="badgeClass[mostRare.name]"
+      class="px1 py1 bg-green rounded rareBadge"
       :class="[{px1: !compact, py1: !compact}, mostRare.name + 'Badge']">Rare</div>
     </div>
 
     <div v-if="displayString && !noMoves">
       <svg-text :fill="textColor" :animation="false" :moveString="displayString"></svg-text>
     </div>
-    <div v-for="row in board" class="row">
-      <span v-for="tile in row" :class="tileMap[tile]"></span>
+    <div v-for="(row, i) in board" :key="i" class="row">
+      <span v-for="(tile, j) in row" :key="j" :class="tileMap[tile]"></span>
     </div>
   </div>
 </template>
@@ -67,7 +66,7 @@
         return this.symTypes.map((type) => {
           return {
             name: type,
-            num: this.symmetries[type]
+            num: (this.symmetries && this.symmetries[type]) || 0
           }
         }).sort((a, b) => b.num - a.num).pop()
       },

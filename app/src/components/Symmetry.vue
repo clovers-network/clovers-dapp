@@ -1,6 +1,6 @@
 <template>
   <ul :class="{absolute:absolute, 'all-symmetries': horizontal}" class=" list-reset ">
-    <li v-for="sym in symmetries" :class="[sym, {'inline-block': horizontal}]" class="symmetry-type"></li>
+    <li v-for="(sym, i) in symmetries" :key="i" :class="[sym, {'inline-block': horizontal}]" class="symmetry-type"></li>
   </ul>
 </template>
 
