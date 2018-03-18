@@ -2,3 +2,4 @@ password
 node_modules
 SECRET_README.md
 dirtydata.txt
+npm-debug.log

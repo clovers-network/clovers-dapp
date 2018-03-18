@@ -1,16 +1,30 @@
 <template>
-  <div ref='body' @mouseenter="activate()" @click="playAnimate()" class="clover nowrap pointer" :class="winner">
+  <div ref='body' @mouseenter="activate()" @click="playAnimate()" class="clover nowrap pointer relative" :class="winner">
+    <div v-if="showFlags" :class="{h6: !compact, h7: compact}" class='center  absolute top-0  right-0 mxn3 gridItemBadge z1'>
+      <div
+      :class="{px1: !compact, py1: !compact}"
+       v-if="badgeClass.multiple" class="px1 mb1 py1 bg-red rounded multipleBagde">{{badgeClass.count}}x Sym</div>
+    </div>
+
+    <div v-if="showFlags" :class="{h6: !compact, h7: compact}" class='center absolute bottom-0  right-0 mxn3 gridItemBadge z1'>
+      <div
+      v-if="badgeClass[mostRare.name]"
+      class="px1 py1 bg-green rounded rareBadge"
+      :class="[{px1: !compact, py1: !compact}, mostRare.name + 'Badge']">Rare</div>
+    </div>
+
     <div v-if="displayString && !noMoves">
       <svg-text :fill="textColor" :animation="false" :moveString="displayString"></svg-text>
     </div>
-    <div v-for="row in board" class="row">
-      <span v-for="tile in row" :class="tileMap[tile]"></span>
+    <div v-for="(row, i) in board" :key="i" class="row">
+      <span v-for="(tile, j) in row" :key="j" :class="tileMap[tile]"></span>
     </div>
   </div>
 </template>
 <script>
   import Reversi from '../assets/reversi'
   import SvgText from './SvgText'
+  import { mapGetters } from 'vuex'
 
   export default {
     name: 'Clv',
@@ -29,7 +43,8 @@
           '1': 't-b',
           '3': 't-n'
         },
-        displayString: null
+        displayString: null,
+        symTypes: ['RotSym', 'Y0Sym', 'X0Sym', 'XYSym', 'XnYSym']
       }
     },
     mounted () {
@@ -44,6 +59,37 @@
       }
     },
     computed: {
+      ...mapGetters([
+        'symmetries'
+      ]),
+      mostRare () {
+        return this.symTypes.map((type) => {
+          return {
+            name: type,
+            num: (this.symmetries && this.symmetries[type]) || 0
+          }
+        }).sort((a, b) => b.num - a.num).pop()
+      },
+      badgeClass () {
+        this.reversi.byteBoardPopulateBoard(this.byteBoard)
+        this.reversi.isSymmetrical()
+        let symCount = 0
+        if (this.reversi.RotSym) symCount++
+        if (this.reversi.X0Sym) symCount++
+        if (this.reversi.Y0Sym) symCount++
+        if (this.reversi.XYSym) symCount++
+        if (this.reversi.XnYSym) symCount++
+
+        return {
+          multiple: symCount > 1,
+          count: symCount,
+          RotSym: this.reversi.RotSym,
+          X0Sym: this.reversi.X0Sym,
+          Y0Sym: this.reversi.Y0Sym,
+          XYSym: this.reversi.XYSym,
+          XnYSym: this.reversi.XnYSym
+        }
+      },
       board () {
         return this.animatedBoard || this.rowArray || (this.byteBoard && this.reversi.byteBoardToRowArray(this.byteBoard)) || (this.moveString && this.reversi.playGameMovesString(this.moveString).byteBoardToRowArray())
       },
@@ -108,6 +154,14 @@
       }
     },
     props: {
+      compact: {
+        type: Boolean,
+        default: false
+      },
+      showFlags: {
+        type: Boolean,
+        default: false
+      },
       autoPlay: {
         type: Boolean,
         default: false

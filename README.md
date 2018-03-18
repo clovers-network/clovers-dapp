@@ -2,7 +2,7 @@
 
 ## https://clovers.network/
 
-Hacked together by [Alan Woo](https://github.com/alancwoo/), [Billy Rennekamp](https://github.com/okwme/) & [Nics Kort](https://github.com/n-kort/) using [Vue.js](https://github.com/vuejs/vue), [Truffle](https://github.com/trufflesuite/truffle) and [Ethereum/Solidity](https://ethereum.org)
+3rd Prize Winner of Cosmo Hackatom 2 Hackathon, 2017 — Made by [Alan Woo](https://github.com/alancwoo/), [Billy Rennekamp](https://github.com/okwme/) & [Nics Kort](https://github.com/n-kort/) using [Vue.js](https://github.com/vuejs/vue), [Truffle](https://github.com/trufflesuite/truffle) and [Ethereum/Solidity](https://ethereum.org)
 
 ## Files of Interest
 * [ClubToken.sol](https://github.com/okwme/clovers-dapp/blob/master/contracts/ClubToken.sol)

@@ -14,11 +14,11 @@
             <symmetry id='sym' :board="reversi"></symmetry>
           </div>
           <div class="order-0 md-right-align col-6 sm-col-3">
-            <p class="h2">
+            <span class="h2">
               <form v-if='currentOwner' class='inline-block border-bottom' @submit.prevent="changeName()">
                 <input class='input big align-right white' type="text" placeholder="Name" v-model="name"/></form>
-              <span v-else class="h1" v-html="name"></span>
-            </p>
+              <span v-else class="h1" v-html="trim(name, 16)"></span>
+            </span>
             <div>
               Flips
               <p class="h2">
@@ -42,7 +42,7 @@
             <div>
               Discovered by
               <p class="h2">
-                <router-link :to="'/users/' + founderAddress" v-html="founderName" class="white"></router-link></code>
+                <router-link :to="'/users/' + founderAddress" v-html="founderName" class="white"></router-link>
               </p>
             </div>
             <div>
@@ -87,12 +87,12 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(event, idx) in flipEvents" :class="{muted: idx > 2}" class="h3">
-                <td>{{ eventTime(event.args.modified) }}</td>
+              <tr v-for="(event, idx) in flipEvents" :key="idx" :class="{muted: idx > 2}" class="h3">
+                <td>{{ eventTime(event.data.modified) }}</td>
                 <td>
-                  <router-link :to="userLink(event.args.newOwner)" class=" color-inherit">{{ userName(event.args.newOwner) }}</router-link>
+                  <router-link :to="userLink(event.data.newOwner)" class=" color-inherit">{{ userName(event.data.newOwner) }}</router-link>
                 </td>
-                <td>{{ cost(event.args, idx) }}</td>
+                <td>{{ cost(event.data, idx) }}</td>
                 <td>{{ calcEarnings(idx) }} &clubs;</td>
               </tr>
               <tr class="h3" :class="{muted: flippers > 2}">
@@ -117,7 +117,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions, mapMutations } from 'vuex'
+  import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
   import moment from 'moment'
   import Reversi from '@/assets/reversi'
   import Symmetry from '@/components/Symmetry'
@@ -137,6 +137,9 @@
       }
     },
     methods: {
+      trim (string, len = 8) {
+        return xss(string > len ? string.substring(0, len) + '...' : string)
+      },
       copy (type) {
         let msg = ''
         if (type === 'moves') {
@@ -193,7 +196,7 @@
         return args.lastPaidAmount && parseInt(args.lastPaidAmount).toLocaleString() + ' ♣'
       },
       calcEarnings (idx) {
-        let paid = -parseInt(this.flipEvents[idx].args.lastPaidAmount)
+        let paid = -parseInt(this.flipEvents[idx].data.lastPaidAmount)
         let max = Math.min(idx, 2)
         let earned = (Math.abs(paid) * (max * max))
 
@@ -206,7 +209,7 @@
         return `/users/${address}`
       },
       userName (address) {
-        let username = this.usernames.find((u) => u.address === address)
+        let username = this.users.find((u) => u.address === address)
         username = username ? username.name : address
         return xss(username.length > 8 ? username.substring(0, 8) + '...' : username)
       },
@@ -308,18 +311,23 @@
       })
     },
     watch: {
+      allClovers () {
+        console.log('ALL CLOVERS CHANGED!!')
+      },
       board () {
+        console.log('board changed')
         this.init(this.$route.params.board)
         this.setPrice()
       }
     },
     computed: {
       flipEvents () {
-        return this.$store.state.registeredEvents.filter((e) => {
-          return e.args.board === this.boardId && !e.args.newBoard
+        return this.logs.filter((e) => {
+          return e.name === 'Registered' && e.data.board === this.boardId && !e.data.newBoard
         }).reverse()
       },
       board () {
+        console.log('this board is')
         return this.boardId && this.allClovers.find(c => c.board === this.boardId)
       },
       visibleMoveString () {
@@ -349,7 +357,9 @@
         return this.price && this.price.toLocaleString()
       },
       founder () {
-        return this.board && this.board.previousOwners && this.board.previousOwners[0]
+        let address = this.board && this.board.previousOwners && this.board.previousOwners[0]
+        console.log('founder address:', address)
+        return this.users.find(u => u.address === address)
       },
       founderName () {
         return this.founder && xss(this.founder.name.length > 21 ? this.founder.name.slice(0, 21) + '&hellip;' : this.founder.name)
@@ -359,11 +369,12 @@
       },
       calcFinderEarnings () {
         let max = Math.min(this.flippers, 2)
-        let firstPaid = this.flipEvents.length ? this.flipEvents[this.flippers - 1].args.lastPaidAmount : 0
+        let firstPaid = this.flipEvents.length ? this.flipEvents[this.flippers - 1].data.lastPaidAmount : 0
         return parseInt(this.findersFee) + (firstPaid * max)
       },
       owner () {
-        return this.board && this.board.previousOwners && this.board.previousOwners[this.board.previousOwners.length - 1]
+        let address = this.board && this.board.previousOwners && this.board.previousOwners[this.board.previousOwners.length - 1]
+        return this.users.find(u => u.address === address)
       },
       ownerName () {
         return this.owner && xss(this.owner.name.length > 9 ? this.owner.name.slice(0, 9) + '&hellip;' : this.owner.name)
@@ -372,6 +383,7 @@
         return this.owner && this.owner.address
       },
       boardId () {
+        console.log('boardId changed')
         return this.$route.params.board
       },
       boardArray () {
@@ -384,7 +396,10 @@
         return this.board && moment(this.board.modified * 1000).format('MMMM Do YYYY, h:mm:ss a')
       },
       currentOwner () {
-        return this.account && this.owner && (this.account === this.owner.address)
+        // console.log(this.account ? 'account' : 'not account')
+        // console.log(this.owner ? 'owner' : 'not owner')
+        // console.log(this.account === this.owner.address ? 'account == owner' : 'not account == owner', this.account, this.owner.address)
+        return this.account && this.owner && (this.account.toLowerCase() === this.owner.address.toLowerCase())
       },
       findersFee () {
         return this.board && parseInt(this.board.findersFee)
@@ -392,13 +407,15 @@
       historyToggleText () {
         return this.showHistory ? 'hide clover history' : 'show clover history'
       },
-
+      ...mapState([
+        'users',
+        'allClovers',
+        'logs'
+      ]),
       ...mapGetters([
         'balance',
         'account',
         'clover',
-        'usernames',
-        'allClovers',
         'account'
       ])
     },

@@ -54,12 +54,14 @@
           <span class='pointer' @click="enterManually = !enterManually">⚙️</span>
         </p> -->
         <div>
-          <ul ref="cloverList" class="list-reset flex mxn1 nowrap overflow-auto items-center">
-            <li ref="clover" @click="select(board)" v-for="board in newClovers" class="py1 px2 pointer h6 newClover" :class="isFocus(board)">
-              <clv :no-click='true' :key="board.movesString" :byteBoard="board.byteBoard"></clv>
+          <ul ref="cloverList" class="list-reset mb0 flex mxn1 nowrap overflow-auto items-center">
+            <li ref="clover" @click="select(board)" v-for="(board, i) in newClovers" :key="'a' + i" class="relative py1 px2 pointer h6 newClover" :class="isFocus(board)">
+              <clv :compact="true" :show-flags="true" :no-click='true' :key="board.movesString" :byteBoard="board.byteBoard"></clv>
+              <symmetry :absolute="false" class="relative my1" :horizontal="true" :board="board"></symmetry>
             </li>
-            <li ref="clover" @click="select(board)" v-for="board in claimedClovers" class="py1 px2 pointer h6 claimed" :class="isFocus(board)">
-              <clv :no-click='true' :key="board.movesString" :byteBoard="board.byteBoard"></clv>
+            <li ref="clover" @click="select(board)" v-for="(board, i) in claimedClovers" :key="'b' + i" class="relative py1 px2 pointer h6 claimed" :class="isFocus(board)">
+              <clv :compact="true" :show-flags="true" :no-click='true' :key="board.movesString" :byteBoard="board.byteBoard"></clv>
+              <symmetry :absolute="false" class="relative my1" :horizontal="true" :board="board"></symmetry>
             </li>
             <li>
               <p v-if="this.limit && this.claimedClovers.length > 4" @click="limit = false" class="mx3 m0 pointer">👁 more</p>
@@ -78,7 +80,9 @@
   import CloverWorker from 'worker-loader!../assets/clover-worker'
   import Reversi from '../assets/reversi'
   import ClaimClover from '@/components/ClaimClover'
+  import Symmetry from '@/components/Symmetry'
   import moment from 'moment'
+  let reversi = new Reversi()
 
   export default {
     name: 'miner',
@@ -87,7 +91,6 @@
         enterManually: false,
         moves: null,
         miners: [],
-        reversi: new Reversi(),
         customMoves: 'C4C5D6C7C6D3E6D7C2B3A2F5C8E3G5B6A5H5F6B1H4A4E7G7E2F7G6B7G8G4F4F3D8H7E8F2H8B5A7E1H3D2G2H2C1C3F1D1A1G1G3A6H6F8B2B8A3H1A8B4',
         interval: null,
         hasStorage: !!window.localStorage,
@@ -117,7 +120,13 @@
         return this.claimedClovers.findIndex((c) => c.byteBoard === this.selectedClover.byteBoard)
       },
       clovers () {
-        return this.minedClovers
+        return this.minedClovers.map((c) => {
+          if (typeof c.X0Sym !== 'undefined') return c
+          reversi.board = c.board
+          Object.assign(reversi, c)
+          reversi.isSymmetrical()
+          return JSON.parse(JSON.stringify(reversi))
+        })
       },
       newClovers () {
         return this.clovers.filter(c => !c.claimed)
@@ -371,7 +380,7 @@
       clearInterval(this.interval)
       window.removeEventListener('keydown', this.checkKey)
     },
-    components: { ClaimClover }
+    components: { ClaimClover, Symmetry }
   }
 
 </script>

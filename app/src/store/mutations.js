@@ -63,11 +63,41 @@ export default {
     let i = state.allMinedClovers.findIndex(cl => cl.byteBoard === byteBoard)
     if (i > -1) state.allMinedClovers.splice(i, 1)
   },
-  UPDATE_CLOVER (state, clover) {
+  UPDATE_CLOVER_OBJECT (state, clover) {
     state.clover = Object.assign(state.clover, clover)
   },
   STORED_CLOVERS (state, clovers) {
     state.allMinedClovers = clovers
+  },
+  UPDATE_ALLCLOVERS (state, allClovers) {
+    state.allClovers = allClovers
+  },
+  UPDATE_LOGS (state, logs) {
+    state.logs = logs
+  },
+  ADD_LOG (state, log) {
+    state.logs.push(log)
+  },
+  ADD_USER (state, user) {
+    state.users.push(user)
+  },
+  UPDATE_USER (state, user) {
+    let userKey = state.users.findIndex((u) => u.address.toLowerCase() === user.address.toLowerCase())
+    if (userKey > -1) {
+      state.users.splice(userKey, 1, user)
+    }
+  },
+  ADD_CLOVER (state, clover) {
+    state.allClovers.push(clover)
+  },
+  UPDATE_CLOVER (state, clover) {
+    let cloverKey = state.allClovers.findIndex((u) => u.board.toLowerCase() === clover.board.toLowerCase())
+    if (cloverKey > -1) {
+      state.allClovers.splice(cloverKey, 1, clover)
+    }
+  },
+  UPDATE_USERS (state, users) {
+    state.users = users
   },
   STORED_COUNT (state, total) {
     state.totalMined = total

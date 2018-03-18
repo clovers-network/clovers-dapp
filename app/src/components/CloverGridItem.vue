@@ -1,21 +1,9 @@
 <template>
   <router-link :to="link" tag="div" class="pointer gridItem relative">
-
-          
-
     <div class="center muted mb2 h5" v-text="timeAgo"></div>
     <!-- <div class="center silver mb2">by {{board.previousOwners[0]}}</div> -->
     <div>
-      <div class='relative'>
-        <div class=' h6 absolute top-0  right-0 mxn3 gridItemBadge z1'>
-          <div v-if="badgeClass.multiple" class="px1 mb1 py1 bg-red rounded multipleBagde">{{badgeClass.count}}x Sym</div>
-        </div>
-
-        <div class=' h6 absolute bottom-0  right-0 mxn3 gridItemBadge z1'>
-          <div v-if="badgeClass[mostRare.name]" class="px1 py1 bg-green rounded rareBadge" :class="mostRare.name + 'Badge'">Rare</div>
-        </div>
-        <clv :no-click="true" :byteBoard="board.board"></clv>
-      </div>
+    <clv :show-flags="true" :no-click="true" :byteBoard="board.board"></clv>
       <div class="h1 center mt2 max-fit overflow-hidden" ><code v-html="boardName"></code></div>
       <div class="center mt2 max-fit overflow-hidden" v-html="boardOwner"></div>
       <div class="center mt2">
@@ -27,15 +15,12 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
-  import Reversi from '../assets/reversi'
+  import { mapState, mapGetters } from 'vuex'
   import moment from 'moment'
   export default {
     name: 'clover-grid-item',
     data () {
       return {
-        reversi: new Reversi(),
-        symTypes: ['RotSym', 'Y0Sym', 'X0Sym', 'XYSym', 'XnYSym']
       }
     },
     props: {
@@ -49,46 +34,15 @@
       }
     },
     computed: {
-      mostRare () {
-        return this.symTypes.map((type) => {
-          return {
-            name: type,
-            num: this.symmetries[type]
-          }
-        }).sort((a, b) => b.num - a.num).pop()
-      },
-      badgeClass () {
-        this.reversi.byteBoardPopulateBoard(this.board.board)
-        this.reversi.isSymmetrical()
-        let symCount = 0
-        if (this.reversi.RotSym) symCount++
-        if (this.reversi.X0Sym) symCount++
-        if (this.reversi.Y0Sym) symCount++
-        if (this.reversi.XYSym) symCount++
-        if (this.reversi.XnYSym) symCount++
-
-        return {
-          multiple: symCount > 1,
-          count: symCount,
-          RotSym: this.reversi.RotSym,
-          X0Sym: this.reversi.X0Sym,
-          Y0Sym: this.reversi.Y0Sym,
-          XYSym: this.reversi.XYSym,
-          XnYSym: this.reversi.XnYSym
-        }
-      },
       boardName () {
         let name = this.board.name || this.board.board
         return name && (name.length > 9 ? name.slice(0, 9) + '&hellip;' : name)
       },
       boardOwner () {
-        let owner = this.board.previousOwners && this.board.previousOwners[ this.board.previousOwners.length - 1 ].name
+        let address = this.board.previousOwners && this.board.previousOwners[ this.board.previousOwners.length - 1 ]
+        let owner = this.users.find((u) => u.address === address)
+        owner = owner && owner.address && owner.name || address
         return owner && 'Owned By: ' + (owner.length > 9 ? owner.slice(0, 9) + '&hellip;' : owner)
-      },
-      findersFee () {
-        // this.reversi.byteBoard = this.board.board
-        // this.reversi.isSymmetrical()
-        // return this.clover.calcFindersFees(this.symmetries, ...this.reversi)
       },
       flippers () {
         return this.board && this.board.previousOwners && this.board.previousOwners.length - 1
@@ -111,8 +65,8 @@
       flipped () {
         return 'Flipped ' + moment(this.board.modified * 1000).startOf('hour').fromNow()
       },
+      ...mapState(['users']),
       ...mapGetters([
-        'clover',
         'symmetries'
       ])
     }

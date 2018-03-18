@@ -16,12 +16,11 @@
         </div>
       </div>
     </div>
-    
   </div>
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapState } from 'vuex'
 
   export default {
     name: 'Home',
@@ -36,6 +35,10 @@
         this.clover.playGameMovesString(this.heart)
         return this.clover.byteBoardToRowArray()
       },
+
+      ...mapState([
+        'allClovers'
+      ]),
       ...mapGetters([
         'balance',
         'clover',
@@ -46,7 +49,8 @@
   }
 </script>
 
-<style>
+<style lang="scss">
+
   .intro-screen {
 
     .clover {

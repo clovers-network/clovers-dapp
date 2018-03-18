@@ -18,35 +18,36 @@
           </div>
           </li>
           <li
-           class='mb1  table' v-for="activity in pagedActivity">
-            <div class='h4  table' v-if="activity.event === 'Registered'">
+          :key="i"
+          class='mb1  table' v-for="(activity, i) in pagedActivity">
+            <div class='h4  table' v-if="activity.name === 'Registered'">
               <span class="align-middle table-cell"> Block {{activity.blockNumber}} —</span>
-              <router-link class="align-middle table-cell px1" :to="'/clovers/' + activity.args.board">
-                <clv :key="activity.args.board" class=' small-clover no-hover' :no-click="true" :byteBoard="activity.args.board"></clv>
+              <router-link class="align-middle table-cell px1" :to="'/clovers/' + activity.data.board">
+                <clv :key="activity.data.board" class=' small-clover no-hover' :no-click="true" :byteBoard="activity.data.board"></clv>
               </router-link>
-              <span  class="align-middle table-cell" v-if="activity.args.newBoard"> claimed by </span>
+              <span  class="align-middle table-cell" v-if="activity.data.newBoard"> claimed by </span>
               <span  class="align-middle table-cell" v-else> flipped by </span>
-              <router-link class="align-middle table-cell px1" :to="'/users/' + activity.args.newOwner">
-                <span   v-html="getName(activity.args.newOwner)"></span>
+              <router-link class="align-middle table-cell px1" :to="'/users/' + activity.data.newOwner">
+                <span   v-html="getName(activity.data.newOwner)"></span>
               </router-link>
-              <span  class="align-middle table-cell" v-if="activity.args.newBoard">for {{parseInt(activity.args.findersFee)}} ♧ with initial price {{parseInt(activity.args.lastPaidAmount)}} ♧</span>
-              <span  class="align-middle table-cell" v-else>for {{parseInt(activity.args.lastPaidAmount)}} ♧</span>
+              <span  class="align-middle table-cell" v-if="activity.data.newBoard">for {{parseInt(activity.data.findersFee)}} ♧ with initial price {{parseInt(activity.data.lastPaidAmount)}} ♧</span>
+              <span  class="align-middle table-cell" v-else>for {{parseInt(activity.data.lastPaidAmount)}} ♧</span>
             </div>
-            <div class='h4  table my2' v-else-if="activity.event === 'newUserName'">
+            <div class='h4  table my2' v-else-if="activity.name === 'newUserName'">
               <span class="align-middle table-cell"> Block {{activity.blockNumber}} —</span>
-              <router-link class="align-middle table-cell px1" :to="'/users/' + activity.args.player">
-                <span  v-html="activity.args.player.slice(0,8) + '&hellip;'"></span>
+              <router-link class="align-middle table-cell px1" :to="'/users/' + activity.data.player">
+                <span  v-html="activity.data.player.slice(0,8) + '&hellip;'"></span>
               </router-link>
               <span class="align-middle table-cell"> changed their name to</span>
-              <span class="align-middle table-cell px1">{{filter(activity.args.name)}}</span>
+              <span class="align-middle table-cell px1">{{filter(activity.data.name)}}</span>
             </div>
-            <div class='h4  table' v-else-if="activity.event === 'newCloverName'">
+            <div class='h4  table' v-else-if="activity.name === 'newCloverName'">
               <span class="align-middle table-cell"> Block {{activity.blockNumber}} —</span>
-              <router-link class="align-middle table-cell px1" :to="'/clovers/' + activity.args.board">
-                <clv :key="activity.args.board" class=' small-clover no-hover' :no-click="true" :byteBoard="activity.args.board"></clv>
+              <router-link class="align-middle table-cell px1" :to="'/clovers/' + activity.data.board">
+                <clv :key="activity.data.board" class=' small-clover no-hover' :no-click="true" :byteBoard="activity.data.board"></clv>
               </router-link>
               <span class="align-middle table-cell"> renamed </span>
-              <span class="align-middle table-cell px1">{{filter(activity.args.name)}}</span>
+              <span class="align-middle table-cell px1">{{filter(activity.data.name)}}</span>
             </div>
             <div v-else>
               <pre>{{activity}}</pre>
@@ -77,13 +78,12 @@
           </div>
         </div>
       </div>
-      
     </div>
   </div>
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapState } from 'vuex'
   import xss from 'xss'
   export default {
 
@@ -120,7 +120,7 @@
         return xss(word)
       },
       getName (address) {
-        let user = this.allUsers.find((u) => u.address === address)
+        let user = this.users.find((u) => u.address.toLowerCase() === address.toLowerCase())
         user = user && user.name || address
         if (user.length > 9) user = user.slice(0, 9) + '&hellip;'
         return user
@@ -144,7 +144,7 @@
         return this.paged < this.pagedTotal
       },
       sortedActivity () {
-        return this.allActivity.sort((a, b) => this.asc ? a.blockNumber - b.blockNumber : b.blockNumber - a.blockNumber)
+        return this.allActivity.slice(0).sort((a, b) => this.asc ? a.blockNumber - b.blockNumber : b.blockNumber - a.blockNumber)
       },
       startSlice () {
         return (this.paged - 1) * this.limit
@@ -156,26 +156,22 @@
         return this.sortedActivity.slice(this.startSlice, this.endSlice)
       },
       allActivity () {
-        return this.registeredEvents.map((r) => {
-          return r
-        }).filter((r) => {
-          return !this.address || r.args.newOwner === this.address
-        }).concat(...this.usernameEvents.map((u) => {
-          return u
-        }).filter((u) => {
-          return !this.address || u.args.player === this.address
-        })).concat(...this.clovernameEvents.map((c) => {
-          return c
-        }).filter((c) => {
-          return !this.address || c.address === this.address
-        }))
+        return this.logs.filter((l) => {
+          switch (l.name) {
+            case ('Registered'):
+              return !this.address || l.data.newOwner === this.address
+            case ('newUserName'):
+              return !this.address || l.data.player === this.address
+            case ('newCloverName'):
+              return !this.address || l.address === this.address
+            default:
+              return false
+          }
+        })
       },
+      ...mapState(['logs', 'users']),
       ...mapGetters([
-        'clover',
-        'registeredEvents',
-        'usernameEvents',
-        'clovernameEvents',
-        'allUsers'
+        'clover'
       ])
     }
   }

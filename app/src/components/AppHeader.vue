@@ -36,11 +36,11 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapState } from 'vuex'
   import Miner from '@/components/Miner'
 
   export default {
-    name: 'header',
+    name: 'AppHeader',
     data () {
       return {
         showMiner: false,
@@ -95,8 +95,10 @@
         return parseInt(this.balance).toLocaleString()
       },
 
+      ...mapState([
+        'allClovers'
+      ]),
       ...mapGetters({
-        allClovers: 'allClovers',
         username: 'username',
         tokenName: 'name',
         tokenSymbol: 'symbol',
@@ -131,7 +133,7 @@
       transform: translateX(0%);
     }
     li {
-      display:block;  
+      display:block;
     }
    }
 }

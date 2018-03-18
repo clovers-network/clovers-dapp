@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <div class="bg-green  white pb2 md-p3 flex justify-around">
-      <div class="center" v-for="sym in symTypes" >
+      <div class="center" v-for="(sym, i) in symTypes" :key="i">
         <div class='px1'>{{symmetries[sym]}} x</div>
         <div :class="sym" class="symmetry-type"></div>
         <div>{{symValues[sym]}} ♧</div>
@@ -11,14 +11,12 @@
     <div id="break-up" class="bg-gray white p2 md-p3 flex justify-around shadow-bottom">
       <div>{{ allClovers.length }} Clovers Claimed</div>
       <div>{{ symmetries.RotSym }} Rotational</div>
-      <div>{{ symmetries.X0Sym + symmetries.Y0Sym }} Perpindicular</div>
+      <div>{{ symmetries.X0Sym + symmetries.Y0Sym }} Perpendicular</div>
       <div>{{ symmetries.XYSym + symmetries.XnYSym }} Diagonal</div>
     </div>
 
     <div v-if="allClovers.length" class="mt2 px2">
-
-
-
+      <email />
       <div class="hide">
         <form
           class="border-bottom inline-block my1"
@@ -27,13 +25,12 @@
         </form>
       </div>
 
-
        <div class=" max-width-4 mx-auto flex justify-between align-middle py3" >
           <div class=" " :class="{hide: pagedTotal === 1}">
             <button
             class="btn btn-outline mb1 blue"
             :disabled="!prevPossible"
-            @click="paged--">←</button>&nbsp;
+            @click="chPage(-1)">←</button>&nbsp;
           </div>
 
         <div class="">
@@ -42,18 +39,19 @@
           :class="sortableClass(i)"
           class="inline-block mx2 pointer no-select"
           v-html="sort"
-          v-for="sort, i in sortable"></span>
+          :key="i"
+          v-for="(sort, i) in sortable"></span>
         </div>
 
           <div class=" " :class="{hide: pagedTotal === 1}">
             <button
             class="btn btn-outline mb1 blue"
             :disabled="!nextPossible"
-            @click="paged++">→</button>&nbsp;
+            @click="chPage(1)">→</button>&nbsp;
           </div>
         </div>
 
-      <ul class="list-reset max-width-5 mx-auto flex flex-wrap mxn2 center justify-center">
+      <ul ref="cloverList" class="list-reset max-width-5 mx-auto flex flex-wrap mxn2 center justify-center">
         <li v-for="board in cloversSliced" :key="board.board" class="px2 mb3">
           <clover-grid-item :by-flip="sortableIndex == 0 || sortableIndex == 3" :key="board.board" :board="board"></clover-grid-item>
         </li>
@@ -65,43 +63,42 @@
         <span
         class="btn btn-outline mb1 orange"
         @click="limit = amount"
-        v-for="amount in limits"
+        v-for="(amount, i) in limits"
+        :key="i"
         :class="{'bg-red': limit === amount}"
         v-html="amount"></span>
       </div>
-
-
-
-
-
-         <div class=" max-width-4 mx-auto flex justify-between align-middle" >
-          <div class=" " :class="{hide: pagedTotal === 1}">
-            <button
-            class="btn btn-outline mb1 blue"
-            :disabled="!prevPossible"
-            @click="paged--">←</button>&nbsp;
-          </div>
-
-          <div class="center mb2"  :class="{hide: pagedTotal === 0}">
-            <span>{{paged}} / {{pagedTotal}}</span>
-          </div>
-
-          <div class=" " :class="{hide: pagedTotal === 1}">
-            <button
-            class="btn btn-outline mb1 blue"
-            :disabled="!nextPossible"
-            @click="paged++">→</button>&nbsp;
-          </div>
+      <div class=" max-width-4 mx-auto flex justify-between align-middle pb4" >
+        <div class=" " :class="{hide: pagedTotal === 1}">
+          <button
+          class="btn btn-outline mb1 blue"
+          :disabled="!prevPossible"
+          @click="chPage(-1)">←</button>&nbsp;
         </div>
+
+        <div class="center mb2"  :class="{hide: pagedTotal === 0}">
+          <span>{{paged}} / {{pagedTotal}}</span>
+        </div>
+
+        <div class=" " :class="{hide: pagedTotal === 1}">
+          <button
+          class="btn btn-outline mb1 blue"
+          :disabled="!nextPossible"
+          @click="chPage(1)">→</button>&nbsp;
+        </div>
+      </div>
 
     </div>
   </div>
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import Email from '@/components/Email'
+
+  import { mapGetters, mapState } from 'vuex'
   export default {
     name: 'CloverList',
+    components: { Email },
     data () {
       return {
         paged: 1,
@@ -154,7 +151,7 @@
         return this.cloversSorted.slice(this.startSlice, this.endSlice)
       },
       cloversSorted () {
-        return this.allClovers.sort((a, b) => {
+        return this.allClovers.slice(0).sort((a, b) => {
           switch (this.sortableIndex) {
             case (0):
               return this.asc ? b.modified - a.modified : a.modified - b.modified
@@ -168,10 +165,10 @@
         }).filter((c) => {
           if (!this.search && !this.filter) return c
           return c.previousOwners.slice(-1).filter((p) => {
-            return (p.name && p.name.search(this.search || this.filter) > -1) || p.address.search(this.search || this.filter) > -1
+            return p.search(this.search || this.filter) > -1
           }).length || // owner
           c.previousOwners.slice(0, 1).filter((p) => {
-            return (p.name && p.name.search(this.search || this.filter) > -1) || p.address.search(this.search || this.filter) > -1
+            return p.search(this.search || this.filter) > -1
           }).length || // founder
           c.name && c.name.search(this.search || this.filter) > -1 || // board name
           c.first32Moves.search(this.search || this.filter) > -1 || // moves
@@ -180,15 +177,21 @@
           c.board.search(this.search || this.filter) > -1 // board
         })
       },
+      ...mapState([
+        'allClovers'
+      ]),
       ...mapGetters([
         'clover',
-        'allClovers',
-        'usernames',
-        'clovernames',
         'symmetries'
       ])
     },
     methods: {
+      chPage (amount) {
+        window.scrollTo(0, this.$refs.cloverList.offsetTop - 150)
+        this.$nextTick(() => {
+          this.paged += amount
+        })
+      },
       currPrice (c) {
         return c.previousOwners.length === 1 ? c.lastPaidAmount : (c.lastPaidAmount * 2)
       },
@@ -203,6 +206,7 @@
       clickSort (i) {
         if (i !== this.sortableIndex) {
           this.sortableIndex = i
+          this.paged = 1
         } else {
           this.asc = !this.asc
         }

@@ -37,9 +37,11 @@
       <div class="my4">When claiming your Clover, you can also choose its starting price on the <span class="underline">Flip Market</span></div>
     </div>
     <div class="bg-dark-gray white px2 py4 zig-zag-white relative ">
-      <div class="max-width-5 mx-auto flex justify-around">
-        <img class="pl2" src="/static/left.png">
-        <img class="pr2" src="/static/right.png">
+      <div class="max-width-3 mx-auto flex justify-around">
+        <div>
+          <clv class="small-clover mt1 bg-green no-hover no-border" :speed="120" :no-moves="true"  moveString="D3E3F4G5F3F2G3D2E6C4C3C2B4D6F5G2C5B5C6B3G4E7D7E8G6H3H4H5F6F7"></clv>
+        </div>
+        <img class="pr2" src="/static/about-flip-right.svg" style="height: 200px;">
       </div>
     </div>
     <div class="h2 max-width-4 center mx-auto">
@@ -66,7 +68,7 @@
           <div class="h2 pt4">
             The Contract</div>
           <div class="h4 my2">
-            Clovers is a Dapp that uses an <b>Ethereum Contract</b> on the <a target="_blank" href="https://www.rinkeby.io/">Rinkeby Test Network</a> located at <a href="https://rinkeby.etherscan.io/address/0xcc0604514f71b8d39e13315d59f4115702b42646" target="_blank">0xcc0604514f71b8d39e13315d59f4115702b42646</a>. The contract is an extension of <a href="https://github.com/OpenZeppelin/zeppelin-solidity/tree/master/contracts/token" target="_blank">OpenZeppelin's ERC20 Token Contract</a> which adheres to the global standard for Ethereum Tokens. Instead of using a traditional mining system Clovers uses the game <a  href="https://en.wikipedia.org/wiki/Reversi" target="_blank">Reversi</a> and its massive game tree as a <a href="https://en.wikipedia.org/wiki/Proof-of-work_system" target="_blank">proof of work system</a>. In order to successfully "mine" a block one must search the Reversi game tree (estimated at 10^28 possible games) for a unique endgame which displays <b>symmetry</b>. The symmetry can be on the perpindicular X or Y axis, on the diagonal X = Y or X = -Y axis, or it can be rotationally symmetrical. The miner is rewarded in <a href="https://rinkeby.etherscan.io/token/0xcc0604514f71b8d39e13315d59f4115702b42646" target="_blank">Club&nbsp;Token (♧)</a> based on how many lines of symmetry are found and how prevalent those lines of symmetry have been in the past. Afterwards the miner becomes the owner of the symmetrical game, a <b>unique visual digital asset</b> called a <b>Clover (✤)</b>, which is automatically entered into the Flip Market.</div>
+            Clovers is a Dapp that uses an <b>Ethereum Contract</b> on the <a target="_blank" href="https://www.rinkeby.io/">Rinkeby Test Network</a> located at <a href="https://rinkeby.etherscan.io/address/0xcc0604514f71b8d39e13315d59f4115702b42646" target="_blank">0xcc0604514f71b8d39e13315d59f4115702b42646</a>. The contract is an extension of <a href="https://github.com/OpenZeppelin/zeppelin-solidity/tree/master/contracts/token" target="_blank">OpenZeppelin's ERC20 Token Contract</a> which adheres to the global standard for Ethereum Tokens. Instead of using a traditional mining system Clovers uses the game <a  href="https://en.wikipedia.org/wiki/Reversi" target="_blank">Reversi</a> and its massive game tree as a <a href="https://en.wikipedia.org/wiki/Proof-of-work_system" target="_blank">proof of work system</a>. In order to successfully "mine" a block one must search the Reversi game tree (estimated at 10^28 possible games) for a unique endgame which displays <b>symmetry</b>. The symmetry can be on the perpendicular X or Y axis, on the diagonal X = Y or X = -Y axis, or it can be rotationally symmetrical. The miner is rewarded in <a href="https://rinkeby.etherscan.io/token/0xcc0604514f71b8d39e13315d59f4115702b42646" target="_blank">Club&nbsp;Token (♧)</a> based on how many lines of symmetry are found and how prevalent those lines of symmetry have been in the past. Afterwards the miner becomes the owner of the symmetrical game, a <b>unique visual digital asset</b> called a <b>Clover (✤)</b>, which is automatically entered into the Flip Market.</div>
           <div class="h2 mt3">
             The Flip Market</div>
           <div class="h4 my2">
@@ -112,8 +114,6 @@
      -moz-box-shadow:    inset 0 0 20px rgba(0, 0, 0, .2);
    -webkit-box-shadow: inset 0 0 20px rgba(0, 0, 0, .2);
    box-shadow:        inset 0px 0px 20px rgba(0, 0, 0, .2);
-
-
 }
 
 .wide {
