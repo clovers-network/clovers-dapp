@@ -63,7 +63,28 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     * @return A uint256 representing the reward that would be returned for claiming the board.
     */
     function getReward(uint256 _tokenId) public constant returns (uint256) {
-
+        Reversi.Game memory game;
+        game.board = bytes16(_tokenId);
+        game = Reversi.isSymmetrical(game);
+        if (game.symmetrical) {
+            return calculateReward(game);
+        } else {
+            return 0;
+        }
+    }
+    /**
+    * @dev Calculates the reward of the board.
+    * @param game Reversi library board struct.
+    * @return A uint256 representing the reward that would be returned for claiming the board.
+    */
+    function calculateReward (Reversi.Game game) internal constant returns(uint256) {
+        uint256 base = 0;
+        if (game.RotSym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(RotSym + 1));
+        if (game.Y0Sym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(Y0Sym + 1));
+        if (game.X0Sym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(X0Sym + 1));
+        if (game.XYSym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(XYSym + 1));
+        if (game.XnYSym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(XnYSym + 1));
+        return base;
     }
 
     /**

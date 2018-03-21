@@ -60,7 +60,7 @@ contract Clovers is ERC721Token, isOwnable {
     function moveEth(address _to, uint256 amount) public onlyOwnerOrController returns (bool) {
         require(amount <= this.balance);
         _to.transfer(amount);
-        return
+        return true;
     }
     function moveToken(uint256 amount, address _to, address token) public onlyOwnerOrController returns (bool) {
         require(amount <= ERC20(token).balanceOf(this));
