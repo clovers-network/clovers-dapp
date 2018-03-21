@@ -1,0 +1,49 @@
+
+EternalStorage.sol
+- keeps storage values for CloverToken balances
+- keeps storage values for ClubToken balances
+- hasAdmin
+
+
+ClubToken.sol
+- ERC20
+- uses EternalStorage.sol
+
+
+CloverToken.sol
+- ERC721
+- uses EternalStorage.sol
+- uses CloverValidator.sol
+
+CloverMetaData.sol
+- returns metadata for CloverToken.sol
+- uses EternalStorage.sol
+
+
+
+CloverController.sol
+- Interface for underlying contracts to allow upgrading
+- hasAdmin
+- has Addresses for all other contracts
+- uses EternalStorage.sol
+- can mint CloverTokens
+- can mint ClubTokens
+- - bancor formula
+- - inflation
+
+CloverValidator.sol
+- returns validation method for CloverController.sol
+
+
+
+
+
+mintable NFT
+rewards in ClubToken
+
+Mining Dashboard
+All previouly mined
+likes & comments
+wallet - transfer
+
+Mayyyybe market

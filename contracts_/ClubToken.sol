@@ -373,7 +373,6 @@ contract ClubToken is StandardToken {
   }
 
   function addToSymmTallys (Reversi.Game game) internal {
-  // function addToSymmTallys (Game game) internal {
     if (game.symmetrical) Symmetricals += 1;
     if (game.RotSym) RotSym += 1;
     if (game.Y0Sym) Y0Sym += 1;
@@ -383,7 +382,6 @@ contract ClubToken is StandardToken {
   }
 
   function findersFee (Reversi.Game game) internal constant returns(uint256) {
-  // function findersFee (Game game) internal constant returns(uint256) {
     uint256 base = 0;
 
     if (game.RotSym) base = base.add( payMultiplier.mul( Symmetricals + 1 ).div( RotSym + 1 ) );
