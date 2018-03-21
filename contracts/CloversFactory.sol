@@ -19,9 +19,14 @@ contract CloversFactory {
     function isVerified(uint256 _tokenId) public constant returns (bool);
     function getReward(uint256 _tokenId) public constant returns (uint256);
     
-    function claimClover(bytes15 moves, uint256 _tokenId, address _to) public payable returns (bool);
+    function claimClover(bytes15 moves, uint256 _tokenId) public payable returns (bool);
+    // function claimClover(bytes15 moves, uint256 _tokenId, address _to) public payable returns (bool);
+    // function claimClover(bytes15 moves, uint256 _tokenId, bytes1 _symmetries) public payable returns (bool);
+    function claimClover(bytes15 moves, uint256 _tokenId, bytes1 _symmetries, address _to) public payable returns (bool);
+    // function claimCloverCommit(bytes32 movesHash) public payable returns (bool);
     function claimCloverCommit(bytes32 movesHash, address _to) public payable returns (bool);
-    function claimCloverReveal(bytes15 moves, uint256 _tokenId) public returns (bool);
+    // function claimCloverReveal(bytes15 moves, uint256 _tokenId) public returns (bool);
+    function claimCloverReveal(bytes15 moves, uint256 _tokenId, bytes1 _symetries) public returns (bool);
     function retrieveStake(uint256 _tokenId) public returns (bool);
     function challengeClover(uint256 _tokenId) public returns (bool);
 

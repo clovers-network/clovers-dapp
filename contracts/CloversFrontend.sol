@@ -72,7 +72,7 @@ contract CloversFrontend is CloversFactory, HasNoTokens, HasNoEther {
     * @param board The board that results from the moves.
     * @return A boolean representing whether or not the claim was successful.
     */
-    function claimClover(bytes15 moves, uint256 _tokenId, address _to) public payable returns (bool) {
+    function claimClover(bytes15 moves, uint256 _tokenId, bytes1 _symmetries, address _to) public payable returns (bool) {
         return CloversFactory(cloversController).claimClover(moves, _tokenId, _to);
     }
     /**
@@ -87,10 +87,11 @@ contract CloversFrontend is CloversFactory, HasNoTokens, HasNoEther {
     * @dev Reveal the solution to the previous commit to claim the Clover.
     * @param moves The moves that make up the Clover reversi game.
     * @param board The board that results from the moves.
+    * @param _symmetries The bytes1 representation of the symmetries on the board.
     * @return A boolean representing whether or not the reveal and claim was successful.
     */
-    function claimCloverReveal(bytes15 moves, uint256 _tokenId) public returns (bool) {
-        return CloversFactory(cloversController).claimCloverReveal(moves, _tokenId);
+    function claimCloverReveal(bytes15 moves, uint256 _tokenId, bytes1 _symetries) public returns (bool) {
+        return CloversFactory(cloversController).claimCloverReveal(moves, _tokenId, _symetries);
     }
     /**
     * @dev Retrieve the stake from a Clover claim after the stake period has ended.

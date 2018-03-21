@@ -7,8 +7,10 @@ pragma solidity ^0.4.17;
 import "Clovers.sol";
 import "Reversi.sol";
 import "CloversFactory.sol";
+import "zeppelin-solidity/contracts/token/ERC20.sol";
 import "zeppelin-solidity/contracts/ownership/HasNoTokens.sol";
 import "zeppelin-solidity/contracts/ownership/HasNoEther.sol";
+import "zeppelin-solidity/contracts/math/SafeMath.sol";
 
 contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
 
@@ -16,6 +18,7 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     address clubToken;
     address cloversFrontend;
 
+    uint256 payMultiplier;
     uint256 stakeAmount;
     uint256 stakePeriod;
 
@@ -58,32 +61,50 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         return ((now - _blockMinted) > stakePeriod);
     }
     /**
-    * @dev Gets the reward amount based on the symmetry of the board.
+    * @dev Verifies the reward amount based on the symmetry of the board.
     * @param board The board being checked.
     * @return A uint256 representing the reward that would be returned for claiming the board.
     */
-    function getReward(uint256 _tokenId) public constant returns (uint256) {
+    function verifyReward(uint256 _tokenId) public constant returns (uint256) {
         Reversi.Game memory game;
         game.board = bytes16(_tokenId);
         game = Reversi.isSymmetrical(game);
         if (game.symmetrical) {
-            return calculateReward(game);
+            return calculateReward(game.RotSym, game.Y0Sym, game.X0Sym, game.XYSym, game.XnYSym);
         } else {
             return 0;
         }
+    }
+    /**
+    * @dev Gets the reward amount based on the symmetry of the board.
+    * @param _symmetries The bytes1 representation of the symmetries.
+    * @return A uint256 representing the reward that would be returned for claiming the board.
+    */
+    function getReward(bytes1 _symmetries) public constant returns (uint256) {
+        bool RotSym = _symetries >> 4 & 1 == 1;
+        bool Y0Sym = _symmetries >> 3 & 1 == 1;
+        bool X0Sym = _symmetries >> 2 & 1 == 1;
+        bool XYSym = _symmetries >> 1 & 1 == 1;
+        bool XnYSym = _symmetries >> 0 & 1 == 1;
     }
     /**
     * @dev Calculates the reward of the board.
     * @param game Reversi library board struct.
     * @return A uint256 representing the reward that would be returned for claiming the board.
     */
-    function calculateReward (Reversi.Game game) internal constant returns(uint256) {
+    function calculateReward (bool _RotSym, bool _Y0Sym, bool _X0Sym, bool _XYSym, bool _XnYSym) internal constant returns(uint256) {
+        (uint256 Symmetricals,
+        uint256 RotSym,
+        uint256 Y0Sym,
+        uint256 X0Sym,
+        uint256 XYSym,
+        uint256 XnYSym) = Clovers(clovers).getAllSymmetries();
         uint256 base = 0;
-        if (game.RotSym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(RotSym + 1));
-        if (game.Y0Sym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(Y0Sym + 1));
-        if (game.X0Sym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(X0Sym + 1));
-        if (game.XYSym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(XYSym + 1));
-        if (game.XnYSym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(XnYSym + 1));
+        if (_RotSym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(RotSym + 1));
+        if (_Y0Sym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(Y0Sym + 1));
+        if (_X0Sym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(X0Sym + 1));
+        if (_XYSym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(XYSym + 1));
+        if (_XnYSym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(XnYSym + 1));
         return base;
     }
 
@@ -109,6 +130,13 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     function updateStakePeriod(uint256 _stakePeriod) onlyOwner public {
         stakePeriod = _stakePeriod;
     }
+    /**
+    * @dev Updates the pay multiplier, used to calculate token reward.
+    * @param _payMultiplier The uint256 value of pay multiplier.
+    */
+    function updatePayMultipier(uint256 _payMultiplier) onlyOwner public {
+        payMultiplier = _payMultiplier;
+    }
 
 /* ------------------------------------------------------------------------------------------------------- */
 
@@ -118,8 +146,21 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     * @param board The board that results from the moves.
     * @return A boolean representing whether or not the claim was successful.
     */
-    function claimClover(bytes15 moves, uint256 _tokenId, address _to) public payable returns (bool) {
-
+    function claimClover(bytes15 moves, uint256 _tokenId, bytes1 _symmetries, address _to) public payable returns (bool) {
+        require(moves != 0);
+        bytes32 movesHash = keccak256(moves);
+        Clovers(clovers).setCommit(movesHash, _to);
+        Clovers(clovers).setStake(movesHash, stakeAmount);
+        clovers.transfer(stakeAmount);
+        require(Clovers(clovers).getBlockMinted(_tokenId) != 0);
+        Clovers(clovers).setBlockMinted(_tokenId, now);
+        Clovers(clovers).setCloverMoves(_tokenId, moves);
+        if (_symmetries > 0) {
+            Clovers(clovers).setSymetries(_tokenId, _symmetries);
+            uint256 reward = getReward(_symmetries);
+            Clovers(clovers).setReward(_tokenId, reward);
+        }
+        require(Clovers(clovers).mint(_to, _tokenId, moves));
     }
     /**
     * @dev Commit the hash of the moves needed to claim the Clover. A stake should be made for counterfactual verification.
@@ -138,17 +179,21 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     * @dev Reveal the solution to the previous commit to claim the Clover.
     * @param moves The moves that make up the Clover reversi game.
     * @param board The board that results from the moves.
+    * @param _symmetries The bytes1 representation of the symmetries on the board.
     * @return A boolean representing whether or not the reveal and claim was successful.
     */
-    function claimCloverReveal(bytes15 moves, uint256 _tokenId) public returns (bool) {
+    function claimCloverReveal(bytes15 moves, uint256 _tokenId, bytes1 _symmetries) public returns (bool) {
         require(moves != 0);
         bytes32 movesHash = keccak256(moves);
         address commiter = Clovers(clovers).getCommit(movesHash);
         require(Clovers(clovers).getBlockMinted(_tokenId) != 0);
         Clovers(clovers).setBlockMinted(_tokenId, now);
         Clovers(clovers).setCloverMoves(_tokenId, moves);
-        uint256 reward = getReward(_tokenId);
-        Clovers(clovers).setReward(_tokenId, reward);
+        if (_symmetries > 0) {
+            Clovers(clovers).setSymetries(_tokenId, _symmetries);
+            uint256 reward = getReward(_symmetries);
+            Clovers(clovers).setReward(_tokenId, reward);
+        }
         require(Clovers(clovers).mint(commiter, _tokenId, moves));
     }
     /**
@@ -165,6 +210,8 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         require(isVerified(_tokenId));
         Clovers(clovers).setStake(movesHash, 0);
         address commiter = Clovers(clovers).getCommit(movesHash);
+        uint56 reward = Clovers(clovers).getReward(_tokenId);
+        require(ERC20(clubToken).mint(commiter, reward));
         require(Clovers(clovers).moveEth(commiter, stake));
     }
     /**
