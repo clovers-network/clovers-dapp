@@ -1,6 +1,6 @@
 pragma solidity ^0.4.13;
 
-import "zeppelin-solidity/contracts/token/StandardToken.sol";
+import "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 import "./Reversi.sol";
 // import "./oraclizeAPI.sol";
 
@@ -26,7 +26,7 @@ contract ClubToken is StandardToken {
 
 
   function ClubToken() {
-    totalSupply = INITIAL_SUPPLY;
+    totalSupply_ = INITIAL_SUPPLY;
     balances[msg.sender] = INITIAL_SUPPLY;
     admins[msg.sender] = true;
     adminKeys.push(msg.sender);
@@ -242,7 +242,7 @@ contract ClubToken is StandardToken {
     if (game.symmetrical) {
       clovers[board].findersFee = findersFee(game);
       balances[msg.sender] += clovers[board].findersFee;
-      totalSupply += clovers[board].findersFee;
+      totalSupply_ += clovers[board].findersFee;
       addToSymmTallys(game);
     }
     clovers[board].first32Moves = first32Moves;
@@ -365,7 +365,7 @@ contract ClubToken is StandardToken {
     if (game.symmetrical) {
       clovers[game.board].findersFee = findersFee(game);
       balances[msg.sender] += clovers[game.board].findersFee;
-      totalSupply += clovers[game.board].findersFee;
+      totalSupply_ += clovers[game.board].findersFee;
       addToSymmTallys(game);
     }
     Registered(msg.sender, startPrice, game.board, true, game.first32Moves, game.lastMoves, now, clovers[game.board].findersFee);
