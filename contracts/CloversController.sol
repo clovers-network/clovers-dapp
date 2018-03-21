@@ -4,25 +4,24 @@ pragma solidity ^0.4.17;
  * The CloversController is upgradeable and contains the logic used by CloversFrontend
  * Both adhere to the CloversFactory interface design
  */
-import "Clovers.sol";
-import "Reversi.sol";
-import "CloversFactory.sol";
-import "zeppelin-solidity/contracts/token/ERC20.sol";
+import "./Clovers.sol";
+import "./Mintable.sol";
+import "./CloversFactory.sol";
 import "zeppelin-solidity/contracts/ownership/HasNoTokens.sol";
 import "zeppelin-solidity/contracts/ownership/HasNoEther.sol";
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
 
 contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
+    using SafeMath for uint256;
 
     address clovers;
     address clubToken;
-    address cloversFrontend;
 
     uint256 payMultiplier;
     uint256 stakeAmount;
     uint256 stakePeriod;
 
-    function CloversController(address _clovers, address _clubToken, address _cloversStorage) public {
+    function CloversController(address _clovers, address _clubToken) public {
         clovers = _clovers;
         clubToken = _clubToken;
     }    
@@ -81,12 +80,18 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     * @return A uint256 representing the reward that would be returned for claiming the board.
     */
     function calculateReward (bool _RotSym, bool _Y0Sym, bool _X0Sym, bool _XYSym, bool _XnYSym) private constant returns(uint256) {
-        (uint256 Symmetricals,
-        uint256 RotSym,
-        uint256 Y0Sym,
-        uint256 X0Sym,
-        uint256 XYSym,
-        uint256 XnYSym) = Clovers(clovers).getAllSymmetries();
+        uint256 Symmetricals;
+        uint256 RotSym;
+        uint256 Y0Sym;
+        uint256 X0Sym;
+        uint256 XYSym;
+        uint256 XnYSym;
+        (Symmetricals,
+        RotSym,
+        Y0Sym,
+        X0Sym,
+        XYSym,
+        XnYSym) = Clovers(clovers).getAllSymmetries();
         uint256 base = 0;
         if (_RotSym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(RotSym + 1));
         if (_Y0Sym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(Y0Sym + 1));
@@ -171,7 +176,7 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         addSymmetries(_tokenId);
         address commiter = Clovers(clovers).getCommit(movesHash);
         uint56 reward = Clovers(clovers).getReward(_tokenId);
-        require(ERC20(clubToken).mint(commiter, reward));
+        require(Mintable(clubToken).mint(commiter, reward));
         require(Clovers(clovers).moveEth(commiter, stake));
         return true;
     }
@@ -213,14 +218,7 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         }
         return true;
     }
-    /**
-    * @dev Updates the deployed address of the CloverFrontend contract.
-    * @param _cloversFrontend The address of the CloverFrontend contract.
-    */
-    function updateCloversFrontendAddress(address _cloversFrontend) public onlyOwner {
-        require(_cloversFrontend != 0);
-        cloversFrontend = _cloversFrontend;
-    }
+
     /**
     * @dev Updates the stake amount.
     * @param _stakeAmount The new amount needed to stake.
@@ -247,14 +245,18 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     * @param _tokenId The token which needs to be examined.
     */
     function addSymmetries(uint256 _tokenId) private {
-        (
-            uint256 Symmetricals,
-            uint256 RotSym,
-            uint256 Y0Sym,
-            uint256 X0Sym,
-            uint256 XYSym,
-            uint256 XnYSym
-        ) = Clovers(clovers).getAllSymmetries();
+        uint256 Symmetricals;
+        uint256 RotSym;
+        uint256 Y0Sym;
+        uint256 X0Sym;
+        uint256 XYSym;
+        uint256 XnYSym;
+        (Symmetricals,
+        RotSym,
+        Y0Sym,
+        X0Sym,
+        XYSym,
+        XnYSym) = Clovers(clovers).getAllSymmetries();
         bytes1 _symmetries = Clovers(clovers).getSymmetries(_tokenId);
         Symmetricals = Symmetricals.add(_symmetries > 0 ? 1 : 0);
         RotSym = RotSym.add(_symmetries >> 4 & 1);
@@ -269,14 +271,18 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     * @param _tokenId The token which needs to be examined.
     */
     function removeSymmetries(uint256 _tokenId) private {
-        (
-            uint256 Symmetricals,
-            uint256 RotSym,
-            uint256 Y0Sym,
-            uint256 X0Sym,
-            uint256 XYSym,
-            uint256 XnYSym
-        ) = Clovers(clovers).getAllSymmetries();
+        uint256 Symmetricals;
+        uint256 RotSym;
+        uint256 Y0Sym;
+        uint256 X0Sym;
+        uint256 XYSym;
+        uint256 XnYSym;
+       (Symmetricals,
+        RotSym,
+        Y0Sym,
+        X0Sym,
+        XYSym,
+        XnYSym) = Clovers(clovers).getAllSymmetries();
         bytes1 _symmetries = Clovers(clovers).getSymmetries(_tokenId);
         Symmetricals = Symmetricals.sub(_symmetries > 0 ? 1 : 0);
         RotSym = RotSym.sub(_symmetries >> 4 & 1);

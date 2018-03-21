@@ -3,7 +3,7 @@ pragma solidity ^0.4.17;
 /**
  * The Clovers contract is the interface for the CloversController Contract
  */
-import "CloversFactory.sol";
+import "./CloversFactory.sol";
 import "zeppelin-solidity/contracts/ownership/HasNoTokens.sol";
 import "zeppelin-solidity/contracts/ownership/HasNoEther.sol";
 

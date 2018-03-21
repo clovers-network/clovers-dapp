@@ -13,7 +13,7 @@ contract ClubToken is ERC827Token, Ownable {
     event Burn(address indexed burner, uint256 value);
     event Mint(address indexed to, uint256 amount);
     
-    address CloversController;
+    address cloversController;
 
     modifier onlyOwnerOrController() {
         require(
@@ -25,6 +25,10 @@ contract ClubToken is ERC827Token, Ownable {
 
     function ClubToken() public {}
 
+    function updateCloversControllerAddress(address _cloversController) public onlyOwner {
+        require(_cloversController != 0);
+        cloversController = _cloversController;
+    }
     /**
      * @dev Burns a specific amount of tokens.
      * @param _value The amount of token to be burned.

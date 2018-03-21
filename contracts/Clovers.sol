@@ -5,20 +5,15 @@ pragma solidity ^0.4.17;
  * with upgradeable contract reference for returning metadata.
  */
 
-import "zeppelin-solidity/contracts/token/ERC20.sol";
-import "zeppelin-solidity/contracts/token/ERC721Token.sol";
-import "zeppelin-solidity/contracts/ownership/isOwnable.sol";
-import "CloversMetadata.sol";
+import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "zeppelin-solidity/contracts/token/ERC721/ERC721Token.sol";
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "./CloversMetadata.sol";
 
-contract Clovers is ERC721Token, isOwnable {
+contract Clovers is ERC721Token, Ownable {
 
-    uint256[5] = symmetries;
     uint256 totalSymmetries;
-    // uint256 RotSym;
-    // uint256 Y0Sym;
-    // uint256 X0Sym;
-    // uint256 XYSym;
-    // uint256 XnYSym;
+    uint256[5] symmetries; // RotSym, Y0Sym, X0Sym, XYSym, XnYSym
     address cloversMetadata;
     address cloversController;
 
@@ -108,11 +103,11 @@ contract Clovers is ERC721Token, isOwnable {
     }
     function setAllSymmetries(uint256 _totalSymmetries, uint256 RotSym, uint256 Y0Sym, uint256 X0Sym, uint256 XYSym, uint256 XnYSym) public onlyOwnerOrController {
         totalSymmetries = _totalSymmetries;
-        symmetries[0] = RotSym,
-        symmetries[1] = Y0Sym,
-        symmetries[2] = X0Sym,
-        symmetries[3] = XYSym,
-        symmetries[4] = XnYSym
+        symmetries[0] = RotSym;
+        symmetries[1] = Y0Sym;
+        symmetries[2] = X0Sym;
+        symmetries[3] = XYSym;
+        symmetries[4] = XnYSym;
     }
     function deleteClover(uint256 _tokenId) public onlyOwnerOrController {
         delete(clovers[_tokenId]);

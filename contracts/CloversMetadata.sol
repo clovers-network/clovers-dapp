@@ -7,7 +7,7 @@ pragma solidity ^0.4.17;
 import "zeppelin-solidity/contracts/ownership/HasNoTokens.sol";
 import "zeppelin-solidity/contracts/ownership/HasNoEther.sol";
 
-contract TokenMetadataController is HasNoTokens, HasNoEther {
+contract CloversMetadata is HasNoTokens, HasNoEther {
     
     address cloversController;
     mapping(uint => string) internal tokenIdToMetadata;
