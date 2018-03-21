@@ -8,6 +8,7 @@
         <p class="hide h3 mb3">Collect 'em All</p>
         <p class="max-width-3 sm-fit h2 mx-auto">
           <a href="/" class="white underline">Clovers</a> are Visual Digital Assets generated with the game <a class="white underline" href="https://en.wikipedia.org/wiki/Reversi" target="_blank">Reversi</a> as Proof-of-Work and rewarded in ERC20 <a href="https://rinkeby.etherscan.io/token/0xcc0604514f71b8d39e13315d59f4115702b42646" target="_blank" class="white underline">Club Tokens</a>.
+        <br><small>(V2 with <a class="white underline" target="_blank" href="http://erc721.org">NFTs</a> & <a class="white underline" target="_blank" href="https://medium.com/@billyrennekamp/re-fungible-token-rft-297003592769">RFTs</a> coming soon...)</small>
         </p>
       </div>
       <div class="center my3 relative">
