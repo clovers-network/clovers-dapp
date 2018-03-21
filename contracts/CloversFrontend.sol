@@ -90,8 +90,8 @@ contract CloversFrontend is CloversFactory, HasNoTokens, HasNoEther {
     * @param _symmetries The bytes1 representation of the symmetries on the board.
     * @return A boolean representing whether or not the reveal and claim was successful.
     */
-    function claimCloverReveal(bytes15 moves, uint256 _tokenId, bytes1 _symetries) public returns (bool) {
-        return CloversFactory(cloversController).claimCloverReveal(moves, _tokenId, _symetries);
+    function claimCloverReveal(bytes15 moves, uint256 _tokenId, bytes1 _symmetries) public returns (bool) {
+        return CloversFactory(cloversController).claimCloverReveal(moves, _tokenId, _symmetries);
     }
     /**
     * @dev Retrieve the stake from a Clover claim after the stake period has ended.
@@ -106,8 +106,8 @@ contract CloversFrontend is CloversFactory, HasNoTokens, HasNoEther {
     * @param board The board being challenged.
     * @return A boolean representing whether or not the challenge was successful.
     */
-    function challengeClover(uint256 _tokenId) public returns (bool) {
-        return CloversFactory(cloversController).challengeClover(_tokenId);
+    function challengeClover(uint256 _tokenId, address _to) public returns (bool) {
+        return CloversFactory(cloversController).challengeClover(_tokenId, _to);
     }
 
 }

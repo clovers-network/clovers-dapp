@@ -49,11 +49,11 @@ library Reversi {
     return (EMPTY, BLACK, WHITE);
   }
 
-  function playGame (bytes28 first32Moves, bytes28 lastMoves) internal constant returns (Game)  {
+  function playGame (bytes28[2] moves) internal constant returns (Game)  {
     Game memory game;
 
-    game.first32Moves = first32Moves;
-    game.lastMoves = lastMoves;
+    game.first32Moves = moves[0];
+    game.lastMoves = moves[1];
     game.moveKey = 0;
     game.blackScore = 2;
     game.whiteScore = 2;
@@ -326,7 +326,7 @@ library Reversi {
         if (returnBytes(game.board, i, j ) != returnBytes(game.board, i, (7 - j) )) {
           Y0Sym = false;
         }
-        // symetry on x = 0
+        // symmetry on x = 0
         if (returnBytes(game.board, i, j ) != returnBytes(game.board, (7 - i), j ) ) {
           X0Sym = false;
         }
