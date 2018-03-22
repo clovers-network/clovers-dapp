@@ -37,9 +37,9 @@ contract Clovers is ERC721Token, Ownable {
 
     function Clovers () public {}
 
-    function tokenMetadata(uint _tokenId) public view returns (string _infoUrl) {
-        return CloversMetadata(cloversMetadata).tokenMetadata(_tokenId);
-    }
+    // function tokenMetadata(uint _tokenId) public view returns (string _infoUrl) {
+    //     return CloversMetadata(cloversMetadata).tokenMetadata(_tokenId);
+    // }
     function getStake(bytes32 movesHash) public view returns (uint256) {
         return stakes[movesHash];
     }

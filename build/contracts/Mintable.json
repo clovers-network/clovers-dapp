@@ -1,0 +1,266 @@
+{
+  "contractName": "Mintable",
+  "abi": [
+    {
+      "inputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "mint",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity ^0.4.17;\n\n/**\n * Mintable is a contract interface for CloversController to use\n */\n\n\ncontract Mintable {\n\n  function Mintable() public {}\n\n  function mint(address _to, uint256 amount) public returns(bool);\n  \n}",
+  "sourcePath": "/Users/billy/vue/clovers-dapp/contracts/Mintable.sol",
+  "ast": {
+    "attributes": {
+      "absolutePath": "/Users/billy/vue/clovers-dapp/contracts/Mintable.sol",
+      "exportedSymbols": {
+        "Mintable": [
+          2346
+        ]
+      }
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            "^",
+            "0.4",
+            ".17"
+          ]
+        },
+        "id": 2332,
+        "name": "PragmaDirective",
+        "src": "0:24:7"
+      },
+      {
+        "attributes": {
+          "baseContracts": [
+            null
+          ],
+          "contractDependencies": [
+            null
+          ],
+          "contractKind": "contract",
+          "documentation": "Mintable is a contract interface for CloversController to use",
+          "fullyImplemented": false,
+          "linearizedBaseContracts": [
+            2346
+          ],
+          "name": "Mintable",
+          "scope": 2347
+        },
+        "children": [
+          {
+            "attributes": {
+              "constant": false,
+              "implemented": true,
+              "isConstructor": true,
+              "modifiers": [
+                null
+              ],
+              "name": "Mintable",
+              "payable": false,
+              "scope": 2346,
+              "stateMutability": "nonpayable",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 2333,
+                "name": "ParameterList",
+                "src": "141:2:7"
+              },
+              {
+                "attributes": {
+                  "parameters": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 2334,
+                "name": "ParameterList",
+                "src": "151:0:7"
+              },
+              {
+                "attributes": {
+                  "statements": [
+                    null
+                  ]
+                },
+                "children": [],
+                "id": 2335,
+                "name": "Block",
+                "src": "151:2:7"
+              }
+            ],
+            "id": 2336,
+            "name": "FunctionDefinition",
+            "src": "124:29:7"
+          },
+          {
+            "attributes": {
+              "body": null,
+              "constant": false,
+              "implemented": false,
+              "isConstructor": false,
+              "modifiers": [
+                null
+              ],
+              "name": "mint",
+              "payable": false,
+              "scope": 2346,
+              "stateMutability": "nonpayable",
+              "superFunction": null,
+              "visibility": "public"
+            },
+            "children": [
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "_to",
+                      "scope": 2345,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "address",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "address",
+                          "type": "address"
+                        },
+                        "id": 2337,
+                        "name": "ElementaryTypeName",
+                        "src": "171:7:7"
+                      }
+                    ],
+                    "id": 2338,
+                    "name": "VariableDeclaration",
+                    "src": "171:11:7"
+                  },
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "amount",
+                      "scope": 2345,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "uint256",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "uint256",
+                          "type": "uint256"
+                        },
+                        "id": 2339,
+                        "name": "ElementaryTypeName",
+                        "src": "184:7:7"
+                      }
+                    ],
+                    "id": 2340,
+                    "name": "VariableDeclaration",
+                    "src": "184:14:7"
+                  }
+                ],
+                "id": 2341,
+                "name": "ParameterList",
+                "src": "170:29:7"
+              },
+              {
+                "children": [
+                  {
+                    "attributes": {
+                      "constant": false,
+                      "name": "",
+                      "scope": 2345,
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "type": "bool",
+                      "value": null,
+                      "visibility": "internal"
+                    },
+                    "children": [
+                      {
+                        "attributes": {
+                          "name": "bool",
+                          "type": "bool"
+                        },
+                        "id": 2342,
+                        "name": "ElementaryTypeName",
+                        "src": "215:4:7"
+                      }
+                    ],
+                    "id": 2343,
+                    "name": "VariableDeclaration",
+                    "src": "215:4:7"
+                  }
+                ],
+                "id": 2344,
+                "name": "ParameterList",
+                "src": "214:6:7"
+              }
+            ],
+            "id": 2345,
+            "name": "FunctionDefinition",
+            "src": "157:64:7"
+          }
+        ],
+        "id": 2346,
+        "name": "ContractDefinition",
+        "src": "101:125:7"
+      }
+    ],
+    "id": 2347,
+    "name": "SourceUnit",
+    "src": "0:226:7"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.19+commit.c4cbbb05.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "1.0.1",
+  "updatedAt": "2018-03-22T00:42:26.165Z"
+}

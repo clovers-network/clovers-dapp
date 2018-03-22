@@ -345,11 +345,11 @@ library Reversi {
         if (col > 7) revert();
         if (row > 7) revert();
         uint128 push = posToPush(col, row);
-        bytes16 mask = 3 << push;// 0b00000011 (ones)
+        bytes16 mask = bytes16(3 << push);// 0b00000011 (ones)
 
         board = ((board ^ mask) & board);
 
-        return board | (color << push);
+        return board | bytes16(color << push);
     }
 
     function returnTile (bytes16 board, uint8 col, uint8 row) internal constant returns (uint8){

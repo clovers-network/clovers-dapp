@@ -35,24 +35,24 @@ contract CloversFrontend is CloversFactory, HasNoTokens, HasNoEther {
     * @param moves The moves needed to play validate the game.
     * @return A boolean representing whether or not the game is valid.
     */
-    function isValid(bytes15 moves) public constant returns (bool) {
+    function isValid(bytes28[2] moves) public constant returns (bool) {
         return CloversFactory(cloversController).isValid(moves);
     }
     /**
     * @dev Checks whether the game has passed the verification period.
-    * @param board The board being checked.
+    * @param _tokenId The board being checked.
     * @return A boolean representing whether or not the game has been verified.
     */
     function isVerified(uint256 _tokenId) public constant returns (bool) {
         return CloversFactory(cloversController).isVerified(_tokenId);
     }
     /**
-    * @dev Gets the reward amount based on the symmetry of the board.
-    * @param board The board being checked.
+    * @dev Calculates the reward of the board.
+    * @param _symmetries symmetries saved as a bytes1 value like 00010101 where bits represent symmetry types.
     * @return A uint256 representing the reward that would be returned for claiming the board.
     */
-    function getReward(uint256 _tokenId) public constant returns (uint256) {
-        return CloversFactory(cloversController).getReward(_tokenId);
+    function calculateReward(bytes1 _symmetries) public constant returns (uint256) {
+        return CloversFactory(cloversController).calculateReward(_symmetries);
     }
 
     /**
@@ -69,15 +69,18 @@ contract CloversFrontend is CloversFactory, HasNoTokens, HasNoEther {
     /**
     * @dev Claim the Clover without a commit or reveal.
     * @param moves The moves that make up the Clover reversi game.
-    * @param board The board that results from the moves.
+    * @param _tokenId The board that results from the moves.
+    * @param _symmetries symmetries saved as a bytes1 value like 00010101 where bits represent symmetry types.
+    * @param _to The address claiming the Clover.
     * @return A boolean representing whether or not the claim was successful.
     */
-    function claimClover(bytes15 moves, uint256 _tokenId, bytes1 _symmetries, address _to) public payable returns (bool) {
-        return CloversFactory(cloversController).claimClover(moves, _tokenId, _to);
+    function claimClover(bytes28[2] moves, uint256 _tokenId, bytes1 _symmetries, address _to) public payable returns (bool) {
+        return CloversFactory(cloversController).claimClover(moves, _tokenId, _symmetries, _to);
     }
     /**
-    * @dev Commit the hash of the moves needed to claim the Clover.
+    * @dev Commit the hash of the moves needed to claim the Clover. A stake should be made for counterfactual verification.
     * @param movesHash The hash of the moves that makes up the Clover reversi game.
+    * @param _to The address claiming the Clover.
     * @return A boolean representing whether or not the commit was successful.
     */
     function claimCloverCommit(bytes32 movesHash, address _to) public payable returns (bool) {
@@ -86,16 +89,16 @@ contract CloversFrontend is CloversFactory, HasNoTokens, HasNoEther {
     /**
     * @dev Reveal the solution to the previous commit to claim the Clover.
     * @param moves The moves that make up the Clover reversi game.
-    * @param board The board that results from the moves.
-    * @param _symmetries The bytes1 representation of the symmetries on the board.
+    * @param _tokenId The board that results from the moves.
+    * @param _symmetries symmetries saved as a bytes1 value like 00010101 where bits represent symmetry types.
     * @return A boolean representing whether or not the reveal and claim was successful.
     */
-    function claimCloverReveal(bytes15 moves, uint256 _tokenId, bytes1 _symmetries) public returns (bool) {
+    function claimCloverReveal(bytes28[2] moves, uint256 _tokenId, bytes1 _symmetries) public returns (bool) {
         return CloversFactory(cloversController).claimCloverReveal(moves, _tokenId, _symmetries);
     }
     /**
     * @dev Retrieve the stake from a Clover claim after the stake period has ended.
-    * @param board The board which holds the stake.
+    * @param _tokenId The board which holds the stake.
     * @return A boolean representing whether or not the retrieval was successful.
     */
     function retrieveStake(uint256 _tokenId) public returns (bool) {
@@ -103,7 +106,8 @@ contract CloversFrontend is CloversFactory, HasNoTokens, HasNoEther {
     }
     /**
     * @dev Challenge a staked Clover for being invalid.
-    * @param board The board being challenged.
+    * @param _tokenId The board being challenged.
+    * @param _to The address challenging the Clover.
     * @return A boolean representing whether or not the challenge was successful.
     */
     function challengeClover(uint256 _tokenId, address _to) public returns (bool) {

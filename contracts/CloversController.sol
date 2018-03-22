@@ -1,10 +1,12 @@
 pragma solidity ^0.4.17;
+pragma experimental ABIEncoderV2;
 
 /**
  * The CloversController is upgradeable and contains the logic used by CloversFrontend
  * Both adhere to the CloversFactory interface design
  */
 import "./Clovers.sol";
+import "./Reversi.sol";
 import "./Mintable.sol";
 import "./CloversFactory.sol";
 import "zeppelin-solidity/contracts/ownership/HasNoTokens.sol";
@@ -45,14 +47,23 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     * @param moves The moves needed to play validate the game.
     * @return A boolean representing whether or not the game is valid.
     */
-    function isValid(Reversi.Game game) public constant returns (bool) {
+    function isValid(bytes28[2] moves) public constant returns (bool) {
+        Reversi.Game memory game = Reversi.playGame(moves);
+        return isValidGame(game);
+    }
+    /**
+    * @dev Checks whether the game is valid.
+    * @param game The pre-played game.
+    * @return A boolean representing whether or not the game is valid.
+    */
+    function isValidGame(Reversi.Game game) public constant returns (bool) {
         if (game.error) return false;
         if (!game.complete) return false;
         return true;
     }
     /**
     * @dev Checks whether the game has passed the verification period.
-    * @param board The board being checked.
+    * @param _tokenId The board being checked.
     * @return A boolean representing whether or not the game has been verified.
     */
     function isVerified(uint256 _tokenId) public constant returns (bool) {
@@ -62,24 +73,11 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         return ((now - _blockMinted) > stakePeriod);
     }
     /**
-    * @dev Gets the reward amount based on the symmetry of the board.
-    * @param _symmetries The bytes1 representation of the symmetries.
-    * @return A uint256 representing the reward that would be returned for claiming the board.
-    */
-    function convertSymmetries(bytes1 _symmetries) private constant returns (bool, bool, bool, bool, bool) {
-        bool RotSym = _symmetries >> 4 & 1 == 1;
-        bool Y0Sym = _symmetries >> 3 & 1 == 1;
-        bool X0Sym = _symmetries >> 2 & 1 == 1;
-        bool XYSym = _symmetries >> 1 & 1 == 1;
-        bool XnYSym = _symmetries & 1 == 1;
-        return (RotSym, Y0Sym, X0Sym, XYSym, XnYSym);
-    }
-    /**
     * @dev Calculates the reward of the board.
-    * @param game Reversi library board struct.
+    * @param _symmetries symmetries saved as a bytes1 value like 00010101 where bits represent symmetry types.
     * @return A uint256 representing the reward that would be returned for claiming the board.
     */
-    function calculateReward (bool _RotSym, bool _Y0Sym, bool _X0Sym, bool _XYSym, bool _XnYSym) private constant returns(uint256) {
+    function calculateReward(bytes1 _symmetries) public constant returns (uint256) {
         uint256 Symmetricals;
         uint256 RotSym;
         uint256 Y0Sym;
@@ -93,18 +91,20 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         XYSym,
         XnYSym) = Clovers(clovers).getAllSymmetries();
         uint256 base = 0;
-        if (_RotSym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(RotSym + 1));
-        if (_Y0Sym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(Y0Sym + 1));
-        if (_X0Sym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(X0Sym + 1));
-        if (_XYSym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(XYSym + 1));
-        if (_XnYSym) base = base.add(payMultiplier.mul(Symmetricals + 1).div(XnYSym + 1));
+        if (_symmetries >> 4 & 1 == 1) base = base.add(payMultiplier.mul(Symmetricals + 1).div(RotSym + 1));
+        if (_symmetries >> 3 & 1 == 1) base = base.add(payMultiplier.mul(Symmetricals + 1).div(Y0Sym + 1));
+        if (_symmetries >> 2 & 1 == 1) base = base.add(payMultiplier.mul(Symmetricals + 1).div(X0Sym + 1));
+        if (_symmetries >> 1 & 1 == 1) base = base.add(payMultiplier.mul(Symmetricals + 1).div(XYSym + 1));
+        if (_symmetries & 1 == 1) base = base.add(payMultiplier.mul(Symmetricals + 1).div(XnYSym + 1));
         return base;
     }
 
     /**
     * @dev Claim the Clover without a commit or reveal.
     * @param moves The moves that make up the Clover reversi game.
-    * @param board The board that results from the moves.
+    * @param _tokenId The board that results from the moves.
+    * @param _symmetries symmetries saved as a bytes1 value like 00010101 where bits represent symmetry types.
+    * @param _to The address claiming the Clover.
     * @return A boolean representing whether or not the claim was successful.
     */
     function claimClover(bytes28[2] moves, uint256 _tokenId, bytes1 _symmetries, address _to) public payable returns (bool) {
@@ -118,7 +118,7 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         Clovers(clovers).setCloverMoves(_tokenId, moves);
         if (_symmetries > 0) {
             Clovers(clovers).setSymmetries(_tokenId, _symmetries);
-            uint256 reward = calculateReward(convertSymmetries(_symmetries));
+            uint256 reward = calculateReward(_symmetries);
             Clovers(clovers).setReward(_tokenId, reward);
         }
         Clovers(clovers).mint(_to, _tokenId);
@@ -127,6 +127,7 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     /**
     * @dev Commit the hash of the moves needed to claim the Clover. A stake should be made for counterfactual verification.
     * @param movesHash The hash of the moves that makes up the Clover reversi game.
+    * @param _to The address claiming the Clover.
     * @return A boolean representing whether or not the commit was successful.
     */
     function claimCloverCommit(bytes32 movesHash, address _to) public payable returns (bool) {
@@ -141,8 +142,8 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     /**
     * @dev Reveal the solution to the previous commit to claim the Clover.
     * @param moves The moves that make up the Clover reversi game.
-    * @param board The board that results from the moves.
-    * @param _symmetries The bytes1 representation of the symmetries on the board.
+    * @param _tokenId The board that results from the moves.
+    * @param _symmetries symmetries saved as a bytes1 value like 00010101 where bits represent symmetry types.
     * @return A boolean representing whether or not the reveal and claim was successful.
     */
     function claimCloverReveal(bytes28[2] moves, uint256 _tokenId, bytes1 _symmetries) public returns (bool) {
@@ -154,19 +155,19 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         Clovers(clovers).setCloverMoves(_tokenId, moves);
         if (_symmetries > 0) {
             Clovers(clovers).setSymmetries(_tokenId, _symmetries);
-            uint256 reward = calculateReward(convertSymmetries(_symmetries));
+            uint256 reward = calculateReward(_symmetries);
             Clovers(clovers).setReward(_tokenId, reward);
         }
-        Clovers(clovers).mint(commiter, _tokenId, moves);
+        Clovers(clovers).mint(commiter, _tokenId);
         return true;
     }
     /**
     * @dev Retrieve the stake from a Clover claim after the stake period has ended.
-    * @param board The board which holds the stake.
+    * @param _tokenId The board which holds the stake.
     * @return A boolean representing whether or not the retrieval was successful.
     */
     function retrieveStake(uint256 _tokenId) public returns (bool) {
-        bytes28[2] moves = Clovers(clovers).getCloverMoves(_tokenId);
+        bytes28[2] memory moves = Clovers(clovers).getCloverMoves(_tokenId);
         require(moves[0] != 0);
         bytes32 movesHash = keccak256(moves);
         uint256 stake = Clovers(clovers).getStake(movesHash);
@@ -175,29 +176,30 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         Clovers(clovers).setStake(movesHash, 0);
         addSymmetries(_tokenId);
         address commiter = Clovers(clovers).getCommit(movesHash);
-        uint56 reward = Clovers(clovers).getReward(_tokenId);
+        uint256 reward = Clovers(clovers).getReward(_tokenId);
         require(Mintable(clubToken).mint(commiter, reward));
         require(Clovers(clovers).moveEth(commiter, stake));
         return true;
     }
     /**
     * @dev Challenge a staked Clover for being invalid.
-    * @param board The board being challenged.
+    * @param _tokenId The board being challenged.
+    * @param _to The address challenging the Clover.
     * @return A boolean representing whether or not the challenge was successful.
     */
     function challengeClover(uint256 _tokenId, address _to) public returns (bool) {
         bool valid = true;
-        bytes28[2] moves = Clovers(clovers).getCloverMoves(_tokenId);
+        bytes28[2] memory moves = Clovers(clovers).getCloverMoves(_tokenId);
         require(moves[0] != 0);
         Reversi.Game memory game = Reversi.playGame(moves);
-        if(isValid(game)) {
+        if(isValidGame(game)) {
             bytes1 _symmetries = Clovers(clovers).getSymmetries(_tokenId);
 
-            valid = bool(_symmetries >> 4 & 1) == game.RotSym ? valid : false;
-            valid = bool(_symmetries >> 3 & 1) == game.Y0Sym ? valid : false;
-            valid = bool(_symmetries >> 2 & 1) == game.X0Sym ? valid : false;
-            valid = bool(_symmetries >> 1 & 1) == game.XYSym ? valid : false;
-            valid = bool(_symmetries & 1) == game.XnYSym ? valid : false;
+            valid = (_symmetries >> 4 & 1) > 0 == game.RotSym ? valid : false;
+            valid = (_symmetries >> 3 & 1) > 0 == game.Y0Sym ? valid : false;
+            valid = (_symmetries >> 2 & 1) > 0 == game.X0Sym ? valid : false;
+            valid = (_symmetries >> 1 & 1) > 0 == game.XYSym ? valid : false;
+            valid = (_symmetries & 1) > 0 == game.XnYSym ? valid : false;
 
         } else {
             valid = false;
@@ -259,11 +261,11 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         XnYSym) = Clovers(clovers).getAllSymmetries();
         bytes1 _symmetries = Clovers(clovers).getSymmetries(_tokenId);
         Symmetricals = Symmetricals.add(_symmetries > 0 ? 1 : 0);
-        RotSym = RotSym.add(_symmetries >> 4 & 1);
-        Y0Sym = Y0Sym.add(_symmetries >> 3 & 1);
-        X0Sym = X0Sym.add(_symmetries >> 2 & 1);
-        XYSym = XYSym.add(_symmetries >> 1 & 1);
-        XnYSym = XnYSym.add(_symmetries & 1);
+        RotSym = RotSym.add(uint256(_symmetries >> 4 & 1));
+        Y0Sym = Y0Sym.add(uint256(_symmetries >> 3 & 1));
+        X0Sym = X0Sym.add(uint256(_symmetries >> 2 & 1));
+        XYSym = XYSym.add(uint256(_symmetries >> 1 & 1));
+        XnYSym = XnYSym.add(uint256(_symmetries & 1));
         Clovers(clovers).setAllSymmetries(Symmetricals, RotSym, Y0Sym, X0Sym, XYSym, XnYSym);
     }
     /**
@@ -285,11 +287,11 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         XnYSym) = Clovers(clovers).getAllSymmetries();
         bytes1 _symmetries = Clovers(clovers).getSymmetries(_tokenId);
         Symmetricals = Symmetricals.sub(_symmetries > 0 ? 1 : 0);
-        RotSym = RotSym.sub(_symmetries >> 4 & 1);
-        Y0Sym = Y0Sym.sub(_symmetries >> 3 & 1);
-        X0Sym = X0Sym.sub(_symmetries >> 2 & 1);
-        XYSym = XYSym.sub(_symmetries >> 1 & 1);
-        XnYSym = XnYSym.sub(_symmetries & 1);
+        RotSym = RotSym.sub(uint256(_symmetries >> 4 & 1));
+        Y0Sym = Y0Sym.sub(uint256(_symmetries >> 3 & 1));
+        X0Sym = X0Sym.sub(uint256(_symmetries >> 2 & 1));
+        XYSym = XYSym.sub(uint256(_symmetries >> 1 & 1));
+        XnYSym = XnYSym.sub(uint256(_symmetries & 1));
         Clovers(clovers).setAllSymmetries(Symmetricals, RotSym, Y0Sym, X0Sym, XYSym, XnYSym);
     }
 

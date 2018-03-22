@@ -7,7 +7,7 @@ pragma solidity ^0.4.17;
 
 contract Mintable {
 
-  function Mintable(){}
+  function Mintable() public {}
 
   function mint(address _to, uint256 amount) public returns(bool);
   
