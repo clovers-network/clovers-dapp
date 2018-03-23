@@ -1,4 +1,5 @@
-
+// assertRevert = require('./helpers/assertRevert.js');
+var utils = require('web3-utils')
 var Reversi = artifacts.require("./Reversi.sol")
 var Clovers = artifacts.require("./Clovers.sol")
 var CloversFrontend = artifacts.require("./CloversFrontend.sol")
@@ -6,16 +7,16 @@ var CloversMetadata = artifacts.require("./CloversMetadata.sol")
 var CloversController = artifacts.require("./CloversController.sol")
 var ClubToken = artifacts.require("./ClubToken.sol")
 
-let gasPrice = 100000000000
+let gasPrice = 1000000000 // 1GWEI
 
 let stakeAmount = 100
 let stakePeriod = 100
-let multiplier = 100
+let multiplier = 10
 let _ = '        '
 
 contract('Clovers', async function(accounts)  {
   let clovers, cloversMetadata, clubToken, reversi, cloversController
-  beforeEach(async () => {
+  before(async () => {
     try {
       // Deploy Clovers.sol (NFT)
       clovers = await Clovers.new()
@@ -76,91 +77,148 @@ contract('Clovers', async function(accounts)  {
   describe('Clovers.sol', function () {
     it('should be able to read metadata', async function () {
       let metadata = await clovers.tokenMetadata(666)
-      let _metadata = await cloversMetadata.tokenMetadata(666);
-      assert(_metadata === metadata, '_metadata != metadata');
+      let _metadata = await cloversMetadata.tokenMetadata(666)
+      assert(_metadata === metadata, '_metadata != metadata')
     })
   })
 
   describe('CloversController.sol', function() {
-    it('should read values that were written', async function () {
+
+    let balance, _balance, tx, clubBalance, gasEstimate, newStakeAmount, gasSpent
+    let _tokenId = '0x00000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'
+    let _moves = [
+      new web3.BigNumber('0x00000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16),
+      new web3.BigNumber('0x00000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', 16)
+    ]
+
+    it('should read parameters that were set', async function () {
       let _stakeAmount = await cloversController.currentStakeAmount()
 
-      assert(_stakeAmount.toNumber() === stakeAmount);
+      assert(_stakeAmount.toNumber() === stakeAmount, 'stake amount not equal');
 
       let _stakePeriod = await cloversController.currentStakePeriod()
-      assert(_stakePeriod.toNumber() === stakePeriod);
+      assert(_stakePeriod.toNumber() === stakePeriod, 'stake period not equal');
       
       let _multiplier = await cloversController.getMultiplier()
-      assert(_multiplier.toNumber() === multiplier);
+      assert(_multiplier.toNumber() === multiplier, 'multiplier not equal');
     })
-    it('should claim, wait, and recover stake', async function () {
-      let _tokenId = '0x00000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'
-      let balance = web3.eth.getBalance(accounts[0])
-      var tx
-      //make sure token doesn't exist
+
+    it('should make sure token doesn\'t exist', async function () {
+      balance = web3.eth.getBalance(accounts[0])
       try {
         await clovers.ownerOf(_tokenId)
       } catch (error) {
         assert(true, 'ownerOf should have failed while no one owns it');
       }
+    })
 
-      // make sure claimClover is successful
+    it('should make sure claimClover is successful', async function () {
       try {
-        tx = await cloversController.claimClover(
-          [
-            '0x00000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF',
-            '0x00000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'
-          ],
-          _tokenId, 
-          '0x000000000000000000000000000000000000000000000000000000000000001F', 
+        let options = [
+          _moves,
+          new web3.BigNumber(_tokenId, 16), 
+          new web3.BigNumber('0x000000000000000000000000000000000000000000000000000000000000001F', 16),
           accounts[0], 
           {
-            value: stakeAmount
+            value: new web3.BigNumber(stakeAmount)
           }
-        )
+        ]
+        tx = await cloversController.claimClover(...options)
+        console.log(_+'claimClover gasCost ' + tx.receipt.cumulativeGasUsed)
+        gasSpent = tx.receipt.cumulativeGasUsed
         assert(tx.receipt.status === '0x01', 'claimClover tx receipt should have been 0x01 (successful) but was instead ' + tx.receipt.status);
       } catch (error) {
-        asser(false, 'claimClover tx receipt should not have thrown an error')
+        console.log(error)
+        assert(false, 'claimClover tx receipt should not have thrown an error')
       }
+    })
 
-      // console.log(_+'Gas Used', tx.receipt.cumulativeGasUsed)
-
-      // make sure token exists & is owned by this account
+    it('should make sure token exists & is owned by this account', async function () {
       try {
         let owner = await clovers.ownerOf(_tokenId)
         assert(accounts[0] === owner, 'owner of token should have been accounts[0] (' + accounts[0] + ') but was ' + owner)
       } catch (error) {
-        asset(false, 'ownerOf should have succeeded')
         console.log(error)
+        assert(false, 'ownerOf should have succeeded')
       }
+    })
 
-      // make sure stake amount was removed from your account
-      let gasCost = tx.receipt.cumulativeGasUsed * gasPrice
-      let _balance = web3.eth.getBalance(accounts[0])
+    it('should make sure stake amount was removed from your account', async function () {
+      let gasCost = gasSpent * gasPrice
+      _balance = web3.eth.getBalance(accounts[0])
       assert(balance.sub(_balance).sub(gasCost).eq(stakeAmount), 'original balance ' + web3.fromWei(balance).toString() + ' minus new balance ' + web3.fromWei(_balance).toString() + ' minus gas ' + web3.fromWei(gasCost).toString() + ' did not equal stakeAmount ' + web3.fromWei(stakeAmount).toString())
-      
-      // make sure it's not verified yet
+    })
+
+    it('should make sure it\'s not verified yet', async function () {
       let isVerified = await cloversController.isVerified(_tokenId)      
       assert(!isVerified, 'clover is already verified somehow')
+    })
 
-      // make sure it is verified after blocks increase
+    it('should check the cost of challenging this fake clover', async function () {
+      gasEstimate = await cloversController.challengeClover.estimateGas(_tokenId, accounts[0])
+      console.log(_+'challengeClover gasEstimate', gasEstimate.toString())
+    })
+
+    it('should update the stake amount with the gas Estimate from challengeClover', async function () {
+       try {
+        newStakeAmount = new web3.BigNumber(gasEstimate).mul(gasPrice).mul(40)
+        tx = await cloversController.updateStakeAmount(stakeAmount)
+        console.log(_+'updateStakeAmount gasCost ' + tx.receipt.cumulativeGasUsed)
+        gasSpent += tx.receipt.cumulativeGasUsed
+
+        assert(tx.receipt.status === '0x01', 'updateStakeAmount tx receipt should have been 0x01 (successful) but was instead ' + tx.receipt.status);
+      } catch (error) {
+        console.log(error)
+        assert(false, 'updateStakeAmount tx should not have thrown an error')
+      }
+    })
+
+    it('should check the stake amount for the token in question', async function () {
+      // let _movesHashJS = utils.soliditySha3({type: 'array', value: _moves})
+      let _movesHashSol = await cloversController.getMovesHash(_tokenId)
+      // console.log(_+_movesHashJS)
+      // console.log(_+_movesHashSol)
+      let currentStake = await clovers.getStake(_movesHashSol)
+      assert(currentStake.toNumber() === stakeAmount, 'currentStake ' + currentStake.toString() + ' doest not equal stakeAmount ' + stakeAmount)
+    })
+
+    it('should make sure it is verified after blocks increase', async function () {
+      // console.log(_+'token block', await clovers.getBlockMinted())
+      // console.log(_+'block', await cloversController.returnBlock())
       await increaseBlocks(stakePeriod)
+      // console.log(_+'block', await cloversController.returnBlock())
       isVerified = await cloversController.isVerified(_tokenId)
       assert(isVerified, 'clover wasn\'t verified when it should have been already')
 
-      // make sure retrieveStake tx was successful
+      clubBalance = await clubToken.balanceOf(accounts[0])
+    })
+
+    it('should make sure retrieveStake tx was successful', async function () {
       try {
         tx = await cloversController.retrieveStake(_tokenId)
+        console.log(_+'retrieveStake gasCost ' + tx.receipt.cumulativeGasUsed)
+        gasSpent += tx.receipt.cumulativeGasUsed
         assert(tx.receipt.status === '0x01', 'retrieveStake tx receipt should have been 0x01 (successful) but was instead ' + tx.receipt.status);
       } catch (error) {
+        console.log(error)
         assert(false, 'retrieveStake tx should not have thrown an error')
       }
-      // make sure stake amount was retured to your account
-      balance = _balance
-      gasCost = tx.receipt.cumulativeGasUsed * gasPrice
-      _balance = web3.eth.getBalance(accounts[0])
-      assert(_balance.sub(balance).add(gasCost).eq(stakeAmount), 'new balance ' + web3.fromWei(_balance).toString() + ' minus old balance ' + web3.fromWei(balance).toString() + ' plus gas ' + web3.fromWei(gasCost).toString() + ' did not equal stakeAmount ' + web3.fromWei(stakeAmount).toString() + ' but rather ' + _balance.sub(balance).add(gasCost).toString())
     })
+
+    it('should make sure reward was received', async function () {
+      let _clubBalance = await clubToken.balanceOf(accounts[0])
+      console.log(_+'reward was ' + _clubBalance.toString())
+      assert(_clubBalance.gt(clubBalance), 'new balance of ' + _clubBalance.toString() + ' is not more than previous Balance of ' + clubBalance.toString())
+    })
+
+    it('should make sure stake amount was retured to your account', async function () {
+      // balance = _balance
+      gasCost = gasSpent * gasPrice
+      _balance = web3.eth.getBalance(accounts[0])
+      let result = balance.minus(gasCost)
+      assert(result.eq(_balance), 'original balance ' + web3.fromWei(balance).toString() + ' minus all gas costs ' + web3.fromWei(gasCost).toString() + ' did not equal new balance ' + web3.fromWei(_balance).toString() + ' but rather ' + result.toString())
+    })
+
   })
 
 })

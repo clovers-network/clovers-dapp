@@ -18,8 +18,10 @@
     "ethereumjs-testrpc": "^4.1.1",
     "ethereumjs-wallet": "0.6.0",
     "truffle": "3.4.5",
+    "truffle-hdwallet-provider": "0.0.3",
     "web3": "0.18.2",
     "web3-provider-engine": "8.6.1",
+    "web3-utils": "^1.0.0-beta.33",
     "zeppelin-solidity": "^1.7.0"
   }
 }

@@ -14,6 +14,12 @@ import "zeppelin-solidity/contracts/ownership/HasNoEther.sol";
 import "zeppelin-solidity/contracts/math/SafeMath.sol";
 
 contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
+    event cloverCommited(bytes32 movesHash, address miner);
+    event cloverRevealed(bytes28[2] moves, uint256 _tokenId, address miner);
+    event cloverClaimed(bytes28[2] moves, uint256 _tokenId, address miner);
+    event stakeRetrieved(bytes28[2] moves, uint256 _tokenId, address miner);
+    event cloverChallenged(bytes28[2] moves, uint256 _tokenId, address miner, address challenger);
+
     using SafeMath for uint256;
 
     address clovers;
@@ -50,6 +56,13 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         return payMultiplier;
     }
     /**
+    * @dev Gets the current staking period needed to verify a Clover.
+    * @return A uint256 value of stake period in seconds.
+    */
+    function getMovesHash(uint _tokenId) public constant returns (bytes32) {
+        return keccak256(IClovers(clovers).getCloverMoves(_tokenId));
+    }
+    /**
     * @dev Checks whether the game is valid.
     * @param moves The moves needed to play validate the game.
     * @return A boolean representing whether or not the game is valid.
@@ -79,7 +92,7 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         // require(block.number > _blockMinted);
         return (block.number - _blockMinted) > stakePeriod;
     }
-    function returnNow() public constant returns (uint) {
+    function returnBlock() public constant returns (uint) {
         return block.number;
     }
     /**
@@ -222,10 +235,10 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
                 uint256 stake = IClovers(clovers).getStake(movesHash);
                 IClovers(clovers).moveEth(_to, stake);
             }
-            IClovers(clovers).burn(_tokenId);
-            IClovers(clovers).setCommit(movesHash, 0);
-            IClovers(clovers).setStake(movesHash, 0);
-            removeSymmetries(_tokenId);
+            IClovers(clovers).unmint(_tokenId);
+            // IClovers(clovers).setCommit(movesHash, 0);
+            // IClovers(clovers).setStake(movesHash, 0);
+            // removeSymmetries(_tokenId);
         } else {
             revert();
         }
@@ -290,7 +303,7 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         uint256 X0Sym;
         uint256 XYSym;
         uint256 XnYSym;
-       (Symmetricals,
+        (Symmetricals,
         RotSym,
         Y0Sym,
         X0Sym,

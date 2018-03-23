@@ -9,6 +9,11 @@ import "zeppelin-solidity/contracts/ownership/HasNoEther.sol";
 
 
 contract CloversFrontend is CloversFactory, HasNoTokens, HasNoEther {
+    event cloverCommited(bytes32 movesHash, address miner);
+    event cloverRevealed(bytes28[2] moves, uint256 _tokenId, address miner);
+    event cloverClaimed(bytes28[2] moves, uint256 _tokenId, address miner);
+    event stakeRetrieved(bytes28[2] moves, uint256 _tokenId, address miner);
+    event cloverChallenged(bytes28[2] moves, uint256 _tokenId, address miner, address challenger);
 
     address cloversController;
 

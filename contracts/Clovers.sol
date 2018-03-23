@@ -144,8 +144,14 @@ contract Clovers is IClovers, ERC721Token, Ownable {
     function mint (address _to, uint256 _tokenId) public onlyOwnerOrController {
         _mint(_to, _tokenId);
     }
-    function burn (uint256 _tokenId) public onlyOwnerOrController {
-        _burn(_tokenId);
+    function unmint (uint256 _tokenId) public onlyOwnerOrController {
+        address _owner = ownerOf(_tokenId); // needs to be changed from private to internal
+        if (approvedFor(_tokenId) != 0) {
+            tokenApprovals[_tokenId] = 0;
+            Approval(_owner, 0, _tokenId);
+        }
+        removeToken(_owner, _tokenId); // needs to be changed from private to internal
+        Transfer(_owner, 0x0, _tokenId);
     }
 
 }

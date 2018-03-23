@@ -35,14 +35,14 @@
   "deployedBytecode": "0x",
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "pragma solidity ^0.4.19;\n\n/**\n * Mintable is a contract interface for CloversController to use\n */\n\n\ncontract Mintable {\n\n  function Mintable() public {}\n\n  function mint(address _to, uint256 amount) public returns(bool);\n  \n}",
+  "source": "pragma solidity ^0.4.19;\n\n/**\n * Mintable is a contract interface for CloversController to use\n */\n\n\ncontract Mintable {\n\n    function Mintable() public {}\n\n    function mint(address _to, uint256 amount) public returns(bool);\n  \n}",
   "sourcePath": "/Users/billy/vue/clovers-dapp/contracts/Mintable.sol",
   "ast": {
     "attributes": {
       "absolutePath": "/Users/billy/vue/clovers-dapp/contracts/Mintable.sol",
       "exportedSymbols": {
         "Mintable": [
-          2088
+          1932
         ]
       }
     },
@@ -56,9 +56,9 @@
             ".19"
           ]
         },
-        "id": 2074,
+        "id": 1918,
         "name": "PragmaDirective",
-        "src": "0:24:4"
+        "src": "0:24:5"
       },
       {
         "attributes": {
@@ -72,10 +72,10 @@
           "documentation": "Mintable is a contract interface for CloversController to use",
           "fullyImplemented": false,
           "linearizedBaseContracts": [
-            2088
+            1932
           ],
           "name": "Mintable",
-          "scope": 2089
+          "scope": 1933
         },
         "children": [
           {
@@ -88,7 +88,7 @@
               ],
               "name": "Mintable",
               "payable": false,
-              "scope": 2088,
+              "scope": 1932,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "public"
@@ -101,9 +101,9 @@
                   ]
                 },
                 "children": [],
-                "id": 2075,
+                "id": 1919,
                 "name": "ParameterList",
-                "src": "141:2:4"
+                "src": "143:2:5"
               },
               {
                 "attributes": {
@@ -112,9 +112,9 @@
                   ]
                 },
                 "children": [],
-                "id": 2076,
+                "id": 1920,
                 "name": "ParameterList",
-                "src": "151:0:4"
+                "src": "153:0:5"
               },
               {
                 "attributes": {
@@ -123,14 +123,14 @@
                   ]
                 },
                 "children": [],
-                "id": 2077,
+                "id": 1921,
                 "name": "Block",
-                "src": "151:2:4"
+                "src": "153:2:5"
               }
             ],
-            "id": 2078,
+            "id": 1922,
             "name": "FunctionDefinition",
-            "src": "124:29:4"
+            "src": "126:29:5"
           },
           {
             "attributes": {
@@ -143,7 +143,7 @@
               ],
               "name": "mint",
               "payable": false,
-              "scope": 2088,
+              "scope": 1932,
               "stateMutability": "nonpayable",
               "superFunction": null,
               "visibility": "public"
@@ -155,7 +155,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "_to",
-                      "scope": 2087,
+                      "scope": 1931,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "address",
@@ -168,20 +168,20 @@
                           "name": "address",
                           "type": "address"
                         },
-                        "id": 2079,
+                        "id": 1923,
                         "name": "ElementaryTypeName",
-                        "src": "171:7:4"
+                        "src": "175:7:5"
                       }
                     ],
-                    "id": 2080,
+                    "id": 1924,
                     "name": "VariableDeclaration",
-                    "src": "171:11:4"
+                    "src": "175:11:5"
                   },
                   {
                     "attributes": {
                       "constant": false,
                       "name": "amount",
-                      "scope": 2087,
+                      "scope": 1931,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "uint256",
@@ -194,19 +194,19 @@
                           "name": "uint256",
                           "type": "uint256"
                         },
-                        "id": 2081,
+                        "id": 1925,
                         "name": "ElementaryTypeName",
-                        "src": "184:7:4"
+                        "src": "188:7:5"
                       }
                     ],
-                    "id": 2082,
+                    "id": 1926,
                     "name": "VariableDeclaration",
-                    "src": "184:14:4"
+                    "src": "188:14:5"
                   }
                 ],
-                "id": 2083,
+                "id": 1927,
                 "name": "ParameterList",
-                "src": "170:29:4"
+                "src": "174:29:5"
               },
               {
                 "children": [
@@ -214,7 +214,7 @@
                     "attributes": {
                       "constant": false,
                       "name": "",
-                      "scope": 2087,
+                      "scope": 1931,
                       "stateVariable": false,
                       "storageLocation": "default",
                       "type": "bool",
@@ -227,34 +227,34 @@
                           "name": "bool",
                           "type": "bool"
                         },
-                        "id": 2084,
+                        "id": 1928,
                         "name": "ElementaryTypeName",
-                        "src": "215:4:4"
+                        "src": "219:4:5"
                       }
                     ],
-                    "id": 2085,
+                    "id": 1929,
                     "name": "VariableDeclaration",
-                    "src": "215:4:4"
+                    "src": "219:4:5"
                   }
                 ],
-                "id": 2086,
+                "id": 1930,
                 "name": "ParameterList",
-                "src": "214:6:4"
+                "src": "218:6:5"
               }
             ],
-            "id": 2087,
+            "id": 1931,
             "name": "FunctionDefinition",
-            "src": "157:64:4"
+            "src": "161:64:5"
           }
         ],
-        "id": 2088,
+        "id": 1932,
         "name": "ContractDefinition",
-        "src": "101:125:4"
+        "src": "101:129:5"
       }
     ],
-    "id": 2089,
+    "id": 1933,
     "name": "SourceUnit",
-    "src": "0:226:4"
+    "src": "0:230:5"
   },
   "compiler": {
     "name": "solc",
@@ -262,5 +262,5 @@
   },
   "networks": {},
   "schemaVersion": "1.0.1",
-  "updatedAt": "2018-03-22T19:08:04.319Z"
+  "updatedAt": "2018-03-23T20:17:50.985Z"
 }

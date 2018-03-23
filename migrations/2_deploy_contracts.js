@@ -6,9 +6,9 @@ var CloversMetadata = artifacts.require("./CloversMetadata.sol");
 var CloversController = artifacts.require("./CloversController.sol");
 var ClubToken = artifacts.require("./ClubToken.sol");
 
-let stakeAmount = 100
+let stakeAmount = 529271 * 1000000000 * 40 // gasPrice * 1GWEI * 40
 let stakePeriod = 100
-let multiplier = 100
+let multiplier = 10
 
 module.exports = async function(deployer, helper, accounts)  {
   try {

@@ -35,6 +35,6 @@ contract IClovers {
     function updateCloversMetadataAddress(address _cloversMetadata) public;
 
     function mint (address _to, uint256 _tokenId) public;
-    function burn (uint256 _tokenId) public;
+    function unmint (uint256 _tokenId) public;
 
 }
