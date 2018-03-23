@@ -1,11 +1,11 @@
-pragma solidity ^0.4.17;
+pragma solidity ^0.4.19;
 pragma experimental ABIEncoderV2;
 
 /**
  * The CloversController is upgradeable and contains the logic used by CloversFrontend
  * Both adhere to the CloversFactory interface design
  */
-import "./Clovers.sol";
+import "./IClovers.sol";
 import "./Reversi.sol";
 import "./Mintable.sol";
 import "./CloversFactory.sol";
@@ -43,6 +43,13 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         return stakePeriod;
     }
     /**
+    * @dev Gets the current staking period needed to verify a Clover.
+    * @return A uint256 value of stake period in seconds.
+    */
+    function getMultiplier() public constant returns (uint256) {
+        return payMultiplier;
+    }
+    /**
     * @dev Checks whether the game is valid.
     * @param moves The moves needed to play validate the game.
     * @return A boolean representing whether or not the game is valid.
@@ -67,10 +74,13 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     * @return A boolean representing whether or not the game has been verified.
     */
     function isVerified(uint256 _tokenId) public constant returns (bool) {
-        uint256 _blockMinted = Clovers(clovers).getBlockMinted(_tokenId);
-        require(_blockMinted != 0);
-        require(now > _blockMinted);
-        return ((now - _blockMinted) > stakePeriod);
+        uint256 _blockMinted = IClovers(clovers).getBlockMinted(_tokenId);
+        if(_blockMinted == 0) return false;
+        // require(block.number > _blockMinted);
+        return (block.number - _blockMinted) > stakePeriod;
+    }
+    function returnNow() public constant returns (uint) {
+        return block.number;
     }
     /**
     * @dev Calculates the reward of the board.
@@ -89,7 +99,7 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         Y0Sym,
         X0Sym,
         XYSym,
-        XnYSym) = Clovers(clovers).getAllSymmetries();
+        XnYSym) = IClovers(clovers).getAllSymmetries();
         uint256 base = 0;
         if (_symmetries >> 4 & 1 == 1) base = base.add(payMultiplier.mul(Symmetricals + 1).div(RotSym + 1));
         if (_symmetries >> 3 & 1 == 1) base = base.add(payMultiplier.mul(Symmetricals + 1).div(Y0Sym + 1));
@@ -109,19 +119,20 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     */
     function claimClover(bytes28[2] moves, uint256 _tokenId, bytes1 _symmetries, address _to) public payable returns (bool) {
         require(moves[0] != 0);
+        require(msg.value == stakeAmount);
         bytes32 movesHash = keccak256(moves);
-        Clovers(clovers).setCommit(movesHash, _to);
-        Clovers(clovers).setStake(movesHash, stakeAmount);
+        IClovers(clovers).setCommit(movesHash, _to);
+        IClovers(clovers).setStake(movesHash, stakeAmount);
         clovers.transfer(stakeAmount);
-        require(Clovers(clovers).getBlockMinted(_tokenId) != 0);
-        Clovers(clovers).setBlockMinted(_tokenId, now);
-        Clovers(clovers).setCloverMoves(_tokenId, moves);
+        require(IClovers(clovers).getBlockMinted(_tokenId) == 0);
+        IClovers(clovers).setBlockMinted(_tokenId, block.number);
+        IClovers(clovers).setCloverMoves(_tokenId, moves);
         if (_symmetries > 0) {
-            Clovers(clovers).setSymmetries(_tokenId, _symmetries);
+            IClovers(clovers).setSymmetries(_tokenId, _symmetries);
             uint256 reward = calculateReward(_symmetries);
-            Clovers(clovers).setReward(_tokenId, reward);
+            IClovers(clovers).setReward(_tokenId, reward);
         }
-        Clovers(clovers).mint(_to, _tokenId);
+        IClovers(clovers).mint(_to, _tokenId);
         return true;
     }
     /**
@@ -133,9 +144,9 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     function claimCloverCommit(bytes32 movesHash, address _to) public payable returns (bool) {
         require(_to != 0);
         require(msg.value == stakeAmount);
-        require(Clovers(clovers).getCommit(movesHash) == 0);
-        Clovers(clovers).setCommit(movesHash, _to);
-        Clovers(clovers).setStake(movesHash, stakeAmount);
+        require(IClovers(clovers).getCommit(movesHash) == 0);
+        IClovers(clovers).setCommit(movesHash, _to);
+        IClovers(clovers).setStake(movesHash, stakeAmount);
         clovers.transfer(stakeAmount);
         return true;
     }
@@ -149,16 +160,16 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     function claimCloverReveal(bytes28[2] moves, uint256 _tokenId, bytes1 _symmetries) public returns (bool) {
         require(moves[0] != 0);
         bytes32 movesHash = keccak256(moves);
-        address commiter = Clovers(clovers).getCommit(movesHash);
-        require(Clovers(clovers).getBlockMinted(_tokenId) != 0);
-        Clovers(clovers).setBlockMinted(_tokenId, now);
-        Clovers(clovers).setCloverMoves(_tokenId, moves);
+        address commiter = IClovers(clovers).getCommit(movesHash);
+        require(IClovers(clovers).getBlockMinted(_tokenId) == 0);
+        IClovers(clovers).setBlockMinted(_tokenId, block.number);
+        IClovers(clovers).setCloverMoves(_tokenId, moves);
         if (_symmetries > 0) {
-            Clovers(clovers).setSymmetries(_tokenId, _symmetries);
+            IClovers(clovers).setSymmetries(_tokenId, _symmetries);
             uint256 reward = calculateReward(_symmetries);
-            Clovers(clovers).setReward(_tokenId, reward);
+            IClovers(clovers).setReward(_tokenId, reward);
         }
-        Clovers(clovers).mint(commiter, _tokenId);
+        IClovers(clovers).mint(commiter, _tokenId);
         return true;
     }
     /**
@@ -167,18 +178,18 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     * @return A boolean representing whether or not the retrieval was successful.
     */
     function retrieveStake(uint256 _tokenId) public returns (bool) {
-        bytes28[2] memory moves = Clovers(clovers).getCloverMoves(_tokenId);
+        bytes28[2] memory moves = IClovers(clovers).getCloverMoves(_tokenId);
         require(moves[0] != 0);
         bytes32 movesHash = keccak256(moves);
-        uint256 stake = Clovers(clovers).getStake(movesHash);
+        uint256 stake = IClovers(clovers).getStake(movesHash);
         require(stake != 0);
         require(isVerified(_tokenId));
-        Clovers(clovers).setStake(movesHash, 0);
+        IClovers(clovers).setStake(movesHash, 0);
         addSymmetries(_tokenId);
-        address commiter = Clovers(clovers).getCommit(movesHash);
-        uint256 reward = Clovers(clovers).getReward(_tokenId);
+        address commiter = IClovers(clovers).getCommit(movesHash);
+        uint256 reward = IClovers(clovers).getReward(_tokenId);
         require(Mintable(clubToken).mint(commiter, reward));
-        require(Clovers(clovers).moveEth(commiter, stake));
+        require(IClovers(clovers).moveEth(commiter, stake));
         return true;
     }
     /**
@@ -189,11 +200,11 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     */
     function challengeClover(uint256 _tokenId, address _to) public returns (bool) {
         bool valid = true;
-        bytes28[2] memory moves = Clovers(clovers).getCloverMoves(_tokenId);
+        bytes28[2] memory moves = IClovers(clovers).getCloverMoves(_tokenId);
         require(moves[0] != 0);
         Reversi.Game memory game = Reversi.playGame(moves);
         if(isValidGame(game)) {
-            bytes1 _symmetries = Clovers(clovers).getSymmetries(_tokenId);
+            bytes1 _symmetries = IClovers(clovers).getSymmetries(_tokenId);
 
             valid = (_symmetries >> 4 & 1) > 0 == game.RotSym ? valid : false;
             valid = (_symmetries >> 3 & 1) > 0 == game.Y0Sym ? valid : false;
@@ -205,15 +216,15 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
             valid = false;
         }
         if (!valid) {
-            Clovers(clovers).deleteClover(_tokenId);
+            IClovers(clovers).deleteClover(_tokenId);
             bytes32 movesHash = keccak256(moves);
             if (!isVerified(_tokenId)) {
-                uint256 stake = Clovers(clovers).getStake(movesHash);
-                Clovers(clovers).moveEth(_to, stake);
+                uint256 stake = IClovers(clovers).getStake(movesHash);
+                IClovers(clovers).moveEth(_to, stake);
             }
-            Clovers(clovers).burn(_tokenId);
-            Clovers(clovers).setCommit(movesHash, 0);
-            Clovers(clovers).setStake(movesHash, 0);
+            IClovers(clovers).burn(_tokenId);
+            IClovers(clovers).setCommit(movesHash, 0);
+            IClovers(clovers).setStake(movesHash, 0);
             removeSymmetries(_tokenId);
         } else {
             revert();
@@ -258,15 +269,15 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         Y0Sym,
         X0Sym,
         XYSym,
-        XnYSym) = Clovers(clovers).getAllSymmetries();
-        bytes1 _symmetries = Clovers(clovers).getSymmetries(_tokenId);
+        XnYSym) = IClovers(clovers).getAllSymmetries();
+        bytes1 _symmetries = IClovers(clovers).getSymmetries(_tokenId);
         Symmetricals = Symmetricals.add(_symmetries > 0 ? 1 : 0);
         RotSym = RotSym.add(uint256(_symmetries >> 4 & 1));
         Y0Sym = Y0Sym.add(uint256(_symmetries >> 3 & 1));
         X0Sym = X0Sym.add(uint256(_symmetries >> 2 & 1));
         XYSym = XYSym.add(uint256(_symmetries >> 1 & 1));
         XnYSym = XnYSym.add(uint256(_symmetries & 1));
-        Clovers(clovers).setAllSymmetries(Symmetricals, RotSym, Y0Sym, X0Sym, XYSym, XnYSym);
+        IClovers(clovers).setAllSymmetries(Symmetricals, RotSym, Y0Sym, X0Sym, XYSym, XnYSym);
     }
     /**
     * @dev Remove false tallys of the totals numbers of clover symmetries.
@@ -284,15 +295,15 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
         Y0Sym,
         X0Sym,
         XYSym,
-        XnYSym) = Clovers(clovers).getAllSymmetries();
-        bytes1 _symmetries = Clovers(clovers).getSymmetries(_tokenId);
+        XnYSym) = IClovers(clovers).getAllSymmetries();
+        bytes1 _symmetries = IClovers(clovers).getSymmetries(_tokenId);
         Symmetricals = Symmetricals.sub(_symmetries > 0 ? 1 : 0);
         RotSym = RotSym.sub(uint256(_symmetries >> 4 & 1));
         Y0Sym = Y0Sym.sub(uint256(_symmetries >> 3 & 1));
         X0Sym = X0Sym.sub(uint256(_symmetries >> 2 & 1));
         XYSym = XYSym.sub(uint256(_symmetries >> 1 & 1));
         XnYSym = XnYSym.sub(uint256(_symmetries & 1));
-        Clovers(clovers).setAllSymmetries(Symmetricals, RotSym, Y0Sym, X0Sym, XYSym, XnYSym);
+        IClovers(clovers).setAllSymmetries(Symmetricals, RotSym, Y0Sym, X0Sym, XYSym, XnYSym);
     }
 
 }

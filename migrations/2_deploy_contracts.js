@@ -10,50 +10,59 @@ let stakeAmount = 100
 let stakePeriod = 100
 let multiplier = 100
 
-module.exports = function(deployer, helper, accounts) async {
+module.exports = async function(deployer, helper, accounts)  {
+  try {
+    // Deploy Clovers.sol (NFT)
+    let clovers = await Clovers.new()
+    // console.log('clovers', clovers.address)
 
-  let a = await deployer.then(() => Contract.new())
-// Deploy Clovers.sol (NFT)
-  let Clovers_ = await Clovers.deployed()
+    // Deploy CloversMetadata.sol
+    // -w Clovers address
+    let cloversMetadata = await CloversMetadata.new(clovers.address)
+    // console.log('cloversMetadata', cloversMetadata.address)
 
-// Deploy CloversMetadata.sol
-// -w Clovers address
-  console.log(Clovers_.address)
-  let CloversMetadata_ = await CloversMetadata_.deployed(Clovers_.address)
+    // Update Clovers.sol 
+    // -w CloversMetadata address
+    await clovers.updateCloversMetadataAddress(cloversMetadata.address)
 
-// Update Clovers.sol 
-// -w CloversMetadata address
-  await Clovers_.updateCloversMetadataAddress(CloversMetadata_.address)
+    // Deploy ClubToken.sol (ERC20)
+    let clubToken = await ClubToken.new()
+    // console.log('clubToken', clubToken.address)
 
-// Deploy ClubToken.sol (ERC20)
-  let ClubToken_ = await ClubToken.deployed()
+    // Deploy Reversi.sol
+    // -link w cloversController
+    reversi = await Reversi.new();
+    await CloversController.link('Reversi', reversi.address)
+    // await deployer.link(Reversi, CloversController);
+    // await deployer.link(Reversi);
+    // await CloversController.link(reversi);
+    // console.log('Reversi', Reversi.address)
 
-// Deploy Reversi.sol
-// -link w CloversController_
-  Reversi = await Reversi.deployed();
-  await deployer.link(Reversi, CloversController);
+    // Deploy CloversController.sol
+    // -w Clovers address
+    // -w ClubToken address
+    let cloversController = await CloversController.new(clovers.address, clubToken.address)
+    // console.log('cloversController', cloversController.address)
 
-// Deploy CloversController.sol
-// -w Clovers address
-// -w ClubToken address
-  let CloversController_ = await CloversController.deployed(Clovers_.address, ClubToken_.address)
+    // Update Clovers.sol
+    // -w CloversController address
+    await clovers.updateCloversControllerAddress(cloversController.address)
 
-// Update Clovers.sol
-// -w CloversController address
-  await Clovers_.updateCloversControllerAddress(CloversController_.address)
+    // Update ClubToken.sol
+    // -w CloversController address
+    await clubToken.updateCloversControllerAddress(cloversController.address)
 
-// Update ClubToken.sol
-// -w CloversController address
-  await ClubToken_.updateCloversControllerAddress(CloversController_.address)
+    // Deploy CloversFrontend.sol
+    // -w CloversController address
 
-// Deploy CloversFrontend.sol
-// -w CloversController address
-
-// Update CloversController.sol
-// -w stakeAmount
-// -w stakePeriod
-// -w payMultiplier
-  await CloversController_.updateStakeAmount(stakeAmount)
-  await CloversController_.updateStakePeriod(stakePeriod)
-  await CloversController_.updatePayMultipier(multiplier)
+    // Update CloversController.sol
+    // -w stakeAmount
+    // -w stakePeriod
+    // -w payMultiplier
+    await cloversController.updateStakeAmount(stakeAmount)
+    await cloversController.updateStakePeriod(stakePeriod)
+    await cloversController.updatePayMultipier(multiplier)
+  } catch (error) {
+    console.log(error)
+  }
 };

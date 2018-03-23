@@ -1,4 +1,4 @@
-pragma solidity ^0.4.17;
+pragma solidity ^0.4.19;
 
 /**
  * The Clovers contract is the interface for the CloversController Contract

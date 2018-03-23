@@ -1,4 +1,5 @@
-pragma solidity ^0.4.17;
+pragma solidity ^0.4.19;
+pragma experimental ABIEncoderV2;
 
 /**
  * Digital Asset Registry for the Non Fungible Token Clover
@@ -8,13 +9,14 @@ pragma solidity ^0.4.17;
 import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 import "zeppelin-solidity/contracts/token/ERC721/ERC721Token.sol";
 import "zeppelin-solidity/contracts/ownership/Ownable.sol";
+import "./IClovers.sol";
 import "./CloversMetadata.sol";
 
-contract Clovers is ERC721Token, Ownable {
+contract Clovers is IClovers, ERC721Token, Ownable {
 
+    address private cloversMetadata;
     uint256 totalSymmetries;
     uint256[5] symmetries; // RotSym, Y0Sym, X0Sym, XYSym, XnYSym
-    address cloversMetadata;
     address cloversController;
 
     mapping (uint256 => Clover) public clovers;
@@ -36,10 +38,27 @@ contract Clovers is ERC721Token, Ownable {
     }
 
     function Clovers () public {}
+    function () public payable {}
 
-    // function tokenMetadata(uint _tokenId) public view returns (string _infoUrl) {
-    //     return CloversMetadata(cloversMetadata).tokenMetadata(_tokenId);
-    // }
+    function implementation() public view returns (address) {
+        return cloversMetadata;
+    }
+
+    function tokenMetadata(uint _tokenId) public view returns (string _infoUrl) {
+        // require(ownerOf(_tokenId) != 0);
+        address _impl = implementation();
+        bytes memory data = msg.data;
+        assembly {
+            let result := delegatecall(gas, _impl, add(data, 0x20), mload(data), 0, 0)
+            let size := returndatasize
+            let ptr := mload(0x40)
+            returndatacopy(ptr, 0, size)
+            switch result
+            case 0 { revert(ptr, size) }
+            default { return(ptr, size) }
+        }
+        // return CloversMetadata(cloversMetadata).tokenMetadata(_tokenId);
+    }
     function getStake(bytes32 movesHash) public view returns (uint256) {
         return stakes[movesHash];
     }

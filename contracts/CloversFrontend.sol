@@ -1,4 +1,4 @@
-pragma solidity ^0.4.17;
+pragma solidity ^0.4.19;
 
 /**
  * The Clovers contract is the interface for the CloversController Contract
@@ -15,6 +15,21 @@ contract CloversFrontend is CloversFactory, HasNoTokens, HasNoEther {
     function CloversFrontend (address _cloversController) public {
         updateCloversControllerAddress(_cloversController);
     }
+
+    // function () public {
+    //     bool callSuccess = cloversController.delegatecall(msg.data);
+
+    //     if (callSuccess) {
+    //         assembly {
+    //             // returndatacopy(toMemAddress, fromMemAddress, sizeInBytes)
+    //             returndatacopy(0x0, 0x0, returndatasize)
+    //             // return(fromMemAddress, sizeInBytes)
+    //             return(0x0, returndatasize)
+    //         }
+    //     } else {
+    //         revert();
+    //     }
+    // }
 
     /**
     * @dev Gets the current staking amount needed to claim a Clover.
