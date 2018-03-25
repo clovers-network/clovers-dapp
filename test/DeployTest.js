@@ -1,4 +1,3 @@
-// assertRevert = require('./helpers/assertRevert.js');
 var utils = require('web3-utils')
 var Reversi = artifacts.require("./Reversi.sol")
 var Clovers = artifacts.require("./Clovers.sol")
@@ -16,62 +15,66 @@ let _ = '        '
 
 contract('Clovers', async function(accounts)  {
   let clovers, cloversMetadata, clubToken, reversi, cloversController
-  before(async () => {
-    try {
-      // Deploy Clovers.sol (NFT)
-      clovers = await Clovers.new()
-      // console.log('clovers', clovers.address)
+  before((done) => {
+    (async () => {
+      try {
+        // Deploy Clovers.sol (NFT)
+        clovers = await Clovers.new()
+        // console.log('clovers', clovers.address)
 
-      // Deploy CloversMetadata.sol
-      // -w Clovers address
-      cloversMetadata = await CloversMetadata.new(clovers.address)
-      // console.log('cloversMetadata', cloversMetadata.address)
+        // Deploy CloversMetadata.sol
+        // -w Clovers address
+        cloversMetadata = await CloversMetadata.new(clovers.address)
+        // console.log('cloversMetadata', cloversMetadata.address)
 
-      // Update Clovers.sol 
-      // -w CloversMetadata address
-      await clovers.updateCloversMetadataAddress(cloversMetadata.address)
+        // Update Clovers.sol 
+        // -w CloversMetadata address
+        await clovers.updateCloversMetadataAddress(cloversMetadata.address)
 
-      // Deploy ClubToken.sol (ERC20)
-      clubToken = await ClubToken.new()
-      // console.log('clubToken', clubToken.address)
+        // Deploy ClubToken.sol (ERC20)
+        clubToken = await ClubToken.new()
+        // console.log('clubToken', clubToken.address)
 
-      // Deploy Reversi.sol
-      // -link w cloversController
-      // console.log(Reversi)
-      reversi = await Reversi.new();
-      await CloversController.link('Reversi', reversi.address)
-      // await deployer.link(Reversi, CloversController);
-      // await deployer.link(Reversi);
-      // await CloversController.link(reversi);
-      // console.log('Reversi', Reversi.address)
+        // Deploy Reversi.sol
+        // -link w cloversController
+        // console.log(Reversi)
+        reversi = await Reversi.new();
+        await CloversController.link('Reversi', reversi.address)
+        // await deployer.link(Reversi, CloversController);
+        // await deployer.link(Reversi);
+        // await CloversController.link(reversi);
+        // console.log('Reversi', Reversi.address)
 
-      // Deploy CloversController.sol
-      // -w Clovers address
-      // -w ClubToken address
-      cloversController = await CloversController.new(clovers.address, clubToken.address)
-      // console.log('cloversController', cloversController.address)
+        // Deploy CloversController.sol
+        // -w Clovers address
+        // -w ClubToken address
+        cloversController = await CloversController.new(clovers.address, clubToken.address)
+        // console.log('cloversController', cloversController.address)
 
-      // Update Clovers.sol
-      // -w CloversController address
-      await clovers.updateCloversControllerAddress(cloversController.address)
+        // Update Clovers.sol
+        // -w CloversController address
+        await clovers.updateCloversControllerAddress(cloversController.address)
 
-      // Update ClubToken.sol
-      // -w CloversController address
-      await clubToken.updateCloversControllerAddress(cloversController.address)
+        // Update ClubToken.sol
+        // -w CloversController address
+        await clubToken.updateCloversControllerAddress(cloversController.address)
 
-      // Deploy CloversFrontend.sol
-      // -w CloversController address
+        // Deploy CloversFrontend.sol
+        // -w CloversController address
 
-      // Update CloversController.sol
-      // -w stakeAmount
-      // -w stakePeriod
-      // -w payMultiplier
-      await cloversController.updateStakeAmount(stakeAmount)
-      await cloversController.updateStakePeriod(stakePeriod)
-      await cloversController.updatePayMultipier(multiplier)
-    } catch (error) {
-      console.log(error)
-    }
+        // Update CloversController.sol
+        // -w stakeAmount
+        // -w stakePeriod
+        // -w payMultiplier
+        await cloversController.updateStakeAmount(stakeAmount)
+        await cloversController.updateStakePeriod(stakePeriod)
+        await cloversController.updatePayMultipier(multiplier)
+        done()
+      } catch (error) {
+        console.log(error)
+        done()
+      }
+    })();
   })
 
   describe('Clovers.sol', function () {
@@ -120,13 +123,14 @@ contract('Clovers', async function(accounts)  {
           new web3.BigNumber('0x000000000000000000000000000000000000000000000000000000000000001F', 16),
           accounts[0], 
           {
-            value: new web3.BigNumber(stakeAmount)
+            value: new web3.BigNumber(stakeAmount),
+            gasPrice
           }
         ]
         tx = await cloversController.claimClover(...options)
         console.log(_+'claimClover gasCost ' + tx.receipt.cumulativeGasUsed)
         gasSpent = tx.receipt.cumulativeGasUsed
-        assert(tx.receipt.status === '0x01', 'claimClover tx receipt should have been 0x01 (successful) but was instead ' + tx.receipt.status);
+        assert(new web3.BigNumber(tx.receipt.status).eq(1), 'claimClover tx receipt should have been 0x01 (successful) but was instead ' + tx.receipt.status);
       } catch (error) {
         console.log(error)
         assert(false, 'claimClover tx receipt should not have thrown an error')
@@ -162,11 +166,11 @@ contract('Clovers', async function(accounts)  {
     it('should update the stake amount with the gas Estimate from challengeClover', async function () {
        try {
         newStakeAmount = new web3.BigNumber(gasEstimate).mul(gasPrice).mul(40)
-        tx = await cloversController.updateStakeAmount(stakeAmount)
+        tx = await cloversController.updateStakeAmount(stakeAmount, {gasPrice})
         console.log(_+'updateStakeAmount gasCost ' + tx.receipt.cumulativeGasUsed)
         gasSpent += tx.receipt.cumulativeGasUsed
 
-        assert(tx.receipt.status === '0x01', 'updateStakeAmount tx receipt should have been 0x01 (successful) but was instead ' + tx.receipt.status);
+        assert(new web3.BigNumber(tx.receipt.status).eq(1), 'updateStakeAmount tx receipt should have been 0x01 (successful) but was instead ' + tx.receipt.status);
       } catch (error) {
         console.log(error)
         assert(false, 'updateStakeAmount tx should not have thrown an error')
@@ -195,10 +199,10 @@ contract('Clovers', async function(accounts)  {
 
     it('should make sure retrieveStake tx was successful', async function () {
       try {
-        tx = await cloversController.retrieveStake(_tokenId)
+        tx = await cloversController.retrieveStake(_tokenId, {gasPrice})
         console.log(_+'retrieveStake gasCost ' + tx.receipt.cumulativeGasUsed)
         gasSpent += tx.receipt.cumulativeGasUsed
-        assert(tx.receipt.status === '0x01', 'retrieveStake tx receipt should have been 0x01 (successful) but was instead ' + tx.receipt.status);
+        assert(new web3.BigNumber(tx.receipt.status).eq(1), 'retrieveStake tx receipt should have been 0x01 (successful) but was instead ' + tx.receipt.status);
       } catch (error) {
         console.log(error)
         assert(false, 'retrieveStake tx should not have thrown an error')
