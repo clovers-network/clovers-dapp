@@ -19,27 +19,30 @@ contract('Clovers', async function(accounts)  {
     (async () => {
       try {
         // Deploy Clovers.sol (NFT)
-        clovers = await Clovers.new()
+        // clovers = await Clovers.new()
+        clovers = await Clovers.deployed()
         // console.log('clovers', clovers.address)
 
         // Deploy CloversMetadata.sol
         // -w Clovers address
-        cloversMetadata = await CloversMetadata.new(clovers.address)
+        // cloversMetadata = await CloversMetadata.new(clovers.address)
+        cloversMetadata = await CloversMetadata.deployed()
         // console.log('cloversMetadata', cloversMetadata.address)
 
         // Update Clovers.sol 
         // -w CloversMetadata address
-        await clovers.updateCloversMetadataAddress(cloversMetadata.address)
+        // await clovers.updateCloversMetadataAddress(cloversMetadata.address)
 
         // Deploy ClubToken.sol (ERC20)
-        clubToken = await ClubToken.new()
+        // clubToken = await ClubToken.new()
+        clubToken = await ClubToken.deployed()
         // console.log('clubToken', clubToken.address)
 
         // Deploy Reversi.sol
         // -link w cloversController
         // console.log(Reversi)
-        reversi = await Reversi.new();
-        await CloversController.link('Reversi', reversi.address)
+        // reversi = await Reversi.new();
+        // await CloversController.link('Reversi', reversi.address)
         // await deployer.link(Reversi, CloversController);
         // await deployer.link(Reversi);
         // await CloversController.link(reversi);
@@ -48,16 +51,17 @@ contract('Clovers', async function(accounts)  {
         // Deploy CloversController.sol
         // -w Clovers address
         // -w ClubToken address
-        cloversController = await CloversController.new(clovers.address, clubToken.address)
+        // cloversController = await CloversController.new(clovers.address, clubToken.address)
+        cloversController = await CloversController.deployed()
         // console.log('cloversController', cloversController.address)
 
         // Update Clovers.sol
         // -w CloversController address
-        await clovers.updateCloversControllerAddress(cloversController.address)
+        // await clovers.updateCloversControllerAddress(cloversController.address)
 
         // Update ClubToken.sol
         // -w CloversController address
-        await clubToken.updateCloversControllerAddress(cloversController.address)
+        // await clubToken.updateCloversControllerAddress(cloversController.address)
 
         // Deploy CloversFrontend.sol
         // -w CloversController address
@@ -66,9 +70,9 @@ contract('Clovers', async function(accounts)  {
         // -w stakeAmount
         // -w stakePeriod
         // -w payMultiplier
-        await cloversController.updateStakeAmount(stakeAmount)
-        await cloversController.updateStakePeriod(stakePeriod)
-        await cloversController.updatePayMultipier(multiplier)
+        // await cloversController.updateStakeAmount(stakeAmount)
+        // await cloversController.updateStakePeriod(stakePeriod)
+        // await cloversController.updatePayMultipier(multiplier)
         done()
       } catch (error) {
         console.log(error)

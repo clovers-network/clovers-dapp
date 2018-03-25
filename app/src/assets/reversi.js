@@ -1,4 +1,4 @@
-import BN from 'bignumber.js'
+var BN = require('bignumber.js')
 class Reversi {
 
  constructor (startVal) {
@@ -559,4 +559,5 @@ class Reversi {
   }
 }
 
-export default Reversi
+// export default Reversi
+module.exports = Reversi

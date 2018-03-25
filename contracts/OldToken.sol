@@ -1,4 +1,5 @@
-pragma solidity ^0.4.13;
+pragma solidity ^0.4.19;
+pragma experimental ABIEncoderV2;
 
 import "zeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
 import "./OldReversi.sol";
@@ -373,12 +374,12 @@ contract OldToken is StandardToken {
   }
 
   function addToSymmTallys (Reversi.Game game) internal {
-    if (game.symmetrical) Symmetricals += 1;
-    if (game.RotSym) RotSym += 1;
-    if (game.Y0Sym) Y0Sym += 1;
-    if (game.X0Sym) X0Sym += 1;
-    if (game.XYSym) XYSym += 1;
-    if (game.XnYSym) XnYSym += 1;
+    // if (game.symmetrical) Symmetricals += 1;
+    // if (game.RotSym) RotSym += 1;
+    // if (game.Y0Sym) Y0Sym += 1;
+    // if (game.X0Sym) X0Sym += 1;
+    // if (game.XYSym) XYSym += 1;
+    // if (game.XnYSym) XnYSym += 1;
   }
 
   function findersFee (Reversi.Game game) internal constant returns(uint256) {
