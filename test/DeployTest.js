@@ -6,6 +6,7 @@ var CloversMetadata = artifacts.require("./CloversMetadata.sol")
 var CloversController = artifacts.require("./CloversController.sol")
 var ClubToken = artifacts.require("./ClubToken.sol")
 
+
 let gasPrice = 1000000000 // 1GWEI
 
 let stakeAmount = 100
@@ -18,31 +19,34 @@ contract('Clovers', async function(accounts)  {
   before((done) => {
     (async () => {
       try {
+
+        // await migration_2(deployer, helper, accounts)
         // Deploy Clovers.sol (NFT)
-        // clovers = await Clovers.new()
+        clovers = await Clovers.new()
         clovers = await Clovers.deployed()
         // console.log('clovers', clovers.address)
 
         // Deploy CloversMetadata.sol
         // -w Clovers address
-        // cloversMetadata = await CloversMetadata.new(clovers.address)
+        cloversMetadata = await CloversMetadata.new(clovers.address)
         cloversMetadata = await CloversMetadata.deployed()
         // console.log('cloversMetadata', cloversMetadata.address)
 
         // Update Clovers.sol 
         // -w CloversMetadata address
-        // await clovers.updateCloversMetadataAddress(cloversMetadata.address)
+        await clovers.updateCloversMetadataAddress(cloversMetadata.address)
 
         // Deploy ClubToken.sol (ERC20)
-        // clubToken = await ClubToken.new()
+        clubToken = await ClubToken.new()
         clubToken = await ClubToken.deployed()
         // console.log('clubToken', clubToken.address)
 
         // Deploy Reversi.sol
         // -link w cloversController
         // console.log(Reversi)
-        // reversi = await Reversi.new();
-        // await CloversController.link('Reversi', reversi.address)
+        reversi = await Reversi.new();
+        reversi = await Reversi.deployed()
+        await CloversController.link('Reversi', reversi.address)
         // await deployer.link(Reversi, CloversController);
         // await deployer.link(Reversi);
         // await CloversController.link(reversi);
@@ -51,17 +55,17 @@ contract('Clovers', async function(accounts)  {
         // Deploy CloversController.sol
         // -w Clovers address
         // -w ClubToken address
-        // cloversController = await CloversController.new(clovers.address, clubToken.address)
+        cloversController = await CloversController.new(clovers.address, reversi.address)
         cloversController = await CloversController.deployed()
         // console.log('cloversController', cloversController.address)
 
         // Update Clovers.sol
         // -w CloversController address
-        // await clovers.updateCloversControllerAddress(cloversController.address)
+        await clovers.updateCloversControllerAddress(cloversController.address)
 
         // Update ClubToken.sol
         // -w CloversController address
-        // await clubToken.updateCloversControllerAddress(cloversController.address)
+        await clubToken.updateCloversControllerAddress(cloversController.address)
 
         // Deploy CloversFrontend.sol
         // -w CloversController address
@@ -70,9 +74,9 @@ contract('Clovers', async function(accounts)  {
         // -w stakeAmount
         // -w stakePeriod
         // -w payMultiplier
-        // await cloversController.updateStakeAmount(stakeAmount)
-        // await cloversController.updateStakePeriod(stakePeriod)
-        // await cloversController.updatePayMultipier(multiplier)
+        await cloversController.updateStakeAmount(stakeAmount)
+        await cloversController.updateStakePeriod(stakePeriod)
+        await cloversController.updatePayMultipier(multiplier)
         done()
       } catch (error) {
         console.log(error)
@@ -163,23 +167,31 @@ contract('Clovers', async function(accounts)  {
     })
 
     it('should check the cost of challenging this fake clover', async function () {
-      gasEstimate = await cloversController.challengeClover.estimateGas(_tokenId, accounts[0])
-      console.log(_+'challengeClover gasEstimate', gasEstimate.toString())
-    })
+      try{
 
-    it('should update the stake amount with the gas Estimate from challengeClover', async function () {
-       try {
-        newStakeAmount = new web3.BigNumber(gasEstimate).mul(gasPrice).mul(40)
-        tx = await cloversController.updateStakeAmount(stakeAmount, {gasPrice})
-        console.log(_+'updateStakeAmount gasCost ' + tx.receipt.cumulativeGasUsed)
-        gasSpent += tx.receipt.cumulativeGasUsed
+        let isValid = await cloversController.isValid(_moves)
+        console.log(_+'isValid', isValid)
 
-        assert(new web3.BigNumber(tx.receipt.status).eq(1), 'updateStakeAmount tx receipt should have been 0x01 (successful) but was instead ' + tx.receipt.status);
+        gasEstimate = await cloversController.challengeClover.estimateGas(_tokenId, accounts[0])
+        console.log(_+'challengeClover gasEstimate', gasEstimate.toString())
       } catch (error) {
-        console.log(error)
-        assert(false, 'updateStakeAmount tx should not have thrown an error')
+        console.error(error)
       }
     })
+
+    // it('should update the stake amount with the gas Estimate from challengeClover', async function () {
+    //    try {
+    //     newStakeAmount = new web3.BigNumber(gasEstimate).mul(gasPrice).mul(40)
+    //     tx = await cloversController.updateStakeAmount(newStakeAmount, {gasPrice})
+    //     console.log(_+'updateStakeAmount gasCost ' + tx.receipt.cumulativeGasUsed)
+    //     gasSpent += tx.receipt.cumulativeGasUsed
+
+    //     assert(new web3.BigNumber(tx.receipt.status).eq(1), 'updateStakeAmount tx receipt should have been 0x01 (successful) but was instead ' + tx.receipt.status);
+    //   } catch (error) {
+    //     console.log(error)
+    //     assert(false, 'updateStakeAmount tx should not have thrown an error')
+    //   }
+    // })
 
     it('should check the stake amount for the token in question', async function () {
       // let _movesHashJS = utils.soliditySha3({type: 'array', value: _moves})
@@ -227,7 +239,41 @@ contract('Clovers', async function(accounts)  {
       assert(result.eq(_balance), 'original balance ' + web3.fromWei(balance).toString() + ' minus all gas costs ' + web3.fromWei(gasCost).toString() + ' did not equal new balance ' + web3.fromWei(_balance).toString() + ' but rather ' + result.toString())
     })
 
+
+    let _realTokenId = '0x5555555565556955695566955aa55555'
+    let _realMoves = [
+      new web3.BigNumber('0xcb76aedd77baf6cfcfbeeb5362d6affb54f9d53971d37f37de9bf87c', 16),
+      new web3.BigNumber('0xc5670faa513068f1effd8f32a14ba11b64ca7461c193223c', 16)
+    ]
+
+    it ('should check the cost of validating a real game', async()=> {
+      try {
+        let currentStakeAmount = await cloversController.currentStakeAmount()
+        let options = [
+          _realMoves,
+          new web3.BigNumber(_realTokenId, 16), 
+          new web3.BigNumber('0x1F', 16),
+          accounts[0], 
+          {
+            value: new web3.BigNumber(currentStakeAmount),
+            gasPrice
+          }
+        ]
+
+        tx = await cloversController.claimClover(...options)
+        console.log(_+'claimClover gasCost ' + tx.receipt.cumulativeGasUsed)
+        gasSpent = tx.receipt.cumulativeGasUsed
+        assert(new web3.BigNumber(tx.receipt.status).eq(1), 'claimClover tx receipt should have been 0x01 (successful) but was instead ' + tx.receipt.status);
+          
+        gasEstimate = await cloversController.challengeClover.estimateGas(new web3.BigNumber(_realTokenId, 16), accounts[0])
+        console.log(_+'challengeClover gasEstimate', gasEstimate.toString())
+      } catch (error) {
+        console.log(error)
+        assert(false, 'claimClover tx receipt should not have thrown an error')
+      }
+    })
   })
+
 
 })
 
@@ -265,4 +311,10 @@ function increaseBlock() {
         resolve(result)
       });
   })
+}
+
+function decodeEventString(hexVal) {
+  return hexVal.match(/.{1,2}/g).map((a) => a.toLowerCase().split('').reduce( (result, ch) =>
+        result * 16 + '0123456789abcdefgh'.indexOf(ch), 0)).map((a) => String.fromCharCode(a)).join('')
+
 }

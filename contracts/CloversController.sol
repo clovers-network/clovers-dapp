@@ -19,6 +19,8 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     event cloverClaimed(bytes28[2] moves, uint256 _tokenId, address miner);
     event stakeRetrieved(bytes28[2] moves, uint256 _tokenId, address miner);
     event cloverChallenged(bytes28[2] moves, uint256 _tokenId, address miner, address challenger);
+    event DebugGame(bytes16 board, bool error, bool complete, bool symmetrical, bool RotSym, bool Y0Sym, bool X0Sym, bool XYSym, bool XnYSym, uint256 moveKey);
+    event DebugBool(bool boolean);
 
     using SafeMath for uint256;
 
@@ -69,7 +71,17 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
     */
     function isValid(bytes28[2] moves) public constant returns (bool) {
         Reversi.Game memory game = Reversi.playGame(moves);
-        return isValidGame(game);
+        if (isValidGame(game)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    function _isValid(bytes28[2] moves) public {
+        Reversi.Game memory game = Reversi.playGame(moves);
+        // DebugBool(game.complete);
+        // return game.msg;
+        // return game.moveKey;
     }
     /**
     * @dev Checks whether the game is valid.
@@ -236,9 +248,9 @@ contract CloversController is CloversFactory, HasNoTokens, HasNoEther {
                 IClovers(clovers).moveEth(_to, stake);
             }
             IClovers(clovers).unmint(_tokenId);
-            // IClovers(clovers).setCommit(movesHash, 0);
-            // IClovers(clovers).setStake(movesHash, 0);
-            // removeSymmetries(_tokenId);
+            IClovers(clovers).setCommit(movesHash, 0);
+            IClovers(clovers).setStake(movesHash, 0);
+            removeSymmetries(_tokenId);
         } else {
             revert();
         }

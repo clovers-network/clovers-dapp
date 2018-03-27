@@ -46,7 +46,7 @@ module.exports = async function(deployer, helper, accounts)  {
           var oldToken = await OldToken.at('0xcc0604514f71b8d39e13315d59f4115702b42646')
           var getCloversCount = await oldToken.getCloversCount()
       } else {
-
+        return
         // var oldToken = await deploy(deployer, OldToken)
         // await deployer.deploy(OldToken)
         // let oldToken = await OldToken.deployed()
