@@ -1,3 +1,9 @@
+# Deprecated #
+
+## Moved to https://github.com/clovers-network
+
+----------------
+
 # Clovers (✤) Dapp & ClubToken (♧) Contract
 
 ## https://clovers.network/
