@@ -25,14 +25,14 @@ export default {
   miningPower: state => state.miningPower,
   minedClovers: (state, getters) => {
     console.log('mined clovers calculated')
-    return state.allMinedClovers || []
-    // return (state.allMinedClovers.length && state.allMinedClovers.map((c) => {
-    //   let clover = state.allClovers && state.allClovers.find((ac) => ac.board === '0x' + c.byteBoard)
-    //   if (clover) {
-    //     c.claimed = clover.created
-    //   }
-    //   return c
-    // })) || []
+    // return state.allMinedClovers || []
+    return (state.allMinedClovers.length && state.allMinedClovers.map((c) => {
+      let clover = state.allClovers && state.allClovers.find((ac) => ac.board === '0x' + c.byteBoard)
+      if (clover) {
+        c.claimed = clover.created
+      }
+      return c
+    })) || []
   },
   symmetries: (state, getters) => {
     console.log('symmetries calculated')

@@ -84,6 +84,7 @@
     mounted () {
       this.name = this.username
       this.clover.balanceOf(this.address).then((amount) => {
+        console.log('amount', amount)
         this.balance = amount
       })
     },
