@@ -132,15 +132,13 @@
     },
     components: { AppHeader, CloverList, Messages, Instructions, Foot }
   }
-  import './style/imports.css'
 
 </script>
 
 <style lang="css">
-  @import './style/global.css';
+  @import './style/global';
 
-  /*@import './style/imports';*/
-  @import './style/settings.css';
+  @import './style/imports';
 
   .h7{
     font-size: 0.6rem;

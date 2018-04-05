@@ -38,6 +38,7 @@
 
 @import 'basscss-addons/modules/all';
 
+@import './settings';
 
 /* @import './icons'; */
 /* @import './helpers'; */
