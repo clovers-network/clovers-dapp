@@ -97,10 +97,10 @@
       setTimeout(() => {
         this.clover.initWeb3()
       }, 5000)
-      // window.addEventListener('updateCloverObject', (e) => {
-      //   console.log('updateClover')
-      //   this.updateClover(e.detail)
-      // }, false)
+      window.addEventListener('updateCloverObject', (e) => {
+        console.log('updateClover')
+        this.updateClover(e.detail)
+      }, false)
       // window.addEventListener('eventRegistered', (e) => {
       //   this.registerEvent(e.detail)
       // }, false)
@@ -123,7 +123,7 @@
     destroyed () {
       this.clover.stopAccountInterval()
       this.clover.stopEvents()
-      // window.removeEventListener('Event', 'updateCloverObject')
+      window.removeEventListener('Event', 'updateCloverObject')
       // window.removeEventListener('Event', 'eventsRegistered')
       // window.removeEventListener('Event', 'eventNewUserName')
       // window.removeEventListener('Event', 'eventsNewUserName')
