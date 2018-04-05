@@ -1,20 +1,17 @@
-# Deprecated #
-
-## Moved to https://github.com/clovers-network
-
-----------------
-
-# Clovers (✤) Dapp & ClubToken (♧) Contract
+# Clovers
 
 ## https://clovers.network/
 
-3rd Prize Winner of Cosmo Hackatom 2 Hackathon, 2017 — Made by [Alan Woo](https://github.com/alancwoo/), [Billy Rennekamp](https://github.com/okwme/) & [Nics Kort](https://github.com/n-kort/) using [Vue.js](https://github.com/vuejs/vue), [Truffle](https://github.com/trufflesuite/truffle) and [Ethereum/Solidity](https://ethereum.org)
+![01](https://clovers.network/assets/01.png)
+![02](https://clovers.network/assets/02.png)
+![03](https://clovers.network/assets/03.png)
+![04](https://clovers.network/assets/04.png)
+![05](https://clovers.network/assets/05.png)
+![06](https://clovers.network/assets/06.png)
+![07](https://clovers.network/assets/07.png)
+![09](https://clovers.network/assets/09.png)
 
-## Files of Interest
-* [ClubToken.sol](https://github.com/okwme/clovers-dapp/blob/master/contracts/ClubToken.sol)
-  * The Club Token Contract with logic for Clovers & Reversi.sol Library
-* [Clovers.js](https://github.com/okwme/clovers-dapp/blob/master/app/src/assets/clovers.js)
-  * Lots of handlers for interacting with the contract
+3rd Prize Winner of Cosmo Hackatom 2 Hackathon, 2017 — Made by [Alan Woo](https://github.com/alancwoo/), [Billy Rennekamp](https://github.com/okwme/) & [Nics Kort](https://github.com/n-kort/) using [Vue.js](https://github.com/vuejs/vue), [Truffle](https://github.com/trufflesuite/truffle) and [Ethereum/Solidity](https://ethereum.org)
 
 ## Links
 * [Hackatom #2](http://www.hackathon.io/cosmos-hackathon1)
