@@ -5,10 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build",
-    "test": "vue-cli-service test",
-    "e2e": "vue-cli-service e2e",
-    "lint": "vue-cli-service lint",
-    "e2e:open": "vue-cli-service e2e:open"
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "axios": "^0.18.0",
