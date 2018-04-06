@@ -65,6 +65,7 @@ export default {
       if (this.testEmail(this.email)) {
         this.error = false
         axios.post('https://clovers.club/register', {email: this.email}).then((response) => {
+          console.log(response)
           this.success = true
           this.email = ''
         })

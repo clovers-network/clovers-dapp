@@ -119,7 +119,7 @@
 <script>
   import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
   import moment from 'moment'
-  import Reversi from '@/assets/reversi'
+  import Reversi from 'clovers-reversi'
   import Symmetry from '@/components/Symmetry'
   import xss from 'xss'
   import copier from 'copy-to-clipboard'
@@ -165,7 +165,7 @@
           msg: 'Updating Price to ' + newPrice + ' ♧',
           type: 'progress'
         }).then((msgId) => {
-          this.clover.changeStartPrice(this.boardId, this.newPrice).then((res) => {
+          this.clover.changeStartPrice(this.boardId, this.newPrice).then(() => {
             this.removeMessage(msgId)
             this.selfDestructMsg({
               msg: 'Clover price changed to ' + newPrice + ' ♧',
@@ -192,7 +192,7 @@
           console.error(err)
         })
       },
-      cost (args, idx) {
+      cost (args) {
         return args.lastPaidAmount && parseInt(args.lastPaidAmount).toLocaleString() + ' ♣'
       },
       calcEarnings (idx) {
@@ -228,7 +228,7 @@
             type: 'progress'
           }).then((msgId) => {
             this.clover.flipClover(this.boardId).then((res) => {
-              // console.log(res)
+              console.log(res)
               this.removeMessage(msgId)
               this.flipping = false
               this.selfDestructMsg({

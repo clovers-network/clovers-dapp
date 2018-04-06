@@ -19,7 +19,7 @@
 //   console.log(data)
 // })
 
-import {Clovers} from 'clovers-contracts'
+// import {Clovers} from 'clovers-contracts'
 
 import io from 'socket.io-client'
 let polling = null
@@ -67,7 +67,7 @@ export default {
       console.error(error)
     })
   },
-  setUpSocket ({commit, dispatch}) {
+  setUpSocket ({commit}) {
     console.log('set up socket')
     const socket = io('//api.clovers.network')
     // const socket = io('//localhost:3333')
@@ -124,7 +124,7 @@ export default {
     commit('ADD_MSG', msg)
     return msg.id
   },
-  cloverExists ({commit, getters}, byteBoard) {
+  cloverExists ({getters}, byteBoard) {
     return getters.allClovers.findIndex((c) => c.board === byteBoard) > -1
   }
 }

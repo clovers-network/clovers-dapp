@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build && cp _redirects dist",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint --fix"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -23,6 +23,7 @@
     "basscss-typography": "^3.0.4",
     "bignumber.js": "^4.1.0",
     "clovers-contracts": "github:clovers-network/clovers-contracts",
+    "clovers-reversi": "github:clovers-network/clovers-reversi",
     "copy-to-clipboard": "^3.0.8",
     "ethjs": "^0.2.9",
     "fs": "0.0.1-security",
@@ -64,11 +65,15 @@
     ]
   },
   "eslintConfig": {
-    "root": true,
+    "root": false,
     "extends": [
       "plugin:vue/essential",
-      "@vue/standard"
-    ]
+      "eslint:recommended"
+    ],
+    "globals": {
+      "web3" : true,
+      "ga" : true
+    }
   },
   "browserslist": [
     "> 1%",

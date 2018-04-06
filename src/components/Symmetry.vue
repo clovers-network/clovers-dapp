@@ -28,9 +28,9 @@
         for (let key in this.board) {
           if (types.includes(key) && this.board[key]) list.push(key)
         }
-        if (!list.length) {
+        // if (!list.length) {
 
-        }
+        // }
         return list
       }
     }

@@ -22,7 +22,7 @@
   </div>
 </template>
 <script>
-  import Reversi from '../assets/reversi'
+  import Reversi from 'clovers-reversi'
   import SvgText from './SvgText'
   import { mapGetters } from 'vuex'
 

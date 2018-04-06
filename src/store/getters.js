@@ -3,7 +3,6 @@ import Clover from '../assets/clovers'
 // import xss from 'xss'
 
 export default {
-  clover: state => null,
   submittingBoards: state => state.submittingBoards,
   readOnly: state => state.readOnly,
   notRinkeby: state => {
@@ -22,7 +21,7 @@ export default {
   mining: state => state.mining,
   messages: state => state.messages,
   miningPower: state => state.miningPower,
-  minedClovers: (state, getters) => {
+  minedClovers: (state) => {
     console.log('mined clovers calculated')
     // return state.allMinedClovers || []
     return (state.allMinedClovers.length && state.allMinedClovers.map((c) => {
@@ -33,7 +32,7 @@ export default {
       return c
     })) || []
   },
-  symmetries: (state, getters) => {
+  symmetries: (state) => {
     console.log('symmetries calculated')
     // return {Symmetricals: 0, RotSym: 0, X0Sym: 0, Y0Sym: 0, XYSym: 0, XnYSym: 0, PayMultiplier: 100}
     let Symmetricals = 0

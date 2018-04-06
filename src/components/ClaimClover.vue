@@ -54,7 +54,7 @@
   import { mapActions, mapGetters, mapMutations } from 'vuex'
   import SvgText from '@/components/SvgText'
   import Symmetry from '@/components/Symmetry'
-  import Reversi from '../assets/reversi'
+  import Reversi from 'clovers-reversi'
 
   export default {
     name: 'claim-clover',
@@ -134,6 +134,7 @@
           msg: 'Validating Clover on the Blockchain',
           type: 'progress'
         }).then((msgId) => {
+          console.log(msgId)
           let byteBoard = reversi.byteBoard
           this.addToSubmittingList(byteBoard)
           

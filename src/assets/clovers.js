@@ -1,18 +1,20 @@
-import BN from 'bignumber.js'
-import clubTokenArtifacts from './ClubToken.json'
-import contract from 'truffle-contract'
+import utils from 'web3-utils'
+const BN = utils.BN
+// import clubTokenArtifacts from './ClubToken.json'
+// import contract from 'truffle-contract'
 import Web3 from 'web3'
-import Reversi from './reversi'
+import Reversi from 'clovers-reversi'
+
 import {Clovers, ClubToken, CloversController} from 'clovers-contracts'
 
-const ProviderEngine = require('web3-provider-engine/index.js')
+// const ProviderEngine = require('web3-provider-engine/index.js')
 const ZeroClientProvider = require('web3-provider-engine/zero.js')
 
 let web3 = self && self.web3
 let _web3 = false
 class Clover extends Reversi {
 
-  constructor (events = false) {
+  constructor () {
     super()
     this.network = null
     this.error = false

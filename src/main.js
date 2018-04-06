@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import './registerServiceWorker'
+// import './registerServiceWorker'
 
 router.beforeEach((to, from, next) => {
   if (store.state.network && store.getters.notRinkeby && (to.path !== '/' || to.path !== '/about')) {
@@ -11,7 +11,7 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
-router.afterEach((to, from, next) => {
+router.afterEach(() => {
   if (ga) ga('send', 'pageview')
 })
 

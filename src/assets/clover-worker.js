@@ -1,4 +1,4 @@
-import Reversi from './reversi'
+import Reversi from 'clovers-reversi'
 
 let running = false
 let hashRate = 0

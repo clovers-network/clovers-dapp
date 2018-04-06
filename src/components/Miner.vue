@@ -78,7 +78,7 @@
 <script>
   import { mapMutations, mapGetters, mapActions } from 'vuex'
   import CloverWorker from 'worker-loader!../assets/clover-worker'
-  import Reversi from '../assets/reversi'
+  import Reversi from 'clovers-reversi'
   import ClaimClover from '@/components/ClaimClover'
   import Symmetry from '@/components/Symmetry'
   import moment from 'moment'
@@ -202,6 +202,7 @@
     },
     methods: {
       scrollBoards (inc) {
+        console.log(inc)
         this.$nextTick(() => {
           let selectedClover = this.$refs.clover.find((c) => c.classList.contains('active-clover'))
           if (!selectedClover) return
@@ -314,7 +315,6 @@
           this.totalMined = data.hashRate
         }
         if ('symmetrical' in data) {
-          // this.clover.cloverExists(data.byteBoard).then((exists) => {
           this.cloverExists(data.byteBoard).then((exists) => {
             if (!exists) {
               this.allMinedClover(data)
@@ -373,7 +373,7 @@
     },
     mounted () {
       this.checkRead()
-      this.interval = setInterval(this.timer, 3000)
+      this.interval = setInterval(this.timer, 1000)
       window.addEventListener('keydown', this.checkKey)
     },
     destroyed () {

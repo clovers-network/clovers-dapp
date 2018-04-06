@@ -25,18 +25,19 @@ export default {
   },
   MINE_INCREMENT (state, increment) {
     if (!increment) return
-    state.totalMined = state.totalMined + increment
+    state.totalMined = parseInt(state.totalMined) + parseInt(increment)
   },
   TIME_INCREMENT (state, inc) {
     if (!inc) return
-    state.mineTime = state.mineTime + parseInt(inc)
+    state.mineTime = parseInt(state.mineTime) + parseInt(inc)
+
   },
   CORE_COUNT (state, count) {
     state.miningPower = count
   },
 
   MINED_CLOVER (state, clover) {
-    state.cloversFound = state.cloversFound + 1
+    state.cloversFound = parseInt(state.cloversFound) + 1
     state.allMinedClovers.unshift(clover)
     if (window.localstorage) {
       window.localStorage.setItem(state.account + '_cloversFound', JSON.stringify(state.cloversFound))
@@ -46,6 +47,7 @@ export default {
     state.allMinedClovers.push(...clovers)
   },
   CLAIMED_CLOVER (state, byteBoard) {
+    console.log(byteBoard)
     // let i = state.allMinedClovers.findIndex(cl => cl.byteBoard === byteBoard)
     // // Object.assign(state.allMinedClovers[i], { claimed: new Date() })
     // let clover = state.allMinedClovers[i]
@@ -76,7 +78,7 @@ export default {
     state.readOnly = readOnly
   },
   UPDATE_BALANCE (state, balance) {
-    state.balance = balance
+    state.balance = parseInt(balance)
   },
   STORED_CLOVERS (state, clovers) {
     state.allMinedClovers = clovers
@@ -118,6 +120,7 @@ export default {
     state.mineTime = duration
   },
   STORED_CLOVERS_FOUND (state, count) {
+    count = parseInt(count)
     if (count < state.allMinedClovers.length) {
       state.cloversFound = state.allMinedClovers.length
     }
