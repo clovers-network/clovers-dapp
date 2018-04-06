@@ -4,7 +4,7 @@
     <main>
       <router-view></router-view>
     </main>
-    <instructions @seen="seenit()" v-if="notRinkeby || readOnly && !seen"></instructions>
+    <instructions @seen="seenit()" v-if="attemptConnect && (notRinkeby || readOnly) && !seen"></instructions>
     <clover-list v-if="!hideMainCloverList || notRinkeby"></clover-list>
     <foot></foot>
     <messages></messages>
@@ -24,6 +24,7 @@
     name: 'app',
     data () {
       return {
+        attemptConnect: false,
         sortBy: null,
         paged: 1,
         limit: 20,
@@ -74,11 +75,11 @@
         this.seen = true
       },
       ...mapActions([
+        'initWeb3',
         'selfDestructMsg',
         'setUpSocket'
       ]),
       ...mapMutations({
-        updateClover: 'UPDATE_CLOVER_OBJECT',
         registerEvent: 'ADD_REGISTERED_EVENT',
         registerEvents: 'ADD_REGISTERED_EVENTS',
         newUsernameEvent: 'ADD_USERNAME_EVENT',
@@ -90,45 +91,21 @@
     mounted () {
       console.log('mounted')
       this.setUpSocket()
-      if (this.$route.path !== '/' && this.notRinkeby) {
-        this.$router.push('/')
-      }
-      this.clover.initWeb3()
-      setTimeout(() => {
-        this.clover.initWeb3()
-      }, 5000)
-      window.addEventListener('updateCloverObject', (e) => {
-        console.log('updateClover')
-        this.updateClover(e.detail)
-      }, false)
-      // window.addEventListener('eventRegistered', (e) => {
-      //   this.registerEvent(e.detail)
-      // }, false)
-      // window.addEventListener('eventsRegistered', (e) => {
-      //   this.registerEvents(e.detail)
-      // }, false)
-      // window.addEventListener('newUsernameEvent', (e) => {
-      //   this.newUsernameEvent(e.detail)
-      // }, false)
-      // window.addEventListener('newUsernameEvents', (e) => {
-      //   this.newUsernameEvents(e.detail)
-      // }, false)
-      // window.addEventListener('newClovernameEvent', (e) => {
-      //   this.newClovernameEvent(e.detail)
-      // }, false)
-      // window.addEventListener('newClovernameEvents', (e) => {
-      //   this.newClovernameEvents(e.detail)
-      // }, false)
+      console.log('INIT-0')
+      this.initWeb3().then(() => {
+        this.attemptConnect = true
+        console.log('INIT-3')
+        // if network is not rinkeby and have not seen popup notice go to front page to show popup
+        if (this.$route.path !== '/' && this.notRinkeby) {
+          this.$router.push('/')
+        }
+      }).catch((error) => {
+        this.attemptConnect = true
+        console.error(error)
+      })
     },
     destroyed () {
-      this.clover.stopAccountInterval()
-      this.clover.stopEvents()
-      window.removeEventListener('Event', 'updateCloverObject')
-      // window.removeEventListener('Event', 'eventsRegistered')
-      // window.removeEventListener('Event', 'eventNewUserName')
-      // window.removeEventListener('Event', 'eventsNewUserName')
-      // window.removeEventListener('Event', 'eventNewCloverName')
-      // window.removeEventListener('Event', 'eventsNewCloverName')
+      this.stopWeb3Polling()
     },
     components: { AppHeader, CloverList, Messages, Instructions, Foot }
   }
@@ -139,7 +116,17 @@
   @import './style/global';
 
   @import './style/imports';
-
+  .intro-screen {
+    .clover {
+      display: inline-block;
+    }
+    .text-path {
+      bottom: -2.6em;
+      left: -2.6em;
+      right: -2.6em;
+      top: -2.6em;
+    }
+  }
   .h7{
     font-size: 0.6rem;
   }

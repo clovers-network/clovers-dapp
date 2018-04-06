@@ -3,14 +3,13 @@ import Clover from '../assets/clovers'
 // import xss from 'xss'
 
 export default {
+  clover: state => null,
   submittingBoards: state => state.submittingBoards,
-  clover: state => state.clover,
-  readOnly: state => state.clover.readOnly,
-  notRinkeby: state => state.clover.notRinkeby,
-  error: state => state.clover.error,
-  name: state => state.clover.name,
-  symbol: state => state.clover.symbol,
-  account: state => state.clover.account,
+  readOnly: state => state.readOnly,
+  notRinkeby: state => {
+    return state.network !== 4
+  },
+  account: state => state.account,
   username: (state, getters) => {
     console.log('username calculated')
     return state.users.find((u) => getters.account && (u.address.toLowerCase() === getters.account.toLowerCase())) || {address: getters.account, name: getters.account}
@@ -18,7 +17,7 @@ export default {
   registeredEvents: state => state.logs.filter(log => log.name === 'Registered'),
   usernameEvents: state => state.usernameEvents,
   clovernameEvents: state => state.clovernameEvents,
-  balance: state => state.clover.balance,
+  balance: state => state.balance,
   hashRate: state => state.hashRate,
   mining: state => state.mining,
   messages: state => state.messages,

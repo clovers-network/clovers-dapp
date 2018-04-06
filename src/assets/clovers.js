@@ -3,6 +3,8 @@ import clubTokenArtifacts from './ClubToken.json'
 import contract from 'truffle-contract'
 import Web3 from 'web3'
 import Reversi from './reversi'
+import {Clovers, ClubToken, CloversController} from 'clovers-contracts'
+
 const ProviderEngine = require('web3-provider-engine/index.js')
 const ZeroClientProvider = require('web3-provider-engine/zero.js')
 
@@ -12,237 +14,1167 @@ class Clover extends Reversi {
 
   constructor (events = false) {
     super()
-    this.notRinkeby = false
+    this.network = null
     this.error = false
-    this.genesisBlock = 858317
-    this.address = '0xcc0604514f71b8d39e13315d59f4115702b42646'
-    this.ClubToken = null
-    this.account = null
-    this.name = null
-    this.symbol = null
-    this.balance = 0
-    this.accountInterval = null
-    this.manualCloverCallComplete = false
-    this.allClovers = []
-    this.events = events
-    this.findersFee = this.startPrice = 0
-    this.retryConnection= false
+    this.loading = false
+    this.retryConnection = false
     this.readOnly = false
-    this.eventsComplete = false
     this.connected = false
-    this.registeredEventsCount = 0
   }
 
   // Connections
 
   initWeb3 () {
-    web3 = self && self.web3
-    let web3Provider = false
-    if (web3) {
-      // Use Mist/MetaMask's provider
-      web3Provider = web3.currentProvider
+    return new Promise((resolve, reject) => {
+      web3 = self && self.web3
+      let web3Provider = false
+      if (web3) {
+        web3Provider = web3.currentProvider
+      } else if (!this.retryConnection){
+        this.retryConnection = true
+        this.resetConnection()
+        setTimeout(() => {
+          this.initWeb3().then((network = this.network) => {
+            resolve(network, this.readOnly)
+          }).catch((error) => {
+            reject(error)
+          })
+        }, 1000)
+      } else {
+        this.readOnly = true
+        web3Provider = ZeroClientProvider({
+          getAccounts: function(){},
+          rpcUrl: 'https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d',
+        })
+      }
+      if (web3Provider) {
+        _web3 = new Web3(web3Provider)
+        _web3.eth.net.getId((err, netId) => {
+          if (!err){
+            this.network = netId
+            if (CloversController.networks[this.network] && Clovers.networks[this.network] && ClubToken.networks[this.network]) {
+              this.deployContracts()
+              resolve(this.network, this.readOnly)
+            } else {
+              reject(new Error('Contracts not deployed'))
+            }
+          } else {
+            reject(new Error(err))
+          }
+        })
+      } else {
+        reject(new Error('No web3Provider'))
+      }
+    })
+  }
 
-    } else if (!this.retryConnection){
-      this.retryConnection = true
-      this.resetConnection()
-      setTimeout(() => {
-        this.initWeb3()
-      }, 1000)
-    } else {
-      this.readOnly = true
-      window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-      web3Provider = ZeroClientProvider({
-        getAccounts: function(){},
-        rpcUrl: 'https://rinkeby.infura.io/Q5I7AA6unRLULsLTYd6d',
-      })
-    }
-    if (web3Provider) {
-      _web3 = new Web3(web3Provider)
-      _web3.version.getNetwork((err, netId) => {
-        if (!err) {
-          switch (netId) {
-            case '4':
-              break
-            default:
-              this.notRinkeby = true
-              window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-          }
-        }
-        if (!this.notRinkeby && !this.connected) {
-          this.connected = true
-          this.checkAccount()
-          this.setAccountInterval()
-          if (this.events) {
-            this.getPastEvents().then(() => {
-              this.watchFutureEvents()
-            })
-          }
+  getAccounts () {
+    return new Promise((resolve, reject) => {
+      _web3.eth.getAccounts((err, accounts) => {
+        if (err) {
+          this.account = null
+          reject(err)
+        } else {
+          if (accounts.length > 0 && !this.account) this.account = accounts[0]
+          if (accounts.length == 0 && this.account) this.account = null
+          resolve(accounts)
         }
       })
-    }
+    })
   }
 
   resetConnection () {
     _web3 = false
-    this.ClubToken = false
-  }
-
-  setAccountInterval () {
-    this.accountInterval = this.accountInterval || setInterval(() => {
-      this.checkAccount()
-    }, 1000)
+    this.network = null
+    return this.initWeb3()
   }
 
 
-  stopAccountInterval () {
-    clearInterval(this.accountInterval)
+  deployContracts () {
+    console.log('ClubToken', ClubToken.networks[this.network].address)
+    console.log('Clovers', Clovers.networks[this.network].address)
+    console.log('CloversController', CloversController.networks[this.network].address)
+    this.ClubToken = new _web3.eth.Contract(ClubToken.abi, ClubToken.networks[this.network].address)
+    this.Clovers = new _web3.eth.Contract(Clovers.abi, Clovers.networks[this.network].address)
+    this.CloversController = new _web3.eth.Contract(CloversController.abi, CloversController.networks[this.network].address)
   }
 
-  checkAccount () {
-    if (!_web3) this.initWeb3()
-    if (!this.symbol) {
-      this.getSymbol().then((symbol) => {
-        this.symbol = symbol
-        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-      }).catch((err) => console.log(err))
-    }
-    if (!this.name) {
-      this.getName().then((name) => {
-        this.name = name
-        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-      }).catch((err) => console.log(err))
-    }
-    _web3.eth.getAccounts((error, accounts) => {
-      if (error) throw new Error(error)
-      if (accounts.length && this.account !== accounts[0]) {
-        this.account = accounts[0]
-        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-      }
-      this.account && this.balanceOf().then(balance => {
-        if (balance.toNumber() !== this.balance) {
-          this.balance = balance.toNumber()
-          window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-        }
-      }).catch((err) => console.log(err))
+
+  /*
+   *
+   * Constant Functions (CloversController.sol)
+   *
+   */
+
+  cloversControllerOwner () {
+    return this.CloversController.methods.owner().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  currentStakeAmount () {
+    return this.CloversController.methods.currentStakeAmount().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  currentStakePeriod () {
+    return this.CloversController.methods.currentStakePeriod().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  getMultiplier () {
+    return this.CloversController.methods.getMultiplier().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  getMovesHash (_tokenId) {
+    return this.CloversController.methods.getMovesHash(new BN(_tokenId, 10)).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  isValid (moves) {
+    return this.CloversController.methods.isValid(moves).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  isVerified (_tokenId) {
+    return this.CloversController.methods.isVerified(new BN(_tokenId, 10)).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  calculateReward (_symmetries) {
+    return this.CloversController.methods.calculateReward(_symmetries).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
     })
   }
 
-  setContract () {
-    if (!_web3) this.initWeb3()
-    this.ClubToken = contract(clubTokenArtifacts)
-    this.ClubToken.setProvider(_web3.currentProvider)
-  }
+  /*
+   *
+   * Transaction Functions (CloversController)
+   *
+   */
 
-  stopEvents () {
-    return this.deploy().then((instance) => {
-      return instance.Registered().stopWatching()
+  claimClover (moves, _tokenId, _symmetries, _to, stakeAmount) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.CloversController.methods.claimClover(moves, _tokenId, _symmetries, _to).send({
+      from: this.account,
+      value: stakeAmount
+    })
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  claimCloverCommit (movesHash, _to, stakeAmount) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.CloversController.methods.claimCloverCommit(movesHash, _to).send({
+      from: this.account,
+      value: stakeAmount
+    })
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
     })
   }
 
-  getPastEvents (depth = 0, limit = 200000) {
-    return this.currentBlock().then((currentBlock) => {
-      if (currentBlock.number - (limit * depth) >= this.genesisBlock) {
-        this.eventsComplete = false
-        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-        return this.deploy().then((instance) => {
-          let fromBlock = this.genesisBlock + (limit * depth)
-          let toBlock = this.genesisBlock + (limit * (depth + 1))
-          console.log(fromBlock, toBlock)
-          return instance.Registered({x: null}, {
-            fromBlock,
-            toBlock
-          }).get((error, result) => {
-            if (error) {
-              this.error = 'need-metamask'
-              this.resetConnection()
-            } else {
-              this.error = false
-
-              if (result.length && result[0].args.newOwner !== '0x') {
-                this.registeredEventsCount += result.length
-                window.dispatchEvent(new CustomEvent('eventsRegistered', {detail: JSON.parse(JSON.stringify(result))}))
-              }
-            }
-            window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-
-            return instance.newCloverName({x: null}, {
-              fromBlock,
-              toBlock
-            }).get((error, result) => {
-              if (error) {
-                this.error = 'need-metamask'
-                this.resetConnection()
-              } else {
-                this.error = false
-                window.dispatchEvent(new CustomEvent('newClovernameEvents', {detail: result}))
-              }
-              window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-            
-              return instance.newUserName({x: null}, {
-                fromBlock,
-                toBlock
-              }).get((error, result) => {
-                if (error) {
-                  this.error = 'need-metamask'
-                  this.resetConnection()
-                } else {
-                  this.error = false
-                  window.dispatchEvent(new CustomEvent('newUsernameEvents', {detail: result}))
-                }
-                window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-                return this.getPastEvents(depth + 1)
-              })
-            })
-          })
-        })
-      } else {
-        this.eventsComplete = true
-        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-      }
+  reclaimToken (token) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.CloversController.methods.reclaimToken(token).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  reclaimEther () {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.CloversController.methods.reclaimEther().send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  tokenFallback (from_, value_, data_) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.CloversController.methods.tokenFallback(from_, new BN(value_, 10), data_).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  cloversControllerTransferOwnership (newOwner) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.CloversController.methods.transferOwnership(newOwner).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  claimCloverReveal (moves, _tokenId, _symmetries) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.CloversController.methods.claimCloverReveal(moves, new BN(_tokenId, 10), _symmetries).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  retrieveStake (_tokenId) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.CloversController.methods.retrieveStake(new BN(_tokenId, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  challengeClover (_tokenId, _to) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.CloversController.methods.challengeClover(new BN(_tokenId, 10), _to).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  updateStakeAmount (_stakeAmount) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.CloversController.methods.updateStakeAmount(new BN(_stakeAmount, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  updateStakePeriod (_stakePeriod) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.CloversController.methods.updateStakePeriod(new BN(_stakePeriod, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  updatePayMultipier (_payMultiplier) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.CloversController.methods.updatePayMultipier(new BN(_payMultiplier, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
     })
   }
 
-  watchFutureEvents () {
-    this.deploy().then((instance) => {
-      instance.Registered({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
-        if (error) {
-          this.error = 'need-metamask'
-          this.resetConnection()
-        } else {
-          this.error = false
-          if (result && result.args.newOwner !== '0x') {
-            window.dispatchEvent(new CustomEvent('eventRegistered', {detail: JSON.parse(JSON.stringify(result))}))
-          }
-        }
-        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-      })
-      instance.newCloverName({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
-        if (error) {
-          this.error = 'need-metamask'
-          this.resetConnection()
-        } else {
-          this.error = false
-          window.dispatchEvent(new CustomEvent('newClovernameEvent', {detail: result}))
-        }
-        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-      })
-      instance.newUserName({x: null}, {fromBlock: 'latest'}).watch((error, result) => {
-        if (error) {
-          this.error = 'need-metamask'
-          this.resetConnection()
-        } else {
-          this.error = false
-          window.dispatchEvent(new CustomEvent('newUsernameEvent', {detail: result}))
-        }
-        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-      })
+  // ---------------------------------------------------------------------------
+
+  /*
+   *
+   * Constant Functions (Clovers)
+   *
+   */
+
+  cloversName () {
+    return this.Clovers.methods.name().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  getApproved (_tokenId) {
+    return this.Clovers.methods.getApproved(new BN(_tokenId, 10)).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  cloversTotalSupply () {
+    return this.Clovers.methods.totalSupply().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  tokenOfOwnerByIndex (_owner, _index) {
+    return this.Clovers.methods.tokenOfOwnerByIndex(_owner, new BN(_index, 10)).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  commits () {
+    return this.Clovers.methods.commits().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  exists (_tokenId) {
+    return this.Clovers.methods.exists(new BN(_tokenId, 10)).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  tokenByIndex (_index) {
+    return this.Clovers.methods.tokenByIndex(new BN(_index, 10)).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  ownerOf (_tokenId) {
+    return this.Clovers.methods.ownerOf(new BN(_tokenId, 10)).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  clovers () {
+    return this.Clovers.methods.clovers().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  cloversBalanceOf (_owner) {
+    return this.Clovers.methods.balanceOf(_owner).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  cloversOwner () {
+    return this.Clovers.methods.owner().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  stakes () {
+    return this.Clovers.methods.stakes().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  cloversSymbol () {
+    return this.Clovers.methods.symbol().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  tokenURI (_tokenId) {
+    return this.Clovers.methods.tokenURI(new BN(_tokenId, 10)).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  isApprovedForAll (_owner, _operator) {
+    return this.Clovers.methods.isApprovedForAll(_owner, _operator).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  implementation () {
+    return this.Clovers.methods.implementation().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  getHash (moves) {
+    return this.Clovers.methods.getHash(moves).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  getStake (movesHash) {
+    return this.Clovers.methods.getStake(movesHash).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  getCommit (movesHash) {
+    return this.Clovers.methods.getCommit(movesHash).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  getBlockMinted (_tokenId) {
+    return this.Clovers.methods.getBlockMinted(new BN(_tokenId, 10)).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  getCloverMoves (_tokenId) {
+    return this.Clovers.methods.getCloverMoves(new BN(_tokenId, 10)).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  getReward (_tokenId) {
+    return this.Clovers.methods.getReward(new BN(_tokenId, 10)).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  getSymmetries (_tokenId) {
+    return this.Clovers.methods.getSymmetries(new BN(_tokenId, 10)).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  getAllSymmetries () {
+    return this.Clovers.methods.getAllSymmetries().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
     })
   }
 
-  deploy () {
-    if (!this.ClubToken) this.setContract()
-    return this.ClubToken.deployed()
+  /*
+   *
+   * Transaction Functions (Clovers.sol)
+   *
+   */
+
+  cloversApprove (_to, _tokenId) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.approve(_to, new BN(_tokenId, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
   }
+  cloversTransferFrom (_from, _to, _tokenId) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.transferFrom(_from, _to, new BN(_tokenId, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  safeTransferFrom (_from, _to, _tokenId) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.safeTransferFrom(_from, _to, new BN(_tokenId, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  setApprovalForAll (_to, _approved) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.setApprovalForAll(_to, _approved).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  safeTransferFromWithData (_from, _to, _tokenId, _data) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.safeTransferFrom(_from, _to, new BN(_tokenId, 10), _data).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  cloversTransferOwnership (newOwner) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.transferOwnership(newOwner).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  moveEth (_to, amount) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.moveEth(_to, new BN(amount, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  moveToken (amount, _to, token) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.moveToken(new BN(amount, 10), _to, token).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  approveToken (amount, _to, token) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.approveToken(new BN(amount, 10), _to, token).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  setStake (movesHash, stake) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.setStake(movesHash, new BN(stake, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  setCommit (movesHash, commiter) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.setCommit(movesHash, commiter).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  setBlockMinted (_tokenId, value) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.setBlockMinted(new BN(_tokenId, 10), new BN(value, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  setCloverMoves (_tokenId, moves) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.setCloverMoves(new BN(_tokenId, 10), moves).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  setReward (_tokenId, _amount) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.setReward(new BN(_tokenId, 10), new BN(_amount, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  setSymmetries (_tokenId, _symmetries) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.setSymmetries(new BN(_tokenId, 10), _symmetries).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  setAllSymmetries (_totalSymmetries, RotSym, Y0Sym, X0Sym, XYSym, XnYSym) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.setAllSymmetries(new BN(_totalSymmetries, 10), new BN(RotSym, 10), new BN(Y0Sym, 10), new BN(X0Sym, 10), new BN(XYSym, 10), new BN(XnYSym, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  deleteClover (_tokenId) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.deleteClover(new BN(_tokenId, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  cloversUpdateCloversControllerAddress (_cloversController) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.updateCloversControllerAddress(_cloversController).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  updateCloversMetadataAddress (_cloversMetadata) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.updateCloversMetadataAddress(_cloversMetadata).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  cloversMint (_to, _tokenId) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.mint(_to, new BN(_tokenId, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  unmint (_tokenId) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.Clovers.methods.unmint(new BN(_tokenId, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+
+  // --------------------------------------------------------------------------------------
+
+  /*
+   *
+   * Constant Functions (ClubToken)
+   *
+   */
+
+  clubTokenName () {
+    return this.ClubToken.methods.name().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+
+  clubTokenSymbol () {
+    return this.ClubToken.methods.symbol().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+
+  decimals () {
+    return this.ClubToken.methods.decimals().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+
+  clubTokenTotalSupply () {
+    return this.ClubToken.methods.totalSupply().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  clubTokenBalanceOf (_owner) {
+    return this.ClubToken.methods.balanceOf(_owner).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  clubTokenOwner () {
+    return this.ClubToken.methods.owner().call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+  allowance (_owner, _spender) {
+    return this.ClubToken.methods.allowance(_owner, _spender).call()
+    .then((resp) => {
+      return resp
+    }).catch((err) => {
+      console.error(err)
+    })
+  }
+
+  /*
+   *
+   * Transaction Functions (ClubToken)
+   *
+   */
+
+  clubTokenApprove (_spender, _value) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.ClubToken.methods.approve(_spender, new BN(_value, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  increaseApprovalWithData (_spender, _addedValue, _data) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.ClubToken.methods.increaseApproval(_spender, new BN(_addedValue, 10), _data).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  clubTokenTransferFrom (_from, _to, _value) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.ClubToken.methods.transferFrom(_from, _to, new BN(_value, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  clubTokenApproveWithData (_spender, _value, _data) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.ClubToken.methods.approve(_spender, new BN(_value, 10), _data).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  decreaseApproval (_spender, _subtractedValue) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.ClubToken.methods.decreaseApproval(_spender, new BN(_subtractedValue, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  decreaseApprovalWithData (_spender, _subtractedValue, _data) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.ClubToken.methods.decreaseApproval(_spender, new BN(_subtractedValue, 10), _data).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  transfer (_to, _value) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.ClubToken.methods.transfer(_to, new BN(_value, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  clubTokenTransferFromWithData (_from, _to, _value, _data) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.ClubToken.methods.transferFrom(_from, _to, new BN(_value, 10), _data).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  transferWithData (_to, _value, _data) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.ClubToken.methods.transfer(_to, new BN(_value, 10), _data).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  increaseApproval (_spender, _addedValue) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.ClubToken.methods.increaseApproval(_spender, new BN(_addedValue, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  clubTokenTransferOwnership (newOwner) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.ClubToken.methods.transferOwnership(newOwner).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  clubTokenUpdateCloversControllerAddress (_cloversController) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.ClubToken.methods.updateCloversControllerAddress(_cloversController).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  burn (_from, _value) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.ClubToken.methods.burn(_from, new BN(_value, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+  clubTokenMint (_to, _amount) {
+    if (!this.account) return Promise.reject(new Error('Unlock Account'))
+    return this.ClubToken.methods.mint(_to, new BN(_amount, 10)).send({from: this.account})
+    .on('transactionHash', (hash) => {
+      console.log(hash)
+      this.loading = true
+    })
+    .then((resp) => {
+      this.loading = false
+      return resp
+    }).catch((err) => {
+      this.loading = false
+      console.error(err)
+    })
+  }
+
+
+  // ---------------------------------------------------------------------------
 
   currentBlock () {
     return new Promise((resolve, reject) => {
@@ -253,497 +1185,34 @@ class Clover extends Reversi {
     })
   }
 
-  // Token
-
-  // contract read only / calls
-
-  balanceOf (account = this.account) {
-    return this.deploy().then((instance) => {
-      return instance.balanceOf(account)
-    })
-  }
-
-  getName () {
-    return this.deploy().then((instance) => {
-      return instance.name()
-    })
-  }
-
-  getSymbol () {
-    return this.deploy().then((instance) => {
-      return instance.symbol()
-    })
-  }
-
-  // contract write / transactions
-
-  transfer (to = this.account, amount = 0) {
-    return this.deploy().then((instance) => {
-      return this.instance.transfer(to, new BN(amount, 10), {from: this.account})
-    })
-  }
-
-
-  // Contract Management
-
-  // contract read only / calls
-
-  isAdmin () {
-    return this.deploy().then((instance) => {
-      return instance.isAdmin({from: this.account})
-    })
-  }
-
-  adminLen () {
-    return this.deploy().then((instance) => {
-      return instance.adminLen().then((num) => new BN(num).toNumber())
-    })
-  }
-
-  adminAt (adminKey = 0) {
-    return this.deploy().then((instance) => {
-      return instance.adminAt(new BN(adminKey, 10))
-    })
-  }
-
-  myAddress () {
-    return this.deploy().then((instance) => {
-      return instance.myAddress({from: this.account})
-    })
-  }
-
-  getTallys () {
-    return this.deploy().then((instance) => {
-      return instance.getTallys().then((result) => {
-        return this.formatTallys(result)
-      })
-    })
-  }
-
-
-  // contract write / transactions
-
-  addAdmin (address = '0x0') {
-    return this.isAdmin().then((isAdmin) => {
-      if (isAdmin) {
-        return this.deploy().then((instance) => {
-          return instance.addAdmin(address, {from: this.account})
-        })
-      } else {
-        throw new Error('Can\'t addAdmin() if not an admin')
-      }
-    })
-
-  }
-
-  updateMultiplier (multiplier = 100) {
-    return this.isAdmin().then((isAdmin) => {
-      if (isAdmin) {
-        return this.deploy().then((instance) => {
-          return instance.updateMultiplier(new BN(multiplier, 10), {from: this.account})
-        })
-      } else {
-        throw new Error('Can\'t updateModifier() if not an admin')
-      }
-    })
-  }
-
-  // formatting
-
-  formatTallys (contractArray = Array(6)) {
-    let tallys = {
-      Symmetricals: contractArray[0].toNumber(),
-      RotSym: contractArray[1].toNumber(),
-      Y0Sym: contractArray[2].toNumber(),
-      X0Sym: contractArray[3].toNumber(),
-      XYSym: contractArray[4].toNumber(),
-      XnYSym: contractArray[5].toNumber(),
-      PayMultiplier: contractArray[6].toNumber()
-    }
-    return {tallys, findersFee: this.symmetrical && this.calcFindersFees(tallys)}
-  }
-
-  calcFindersFees (tallys = Array(), RotSym = this.RotSym, Y0Sym = this.Y0Sym, X0Sym = this.X0Sym, XYSym = this.XYSym, XnYSym = this.XnYSym) {
-    let base = 0
-    if(this.symmetrical && !RotSym && !Y0Sym && !X0Sym && !XYSym && !XnYSym) {
-      this.isSymmetrical()
-      return this.calcFindersFees(tallys)
-    }
-
-    if (RotSym) base += ( tallys.PayMultiplier * ( tallys.Symmetricals + 1 ) ) / ( tallys.RotSym + 1 )
-    if (Y0Sym) base += ( tallys.PayMultiplier * ( tallys.Symmetricals + 1 ) ) / ( tallys.Y0Sym + 1 )
-    if (X0Sym) base += ( tallys.PayMultiplier * ( tallys.Symmetricals + 1 ) ) / ( tallys.X0Sym + 1 )
-    if (XYSym) base += ( tallys.PayMultiplier * ( tallys.Symmetricals + 1 ) ) / ( tallys.XYSym + 1 )
-    if (XnYSym) base += ( tallys.PayMultiplier * ( tallys.Symmetricals + 1 ) ) / ( tallys.XnYSym + 1 )
-
-    return Math.floor(base)
-  }
-
-
-
-  // Player Management
-
-  // contract read only / calls
-
-  listPlayerCount () {
-    return this.deploy().then((instance) => {
-      return instance.listPlayerCount().then((num) => new BN(num).toNumber())
-    })
-  }
-
-  playerAddressByKey (key = 0) {
-    return this.deploy().then((instance) => {
-      return instance.playerAddressByKey(new BN(key, 10))
-    })
-  }
-
-  playerExists (address = '0x0') {
-    return this.deploy().then((instance) => {
-      return instance.playerExists(address)
-    })
-  }
-
-  playerCurrentCount (address = this.account) {
-    return this.playerExists.then((exists) => {
-      if (!exists) throw new Error('Player doesn\'t exist')
-      return this.deploy().then((instance) => {
-        return instance.playerCurrentCount(address).then((num) => new BN(num).toNumber())
-      })
-    })
-  }
-
-  playerAllCount (address = '0x0') {
-    return this.playerExists.then((exists) => {
-      if (!exists) throw new Error('Player doesn\'t exist')
-      return this.deploy().then((instance) => {
-        return instance.playerAllCount(address).then((num) => new BN(num).toNumber())
-      })
-    })
-  }
-
-  playerCloverByKey (address = '0x0', cloverKey = 0) {
-    return this.playerExists.then((exists) => {
-      if (!exists) throw new Error('Player doesn\'t exist')
-      return this.deploy().then((instance) => {
-        return instance.playerCloverByKey(address, new BN(cloverKey, 10))
-      })
-    })
-  }
-
-  playerOwnsClover (address = '0x0', board = this.byteBoard) {
-    return this.playerExists.then((exists) => {
-      if (!exists) throw new Error('Player doesn\'t exist')
-      // add cloverExists if/when it starts working
-      return this.deploy().then((instance) => {
-        return instance.playerCloverByKey(address, new BN(board, 16))
-      })
-    })
-  }
-
-  // contract write / transactions
-
-  changeName (name = '') {
-    if (name === '') throw new Error('Shouldn\'t have an empty name')
-    return this.deploy().then((instance) => {
-      return instance.changeName(name, {from: this.account})
-    })
-  }
-
-
-
-
-  // Clover Management
-
-  // app calls
-
-  register (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, startPrice = this.startPrice, byteBoard = this.byteBoard) {
-    this.playGameByteMoves(byteFirst32Moves, byteLastMoves)
-    if (this.error) throw new Error('Invalid Game (error)')
-    if (!this.complete) throw new Error('Invalid Game (not complete)')
-    return this.cloverExists(this.byteBoard).then((exists) => {
-      if (exists) throw new Error('Board is already claimed')
-      return this.isAdmin().then((isAdmin) => {
-        return this.deploy().then((instance) => {
-          if (isAdmin) {
-            return this.adminMineClover(byteFirst32Moves, byteLastMoves, byteBoard, startPrice)
-          } else {
-            return this.mineClover(byteFirst32Moves, byteLastMoves, startPrice)
-          }
-        })
-      })
-    })
-  }
-
-  callCloversManually () {
-    return this.getCloversCount.then((count) => {
-      return this.iterateClovers(0, count).then(() => {
-        this.manualCloverCallComplete = true
-        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-      })
-    })
-  }
-
-  iterateClovers (i, length) {
-    if (i < length) {
-      i++
-      return this.getCloverByKey(i).then((clover) => {
-        this.allClovers.push(clover)
-        window.dispatchEvent(new CustomEvent('updateCloverObject', {detail: this}))
-        return this.iterateClovers(i, length)
-      })
-    } else {
-      return
-    }
-  }
-
-  // contract read only / calls
-
-  cloverExists (board = this.byteBoard) {
-    return this.deploy().then((instance) => {
-      return instance.cloverExists.call(new BN(board, 16))
-    })
-  }
-
-  getCloversCount () {
-    return this.deploy().then((instance) => {
-      return instance.getCloversCount().then((num) => new BN(num).toNumber())
-    })
-  }
-
-  getCloverByKey (cloverKey = 0) {
-    return this.deploy().then((instance) => {
-      return instance.getCloverByKey(new BN(cloverKey, 10)).then((clover) => {
-        return this.formatClover(clover)
-      })
-    })
-  }
-
-  getClover (board = this.byteBoard) {
-    return this.cloverExists(board).then((exists) => {
-      if (!exists) throw new Error('Clover doesn\'t exist')
-      return this.deploy().then((instance) => {
-        return instance.getClover(new BN(board, 16)).then((clover) => {
-          return this.formatClover(clover)
-        })
-      })
-    })
-  }
-
-  getCloverOwnersLength (board = this.byteBoard) {
-    return this.cloverExists(board).then((exists) => {
-      if (!exists) throw new Error('Clover doesn\'t exist')
-      return this.deploy().then((instance) => {
-        return instance.getCloverOwnersLength(new BN(board, 16)).then((num) => new BN(num).toNumber())
-      })
-    })
-  }
-
-  getCloverOwner (board = this.byteBoard) {
-    return this.cloverExists(board).then((exists) => {
-      if (!exists) throw new Error('Clover doesn\'t exist')
-      return this.deploy().then((instance) => {
-        return instance.getCloverOwner(new BN(board, 16)).then((owner) => {
-          return this.formatOwner(owner)
-        })
-      })
-    })
-  }
-
-  getCloverOwnerAtKeyByBoard (board = this.byteBoard, ownerKey = 0) {
-    return this.cloverExists(board).then((exists) => {
-      if (!exists) throw new Error('Clover doesn\'t exist')
-      return this.deploy().then((instance) => {
-        return instance.getCloverOwnerAtKeyByBoard(new BN(board, 16), new BN(ownerKey, 10)).then((owner) => {
-          return this.formatOwner(owner)
-        })
-      })
-    })
-  }
-
-  getCloverOwnerAtKeyByBoardKey (boardKey = 0, ownerKey = 0) {
-    return this.deploy().then((instance) => {
-      return instance.getCloverOwnerAtKeyByBoardKey(new BN(boardKey, 10), new BN(ownerKey, 10)).then((owner) => {
-        return this.formatOwner(owner)
-      })
-    })
-  }
-
-
-  // contract write / transactions
-
-  renameClover (board = this.byteBoard, name = '') {
-    if (name === '') throw new Error('Can\'t give a clover an empty name')
-    return this.cloverExists(board).then((exists) => {
-      if (!exists) throw new Error('Can\'t name a clover that hasn\'t been registered')
-      return this.getCloverOwner(board).then((result) => {
-        if (result.owner !== this.account) throw new Error('Can\'t name a clover you don\'t own')
-        return this.deploy().then((instance) => {
-          return instance.renameClover(new BN(board, 16), name, {from: this.account})
-        })
-      })
-    })
-  }
-
-  changeStartPrice (board = this.byteBoard, startPrice = 100) {
-    if (!startPrice === 0) throw new Error('Can\'t give a clover a start price of 0')
-    return this.cloverExists(board).then((exists) => {
-      if (!exists) throw new Error('Can\'t change the price of a clover that hasn\'t been registered')
-      return this.getCloverOwner(board).then((result) => {
-        if (result.owner !== this.account) throw new Error('Can\'t change the price of a clover you don\'t own')
-        return this.getCloverOwnersLength(board).then((len) => {
-          if (len > 1) throw new Error('Can\'t change start price of an already flipped clover')
-          return this.deploy().then((instance) => {
-            return instance.changeStartPrice(new BN(board, 16), new BN(startPrice, 10), {from: this.account})
-          })
-        })
-      })
-    })
-  }
-
-  mineClover (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, startPrice = 100) {
-    this.playGameByteMoves(byteFirst32Moves, byteLastMoves)
-    let byteBoard = this.byteBoard
-    if (this.error) throw new Error('Game is not valid')
-    if (!this.complete) throw new Error('Game is not complete')
-    if (!this.symmetrical) throw new Error('Game is not symmetrical')
-    return this.cloverExists(byteBoard).then((exists) => {
-      if (exists) throw new Error('Clover already exists')
-      return this.deploy().then((instance) => {
-        return instance.mineClover(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), startPrice, {from: this.account}).then(() => byteBoard)
-      })
-    })
-  }
-
-  adminMineClover (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves, byteBoard = this.byteBoard, startPrice = 100) {
-    this.playGameByteMoves(byteFirst32Moves, byteLastMoves)
-    if (this.error) throw new Error('Game is not valid')
-    if (!this.complete) throw new Error('Game is not complete')
-    if (!this.symmetrical) throw new Error('Game is not symmetrical')
-    if (new BN(this.byteBoard, 16).toNumber() !== new BN(byteBoard, 16).toNumber()) throw new Error('Not a valid ByteBoard')
-    return this.cloverExists(byteBoard).then((exists) => {
-      if (exists) throw new Error('Clover already exists')
-      return this.deploy().then((instance) => {
-        return instance.adminMineClover(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), new BN(byteBoard, 16), new BN(startPrice, 10), {from: this.account}).then(() => byteBoard)
-      })
-    })
-  }
-
-  flipClover (board = this.byteBoard) {
-    return this.cloverExists(board).then((exists) => {
-      if (!exists) throw new Error('Clover doesn\'t exists')
-      return this.deploy().then((instance) => {
-        return instance.flipClover(new BN(board, 16), {from: this.account} )
-      })
-    })
-  }
-
-  // formatting
-
-  formatOwner (contractArray = new Array(5)) {
-    return {
-      byteBoard: contractArray[0],
-      arrayBoardRow: this.byteBoardToRowArray(contractArray[0]),
-      owner: contractArray[1]
-    }
-  }
-
-  formatClover (contractArray = new Array(5)) {
-    return {
-      byteBoard: contractArray[0],
-      arrayBoardRow: this.byteBoardToRowArray(contractArray[0]),
-      currentPrice: contractArray[1].mul(2).toNumber(),
-      numberOfOwners: contractArray[2].toNumber(),
-      mostRecentOwner: contractArray[3],
-      byteFirst32Moves: contractArray[4],
-      byteLastMoves: contractArray[5],
-      moves: this.byteMovesToStringMoves(contractArray[4].toString(16), contractArray[5].toString(16))
-    }
-  }
-
-
-
-  // Game Management
-
-  // contract read only / calls
-
-  gameIsValid (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
-    return this.deploy().then((instance) => {
-      return instance.gameIsValid(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16))
-    })
-  }
-
-  gameExists (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
-    return this.deploy().then((instance) => {
-      return instance.gameExists(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16))
-    })
-  }
-
-  getSymmetry (byteBoard = this.byteBoard) {
-    return this.deploy().then((instance) => {
-      return instance.getSymmetry(new BN(byteBoard, 16)).then((game) => {
-        return this.formatGame(game)
-      })
-    })
-  }
-
-  getFindersFee (byteBoard = this.byteBoard) {
-    return this.deploy().then((instance) => {
-      return instance.getFindersFee(new BN(byteBoard, 16)).then((num) => new BN(num).toNumber())
-    })
-  }
-
-  debugGame (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
-    return this.deploy().then((instance) => {
-      return instance.debugGame(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), {from: this.account})
-    })
-  }
-
-  showGame (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
-    return this.deploy().then((instance) => {
-      return instance.showGameConstant(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
-        return this.formatGame(result)
-      })
-    })
-  }
-
-  showGame2 (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
-    return this.deploy().then((instance) => {
-      return instance.showGame2(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
-        return this.formatGame2(result)
-      })
-    })
-  }
-
-  // contract write / transactions
-
-  // (none)
-
-
-  // formatting
-
-  formatGame (contractArray = []) {
-    return {
-      error: contractArray[0],
-      complete: contractArray[1],
-      symmetrical: contractArray[2],
-      RotSym: contractArray[3],
-      Y0Sym: contractArray[4],
-      X0Sym: contractArray[5],
-      XYSym: contractArray[6],
-      XnYSym: contractArray[7]
-    }
-  }
-
-  formatGame2 (contractArray = []) {
-    return {
-      board: contractArray[0],
-      arrayBoardRow: this.byteBoardToRowArray(contractArray[0]),
-      blackScore: new BN(contractArray[1], 16).toNumber(10),
-      whiteScore: new BN(contractArray[2], 16).toNumber(10),
-      currentPlayer: new BN(contractArray[3], 16).toNumber(10),
-      moveKey: new BN(contractArray[4], 16).toNumber(10)
-    }
-  }
+  // calcFindersFees (tallys = Array(), RotSym = this.RotSym, Y0Sym = this.Y0Sym, X0Sym = this.X0Sym, XYSym = this.XYSym, XnYSym = this.XnYSym) {
+  //   let base = 0
+  //   if(this.symmetrical && !RotSym && !Y0Sym && !X0Sym && !XYSym && !XnYSym) {
+  //     this.isSymmetrical()
+  //     return this.calcFindersFees(tallys)
+  //   }
+
+  //   if (RotSym) base += ( tallys.PayMultiplier * ( tallys.Symmetricals + 1 ) ) / ( tallys.RotSym + 1 )
+  //   if (Y0Sym) base += ( tallys.PayMultiplier * ( tallys.Symmetricals + 1 ) ) / ( tallys.Y0Sym + 1 )
+  //   if (X0Sym) base += ( tallys.PayMultiplier * ( tallys.Symmetricals + 1 ) ) / ( tallys.X0Sym + 1 )
+  //   if (XYSym) base += ( tallys.PayMultiplier * ( tallys.Symmetricals + 1 ) ) / ( tallys.XYSym + 1 )
+  //   if (XnYSym) base += ( tallys.PayMultiplier * ( tallys.Symmetricals + 1 ) ) / ( tallys.XnYSym + 1 )
+
+  //   return Math.floor(base)
+  // }
+
+  // formatClover (contractArray = new Array(5)) {
+  //   return {
+  //     byteBoard: contractArray[0],
+  //     arrayBoardRow: this.byteBoardToRowArray(contractArray[0]),
+  //     currentPrice: contractArray[1].mul(2).toNumber(),
+  //     numberOfOwners: contractArray[2].toNumber(),
+  //     mostRecentOwner: contractArray[3],
+  //     byteFirst32Moves: contractArray[4],
+  //     byteLastMoves: contractArray[5],
+  //     moves: this.byteMovesToStringMoves(contractArray[4].toString(16), contractArray[5].toString(16))
+  //   }
+  // }
 
 
 }

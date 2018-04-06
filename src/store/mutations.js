@@ -63,8 +63,20 @@ export default {
     let i = state.allMinedClovers.findIndex(cl => cl.byteBoard === byteBoard)
     if (i > -1) state.allMinedClovers.splice(i, 1)
   },
-  UPDATE_CLOVER_OBJECT (state, clover) {
-    state.clover = Object.assign(state.clover, clover)
+  UPDATE_ACCOUNT (state, account) {
+    state.account = account
+  },
+  UPDATE_NETWORK_ID (state, network) {
+    state.network = network
+  },
+  UPDATE_CURRENT_BLOCK (state, blockNumber) {
+    state.currentBlock = blockNumber
+  },
+  UPDATE_READONLY (state, readOnly) {
+    state.readOnly = readOnly
+  },
+  UPDATE_BALANCE (state, balance) {
+    state.balance = balance
   },
   STORED_CLOVERS (state, clovers) {
     state.allMinedClovers = clovers

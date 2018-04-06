@@ -5,7 +5,7 @@ import store from './store'
 import './registerServiceWorker'
 
 router.beforeEach((to, from, next) => {
-  if (store.getters.notRinkeby && (to.path !== '/' || to.path !== '/about')) {
+  if (store.state.network && store.getters.notRinkeby && (to.path !== '/' || to.path !== '/about')) {
     next('/')
   } else {
     next()

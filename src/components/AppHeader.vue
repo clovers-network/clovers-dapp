@@ -22,7 +22,7 @@
         <clover-icon width="14" height="14"></clover-icon>
       </p>
       <p class="m0 pr3">
-        <span id="balance" :class="{white: balance !== '0', red: balance === '0'}">{{ balanceString }}</span> {{ tokenSymbol }}
+        <span id="balance" :class="{white: balance !== '0', white: balance === '0'}">{{ balanceString }}</span> {{ clubTokenSymbol }}
       </p>
       <p @click="toggleMinePanel" class="relative m0 py2 px3 pointer no-select bg-black white">
         {{ mineText }}
@@ -96,12 +96,12 @@
       },
 
       ...mapState([
-        'allClovers'
+        'allClovers',
+        'clubTokenSymbol'
       ]),
       ...mapGetters({
         username: 'username',
         tokenName: 'name',
-        tokenSymbol: 'symbol',
         balance: 'balance',
         hashRate: 'hashRate',
         mining: 'mining'

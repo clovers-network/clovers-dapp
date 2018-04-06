@@ -83,7 +83,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapState } from 'vuex'
+  import { mapGetters, mapState, mapActions } from 'vuex'
   import xss from 'xss'
   export default {
 
@@ -94,8 +94,7 @@
         paged: 1,
         limit: 5,
         asc: false,
-        interval: null,
-        currentBlock: null
+        interval: null
       }
     },
     props: {
@@ -105,17 +104,17 @@
       }
     },
     mounted () {
-      this.interval = setInterval(this.checkBlock, 5000)
+      this.interval = setInterval(() => {
+        this.checkBlock()
+      }, 5000)
     },
     destroyed () {
       clearInterval(this.interval)
     },
     methods: {
-      checkBlock () {
-        this.clover.currentBlock().then((block) => {
-          this.currentBlock = block.number
-        })
-      },
+      ...mapActions([
+        'checkBlock'
+      ]),
       filter (word) {
         return xss(word)
       },
@@ -169,9 +168,12 @@
           }
         })
       },
-      ...mapState(['logs', 'users']),
+      ...mapState([
+        'logs',
+        'users',
+        'currentBlock'
+      ]),
       ...mapGetters([
-        'clover'
       ])
     }
   }

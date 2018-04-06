@@ -63,7 +63,6 @@
         byteBoard: null,
         movesString: null,
         reward: null,
-        reversi: new Reversi(),
         flipPrice: 100
       }
     },
@@ -103,19 +102,20 @@
       },
       movesString () {
         if (!this.movesString) return
-        this.reversi.playGameMovesString(this.movesString)
-        this.reversi.isSymmetrical()
-        this.byteBoard = this.reversi.byteBoard
+        let reversi = new Reversi()
+        reversi.playGameMovesString(this.movesString)
+        reversi.isSymmetrical()
+        this.byteBoard = reversi.byteBoard
       }
     },
     methods: {
       setBoard () {
         this.byteBoard = this.cloverData.byteBoard
         this.movesString = this.cloverData.movesString
-        this.clover.playGameMovesString(this.movesString)
-        this.clover.isSymmetrical()
-        this.reward = this.clover.calcFindersFees(this.symmetries)
-        this.flipPrice = this.reward
+        // this.reversi.playGameMovesString(this.movesString)
+        // this.reversi.isSymmetrical()
+        // this.reward = this.clover.calcFindersFees(this.symmetries)
+        // this.flipPrice = this.reward
       },
       trigger () {
         if (this.notRinkeby || this.readOnly) {
@@ -127,32 +127,34 @@
           return
         }
 
-        this.clover.startPrice = this.flipPrice
-        this.clover.playGameMovesString(this.movesString)
+        let reversi = new Reversi()
+
+        reversi.playGameMovesString(this.movesString)
         this.addMessage({
           msg: 'Validating Clover on the Blockchain',
           type: 'progress'
         }).then((msgId) => {
-          let byteBoard = this.clover.byteBoard
+          let byteBoard = reversi.byteBoard
           this.addToSubmittingList(byteBoard)
-          this.clover.register().then((res) => {
-            this.removeFromSubmittingList(byteBoard)
-            this.claimedClover(byteBoard)
-            this.removeMessage(msgId)
-            this.selfDestructMsg({
-              msg: 'Clover 0x' + byteBoard + ' Claimed',
-              link: '/clovers/0x' + byteBoard,
-              type: 'success'
-            })
-          }).catch((err) => {
-            console.error(err)
-            this.removeFromSubmittingList(byteBoard)
-            this.removeMessage(msgId)
-            this.selfDestructMsg({
-              msg: 'Error Claiming 0x' + byteBoard + ' (check logs)',
-              type: 'error'
-            })
-          })
+          
+          // this.clover.register().then((res) => {
+          //   this.removeFromSubmittingList(byteBoard)
+          //   this.claimedClover(byteBoard)
+          //   this.removeMessage(msgId)
+          //   this.selfDestructMsg({
+          //     msg: 'Clover 0x' + byteBoard + ' Claimed',
+          //     link: '/clovers/0x' + byteBoard,
+          //     type: 'success'
+          //   })
+          // }).catch((err) => {
+          //   console.error(err)
+          //   this.removeFromSubmittingList(byteBoard)
+          //   this.removeMessage(msgId)
+          //   this.selfDestructMsg({
+          //     msg: 'Error Claiming 0x' + byteBoard + ' (check logs)',
+          //     type: 'error'
+          //   })
+          // })
         })
       },
       remove () {
@@ -177,6 +179,7 @@
   }
 </script>
 <style lang="scss">
+
 @media only screen and (max-width: 768px) {
   #claim-outer {
     flex-wrap: wrap;

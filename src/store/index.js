@@ -6,7 +6,6 @@ import actions from './actions'
 import getters from './getters'
 import mutations from './mutations'
 
-import Clover from '../assets/clovers'
 
 Vue.use(Vuex)
 
@@ -14,7 +13,12 @@ Vue.use(Vuex)
 const debug = false
 
 const state = {
-  clover: new Clover(),
+  currentBlock: null,
+  clubTokenSymbol: '♣',
+  network: null,
+  account: null,
+  readOnly: null,
+  balance: 0,
   hashRate: 0,
   mineTime: 0,
   totalMined: 0,

@@ -32,8 +32,7 @@
     name: 'User',
     data () {
       return {
-        name: null,
-        balance: null
+        name: null
       }
     },
     watch: {
@@ -73,6 +72,7 @@
 
       ...mapState([
         'allClovers',
+        'balance',
         'users'
       ]),
       ...mapGetters([
@@ -83,10 +83,6 @@
     },
     mounted () {
       this.name = this.username
-      this.clover.balanceOf(this.address).then((amount) => {
-        console.log('amount', amount)
-        this.balance = amount
-      })
     },
     methods: {
       changeName () {

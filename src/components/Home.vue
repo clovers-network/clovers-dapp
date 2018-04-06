@@ -52,17 +52,4 @@
 
 <style lang="scss">
 
-  .intro-screen {
-
-    .clover {
-      display: inline-block;
-    }
-
-    .text-path {
-      bottom: -2.6em;
-      left: -2.6em;
-      right: -2.6em;
-      top: -2.6em;
-    }
-  }
 </style>

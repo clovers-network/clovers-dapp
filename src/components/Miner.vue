@@ -257,25 +257,25 @@
         }
       },
       getItem (key) {
-        if (key === 'clovers') {
-          let clovers = []
-          let emptyNames = ['null', 'undefined', '0x0']
-          for (let i in emptyNames) {
-            let emptyName = emptyNames[i]
-            let res = window.localStorage.getItem(emptyName + '_clovers')
-            if (res) clovers = clovers.concat(JSON.parse(res))
-          }
-          if (this.account) {
-            let res = window.localStorage.getItem(this.account + '_' + key)
-            if (res) clovers = clovers.concat(JSON.parse(res))
-          }
-          return clovers.filter((thing, index, self) => self.findIndex((t) => { return t.byteBoard === thing.byteBoard }) === index)
+        let foo = []
+        let emptyNames = ['null', 'undefined', '0x0']
+        for (let i in emptyNames) {
+          let emptyName = emptyNames[i]
+          let res = window.localStorage.getItem(emptyName + '_' + key)
+          if (res) foo = foo.concat(JSON.parse(res))
         }
-        let res = window.localStorage.getItem(this.account + '_' + key)
-        return res && res !== 'undefined' && JSON.parse(res)
+        if (this.account) {
+          let res = window.localStorage.getItem(this.account.toLowerCase() + '_' + key)
+          if (res) foo = foo.concat(JSON.parse(res))
+        }
+        if (key === 'clovers') {
+          return foo.filter((thing, index, self) => self.findIndex((t) => { return t.byteBoard === thing.byteBoard }) === index)
+        } else {
+          return foo
+        }
       },
       setItem (key, val) {
-        window.localStorage.setItem(this.account + '_' + key, JSON.stringify(val))
+        window.localStorage.setItem((this.account ? this.account.toLowerCase() : '0x0') + '_' + key, JSON.stringify(val))
       },
       mine () {
         this.mining = true

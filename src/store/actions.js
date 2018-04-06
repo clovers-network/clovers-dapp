@@ -19,8 +19,54 @@
 //   console.log(data)
 // })
 
+import {Clovers} from 'clovers-contracts'
+
 import io from 'socket.io-client'
+let polling = null
+import Clover from '../assets/clovers'
+let clover = new Clover()
 export default {
+  initWeb3 ({commit, dispatch}) {
+    console.log('INIT-1')
+    return clover.initWeb3().then((network, readOnly) => {
+      console.log('INIT-2')
+      commit('UPDATE_NETWORK_ID', network)
+      commit('UPDATE_READONLY', readOnly)
+      dispatch('startWeb3Polling')
+    })
+  },
+  startWeb3Polling ({dispatch}) {
+    polling = polling || setInterval(() => {
+      dispatch('checkAccount')
+    }, 1000)
+  },
+  stopWeb3Polling () {
+    clearInterval(polling)
+  },
+  checkAccount ({commit, state}) {
+    if (state.readOnly) return
+    clover.getAccounts().then((accounts) => {
+      if (accounts.length && state.account !== accounts[0]) {
+        commit('UPDATE_ACCOUNT', accounts[0])
+        state.account && clover.clubTokenBalanceOf(state.account).then((balance) => {
+          if (balance !== state.balance) {
+            commit('UPDATE_BALANCE', balance)
+          }
+        }).catch((err) => console.log(err))
+      } else if (state.account && !accounts.length) {
+        commit('UPDATE_ACCOUNT', null)
+      }
+    }).catch((error) => {
+      console.error(error)
+    })
+  },
+  checkBlock ({commit}) {
+    clover.currentBlock().then((block) => {
+      commit('UPDATE_CURRENT_BLOCK', block.number)
+    }).catch((error) => {
+      console.error(error)
+    })
+  },
   setUpSocket ({commit, dispatch}) {
     console.log('set up socket')
     const socket = io('//api.clovers.network')

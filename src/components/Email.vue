@@ -43,7 +43,7 @@ export default {
       this.success = true
       this.hide = true
     } else {
-      this.$refs.email.focus()
+      // this.$refs.email.focus()
     }
   },
   watch: {

@@ -2,7 +2,7 @@
   <div class="clover-token">
     <header class="p2">
       <h1 class="m0">{{tokenName}}</h1>
-      <h3 class="m0">You have <span class="black"><span id="balance" :class="{green: balance !== '0', red: balance === '0'}">{{ balanceString }}</span> {{tokenSymbol}};</span></h3>
+      <h3 class="m0">You have <span class="black"><span id="balance" :class="{green: balance !== '0', red: balance === '0'}">{{ balanceString }}</span> {{clubTokenSymbol}};</span></h3>
     </header>
 
     <!-- <section>
@@ -19,7 +19,7 @@
 
 <script>
   import Clover from '../assets/clovers'
-  import { mapGetters, mapMutations } from 'vuex'
+  import { mapGetters, mapState, mapMutations } from 'vuex'
   import * as types from '../store/mutation-types'
 
   export default {
@@ -72,10 +72,11 @@
       moveUnConverted () {
         return this.clover.binaryMovesToByteMoves(this.moveConverted)
       },
-
+      ...mapState([
+        'clubTokenSymbol'
+      ]),
       ...mapGetters({
         tokenName: 'name',
-        tokenSymbol: 'symbol',
         address: 'address',
         amount: 'amount',
         balance: 'balance',

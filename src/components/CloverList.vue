@@ -4,7 +4,7 @@
       <div class="center" v-for="(sym, i) in symTypes" :key="i">
         <div class='px1'>{{symmetries[sym]}} x</div>
         <div :class="sym" class="symmetry-type"></div>
-        <div>{{symValues[sym]}} ♧</div>
+        <!-- <div>{{symValues[sym]}} ♧</div> -->
       </div>
     </div>
 
@@ -125,11 +125,11 @@
     computed: {
       symValues () {
         return {
-          RotSym: this.clover.calcFindersFees(this.symmetries, true),
-          Y0Sym: this.clover.calcFindersFees(this.symmetries, false, true),
-          X0Sym: this.clover.calcFindersFees(this.symmetries, false, false, true),
-          XYSym: this.clover.calcFindersFees(this.symmetries, false, false, false, true),
-          XnYSym: this.clover.calcFindersFees(this.symmetries, false, false, false, false, true)
+          // RotSym: this.clover.calcFindersFees(this.symmetries, true),
+          // Y0Sym: this.clover.calcFindersFees(this.symmetries, false, true),
+          // X0Sym: this.clover.calcFindersFees(this.symmetries, false, false, true),
+          // XYSym: this.clover.calcFindersFees(this.symmetries, false, false, false, true),
+          // XnYSym: this.clover.calcFindersFees(this.symmetries, false, false, false, false, true)
         }
       },
       pagedTotal () {
