@@ -1,4 +1,6 @@
-import BN from 'bignumber.js'
+
+import utils from 'web3-utils'
+const BN = utils.BN
 class Reversi {
 
  constructor (startVal) {
