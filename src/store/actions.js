@@ -24,7 +24,7 @@
 import io from 'socket.io-client'
 let polling = null
 import Clover from '../assets/clovers'
-let clover = new Clover()
+global.clover = new Clover()
 export default {
   initWeb3 ({commit, dispatch}) {
     console.log('INIT-1')
@@ -124,7 +124,8 @@ export default {
     commit('ADD_MSG', msg)
     return msg.id
   },
-  cloverExists ({getters}, byteBoard) {
-    return getters.allClovers.findIndex((c) => c.board === byteBoard) > -1
+  cloverExists ({state}, byteBoard) {
+    console.log(byteBoard)
+    return state.allClovers.findIndex((c) => c.board === byteBoard) > -1
   }
 }
