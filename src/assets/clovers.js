@@ -1,4 +1,4 @@
-import utils from 'web3-utils'
+
 import clubTokenArtifacts from './ClubToken.json'
 import contract from 'truffle-contract'
 import Web3 from 'web3'

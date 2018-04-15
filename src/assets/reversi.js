@@ -1,6 +1,5 @@
 
-import utils from 'web3-utils'
-const BN = utils.BN
+const BN = require('bignumber.js')
 class Reversi {
 
  constructor (startVal) {
