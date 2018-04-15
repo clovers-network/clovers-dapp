@@ -1,8 +1,8 @@
 import utils from 'web3-utils'
-const BN = utils.BN
 import clubTokenArtifacts from './ClubToken.json'
 import contract from 'truffle-contract'
 import Web3 from 'web3'
+import BN from 'bignumber.js'
 import Reversi from './reversi'
 const ProviderEngine = require('web3-provider-engine/index.js')
 const ZeroClientProvider = require('web3-provider-engine/zero.js')
@@ -436,7 +436,7 @@ class Clover extends Reversi {
       if (!exists) throw new Error('Player doesn\'t exist')
       // add cloverExists if/when it starts working
       return this.deploy().then((instance) => {
-        return instance.playerCloverByKey(address, board)
+        return instance.playerCloverByKey(address, new BN(board, 16))
       })
     })
   }
@@ -464,7 +464,6 @@ class Clover extends Reversi {
     return this.cloverExists(this.byteBoard).then((exists) => {
       if (exists) throw new Error('Board is already claimed')
       return this.isAdmin().then((isAdmin) => {
-        console.log('isAdmin', isAdmin)
         return this.deploy().then((instance) => {
           if (isAdmin) {
             return this.adminMineClover(byteFirst32Moves, byteLastMoves, byteBoard, startPrice)
@@ -501,9 +500,8 @@ class Clover extends Reversi {
   // contract read only / calls
 
   cloverExists (board = this.byteBoard) {
-    console.log('board', board)
     return this.deploy().then((instance) => {
-      return instance.cloverExists.call(board)
+      return instance.cloverExists.call(new BN(board, 16))
     })
   }
 
@@ -525,7 +523,7 @@ class Clover extends Reversi {
     return this.cloverExists(board).then((exists) => {
       if (!exists) throw new Error('Clover doesn\'t exist')
       return this.deploy().then((instance) => {
-        return instance.getClover(board).then((clover) => {
+        return instance.getClover(new BN(board, 16)).then((clover) => {
           return this.formatClover(clover)
         })
       })
@@ -536,7 +534,7 @@ class Clover extends Reversi {
     return this.cloverExists(board).then((exists) => {
       if (!exists) throw new Error('Clover doesn\'t exist')
       return this.deploy().then((instance) => {
-        return instance.getCloverOwnersLength(board).then((num) => new BN(num).toNumber())
+        return instance.getCloverOwnersLength(new BN(board, 16)).then((num) => new BN(num).toNumber())
       })
     })
   }
@@ -545,7 +543,7 @@ class Clover extends Reversi {
     return this.cloverExists(board).then((exists) => {
       if (!exists) throw new Error('Clover doesn\'t exist')
       return this.deploy().then((instance) => {
-        return instance.getCloverOwner(board).then((owner) => {
+        return instance.getCloverOwner(new BN(board, 16)).then((owner) => {
           return this.formatOwner(owner)
         })
       })
@@ -556,7 +554,7 @@ class Clover extends Reversi {
     return this.cloverExists(board).then((exists) => {
       if (!exists) throw new Error('Clover doesn\'t exist')
       return this.deploy().then((instance) => {
-        return instance.getCloverOwnerAtKeyByBoard(board, new BN(ownerKey, 10)).then((owner) => {
+        return instance.getCloverOwnerAtKeyByBoard(new BN(board, 16), new BN(ownerKey, 10)).then((owner) => {
           return this.formatOwner(owner)
         })
       })
@@ -582,10 +580,10 @@ class Clover extends Reversi {
       console.log('exists', exists)
       if (!exists) throw new Error('Can\'t name a clover that hasn\'t been registered')
       return this.getCloverOwner(board).then((result) => {
-        console.log('result', result)
+        console.log('board', board)
         if (result.owner !== this.account) throw new Error('Can\'t name a clover you don\'t own')
         return this.deploy().then((instance) => {
-          return instance.renameClover(board, name, {from: this.account})
+          return instance.renameClover(new BN(board, 16), name, {from: this.account})
         })
       })
     })
@@ -600,7 +598,7 @@ class Clover extends Reversi {
         return this.getCloverOwnersLength(board).then((len) => {
           if (len > 1) throw new Error('Can\'t change start price of an already flipped clover')
           return this.deploy().then((instance) => {
-            return instance.changeStartPrice(board, new BN(startPrice, 10), {from: this.account})
+            return instance.changeStartPrice(new BN(board, 16), new BN(startPrice, 10), {from: this.account})
           })
         })
       })
@@ -616,7 +614,7 @@ class Clover extends Reversi {
     return this.cloverExists(byteBoard).then((exists) => {
       if (exists) throw new Error('Clover already exists')
       return this.deploy().then((instance) => {
-        return instance.mineClover(byteFirst32Moves, byteLastMoves, startPrice, {from: this.account}).then(() => byteBoard)
+        return instance.mineClover(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), startPrice, {from: this.account}).then(() => byteBoard)
       })
     })
   }
@@ -626,11 +624,11 @@ class Clover extends Reversi {
     if (this.error) throw new Error('Game is not valid')
     if (!this.complete) throw new Error('Game is not complete')
     if (!this.symmetrical) throw new Error('Game is not symmetrical')
-    if (this.byteBoard.toNumber() !== byteBoard.toNumber()) throw new Error('Not a valid ByteBoard')
+    if (new BN(this.byteBoard, 16).toNumber() !== new BN(byteBoard, 16).toNumber()) throw new Error('Not a valid ByteBoard')
     return this.cloverExists(byteBoard).then((exists) => {
       if (exists) throw new Error('Clover already exists')
       return this.deploy().then((instance) => {
-        return instance.adminMineClover(byteFirst32Moves, byteLastMoves, byteBoard, new BN(startPrice, 10), {from: this.account}).then(() => byteBoard)
+        return instance.adminMineClover(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), new BN(byteBoard, 16), new BN(startPrice, 10), {from: this.account}).then(() => byteBoard)
       })
     })
   }
@@ -639,7 +637,7 @@ class Clover extends Reversi {
     return this.cloverExists(board).then((exists) => {
       if (!exists) throw new Error('Clover doesn\'t exists')
       return this.deploy().then((instance) => {
-        return instance.flipClover(board, {from: this.account} )
+        return instance.flipClover(new BN(board, 16), {from: this.account} )
       })
     })
   }
@@ -675,19 +673,19 @@ class Clover extends Reversi {
 
   gameIsValid (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     return this.deploy().then((instance) => {
-      return instance.gameIsValid(byteFirst32Moves, byteLastMoves)
+      return instance.gameIsValid(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16))
     })
   }
 
   gameExists (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     return this.deploy().then((instance) => {
-      return instance.gameExists(byteFirst32Moves, byteLastMoves)
+      return instance.gameExists(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16))
     })
   }
 
   getSymmetry (byteBoard = this.byteBoard) {
     return this.deploy().then((instance) => {
-      return instance.getSymmetry(byteBoard).then((game) => {
+      return instance.getSymmetry(new BN(byteBoard, 16)).then((game) => {
         return this.formatGame(game)
       })
     })
@@ -695,19 +693,19 @@ class Clover extends Reversi {
 
   getFindersFee (byteBoard = this.byteBoard) {
     return this.deploy().then((instance) => {
-      return instance.getFindersFee(byteBoard).then((num) => new BN(num).toNumber())
+      return instance.getFindersFee(new BN(byteBoard, 16)).then((num) => new BN(num).toNumber())
     })
   }
 
   debugGame (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     return this.deploy().then((instance) => {
-      return instance.debugGame(byteFirst32Moves, byteLastMoves, {from: this.account})
+      return instance.debugGame(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16), {from: this.account})
     })
   }
 
   showGame (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     return this.deploy().then((instance) => {
-      return instance.showGameConstant(byteFirst32Moves, byteLastMoves).then((result) => {
+      return instance.showGameConstant(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
         return this.formatGame(result)
       })
     })
@@ -715,7 +713,7 @@ class Clover extends Reversi {
 
   showGame2 (byteFirst32Moves = this.byteFirst32Moves, byteLastMoves = this.byteLastMoves) {
     return this.deploy().then((instance) => {
-      return instance.showGame2(byteFirst32Moves, byteLastMoves).then((result) => {
+      return instance.showGame2(new BN(byteFirst32Moves, 16), new BN(byteLastMoves, 16)).then((result) => {
         return this.formatGame2(result)
       })
     })
