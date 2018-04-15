@@ -21,7 +21,6 @@
     "basscss-position": "^2.0.3",
     "basscss-type-scale": "^1.0.5",
     "basscss-typography": "^3.0.4",
-    "bignumber.js": "^4.1.0",
     "copy-to-clipboard": "^3.0.8",
     "ethjs": "^0.2.9",
     "fs": "0.0.1-security",
@@ -34,7 +33,7 @@
     "vue": "^2.5.13",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1",
-    "web3": "^0.20.1",
+    "web3": "0.20.1",
     "web3-provider-engine": "^13.6.6",
     "ws": "^3.3.3",
     "xss": "^0.3.7"
