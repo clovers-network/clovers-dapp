@@ -436,7 +436,7 @@ class Clover extends Reversi {
       if (!exists) throw new Error('Player doesn\'t exist')
       // add cloverExists if/when it starts working
       return this.deploy().then((instance) => {
-        return instance.playerCloverByKey(address, new BN(board, 16))
+        return instance.playerCloverByKey(address, board)
       })
     })
   }
@@ -501,7 +501,7 @@ class Clover extends Reversi {
 
   cloverExists (board = this.byteBoard) {
     return this.deploy().then((instance) => {
-      return instance.cloverExists.call(new BN(board, 16))
+      return instance.cloverExists.call(board)
     })
   }
 
@@ -523,7 +523,7 @@ class Clover extends Reversi {
     return this.cloverExists(board).then((exists) => {
       if (!exists) throw new Error('Clover doesn\'t exist')
       return this.deploy().then((instance) => {
-        return instance.getClover(new BN(board, 16)).then((clover) => {
+        return instance.getClover(board).then((clover) => {
           return this.formatClover(clover)
         })
       })
@@ -534,7 +534,7 @@ class Clover extends Reversi {
     return this.cloverExists(board).then((exists) => {
       if (!exists) throw new Error('Clover doesn\'t exist')
       return this.deploy().then((instance) => {
-        return instance.getCloverOwnersLength(new BN(board, 16)).then((num) => new BN(num).toNumber())
+        return instance.getCloverOwnersLength(board).then((num) => new BN(num).toNumber())
       })
     })
   }
@@ -543,7 +543,7 @@ class Clover extends Reversi {
     return this.cloverExists(board).then((exists) => {
       if (!exists) throw new Error('Clover doesn\'t exist')
       return this.deploy().then((instance) => {
-        return instance.getCloverOwner(new BN(board, 16)).then((owner) => {
+        return instance.getCloverOwner(board).then((owner) => {
           return this.formatOwner(owner)
         })
       })
@@ -554,7 +554,7 @@ class Clover extends Reversi {
     return this.cloverExists(board).then((exists) => {
       if (!exists) throw new Error('Clover doesn\'t exist')
       return this.deploy().then((instance) => {
-        return instance.getCloverOwnerAtKeyByBoard(new BN(board, 16), new BN(ownerKey, 10)).then((owner) => {
+        return instance.getCloverOwnerAtKeyByBoard(board, new BN(ownerKey, 10)).then((owner) => {
           return this.formatOwner(owner)
         })
       })
@@ -573,13 +573,17 @@ class Clover extends Reversi {
   // contract write / transactions
 
   renameClover (board = this.byteBoard, name = '') {
+    console.log('board', board)
+    console.log('name', name)
     if (name === '') throw new Error('Can\'t give a clover an empty name')
     return this.cloverExists(board).then((exists) => {
+      console.log('exists', exists)
       if (!exists) throw new Error('Can\'t name a clover that hasn\'t been registered')
       return this.getCloverOwner(board).then((result) => {
+        console.log('result', result)
         if (result.owner !== this.account) throw new Error('Can\'t name a clover you don\'t own')
         return this.deploy().then((instance) => {
-          return instance.renameClover(new BN(board, 16), name, {from: this.account})
+          return instance.renameClover(board, name, {from: this.account})
         })
       })
     })
@@ -594,7 +598,7 @@ class Clover extends Reversi {
         return this.getCloverOwnersLength(board).then((len) => {
           if (len > 1) throw new Error('Can\'t change start price of an already flipped clover')
           return this.deploy().then((instance) => {
-            return instance.changeStartPrice(new BN(board, 16), new BN(startPrice, 10), {from: this.account})
+            return instance.changeStartPrice(board, new BN(startPrice, 10), {from: this.account})
           })
         })
       })
@@ -633,7 +637,7 @@ class Clover extends Reversi {
     return this.cloverExists(board).then((exists) => {
       if (!exists) throw new Error('Clover doesn\'t exists')
       return this.deploy().then((instance) => {
-        return instance.flipClover(new BN(board, 16), {from: this.account} )
+        return instance.flipClover(board, {from: this.account} )
       })
     })
   }
