@@ -93,138 +93,154 @@
 </template>
 
 <script>
-  import Email from '@/components/Email'
+import Email from "@/components/Email";
 
-  import { mapGetters, mapState } from 'vuex'
-  export default {
-    name: 'CloverList',
-    components: { Email },
-    data () {
+import { mapGetters, mapState } from "vuex";
+export default {
+  name: "CloverList",
+  components: { Email },
+  data() {
+    return {
+      paged: 1,
+      limit: 18,
+      limits: [5, 10, 20, 50, 100],
+      asc: true,
+      sortableIndex: 0,
+      symTypes: ["RotSym", "Y0Sym", "X0Sym", "XYSym", "XnYSym"],
+      sortable: [
+        "Date Flipped",
+        "Date Found",
+        "Current Price",
+        "Times Flipped"
+      ],
+      search: null
+    };
+  },
+  watch: {
+    limit() {
+      this.paged = 1;
+    }
+  },
+  props: {
+    filter: {
+      type: String,
+      default: null
+    }
+  },
+  computed: {
+    symValues() {
       return {
-        paged: 1,
-        limit: 18,
-        limits: [5, 10, 20, 50, 100],
-        asc: true,
-        sortableIndex: 0,
-        symTypes: ['RotSym', 'Y0Sym', 'X0Sym', 'XYSym', 'XnYSym'],
-        sortable: ['Date Flipped', 'Date Found', 'Current Price', 'Times Flipped'],
-        search: null
-      }
+        // RotSym: this.clover.calcFindersFees(this.symmetries, true),
+        // Y0Sym: this.clover.calcFindersFees(this.symmetries, false, true),
+        // X0Sym: this.clover.calcFindersFees(this.symmetries, false, false, true),
+        // XYSym: this.clover.calcFindersFees(this.symmetries, false, false, false, true),
+        // XnYSym: this.clover.calcFindersFees(this.symmetries, false, false, false, false, true)
+      };
     },
-    watch: {
-      limit () {
-        this.paged = 1
-      }
+    pagedTotal() {
+      return (
+        Math.floor(this.cloversSorted.length / this.limit) +
+        (this.cloversSorted.length % this.limit && 1)
+      );
     },
-    props: {
-      filter: {
-        type: String,
-        default: null
-      }
+    prevPossible() {
+      return this.paged > 1;
     },
-    computed: {
-      symValues () {
-        return {
-          // RotSym: this.clover.calcFindersFees(this.symmetries, true),
-          // Y0Sym: this.clover.calcFindersFees(this.symmetries, false, true),
-          // X0Sym: this.clover.calcFindersFees(this.symmetries, false, false, true),
-          // XYSym: this.clover.calcFindersFees(this.symmetries, false, false, false, true),
-          // XnYSym: this.clover.calcFindersFees(this.symmetries, false, false, false, false, true)
-        }
-      },
-      pagedTotal () {
-        return Math.floor(this.cloversSorted.length / this.limit) + (this.cloversSorted.length % this.limit && 1)
-      },
-      prevPossible () {
-        return this.paged > 1
-      },
-      nextPossible () {
-        return this.paged < this.pagedTotal
-      },
-      startSlice () {
-        return this.limit * (this.paged - 1)
-      },
-      endSlice () {
-        return this.limit * this.paged
-      },
-      cloversSliced () {
-        return this.cloversSorted.slice(this.startSlice, this.endSlice)
-      },
-      cloversSorted () {
-        return this.allClovers.slice(0).sort((a, b) => {
+    nextPossible() {
+      return this.paged < this.pagedTotal;
+    },
+    startSlice() {
+      return this.limit * (this.paged - 1);
+    },
+    endSlice() {
+      return this.limit * this.paged;
+    },
+    cloversSliced() {
+      return this.cloversSorted.slice(this.startSlice, this.endSlice);
+    },
+    cloversSorted() {
+      return this.allClovers
+        .slice(0)
+        .sort((a, b) => {
           switch (this.sortableIndex) {
-            case (0):
-              return this.asc ? b.modified - a.modified : a.modified - b.modified
-            case (1):
-              return this.asc ? b.created - a.created : a.created - b.created
-            case (2):
-              return this.asc ? this.currPrice(b) - this.currPrice(a) : this.currPrice(a) - this.currPrice(b)
-            case (3):
-              return this.asc ? b.previousOwners.length - a.previousOwners.length : a.previousOwners.length - b.previousOwners.length
+            case 0:
+              return this.asc
+                ? b.modified - a.modified
+                : a.modified - b.modified;
+            case 1:
+              return this.asc ? b.created - a.created : a.created - b.created;
+            case 2:
+              return this.asc
+                ? this.currPrice(b) - this.currPrice(a)
+                : this.currPrice(a) - this.currPrice(b);
+            case 3:
+              return this.asc
+                ? b.previousOwners.length - a.previousOwners.length
+                : a.previousOwners.length - b.previousOwners.length;
           }
-        }).filter((c) => {
-          if (!this.search && !this.filter) return c
-          return c.previousOwners.slice(-1).filter((p) => {
-            return p.search(this.search || this.filter) > -1
-          }).length || // owner
-          c.previousOwners.slice(0, 1).filter((p) => {
-            return p.search(this.search || this.filter) > -1
-          }).length || // founder
-          c.name && c.name.search(this.search || this.filter) > -1 || // board name
-          c.first32Moves.search(this.search || this.filter) > -1 || // moves
-          c.first32Moves.search(this.search || this.filter) > -1 || // moves
-          c.lastMoves.search(this.search || this.filter) > -1 || // moves
-          c.board.search(this.search || this.filter) > -1 // board
         })
-      },
-      ...mapState([
-        'allClovers'
-      ]),
-      ...mapGetters([
-        'clover',
-        'symmetries'
-      ])
+        .filter(c => {
+          if (!this.search && !this.filter) return c;
+          return (
+            c.previousOwners.slice(-1).filter(p => {
+              return p.search(this.search || this.filter) > -1;
+            }).length || // owner
+            c.previousOwners.slice(0, 1).filter(p => {
+              return p.search(this.search || this.filter) > -1;
+            }).length || // founder
+            (c.name && c.name.search(this.search || this.filter) > -1) || // board name
+            c.first32Moves.search(this.search || this.filter) > -1 || // moves
+            c.first32Moves.search(this.search || this.filter) > -1 || // moves
+            c.lastMoves.search(this.search || this.filter) > -1 || // moves
+            c.board.search(this.search || this.filter) > -1
+          ); // board
+        });
     },
-    methods: {
-      chPage (amount) {
-        window.scrollTo(0, this.$refs.cloverList.offsetTop - 150)
-        this.$nextTick(() => {
-          this.paged += amount
-        })
-      },
-      currPrice (c) {
-        return c.previousOwners.length === 1 ? c.lastPaidAmount : (c.lastPaidAmount * 2)
-      },
-      sortableClass (i) {
-        if (i !== this.sortableIndex) return 'muted'
-        return {
-          gray: true,
-          asc: this.asc,
-          desc: !this.asc
-        }
-      },
-      clickSort (i) {
-        if (i !== this.sortableIndex) {
-          this.sortableIndex = i
-          this.paged = 1
-        } else {
-          this.asc = !this.asc
-        }
+    ...mapState(["allClovers"]),
+    ...mapGetters(["clover", "symmetries"])
+  },
+  methods: {
+    chPage(amount) {
+      window.scrollTo(0, this.$refs.cloverList.offsetTop - 150);
+      this.$nextTick(() => {
+        this.paged += amount;
+      });
+    },
+    currPrice(c) {
+      return c.previousOwners.length === 1
+        ? c.lastPaidAmount
+        : c.lastPaidAmount * 2;
+    },
+    sortableClass(i) {
+      if (i !== this.sortableIndex) return "muted";
+      return {
+        gray: true,
+        asc: this.asc,
+        desc: !this.asc
+      };
+    },
+    clickSort(i) {
+      if (i !== this.sortableIndex) {
+        this.sortableIndex = i;
+        this.paged = 1;
+      } else {
+        this.asc = !this.asc;
       }
     }
   }
+};
 </script>
 
 <style lang="scss">
 .shadow-bottom {
-  box-shadow: 0px 4px 7px 1px rgba(0, 0, 0, .2);
+  box-shadow: 0px 4px 7px 1px rgba(0, 0, 0, 0.2);
 }
-  @media only screen and (max-width: 768px) {
+@media only screen and (max-width: 768px) {
   #break-up {
-    flex-wrap:wrap;
+    flex-wrap: wrap;
     > * {
       text-align: center;
-      width:100%;
+      width: 100%;
     }
   }
 }

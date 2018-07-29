@@ -16,21 +16,18 @@
 </template>
 
 <script>
-  export default {
+export default {
+  name: "Instructions",
 
-    name: 'Instructions',
-
-    data () {
-      return {
-
-      }
-    },
-    methods: {
-      seen () {
-        this.$emit('seen')
-      }
+  data() {
+    return {};
+  },
+  methods: {
+    seen() {
+      this.$emit("seen");
     }
   }
+};
 </script>
 
 <style lang="css" scoped>
