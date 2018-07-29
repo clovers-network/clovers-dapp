@@ -76,317 +76,343 @@
 </template>
 
 <script>
-  import { mapMutations, mapGetters, mapActions } from 'vuex'
-  import CloverWorker from 'worker-loader!../assets/clover-worker'
-  import Reversi from '../assets/reversi'
-  import ClaimClover from '@/components/ClaimClover'
-  import Symmetry from '@/components/Symmetry'
-  import moment from 'moment'
-  let reversi = new Reversi()
+import { mapMutations, mapGetters, mapActions } from 'vuex'
+import CloverWorker from 'worker-loader!../assets/clover-worker'
+import Reversi from '../assets/reversi'
+import ClaimClover from '@/components/ClaimClover'
+import Symmetry from '@/components/Symmetry'
+import moment from 'moment'
+let reversi = new Reversi()
 
-  export default {
-    name: 'miner',
-    data () {
-      return {
-        enterManually: false,
-        moves: null,
-        miners: [],
-        customMoves: 'C4C5D6C7C6D3E6D7C2B3A2F5C8E3G5B6A5H5F6B1H4A4E7G7E2F7G6B7G8G4F4F3D8H7E8F2H8B5A7E1H3D2G2H2C1C3F1D1A1G1G3A6H6F8B2B8A3H1A8B4',
-        interval: null,
-        hasStorage: !!window.localStorage,
-        selectedClover: null,
-        limit: true
+export default {
+  name: 'miner',
+  data() {
+    return {
+      enterManually: false,
+      moves: null,
+      miners: [],
+      customMoves:
+        'C4C5D6C7C6D3E6D7C2B3A2F5C8E3G5B6A5H5F6B1H4A4E7G7E2F7G6B7G8G4F4F3D8H7E8F2H8B5A7E1H3D2G2H2C1C3F1D1A1G1G3A6H6F8B2B8A3H1A8B4',
+      interval: null,
+      hasStorage: !!window.localStorage,
+      selectedClover: null,
+      limit: true
+    }
+  },
+  watch: {
+    account() {
+      this.checkRead()
+    },
+    showMiner() {
+      if (!this.showMiner) this.selectedClover = null
+    }
+  },
+  props: {
+    showMiner: {
+      type: Boolean,
+      default: false
+    }
+  },
+  computed: {
+    newBoardKey() {
+      return this.newClovers.findIndex(
+        c => c.byteBoard === this.selectedClover.byteBoard
+      )
+    },
+    claimedBoardKey() {
+      return this.claimedClovers.findIndex(
+        c => c.byteBoard === this.selectedClover.byteBoard
+      )
+    },
+    clovers() {
+      return this.minedClovers.map(c => {
+        if (typeof c.X0Sym !== 'undefined') return c
+        reversi.board = c.board
+        Object.assign(reversi, c)
+        reversi.isSymmetrical()
+        return JSON.parse(JSON.stringify(reversi))
+      })
+    },
+    newClovers() {
+      return this.clovers.filter(c => !c.claimed)
+    },
+    claimedClovers() {
+      let claims = this.clovers.filter(c => c.claimed).sort((a, b) => {
+        return b.claimed - a.claimed
+      })
+      if (this.limit) {
+        return claims.slice(0, 5)
+      }
+      return claims
+    },
+    cloversFound() {
+      return this.clovers.length - this.claimedClovers.length
+    },
+    mining: {
+      get() {
+        return this.$store.state.mining
+      },
+      set(newVal) {
+        this.toggleMiner(newVal)
       }
     },
-    watch: {
-      account () {
-        this.checkRead()
+    hashRate: {
+      get() {
+        return this.$store.state.hashRate
       },
-      showMiner () {
-        if (!this.showMiner) this.selectedClover = null
+      set(newVal) {
+        this.newHashRate(newVal)
       }
     },
-    props: {
-      showMiner: {
-        type: Boolean,
-        default: false
+    totalMined: {
+      get() {
+        return this.$store.state.totalMined
+      },
+      set(newVal) {
+        this.addMineTotal(newVal)
       }
     },
-    computed: {
-      newBoardKey () {
-        return this.newClovers.findIndex((c) => c.byteBoard === this.selectedClover.byteBoard)
+    mineTime: {
+      get() {
+        return this.$store.state.mineTime
       },
-      claimedBoardKey () {
-        return this.claimedClovers.findIndex((c) => c.byteBoard === this.selectedClover.byteBoard)
+      set(newVal) {
+        this.addMineTime(newVal)
+      }
+    },
+    miningPower: {
+      get() {
+        return this.$store.state.miningPower
       },
-      clovers () {
-        return this.minedClovers.map((c) => {
-          if (typeof c.X0Sym !== 'undefined') return c
-          reversi.board = c.board
-          Object.assign(reversi, c)
-          reversi.isSymmetrical()
-          return JSON.parse(JSON.stringify(reversi))
-        })
-      },
-      newClovers () {
-        return this.clovers.filter(c => !c.claimed)
-      },
-      claimedClovers () {
-        let claims = this.clovers.filter(c => c.claimed).sort((a, b) => {
-          return b.claimed - a.claimed
-        })
-        if (this.limit) {
-          return claims.slice(0, 5)
-        }
-        return claims
-      },
-      cloversFound () {
-        return this.clovers.length - this.claimedClovers.length
-      },
-      mining: {
-        get () {
-          return this.$store.state.mining
-        },
-        set (newVal) {
-          this.toggleMiner(newVal)
-        }
-      },
-      hashRate: {
-        get () {
-          return this.$store.state.hashRate
-        },
-        set (newVal) {
-          this.newHashRate(newVal)
-        }
-      },
-      totalMined: {
-        get () {
-          return this.$store.state.totalMined
-        },
-        set (newVal) {
-          this.addMineTotal(newVal)
-        }
-      },
-      mineTime: {
-        get () {
-          return this.$store.state.mineTime
-        },
-        set (newVal) {
-          this.addMineTime(newVal)
-        }
-      },
-      miningPower: {
-        get () {
-          return this.$store.state.miningPower
-        },
-        set (newVal) {
-          this.changePower(newVal)
-        }
-      },
-      mineBtn () {
-        return this.miners.length ? 'More power' : 'Start mining'
-      },
-      stopBtn () {
-        return this.miners.length === 1 ? 'Stop mining' : 'Slow down!'
-      },
-      timeSpent () {
-        return moment.utc(this.mineTime * 1000).format('HH:mm:ss')
-      },
+      set(newVal) {
+        this.changePower(newVal)
+      }
+    },
+    mineBtn() {
+      return this.miners.length ? 'More power' : 'Start mining'
+    },
+    stopBtn() {
+      return this.miners.length === 1 ? 'Stop mining' : 'Slow down!'
+    },
+    timeSpent() {
+      return moment.utc(this.mineTime * 1000).format('HH:mm:ss')
+    },
 
-      ...mapGetters([
-        'account',
-        'clover',
-        'minedClovers',
-        'balance'
-      ])
+    ...mapGetters(['account', 'clover', 'minedClovers', 'balance'])
+  },
+  methods: {
+    scrollBoards(inc) {
+      this.$nextTick(() => {
+        let selectedClover = this.$refs.clover.find(c =>
+          c.classList.contains('active-clover')
+        )
+        if (!selectedClover) return
+        this.$refs.cloverList.scrollLeft = selectedClover.offsetLeft
+      })
     },
-    methods: {
-      scrollBoards (inc) {
-        this.$nextTick(() => {
-          let selectedClover = this.$refs.clover.find((c) => c.classList.contains('active-clover'))
-          if (!selectedClover) return
-          this.$refs.cloverList.scrollLeft = selectedClover.offsetLeft
-        })
-      },
-      swapBoard (inc) {
-        if (this.newBoardKey > -1) {
-          if (this.newClovers.length > (this.newBoardKey + inc) && (this.newBoardKey + inc) >= 0) {
-            this.selectedClover = this.newClovers[this.newBoardKey + inc]
-          } else if (this.claimedClovers.length) {
-            this.selectedClover = inc > 0 ? this.claimedClovers[0] : this.claimedClovers[this.claimedClovers.length - 1]
-          } else if (this.newClovers.length) {
-            this.selectedClover = inc > 0 ? this.newClovers[0] : this.newClovers[this.newClovers.length - 1]
-          }
-        } else if (this.claimedBoardKey > -1) {
-          if (this.claimedClovers.length > (this.claimedBoardKey + inc) && (this.claimedBoardKey + inc) >= 0) {
-            this.selectedClover = this.claimedClovers[this.claimedBoardKey + inc]
-          } else if (this.newClovers.length) {
-            this.selectedClover = inc > 0 ? this.newClovers[0] : this.newClovers[this.newClovers.length - 1]
-          } else if (this.claimedClovers.length) {
-            this.selectedClover = inc > 0 ? this.claimedClovers[0] : this.claimedClovers[this.claimedClovers.length - 1]
-          }
+    swapBoard(inc) {
+      if (this.newBoardKey > -1) {
+        if (
+          this.newClovers.length > this.newBoardKey + inc &&
+          this.newBoardKey + inc >= 0
+        ) {
+          this.selectedClover = this.newClovers[this.newBoardKey + inc]
+        } else if (this.claimedClovers.length) {
+          this.selectedClover =
+            inc > 0
+              ? this.claimedClovers[0]
+              : this.claimedClovers[this.claimedClovers.length - 1]
+        } else if (this.newClovers.length) {
+          this.selectedClover =
+            inc > 0
+              ? this.newClovers[0]
+              : this.newClovers[this.newClovers.length - 1]
         }
-        this.scrollBoards(inc)
-      },
-      nextBoard () {
-        this.swapBoard(1)
-      },
-      previousBoard () {
-        this.swapBoard(-1)
-      },
-      checkKey (e) {
-        if (e.keyCode === 39) {
-          e.preventDefault()
-          this.nextBoard()
-        } else if (e.keyCode === 37) {
-          e.preventDefault()
-          this.previousBoard()
+      } else if (this.claimedBoardKey > -1) {
+        if (
+          this.claimedClovers.length > this.claimedBoardKey + inc &&
+          this.claimedBoardKey + inc >= 0
+        ) {
+          this.selectedClover = this.claimedClovers[this.claimedBoardKey + inc]
+        } else if (this.newClovers.length) {
+          this.selectedClover =
+            inc > 0
+              ? this.newClovers[0]
+              : this.newClovers[this.newClovers.length - 1]
+        } else if (this.claimedClovers.length) {
+          this.selectedClover =
+            inc > 0
+              ? this.claimedClovers[0]
+              : this.claimedClovers[this.claimedClovers.length - 1]
         }
-      },
-      checkExists () {
-        this.clover.cloverExists(this.customMoves).then((res) => {
-          console.log(res)
-        })
-      },
-      checkRead () {
-        if (this.hasStorage) {
-          this.storedClovers(this.getItem('clovers') || [])
-          this.storedMineCount(this.getItem('totalMined') || 0)
-          this.storedMineDuration(this.getItem('mineTime') || 0)
-          this.storedCloversFound(this.getItem('cloversFound') || 0)
+      }
+      this.scrollBoards(inc)
+    },
+    nextBoard() {
+      this.swapBoard(1)
+    },
+    previousBoard() {
+      this.swapBoard(-1)
+    },
+    checkKey(e) {
+      if (e.keyCode === 39) {
+        e.preventDefault()
+        this.nextBoard()
+      } else if (e.keyCode === 37) {
+        e.preventDefault()
+        this.previousBoard()
+      }
+    },
+    checkExists() {
+      this.clover.cloverExists(this.customMoves).then(res => {
+        console.log(res)
+      })
+    },
+    checkRead() {
+      if (this.hasStorage) {
+        this.storedClovers(this.getItem('clovers') || [])
+        this.storedMineCount(this.getItem('totalMined') || 0)
+        this.storedMineDuration(this.getItem('mineTime') || 0)
+        this.storedCloversFound(this.getItem('cloversFound') || 0)
+      }
+    },
+    getItem(key) {
+      if (key === 'clovers') {
+        let clovers = []
+        let emptyNames = ['null', 'undefined', '0x0']
+        for (let i in emptyNames) {
+          let emptyName = emptyNames[i]
+          let res = window.localStorage.getItem(emptyName + '_clovers')
+          if (res) clovers = clovers.concat(JSON.parse(res))
         }
-      },
-      getItem (key) {
-        if (key === 'clovers') {
-          let clovers = []
-          let emptyNames = ['null', 'undefined', '0x0']
-          for (let i in emptyNames) {
-            let emptyName = emptyNames[i]
-            let res = window.localStorage.getItem(emptyName + '_clovers')
-            if (res) clovers = clovers.concat(JSON.parse(res))
-          }
-          if (this.account) {
-            let res = window.localStorage.getItem(this.account + '_' + key)
-            if (res) clovers = clovers.concat(JSON.parse(res))
-          }
-          return clovers.filter((thing, index, self) => self.findIndex((t) => { return t.byteBoard === thing.byteBoard }) === index)
+        if (this.account) {
+          let res = window.localStorage.getItem(this.account + '_' + key)
+          if (res) clovers = clovers.concat(JSON.parse(res))
         }
-        let res = window.localStorage.getItem(this.account + '_' + key)
-        return res && res !== 'undefined' && JSON.parse(res)
-      },
-      setItem (key, val) {
-        window.localStorage.setItem(this.account + '_' + key, JSON.stringify(val))
-      },
-      mine () {
-        this.mining = true
-        if (!this.start) this.start = new Date()
-        let miner = new CloverWorker()
-        miner.onmessage = this.minerEvent
-        miner.postMessage('start')
-        this.miners.push(miner)
-        this.miningPower = this.miners.length
-      },
-      stop () {
-        console.log('stop')
-        if (this.miners.length) {
-          let removed = this.miners.pop()
-          removed.postMessage('stop')
-          if (!this.miners.length) {
-            this.mining = false
-            this.hashRate = 0
-          }
-          this.miningPower = this.miners.length
-        } else {
+        return clovers.filter(
+          (thing, index, self) =>
+            self.findIndex(t => {
+              return t.byteBoard === thing.byteBoard
+            }) === index
+        )
+      }
+      let res = window.localStorage.getItem(this.account + '_' + key)
+      return res && res !== 'undefined' && JSON.parse(res)
+    },
+    setItem(key, val) {
+      window.localStorage.setItem(this.account + '_' + key, JSON.stringify(val))
+    },
+    mine() {
+      this.mining = true
+      if (!this.start) this.start = new Date()
+      let miner = new CloverWorker()
+      miner.onmessage = this.minerEvent
+      miner.postMessage('start')
+      this.miners.push(miner)
+      this.miningPower = this.miners.length
+    },
+    stop() {
+      console.log('stop')
+      if (this.miners.length) {
+        let removed = this.miners.pop()
+        removed.postMessage('stop')
+        if (!this.miners.length) {
           this.mining = false
+          this.hashRate = 0
         }
-      },
-      stopAll () {
-        console.log('stop all')
+        this.miningPower = this.miners.length
+      } else {
+        this.mining = false
+      }
+    },
+    stopAll() {
+      console.log('stop all')
+      this.stop()
+      while (this.miners.length > 0) {
         this.stop()
-        while (this.miners.length > 0) {
-          this.stop()
-        }
-      },
-      minerEvent (event) {
-        let { data } = event
-        if ('hashRate' in data) {
-          this.hashRate = data.hashRate
-          this.totalMined = data.hashRate
-        }
-        if ('symmetrical' in data) {
-          // this.clover.cloverExists(data.byteBoard).then((exists) => {
-          this.cloverExists(data.byteBoard).then((exists) => {
+      }
+    },
+    minerEvent(event) {
+      let { data } = event
+      if ('hashRate' in data) {
+        this.hashRate = data.hashRate
+        this.totalMined = data.hashRate
+      }
+      if ('symmetrical' in data) {
+        // this.clover.cloverExists(data.byteBoard).then((exists) => {
+        this.cloverExists(data.byteBoard)
+          .then(exists => {
             if (!exists) {
               this.allMinedClover(data)
             }
-          }).catch((err) => {
+          })
+          .catch(err => {
             console.log(err)
           })
-        }
-      },
-      select (clover) {
-        this.selectedClover = clover
-      },
-      deselect () {
-        this.selectedClover = null
-      },
-      timer () {
-        if (this.mining) {
-          this.mineTime = 1
-          this.setItem('totalMined', this.totalMined)
-          this.setItem('mineTime', this.mineTime)
-        }
-        this.setItem('clovers', this.$store.state.allMinedClovers)
-        this.setItem('cloversFound', this.cloversFound)
-      },
-      isFocus (board) {
-        if (!this.selectedClover) return false
-        return board.byteBoard === this.selectedClover.byteBoard ? 'active-clover' : false
-      },
-      remove () {
-        this.$set(this.selectedClover, 'removed', new Date())
-        this.removeMinedClover(this.selectedClover)
-      },
-      updateFindersFee (newVal) {
-        this.$set(this.selectedClover, 'findersFee', newVal)
-      },
-      close () {
-        this.$emit('close')
-      },
-      ...mapActions([
-        'cloverExists'
-      ]),
-      ...mapMutations({
-        toggleMiner: 'TOGGLE_MINER',
-        newHashRate: 'HASH_RATE',
-        addMineTotal: 'MINE_INCREMENT',
-        addMineTime: 'TIME_INCREMENT',
-        changePower: 'CORE_COUNT',
-        allMinedClover: 'MINED_CLOVER',
-        restoreMinedClovers: 'EXISTING_CLOVERS',
-        storedClovers: 'STORED_CLOVERS',
-        storedMineCount: 'STORED_COUNT',
-        storedMineDuration: 'STORED_DURATION',
-        storedCloversFound: 'STORED_CLOVERS_FOUND',
-        removeMinedClover: 'REMOVE_MINED_CLOVER'
-      })
+      }
     },
-    mounted () {
-      this.checkRead()
-      this.interval = setInterval(this.timer, 3000)
-      window.addEventListener('keydown', this.checkKey)
+    select(clover) {
+      this.selectedClover = clover
     },
-    destroyed () {
-      clearInterval(this.interval)
-      window.removeEventListener('keydown', this.checkKey)
+    deselect() {
+      this.selectedClover = null
     },
-    components: { ClaimClover, Symmetry }
-  }
-
+    timer() {
+      if (this.mining) {
+        this.mineTime = 1
+        this.setItem('totalMined', this.totalMined)
+        this.setItem('mineTime', this.mineTime)
+      }
+      this.setItem('clovers', this.$store.state.allMinedClovers)
+      this.setItem('cloversFound', this.cloversFound)
+    },
+    isFocus(board) {
+      if (!this.selectedClover) return false
+      return board.byteBoard === this.selectedClover.byteBoard
+        ? 'active-clover'
+        : false
+    },
+    remove() {
+      this.$set(this.selectedClover, 'removed', new Date())
+      this.removeMinedClover(this.selectedClover)
+    },
+    updateFindersFee(newVal) {
+      this.$set(this.selectedClover, 'findersFee', newVal)
+    },
+    close() {
+      this.$emit('close')
+    },
+    ...mapActions(['cloverExists']),
+    ...mapMutations({
+      toggleMiner: 'TOGGLE_MINER',
+      newHashRate: 'HASH_RATE',
+      addMineTotal: 'MINE_INCREMENT',
+      addMineTime: 'TIME_INCREMENT',
+      changePower: 'CORE_COUNT',
+      allMinedClover: 'MINED_CLOVER',
+      restoreMinedClovers: 'EXISTING_CLOVERS',
+      storedClovers: 'STORED_CLOVERS',
+      storedMineCount: 'STORED_COUNT',
+      storedMineDuration: 'STORED_DURATION',
+      storedCloversFound: 'STORED_CLOVERS_FOUND',
+      removeMinedClover: 'REMOVE_MINED_CLOVER'
+    })
+  },
+  mounted() {
+    this.checkRead()
+    this.interval = setInterval(this.timer, 3000)
+    window.addEventListener('keydown', this.checkKey)
+  },
+  destroyed() {
+    clearInterval(this.interval)
+    window.removeEventListener('keydown', this.checkKey)
+  },
+  components: { ClaimClover, Symmetry }
+}
 </script>
 <style lang="scss">
-  #miner {
-    max-height:calc(100vh - 56px);
-    overflow:auto;
-  }
+#miner {
+  max-height: calc(100vh - 56px);
+  overflow: auto;
+}
 </style>
