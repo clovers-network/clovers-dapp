@@ -10,9 +10,9 @@
       <div class="h-header"></div>
       <nav class="flex-auto flex items-center justify-center">
         <ul class="h1 list-reset">
-          <li><span>Find Clovers</span></li>
-          <li class="mt2"><span>Market</span></li>
-          <li class="mt2"><span>Wallet</span></li>
+          <li><router-link :to="{name: 'Find'}">Find Clovers</router-link></li>
+          <li class="mt2"><router-link :to="{name: 'Market'}">Market</router-link></li>
+          <li class="mt2"><router-link :to="{name: 'Wallet'}">Wallet</router-link></li>
           <li class="mt2"><router-link :to="{name: 'About'}">About</router-link></li>
         </ul>
       </nav>
@@ -58,6 +58,7 @@
     },
     watch: {
       '$route.fullPath': function () {
+        this.showMenu = false
         this.showMiner = false
       },
       cloversFound () {
