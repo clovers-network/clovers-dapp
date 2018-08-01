@@ -114,8 +114,8 @@ export default {
 </script>
 
 <style lang="css">
+  @import './style/fonts';
   @import './style/global';
-
   @import './style/imports';
   .intro-screen {
     .clover {

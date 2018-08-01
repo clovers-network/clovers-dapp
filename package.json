@@ -71,8 +71,8 @@
       "eslint:recommended"
     ],
     "globals": {
-      "web3" : true,
-      "ga" : true
+      "web3": true,
+      "ga": true
     }
   },
   "browserslist": [
