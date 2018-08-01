@@ -6,7 +6,7 @@ export default {
   submittingBoards: state => state.submittingBoards,
   readOnly: state => state.readOnly,
   notRinkeby: state => {
-    return state.network !== 5777;
+    return state.network !== 4;
   },
   account: state => state.account,
   username: (state, getters) => {

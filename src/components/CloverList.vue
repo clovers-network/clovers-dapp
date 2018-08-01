@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="relative z1">
     <div class="bg-green  white pb2 md-p3 flex justify-around">
       <div class="center" v-for="(sym, i) in symTypes" :key="i">
         <div class='px1'>{{symmetries[sym]}} x</div>

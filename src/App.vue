@@ -5,7 +5,8 @@
       <router-view></router-view>
     </main>
     <instructions @seen="seenit()" v-if="attemptConnect && (notRinkeby || readOnly) && !seen"></instructions>
-    <clover-list v-if="!hideMainCloverList || notRinkeby"></clover-list>
+    <!-- moved to /cloverlist -->
+    <!-- <clover-list v-if="!hideMainCloverList || notRinkeby"></clover-list> -->
     <foot></foot>
     <messages></messages>
   </div>
@@ -16,7 +17,7 @@ import AppHeader from "@/components/AppHeader";
 
 import Foot from "@/components/Foot";
 import Instructions from "@/components/Instructions";
-import CloverList from "@/components/CloverList";
+// import CloverList from "@/components/CloverList";
 import Messages from "@/components/Messages";
 import { mapGetters, mapMutations, mapActions, mapState } from "vuex";
 
@@ -109,7 +110,7 @@ export default {
   destroyed() {
     this.stopWeb3Polling();
   },
-  components: { AppHeader, CloverList, Messages, Instructions, Foot }
+  components: { AppHeader, Messages, Instructions, Foot }
 };
 </script>
 
