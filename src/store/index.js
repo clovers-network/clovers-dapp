@@ -6,13 +6,14 @@ import actions from './actions'
 import getters from './getters'
 import mutations from './mutations'
 
-
 Vue.use(Vuex)
 
 // const debug = process.env.NODE_ENV !== 'production'
 const debug = false
 
 const state = {
+  tokens: getTokens(),
+
   currentBlock: null,
   clubTokenSymbol: '♣',
   network: null,
@@ -41,3 +42,8 @@ export default new Vuex.Store({
   strict: false, // debug,
   plugins: debug ? [createLogger()] : []
 })
+
+function getTokens (key = 'clover_tokens') {
+  if (!window.localStorage) return null
+  return JSON.parse(window.localStorage.getItem(key))
+}

@@ -75,6 +75,11 @@ export default {
       XYSym,
       XnYSym,
       PayMultiplier: 100
-    };
+    }
+  },
+
+  authHeader ({ account, tokens }) {
+    if (!account || !tokens || !tokens[account]) return null
+    return `Basic ${btoa(`${account}:${tokens[account]}`)}`
   }
-};
+}
