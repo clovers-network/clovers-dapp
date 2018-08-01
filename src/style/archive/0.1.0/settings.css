@@ -5,7 +5,6 @@
 @custom-media --breakpoint-lg (min-width: 64em);
 
 :root {
-  --rem: 10px;
   --body-font: "gt-amer-st-reg", -apple-system,system-ui,"San Francisco",BlinkMacSystemFont,"Helvetica Neue",Helvetica,Ubuntu,Roboto,Noto,"Segoe UI",Arial,sans-serif;
   --base-font-size: 16px;
 
@@ -49,9 +48,9 @@
 
   /* spacing */
   --space-1: .5rem;
-  --space-2: 1.2rem;
-  --space-3: 2.4rem;
-  --space-4: 4.8rem;
+  --space-2: 1rem;
+  --space-3: 2rem;
+  --space-4: 4rem;
 
   --width-0: 10rem;
   --width-1: 24rem;
@@ -59,16 +58,14 @@
   --width-3: 48rem;
   --width-4: 64rem;
 
-  --height-header: 4.6rem;
-
-  --h00: 4em;
-  --h0: 3em;
-  --h1: 2em;
-  --h2: 1.5em;
-  --h3: 1.25em;
-  --h4: 1em;
-  --h5: .875em;
-  --h6: .75em;
-  --h7: .6em;
-  --h8: .5em;
+  --h00: 4rem;
+  --h0: 3rem;
+  --h1: 2rem;
+  --h2: 1.5rem;
+  --h3: 1.25rem;
+  --h4: 1rem;
+  --h5: .875rem;
+  --h6: .75rem;
+  --h7: .6rem;
+  --h8: .5rem;
 }

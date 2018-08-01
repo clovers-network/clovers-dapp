@@ -1,0 +1,31 @@
+@font-face {
+  font-family:"gt-amer-exp-bold";
+  src:url("./assets/fonts/gt-amer-exp-bold/gt-amer-exp-bold.woff2") format("woff2"),url("./assets/fonts/gt-amer-exp-bold/gt-amer-exp-bold.woff") format("woff"),url("./assets/fonts/gt-amer-exp-bold/gt-amer-exp-bold.otf") format("opentype");
+  font-style:normal;
+  font-weight:400;
+}
+.font-exp{ font-family:"gt-amer-exp-bold", sans-serif; }
+
+@font-face {
+  font-family:"gt-amer-ext-reg";
+  src:url("./assets/fonts/gt-amer-ext-reg/gt-amer-ext-reg.woff2") format("woff2"),url("./assets/fonts/gt-amer-ext-reg/gt-amer-ext-reg.woff") format("woff"),url("./assets/fonts/gt-amer-ext-reg/gt-amer-ext-reg.otf") format("opentype");
+  font-style:normal;
+  font-weight:400;
+}
+.font-ext{ font-family:"gt-amer-ext-reg", sans-serif; }
+
+@font-face {
+  font-family:"gt-amer-st-reg";
+  src:url("./assets/fonts/gt-amer-st-reg/gt-amer-st-reg.woff2") format("woff2"),url("./assets/fonts/gt-amer-st-reg/gt-amer-st-reg.woff") format("woff"),url("./assets/fonts/gt-amer-st-reg/gt-amer-st-reg.otf") format("opentype");
+  font-style:normal;
+  font-weight:400;
+}
+.font-reg{ font-family:"gt-amer-st-reg", sans-serif; }
+
+@font-face {
+  font-family:"gt-amer-mono-reg";
+  src:url("./assets/fonts/gt-amer-mono-reg/gt-amer-mono-reg.woff2") format("woff2"),url("./assets/fonts/gt-amer-mono-reg/gt-amer-mono-reg.woff") format("woff"),url("./assets/fonts/gt-amer-mono-reg/gt-amer-mono-reg.otf") format("opentype");
+  font-style:normal;
+  font-weight:400;
+}
+.font-mono{ font-family:"gt-amer-mono-reg", sans-serif; }

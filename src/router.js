@@ -1,11 +1,18 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import About from '@/components/About'
+import Welcome from '@/views/Welcome'
+import Find from '@/views/Find'
+import Market from '@/views/Market'
+import Wallet from '@/views/Wallet'
+import About from '@/views/About'
+// Old routes
+import AboutOld from '@/components/About'
 import Activity from '@/components/Activity'
 import Home from '@/components/Home'
 import Clover from '@/components/Clover'
 import User from '@/components/User'
 import Users from '@/components/Users'
+import CloverList from '@/components/CloverList'
 
 Vue.use(Router)
 
@@ -14,17 +21,49 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Home',
-      component: Home
+      name: 'Welcome',
+      component: Welcome
+    },
+    {
+      path: '/find',
+      name: 'Find',
+      component: Find
+    },
+    {
+      path: '/market',
+      name: 'Market',
+      component: Market
+    },
+    {
+      path: '/wallet',
+      name: 'Wallet',
+      component: Wallet
     },
     {
       path: '/about',
       name: 'About',
-      component: About,
+      component: About
+    },
+    //
+    // =======================================
+    // Old Paths
+    // =======================================
+    //
+    {
+      path: '/home', // formerly "/"
+      name: 'Home',
+      component: Home
+    },
+    /*
+    {
+      path: '/about',
+      name: 'About',
+      component: AboutOld,
       meta: {
         hideMainCloverList: true
       }
     },
+    */
     {
       path: '/clovers/:board',
       name: 'Clover',
@@ -47,6 +86,12 @@ export default new Router({
       meta: {
         hideMainCloverList: true
       }
+    },
+    // add on for reference
+    {
+      path: '/cloverlist',
+      name: 'CloverList',
+      component: CloverList
     }
   ],
   scrollBehavior (to, from, savedPosition) {
