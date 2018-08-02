@@ -11,7 +11,7 @@
       <nav class="flex-auto flex items-center justify-center">
         <ul class="h1 list-reset">
           <li><router-link :to="{name: 'Find'}">Find Clovers</router-link></li>
-          <li class="mt2"><router-link :to="{name: 'Market'}">Market</router-link></li>
+          <li class="mt2"><router-link to="/market">Market</router-link></li>
           <li class="mt2"><router-link :to="{name: 'Wallet'}">Wallet</router-link></li>
           <li class="mt2"><router-link :to="{name: 'About'}">About</router-link></li>
         </ul>

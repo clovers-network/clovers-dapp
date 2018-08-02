@@ -72,6 +72,15 @@ export default {
     updateLocal('clover_tokens', state.tokens)
   },
 
+  NEW_CLOVER_FROM_CHAIN (state, clover) {
+    // called when socket receives new clover
+    state.newClovers.unshift(clover)
+  },
+  SHOW_NEW_CLOVERS (state) {
+    // move new chain clovers to feed
+    state.allClovers.unshift(...state.newClovers.splice(0))
+  },
+
   UPDATE_CLOVER_PRICE (state, { byteBoard, newVal }) {
     // let i = state.allSavedClovers.findIndex(cl => cl.byteBoard === byteBoard)
     // Object.assign(state.allSavedClovers[i], { startPrice: newVal })
