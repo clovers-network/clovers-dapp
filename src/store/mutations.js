@@ -83,8 +83,15 @@ export default {
   STORED_CLOVERS (state, clovers) {
     state.allMinedClovers = clovers
   },
-  UPDATE_ALLCLOVERS (state, allClovers) {
-    state.allClovers = allClovers
+  // UPDATE_ALLCLOVERS (state, allClovers) {
+  //   state.allClovers = allClovers
+  // },
+  GOT_CLOVERS (state, data) {
+    data.forEach((obj) => {
+      if (!state.allClovers.find(v => v.board === obj.board)) {
+        state.allClovers.push(obj)
+      }
+    })
   },
   UPDATE_LOGS (state, logs) {
     state.logs = logs
@@ -155,5 +162,4 @@ export default {
     if (msgKey < 0) return
     state.messages.splice(msgKey, 1)
   }
-
 }

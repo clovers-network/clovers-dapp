@@ -93,12 +93,12 @@ export default {
       console.log("disconnected")
     })
 
-    socket.on("init", ({ clovers, users, logs }) => {
-      console.log("got init")
-      commit("UPDATE_ALLCLOVERS", clovers)
-      commit("UPDATE_LOGS", logs)
-      commit("UPDATE_USERS", users)
-    })
+    // socket.on("init", ({ clovers, users, logs }) => {
+    //   console.log("got init")
+    //   commit("UPDATE_ALLCLOVERS", clovers)
+    //   commit("UPDATE_LOGS", logs)
+    //   commit("UPDATE_USERS", users)
+    // })
 
     socket.on("newUser", user => {
       commit("ADD_USER", user)
@@ -146,9 +146,25 @@ export default {
     return state.allClovers.findIndex(c => c.board === byteBoard) > -1
   },
 
+  getClovers({ state, commit }, page) {
+    let cloverCount = state.allClovers.length
+    page = Math.max(page, 1)
+    let params = { page }
+    if (!cloverCount) {
+      // all prev, up to end of requested page
+      params.all = true
+    } else {
+      // can just get next page (offset in case of new)
+      params.before = state.allClovers[cloverCount - 1].modified
+    }
+    return axios.get(apiUrl('/clovers'), { params }).then(({ data }) => {
+      commit('GOT_CLOVERS', data)
+    }).catch(console.log)
+  },
+
   updateCloverName ({ getters, commit }, clover) {
     const { board, name } = clover
-    return axios.put(`${apiBase}/clovers/${board}`, { name }, {
+    return axios.put(apiUrl(`/clovers/${board}`), { name }, {
       headers: {
         Authorization: getters.authHeader
       }
@@ -156,4 +172,8 @@ export default {
       console.log(data)
     }).catch(console.log)
   }
+}
+
+function apiUrl (path) {
+  return apiBase + path
 }

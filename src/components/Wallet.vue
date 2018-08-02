@@ -72,16 +72,18 @@
       moveUnConverted () {
         return this.clover.binaryMovesToByteMoves(this.moveConverted)
       },
+
       ...mapState([
-        'clubTokenSymbol'
+        'clubTokenSymbol',
+        'balance'
       ]),
-      ...mapGetters({
-        tokenName: 'name',
-        address: 'address',
-        amount: 'amount',
-        balance: 'balance',
-        status: 'status'
-      })
+      // ...mapGetters({
+      //   tokenName: 'name',
+      //   address: 'address',
+      //   amount: 'amount',
+      //   balance: 'balance',
+      //   status: 'status'
+      // })
     },
     methods: {
       testClover (key, board) {

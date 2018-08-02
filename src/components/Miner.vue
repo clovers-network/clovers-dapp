@@ -76,7 +76,7 @@
 </template>
 
 <script>
-  import { mapMutations, mapGetters, mapActions } from 'vuex'
+  import { mapMutations, mapState, mapGetters, mapActions } from 'vuex'
   import CloverWorker from 'worker-loader!../assets/clover-worker'
   import Reversi from 'clovers-reversi'
   import ClaimClover from '@/components/ClaimClover'
@@ -193,12 +193,12 @@
         return moment.utc(this.mineTime * 1000).format('HH:mm:ss')
       },
 
-      ...mapGetters([
+      ...mapState([
         'account',
         'clover',
-        'minedClovers',
         'balance'
-      ])
+      ]),
+      ...mapGetters([ 'minedClovers' ])
     },
     methods: {
       scrollBoards (inc) {
