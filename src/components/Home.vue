@@ -38,14 +38,11 @@
       },
 
       ...mapState([
-        'allClovers'
-      ]),
-      ...mapGetters([
-        'balance',
-        'clover',
         'allClovers',
-        'symmetries'
-      ])
+        'balance',
+        'clover'
+      ]),
+      ...mapGetters([ 'symmetries' ])
     }
   }
 </script>

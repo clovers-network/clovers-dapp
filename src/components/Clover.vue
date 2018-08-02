@@ -117,7 +117,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions, mapMutations, mapState } from 'vuex'
+  import { mapActions, mapMutations, mapState } from 'vuex'
   import moment from 'moment'
   import Reversi from 'clovers-reversi'
   import Symmetry from '@/components/Symmetry'
@@ -407,16 +407,14 @@
       historyToggleText () {
         return this.showHistory ? 'hide clover history' : 'show clover history'
       },
+
       ...mapState([
         'users',
         'allClovers',
-        'logs'
-      ]),
-      ...mapGetters([
+        'logs',
         'balance',
         'account',
-        'clover',
-        'account'
+        'clover'
       ])
     },
     mounted () {

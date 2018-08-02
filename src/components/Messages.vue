@@ -13,7 +13,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapMutations } from 'vuex'
+  import { mapMutations } from 'vuex'
   import xss from 'xss'
 
   export default {
@@ -26,9 +26,9 @@
       }
     },
     computed: {
-      ...mapGetters({
-        messages: 'messages'
-      })
+      messages () {
+        return this.$store.state.messages
+      }
     },
     methods: {
       escape (msg) {

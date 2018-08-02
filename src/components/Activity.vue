@@ -83,8 +83,9 @@
 </template>
 
 <script>
-  import { mapGetters, mapState, mapActions } from 'vuex'
+  import { mapState, mapActions } from 'vuex'
   import xss from 'xss'
+
   export default {
 
     name: 'Activity',
@@ -172,8 +173,6 @@
         'logs',
         'users',
         'currentBlock'
-      ]),
-      ...mapGetters([
       ])
     }
   }

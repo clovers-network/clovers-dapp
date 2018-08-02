@@ -59,9 +59,6 @@
       }
     },
     computed: {
-      ...mapGetters([
-        'symmetries'
-      ]),
       mostRare () {
         return this.symTypes.map((type) => {
           return {
@@ -107,7 +104,9 @@
           'w-t': w === b,
           'active': this.isActive
         }
-      }
+      },
+
+      ...mapGetters([ 'symmetries' ])
     },
     methods: {
       activate () {

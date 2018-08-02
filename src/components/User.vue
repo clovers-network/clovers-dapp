@@ -24,7 +24,7 @@
 </template>
 
 <script>
-  import { mapMutations, mapGetters, mapActions, mapState } from 'vuex'
+  import { mapMutations, mapActions, mapState } from 'vuex'
   import CloverList from '@/components/CloverList'
   import Activity from '@/components/Activity'
 
@@ -73,9 +73,7 @@
       ...mapState([
         'allClovers',
         'balance',
-        'users'
-      ]),
-      ...mapGetters([
+        'users',
         'readOnly',
         'account',
         'clover'

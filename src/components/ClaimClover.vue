@@ -51,7 +51,7 @@
 
 <script>
   import moment from 'moment'
-  import { mapActions, mapGetters, mapMutations } from 'vuex'
+  import { mapState, mapActions, mapGetters, mapMutations } from 'vuex'
   import SvgText from '@/components/SvgText'
   import Symmetry from '@/components/Symmetry'
   import Reversi from 'clovers-reversi'
@@ -85,13 +85,16 @@
       removeDate () {
         return moment(this.cloverData.removed * 1000).fromNow()
       },
-      ...mapGetters({
-        submittingBoards: 'submittingBoards',
-        readOnly: 'readOnly',
-        notRinkeby: 'notRinkeby',
-        symmetries: 'symmetries',
-        clover: 'clover'
-      })
+
+      ...mapState([
+        'submittingBoards',
+        'readOnly',
+        'clover'
+      ]),
+      ...mapGetters([
+        'notRinkeby',
+        'symmetries'
+      ])
     },
     mounted () {
       this.setBoard()
@@ -137,7 +140,7 @@
           console.log(msgId)
           let byteBoard = reversi.byteBoard
           this.addToSubmittingList(byteBoard)
-          
+
           // this.clover.register().then((res) => {
           //   this.removeFromSubmittingList(byteBoard)
           //   this.claimedClover(byteBoard)

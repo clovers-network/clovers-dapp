@@ -67,26 +67,29 @@ export default {
     hideMainCloverList() {
       return this.$route.meta.hideMainCloverList;
     },
-    ...mapState(["allClovers"]),
-    ...mapGetters({
-      readOnly: "readOnly",
-      notRinkeby: "notRinkeby",
-      account: "account",
-      clover: "clover"
-    })
+
+    ...mapState([
+      'allClovers',
+      'readOnly',
+      'account',
+      'clover'
+    ]),
+
+    ...mapGetters(['notRinkeby'])
   },
   methods: {
     seenit() {
       this.seen = true;
     },
-    ...mapActions(["initWeb3", "selfDestructMsg", "setUpSocket"]),
+
+    ...mapActions(['initWeb3', 'selfDestructMsg', 'setUpSocket']),
     ...mapMutations({
-      registerEvent: "ADD_REGISTERED_EVENT",
-      registerEvents: "ADD_REGISTERED_EVENTS",
-      newUsernameEvent: "ADD_USERNAME_EVENT",
-      newUsernameEvents: "ADD_USERNAME_EVENTS",
-      newClovernameEvent: "ADD_CLOVERNAME_EVENT",
-      newClovernameEvents: "ADD_CLOVERNAME_EVENTS"
+      registerEvent: 'ADD_REGISTERED_EVENT',
+      registerEvents: 'ADD_REGISTERED_EVENTS',
+      newUsernameEvent: 'ADD_USERNAME_EVENT',
+      newUsernameEvents: 'ADD_USERNAME_EVENTS',
+      newClovernameEvent: 'ADD_CLOVERNAME_EVENT',
+      newClovernameEvents: 'ADD_CLOVERNAME_EVENTS'
     })
   },
   mounted() {

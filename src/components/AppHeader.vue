@@ -100,15 +100,13 @@
 
       ...mapState([
         'allClovers',
-        'clubTokenSymbol'
+        'clubTokenSymbol',
+        'balance',
+        'hashRate',
+        'mining'
       ]),
-      ...mapGetters({
-        username: 'username',
-        tokenName: 'name',
-        balance: 'balance',
-        hashRate: 'hashRate',
-        mining: 'mining'
-      })
+
+      ...mapGetters(['username'])
     },
     components: { Miner }
   }

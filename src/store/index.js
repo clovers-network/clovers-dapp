@@ -26,7 +26,12 @@ const state = {
   cloversFound: 0,
   mining: false,
   miningPower: 0,
+
+  // socket events pushed to clover queue
+  newClovers: [],
+  // all pages get pushed to full list
   allClovers: [],
+
   users: [],
   logs: [],
   allMinedClovers: [],

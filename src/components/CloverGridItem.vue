@@ -84,8 +84,9 @@ export default {
           .fromNow()
       );
     },
-    ...mapState(["users"]),
-    ...mapGetters(["symmetries"])
+
+    ...mapState(['users']),
+    ...mapGetters(['symmetries'])
   }
 };
 </script>
