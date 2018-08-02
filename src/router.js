@@ -30,7 +30,7 @@ export default new Router({
       component: Find
     },
     {
-      path: '/market',
+      path: '/market(/page/)?:page?',
       name: 'Market',
       component: Market
     },

@@ -68,6 +68,10 @@ export default {
     }
   },
 
+  newCloversCount ({ newClovers }) {
+    return newClovers.length
+  },
+
   savedClovers ({ account, allSavedClovers }) {
     return allSavedClovers[account || 'anon'] || []
   },

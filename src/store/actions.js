@@ -92,10 +92,9 @@ export default {
       })
   },
   setUpSocket({ commit }) {
-    console.log("set up socket")
     const socket = io(process.env.VUE_APP_API_URL)
-    socket.on("disconnect", () => {
-      console.log("disconnected")
+    socket.on('disconnect', () => {
+      console.log('disconnected')
     })
 
     // socket.on("init", ({ clovers, users, logs }) => {
@@ -105,33 +104,32 @@ export default {
     //   commit("UPDATE_USERS", users)
     // })
 
-    socket.on("newUser", user => {
-      commit("ADD_USER", user)
+    socket.on('newUser', (user) => {
+      commit('ADD_USER', user)
       console.log(user)
     })
-    socket.on("updateUser", user => {
-      commit("UPDATE_USER", user)
+    socket.on('updateUser', (user) => {
+      commit('UPDATE_USER', user)
       console.log(user)
     })
-    socket.on("newClover", clover => {
-      commit("ADD_CLOVER", clover)
+    socket.on('newClover', (clover) => {
+      commit('NEW_CLOVER_FROM_CHAIN', clover)
+    })
+    socket.on('updateClover', (clover) => {
+      commit('UPDATE_CLOVER', clover)
       console.log(clover)
     })
-    socket.on("updateClover", clover => {
-      commit("UPDATE_CLOVER", clover)
-      console.log(clover)
-    })
-    socket.on("newUserName", log => {
+    socket.on('newUserName', (log) => {
       console.log(log)
-      commit("ADD_LOG", log)
+      commit('ADD_LOG', log)
     })
-    socket.on("newCloverName", log => {
+    socket.on('newCloverName', (log) => {
       console.log(log)
-      commit("ADD_LOG", log)
+      commit('ADD_LOG', log)
     })
-    socket.on("Registered", log => {
+    socket.on('Registered', (log) => {
       console.log(log)
-      commit("ADD_LOG", log)
+      commit('ADD_LOG', log)
     })
   },
   selfDestructMsg({ commit }, msg) {
@@ -151,9 +149,8 @@ export default {
     return state.allClovers.findIndex(c => c.board === byteBoard) > -1
   },
 
-  getClovers({ state, commit }, page) {
+  getClovers({ state, commit }, page = 1) {
     let cloverCount = state.allClovers.length
-    page = Math.max(page, 1)
     let params = { page }
     if (!cloverCount) {
       // all prev, up to end of requested page
