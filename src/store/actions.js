@@ -26,6 +26,11 @@ import Clover from "../assets/clovers"
 import axios from 'axios'
 
 const apiBase = process.env.VUE_APP_API_URL
+const signingParams = [{
+  type: 'string',
+  name: 'Message',
+  value: 'To avoid bad things, sign below to authenticate with Clovers'
+}]
 
 let polling = null
 global.clover = new Clover()
@@ -160,6 +165,19 @@ export default {
     return axios.get(apiUrl('/clovers'), { params }).then(({ data }) => {
       commit('GOT_CLOVERS', data)
     }).catch(console.log)
+  },
+
+  signIn ({ state, commit }) {
+    const { account } = state
+    if (!account) return
+    global.web3.currentProvider.sendAsync({
+      method: 'eth_signTypedData',
+      params: [signingParams, account],
+      from: account
+    }, (err, { result }) => {
+      console.log(err, result)
+      commit('SIGN_IN', { account, signature: result })
+    })
   },
 
   updateCloverName ({ getters, commit }, clover) {

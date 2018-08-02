@@ -67,6 +67,11 @@ export default {
     // }
   },
 
+  SIGN_IN (state, { account, signature }) {
+    state.tokens = { ...state.tokens, [account]: signature }
+    updateLocal('clover_tokens', state.tokens)
+  },
+
   UPDATE_CLOVER_PRICE (state, { byteBoard, newVal }) {
     // let i = state.allSavedClovers.findIndex(cl => cl.byteBoard === byteBoard)
     // Object.assign(state.allSavedClovers[i], { startPrice: newVal })
