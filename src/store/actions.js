@@ -22,9 +22,14 @@
 // import {Clovers} from 'clovers-contracts'
 
 import io from "socket.io-client"
-let polling = null
 import Clover from "../assets/clovers"
+import axios from 'axios'
+
+const apiBase = process.env.VUE_APP_API_URL
+
+let polling = null
 global.clover = new Clover()
+
 export default {
   initWeb3({ commit, dispatch }) {
     console.log("INIT-1")
@@ -139,5 +144,16 @@ export default {
   cloverExists({ state }, byteBoard) {
     console.log(byteBoard)
     return state.allClovers.findIndex(c => c.board === byteBoard) > -1
+  },
+
+  updateCloverName ({ getters, commit }, clover) {
+    const { board, name } = clover
+    return axios.put(`${apiBase}/clovers/${board}`, { name }, {
+      headers: {
+        Authorization: getters.authHeader
+      }
+    }).then(({ data }) => {
+      console.log(data)
+    }).catch(console.log)
   }
 }
