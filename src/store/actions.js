@@ -56,7 +56,7 @@ export default {
     if (state.readOnly) return
     clover
       .getAccounts()
-      .then(accounts => {
+      .then((accounts) => {
         if (accounts.length && state.account !== accounts[0]) {
           commit("UPDATE_ACCOUNT", accounts[0])
           state.account &&
@@ -164,6 +164,7 @@ export default {
 
   updateCloverName ({ getters, commit }, clover) {
     const { board, name } = clover
+    // if (!getters.authHeader) alert('Not signed in, this won\'t work')
     return axios.put(apiUrl(`/clovers/${board}`), { name }, {
       headers: {
         Authorization: getters.authHeader

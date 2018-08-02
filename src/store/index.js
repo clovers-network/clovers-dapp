@@ -12,6 +12,7 @@ Vue.use(Vuex)
 const debug = false
 
 const state = {
+  // stored signin tokens
   tokens: getTokens(),
 
   currentBlock: null,
@@ -23,7 +24,6 @@ const state = {
   hashRate: 0,
   mineTime: 0,
   totalMined: 0,
-  cloversFound: 0,
   mining: false,
   miningPower: 0,
 
@@ -31,10 +31,12 @@ const state = {
   newClovers: [],
   // all pages get pushed to full list
   allClovers: [],
+  // saved clovers, organized by account ID
+  // use getter savedClovers in views
+  allSavedClovers: getSavedClovers(),
 
   users: [],
   logs: [],
-  allMinedClovers: [],
   messages: [],
   submittingBoards: []
 }
@@ -51,4 +53,13 @@ export default new Vuex.Store({
 function getTokens (key = 'clover_tokens') {
   if (!window.localStorage) return null
   return JSON.parse(window.localStorage.getItem(key))
+}
+
+function getSavedClovers (key = 'saved_clovers') {
+  if (!window.localStorage) return {}
+  let all = JSON.parse(window.localStorage.getItem(key)) || {}
+  if (Object.keys(all).length === 0) {
+    all['anon'] = []
+  }
+  return all
 }

@@ -92,7 +92,7 @@
         return `Mining at ${this.hashRate} g/s`
       },
       cloversFound () {
-        return this.$store.state.cloversFound
+        return this.$store.getters.cloversFound
       },
       balanceString () {
         return parseInt(this.balance).toLocaleString()

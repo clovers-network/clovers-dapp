@@ -20,10 +20,10 @@ export default {
   },
   minedClovers (state) {
     console.log("mined clovers calculated")
-    // return state.allMinedClovers || []
+    // return state.allSavedClovers || []
     return (
-      (state.allMinedClovers.length &&
-        state.allMinedClovers.map(c => {
+      (state.allSavedClovers.length &&
+        state.allSavedClovers.map(c => {
           let clover =
             state.allClovers &&
             state.allClovers.find(ac => ac.board === "0x" + c.byteBoard)
@@ -66,6 +66,13 @@ export default {
       XnYSym,
       PayMultiplier: 100
     }
+  },
+
+  savedClovers ({ account, allSavedClovers }) {
+    return allSavedClovers[account || 'anon'] || []
+  },
+  cloversFound (_, { savedClovers }) {
+    return savedClovers.length
   },
 
   authHeader ({ account, tokens }) {
