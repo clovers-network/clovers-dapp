@@ -91,9 +91,6 @@
         if (!this.mining) return 'Miner stopped'
         return `Mining at ${this.hashRate} g/s`
       },
-      cloversFound () {
-        return this.$store.state.cloversFound
-      },
       balanceString () {
         return parseInt(this.balance).toLocaleString()
       },
@@ -106,7 +103,7 @@
         'mining'
       ]),
 
-      ...mapGetters(['username'])
+      ...mapGetters(['username', 'cloversFound'])
     },
     components: { Miner }
   }

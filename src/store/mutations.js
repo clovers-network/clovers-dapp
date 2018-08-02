@@ -36,34 +36,45 @@ export default {
     state.miningPower = count
   },
 
-  MINED_CLOVER (state, clover) {
-    state.cloversFound = parseInt(state.cloversFound) + 1
-    state.allMinedClovers.unshift(clover)
-    if (window.localstorage) {
-      window.localStorage.setItem(state.account + '_cloversFound', JSON.stringify(state.cloversFound))
+  // mining/saving clovers. Stored clovers are added to state on load
+  SAVE_CLOVER (state, clover) {
+    const account = state.account || 'anon'
+    if (!state.allSavedClovers[account]) {
+      // make sure account key exists
+      state.allSavedClovers = { ...state.allSavedClovers, [account]: [] }
+    }
+    state.allSavedClovers[account].unshift(clover)
+    updateLocal('saved_clovers', state.allSavedClovers)
+  },
+  REMOVE_SAVED_CLOVER (state, { board }) {
+    const account = state.account || 'anon'
+    const index = state.allSavedClovers[account].findIndex(c = c.board === board)
+    if (index >= 0) {
+      state.allSavedClovers.splice(index, 1)
+      updateLocal('saved_clovers', state.allSavedClovers)
     }
   },
-  EXISTING_CLOVERS (state, clovers) {
-    state.allMinedClovers.push(...clovers)
-  },
+
   CLAIMED_CLOVER (state, byteBoard) {
     console.log(byteBoard)
-    // let i = state.allMinedClovers.findIndex(cl => cl.byteBoard === byteBoard)
-    // // Object.assign(state.allMinedClovers[i], { claimed: new Date() })
-    // let clover = state.allMinedClovers[i]
+    // let i = state.allSavedClovers.findIndex(cl => cl.byteBoard === byteBoard)
+    // // Object.assign(state.allSavedClovers[i], { claimed: new Date() })
+    // let clover = state.allSavedClovers[i]
     // clover.claimed = new Date()
-    // state.allMinedClovers.splice(i, 1, clover)
+    // state.allSavedClovers.splice(i, 1, clover)
     // if (window.localstorage) {
-    //   window.localStorage.setItem(state.account + '_clovers', JSON.stringify(state.allMinedClovers))
+    //   window.localStorage.setItem(state.account + '_clovers', JSON.stringify(state.allSavedClovers))
     // }
   },
-  UPDATE_CLOVER_PRICE (state, { byteBoard, newVal }) {
-    let i = state.allMinedClovers.findIndex(cl => cl.byteBoard === byteBoard)
-    Object.assign(state.allMinedClovers[i], {startPrice: newVal})
+
+  SIGN_IN (state, { account, signature }) {
+    state.tokens = { ...state.tokens, [account]: signature }
+    updateLocal('clover_tokens', state.tokens)
   },
-  REMOVE_MINED_CLOVER (state, { byteBoard }) {
-    let i = state.allMinedClovers.findIndex(cl => cl.byteBoard === byteBoard)
-    if (i > -1) state.allMinedClovers.splice(i, 1)
+
+  UPDATE_CLOVER_PRICE (state, { byteBoard, newVal }) {
+    // let i = state.allSavedClovers.findIndex(cl => cl.byteBoard === byteBoard)
+    // Object.assign(state.allSavedClovers[i], { startPrice: newVal })
   },
   UPDATE_ACCOUNT (state, account) {
     state.account = account
@@ -81,11 +92,13 @@ export default {
     state.balance = parseInt(balance)
   },
   STORED_CLOVERS (state, clovers) {
-    state.allMinedClovers = clovers
+    // state.allSavedClovers = clovers
   },
   // UPDATE_ALLCLOVERS (state, allClovers) {
   //   state.allClovers = allClovers
   // },
+
+  // clovers on chain
   GOT_CLOVERS (state, data) {
     data.forEach((obj) => {
       if (!state.allClovers.find(v => v.board === obj.board)) {
@@ -93,6 +106,23 @@ export default {
       }
     })
   },
+  ADD_CLOVER (state, clover) {
+    state.allClovers.push(clover)
+  },
+  UPDATE_CLOVER (state, clover) {
+    let cloverKey = state.allClovers.findIndex((u) => u.board.toLowerCase() === clover.board.toLowerCase())
+    if (cloverKey > -1) {
+      state.allClovers.splice(cloverKey, 1, clover)
+    }
+  },
+  STORED_CLOVERS_FOUND (state, count) {
+    // count = parseInt(count)
+    // if (count < state.allSavedClovers.length) {
+    //   state.cloversFound = state.allSavedClovers.length
+    // }
+    // state.cloversFound = count
+  },
+
   UPDATE_LOGS (state, logs) {
     state.logs = logs
   },
@@ -108,15 +138,6 @@ export default {
       state.users.splice(userKey, 1, user)
     }
   },
-  ADD_CLOVER (state, clover) {
-    state.allClovers.push(clover)
-  },
-  UPDATE_CLOVER (state, clover) {
-    let cloverKey = state.allClovers.findIndex((u) => u.board.toLowerCase() === clover.board.toLowerCase())
-    if (cloverKey > -1) {
-      state.allClovers.splice(cloverKey, 1, clover)
-    }
-  },
   UPDATE_USERS (state, users) {
     state.users = users
   },
@@ -125,13 +146,6 @@ export default {
   },
   STORED_DURATION (state, duration) {
     state.mineTime = duration
-  },
-  STORED_CLOVERS_FOUND (state, count) {
-    count = parseInt(count)
-    if (count < state.allMinedClovers.length) {
-      state.cloversFound = state.allMinedClovers.length
-    }
-    state.cloversFound = count
   },
   ADD_REGISTERED_EVENT (state, event) {
     let rIndex = state.registeredEvents.findIndex((e) => e.transactionHash === event.transactionHash)
@@ -162,4 +176,9 @@ export default {
     if (msgKey < 0) return
     state.messages.splice(msgKey, 1)
   }
+}
+
+function updateLocal (key, value) {
+  if (!window.localStorage) return
+  window.localStorage.setItem(key, JSON.stringify(value))
 }

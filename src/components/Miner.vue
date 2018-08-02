@@ -317,7 +317,7 @@
         if ('symmetrical' in data) {
           this.cloverExists(data.byteBoard).then((exists) => {
             if (!exists) {
-              this.allMinedClover(data)
+              this.saveClover(data)
             }
           }).catch((err) => {
             console.log(err)
@@ -336,7 +336,7 @@
           this.setItem('totalMined', this.totalMined)
           this.setItem('mineTime', this.mineTime)
         }
-        this.setItem('clovers', this.$store.state.allMinedClovers)
+        this.setItem('clovers', this.$store.state.allSavedClovers)
         this.setItem('cloversFound', this.cloversFound)
       },
       isFocus (board) {
@@ -345,7 +345,7 @@
       },
       remove () {
         this.$set(this.selectedClover, 'removed', new Date())
-        this.removeMinedClover(this.selectedClover)
+        this.removeSavedClover(this.selectedClover)
       },
       updateFindersFee (newVal) {
         this.$set(this.selectedClover, 'findersFee', newVal)
@@ -362,13 +362,12 @@
         addMineTotal: 'MINE_INCREMENT',
         addMineTime: 'TIME_INCREMENT',
         changePower: 'CORE_COUNT',
-        allMinedClover: 'MINED_CLOVER',
-        restoreMinedClovers: 'EXISTING_CLOVERS',
+        saveClover: 'SAVE_CLOVER',
         storedClovers: 'STORED_CLOVERS',
         storedMineCount: 'STORED_COUNT',
         storedMineDuration: 'STORED_DURATION',
         storedCloversFound: 'STORED_CLOVERS_FOUND',
-        removeMinedClover: 'REMOVE_MINED_CLOVER'
+        removeSavedClover: 'REMOVE_SAVED_CLOVER'
       })
     },
     mounted () {
@@ -382,8 +381,8 @@
     },
     components: { ClaimClover, Symmetry }
   }
-
 </script>
+
 <style lang="scss">
   #miner {
     max-height:calc(100vh - 56px);
