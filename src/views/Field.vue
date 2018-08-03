@@ -32,6 +32,7 @@
     name: 'Field',
     data () {
       return {
+        growing: false,
         generated: []
       }
     },
@@ -45,17 +46,25 @@
       cloverImage,
 
       getNext () {
+        if (this.growing) return
+        this.growing = true
         for (let i = 30; i; i--) {
-          limiter.submit(this.mineOne)
+          limiter.submit(this.mineOne, i === 1, this.miningDone)
         }
       },
-      mineOne () {
+      mineOne (last) {
         clover.mine()
         this.generated.push({
           board: pad0x(clover.byteBoard),
           movesString: clover.movesString,
           createdAt: new Date()
         })
+        if (last) {
+          this.growing = false
+        }
+      },
+      miningDone () {
+        // no op
       },
       isSaved ({ board }) {
         if (!this.picks.length) return false
