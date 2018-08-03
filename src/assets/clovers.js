@@ -1,11 +1,11 @@
 import utils from 'web3-utils'
-const BN = utils.BN
 // import clubTokenArtifacts from './ClubToken.json'
 // import contract from 'truffle-contract'
 import Web3 from 'web3'
 import Reversi from 'clovers-reversi'
 
 import {Clovers, ClubToken, CloversController} from 'clovers-contracts'
+const BN = utils.BN
 
 // const ProviderEngine = require('web3-provider-engine/index.js')
 const ZeroClientProvider = require('web3-provider-engine/zero.js')

@@ -2,6 +2,12 @@ import Vue from "vue";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
+
+import BN from "bignumber.js";
+
+import Clv from "@/components/Clv";
+import CloverIcon from "@/components/CloverIcon";
+import CloverGridItem from "@/components/CloverGridItem";
 // import './registerServiceWorker'
 
 router.beforeEach((to, from, next) => {
@@ -21,13 +27,7 @@ router.beforeEach((to, from, next) => {
 router.afterEach(() => {
   if (ga) ga("send", "pageview");
 });
-
-import BN from "bignumber.js";
 Object.defineProperty(Vue.prototype, "$BN", { value: BN });
-
-import Clv from "@/components/Clv";
-import CloverIcon from "@/components/CloverIcon";
-import CloverGridItem from "@/components/CloverGridItem";
 
 Vue.component("clv", Clv);
 Vue.component("clover-icon", CloverIcon);

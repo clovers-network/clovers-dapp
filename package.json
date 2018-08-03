@@ -77,10 +77,12 @@
     "rules": {
       "no-unused-vars": 0,
       "no-console": 0,
-      "no-inner-declarations": 0
+      "no-inner-declarations": 0,
+      "import/no-webpack-loader-syntax": 0
     },
     "root": false,
     "extends": [
+      "standard",
       "plugin:vue/essential",
       "eslint:recommended"
     ],
