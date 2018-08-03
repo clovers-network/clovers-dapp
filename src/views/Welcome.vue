@@ -29,10 +29,6 @@ export default {
     return {
       heart:
         'C4E3F4C5D6F3D3C2D2E6F5E7C6B6F7B4E8F8G8G5F6B3D8G3G4H5H6H7F2E1B5D7G6A4C8D1C3E2C1B1G1G2H1G7H8C7F1H2H4B2H3A1A2B8B7A8A7A6A5A3',
-      random1: null,
-      random2: null,
-      random3: null,
-      random4: null
     }
   },
   mounted() {
