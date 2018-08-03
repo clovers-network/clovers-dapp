@@ -90,9 +90,6 @@ export default {
         this.showMiner = false
       }
     },
-    showMiner () {
-      this.symmsSinceOpened = 0
-    },
     toggleMinePanel () {
       this.showMiner = !this.showMiner
     }

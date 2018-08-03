@@ -1,7 +1,7 @@
 <template>
   <div class="p2 my4">
     <ul class="list-reset flex flex-wrap">
-      <li v-for="clover in picks" class="pr4 pb4">
+      <li v-for="(clover, i) in picks" :key="i" class="pr4 pb4">
         <img :src="cloverImage(clover)"/>
       </li>
     </ul>
@@ -15,10 +15,7 @@ import { cloverImage } from '@/utils'
 export default {
   name: 'Picks',
   computed: {
-    ...mapGetters([
-      'picks',
-      'pickCount'
-    ])
+    ...mapGetters(['picks', 'pickCount'])
   },
   methods: {
     cloverImage

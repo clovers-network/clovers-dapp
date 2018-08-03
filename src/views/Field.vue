@@ -1,7 +1,7 @@
 <template>
   <div class="p2 my4">
     <ul class="list-reset flex flex-wrap">
-      <li v-for="clover in generated" class="pr4 pb4">
+      <li v-for="(clover, i) in generated" :key="i" class="pr4 pb4">
         <img :src="cloverImage(clover)"/>
         <p class="h2">
           <span v-if="isSaved(clover)" class="green">&hearts;</span>
@@ -37,10 +37,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'picks',
-      'pickCount'
-    ])
+    ...mapGetters(['picks', 'pickCount'])
   },
   methods: {
     cloverImage,
