@@ -5,7 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build && cp _redirects dist",
-    "lint": "vue-cli-service lint --fix",
+    "lint": "vue-cli-service lint --fix"
   },
   "pre-commit": [
     "lint"
@@ -74,12 +74,21 @@
     ]
   },
   "eslintConfig": {
+    "rules": {
+      "no-unused-vars": 0,
+      "no-console": 0,
+      "no-inner-declarations": 0
+    },
     "root": false,
     "extends": [
       "plugin:vue/essential",
       "eslint:recommended"
     ],
     "globals": {
+      "require": true,
+      "process": true,
+      "global": true,
+      "module": true,
       "web3": true,
       "ga": true
     }

@@ -21,81 +21,83 @@
 
 // import {Clovers} from 'clovers-contracts'
 
-import io from "socket.io-client"
-import Clover from "../assets/clovers"
-import axios from 'axios'
+import io from "socket.io-client";
+import Clover from "../assets/clovers";
+import axios from "axios";
 
-const apiBase = process.env.VUE_APP_API_URL
-const signingParams = [{
-  type: 'string',
-  name: 'Message',
-  value: 'To avoid bad things, sign below to authenticate with Clovers'
-}]
+const apiBase = process.env.VUE_APP_API_URL;
+const signingParams = [
+  {
+    type: "string",
+    name: "Message",
+    value: "To avoid bad things, sign below to authenticate with Clovers"
+  }
+];
 
-let polling = null
-global.clover = new Clover()
+let polling = null;
+global.clover = new Clover();
 
 export default {
   initWeb3({ commit, dispatch }) {
-    console.log("INIT-1")
-    return clover.initWeb3().then((network, readOnly) => {
-      console.log("INIT-2")
-      console.log("network", network)
-      commit("UPDATE_NETWORK_ID", network)
-      console.log("readOnly", readOnly)
-      commit("UPDATE_READONLY", readOnly)
-      dispatch("startWeb3Polling")
-    })
+    console.log("INIT-1");
+    return global.clover.initWeb3().then((network, readOnly) => {
+      console.log("INIT-2");
+      console.log("network", network);
+      commit("UPDATE_NETWORK_ID", network);
+      console.log("readOnly", readOnly);
+      commit("UPDATE_READONLY", readOnly);
+      dispatch("startWeb3Polling");
+    });
   },
   startWeb3Polling({ dispatch }) {
     polling =
       polling ||
       setInterval(() => {
-        dispatch("checkAccount")
-      }, 1000)
+        dispatch("checkAccount");
+      }, 1000);
   },
   stopWeb3Polling() {
-    clearInterval(polling)
+    clearInterval(polling);
   },
   checkAccount({ commit, state }) {
-    if (state.readOnly) return
-    clover
+    if (state.readOnly) return;
+    global.clover
       .getAccounts()
-      .then((accounts) => {
+      .then(accounts => {
         if (accounts.length && state.account !== accounts[0]) {
-          commit("UPDATE_ACCOUNT", accounts[0])
+          commit("UPDATE_ACCOUNT", accounts[0]);
           state.account &&
-            clover
+            global.clover
               .clubTokenBalanceOf(state.account)
               .then(balance => {
                 if (balance !== state.balance) {
-                  commit("UPDATE_BALANCE", balance)
+                  commit("UPDATE_BALANCE", balance);
                 }
               })
-              .catch(err => console.log(err))
+              .catch(err => console.log(err));
         } else if (state.account && !accounts.length) {
-          commit("UPDATE_ACCOUNT", null)
+          commit("UPDATE_ACCOUNT", null);
         }
       })
       .catch(error => {
-        console.error(error)
-      })
+        console.error(error);
+      });
   },
   checkBlock({ commit }) {
-    clover
+    global.clover
       .currentBlock()
       .then(block => {
-        commit("UPDATE_CURRENT_BLOCK", block.number)
+        commit("UPDATE_CURRENT_BLOCK", block.number);
       })
       .catch(error => {
-        console.error(error)
-      })
+        console.error(error);
+      });
   },
   setUpSocket({ commit }) {
-    const socket = io(process.env.VUE_APP_API_URL)
-    socket.on('disconnect', () => {
-      console.log('disconnected')
-    })
+    const socket = io(process.env.VUE_APP_API_URL);
+    socket.on("disconnect", () => {
+      console.log("disconnected");
+    });
 
     // socket.on("init", ({ clovers, users, logs }) => {
     //   console.log("got init")
@@ -104,92 +106,105 @@ export default {
     //   commit("UPDATE_USERS", users)
     // })
 
-    socket.on('newUser', (user) => {
-      commit('ADD_USER', user)
-      console.log(user)
-    })
-    socket.on('updateUser', (user) => {
-      commit('UPDATE_USER', user)
-      console.log(user)
-    })
-    socket.on('newClover', (clover) => {
-      commit('NEW_CLOVER_FROM_CHAIN', clover)
-    })
-    socket.on('updateClover', (clover) => {
-      commit('UPDATE_CLOVER', clover)
-      console.log(clover)
-    })
-    socket.on('newUserName', (log) => {
-      console.log(log)
-      commit('ADD_LOG', log)
-    })
-    socket.on('newCloverName', (log) => {
-      console.log(log)
-      commit('ADD_LOG', log)
-    })
-    socket.on('Registered', (log) => {
-      console.log(log)
-      commit('ADD_LOG', log)
-    })
+    socket.on("newUser", user => {
+      commit("ADD_USER", user);
+      console.log(user);
+    });
+    socket.on("updateUser", user => {
+      commit("UPDATE_USER", user);
+      console.log(user);
+    });
+    socket.on("newClover", clover => {
+      commit("NEW_CLOVER_FROM_CHAIN", clover);
+    });
+    socket.on("updateClover", clover => {
+      commit("UPDATE_CLOVER", clover);
+      console.log(clover);
+    });
+    socket.on("newUserName", log => {
+      console.log(log);
+      commit("ADD_LOG", log);
+    });
+    socket.on("newCloverName", log => {
+      console.log(log);
+      commit("ADD_LOG", log);
+    });
+    socket.on("Registered", log => {
+      console.log(log);
+      commit("ADD_LOG", log);
+    });
   },
   selfDestructMsg({ commit }, msg) {
-    let msgId = commit("ADD_MSG", msg)
+    let msgId = commit("ADD_MSG", msg);
     setTimeout(() => {
-      commit("REMOVE_MSG", msgId)
-    }, 7000)
+      commit("REMOVE_MSG", msgId);
+    }, 7000);
   },
   addMessage({ commit }, msg) {
-    let msgId = Date.now()
-    msg.id = msgId
-    commit("ADD_MSG", msg)
-    return msg.id
+    let msgId = Date.now();
+    msg.id = msgId;
+    commit("ADD_MSG", msg);
+    return msg.id;
   },
   cloverExists({ state }, byteBoard) {
-    console.log(byteBoard)
-    return state.allClovers.findIndex(c => c.board === byteBoard) > -1
+    console.log(byteBoard);
+    return state.allClovers.findIndex(c => c.board === byteBoard) > -1;
   },
 
   getClovers({ state, commit }, page = 1) {
-    let cloverCount = state.allClovers.length
-    let params = { page }
+    let cloverCount = state.allClovers.length;
+    let params = { page };
     if (!cloverCount) {
       // all prev, up to end of requested page
-      params.all = true
+      params.all = true;
     } else {
       // can just get next page (offset in case of new)
-      params.before = state.allClovers[cloverCount - 1].modified
+      params.before = state.allClovers[cloverCount - 1].modified;
     }
-    return axios.get(apiUrl('/clovers'), { params }).then(({ data }) => {
-      commit('GOT_CLOVERS', data)
-    }).catch(console.log)
+    return axios
+      .get(apiUrl("/clovers"), { params })
+      .then(({ data }) => {
+        commit("GOT_CLOVERS", data);
+      })
+      .catch(console.log);
   },
 
-  signIn ({ state, commit }) {
-    const { account } = state
-    if (!account) return
-    global.web3.currentProvider.sendAsync({
-      method: 'eth_signTypedData',
-      params: [signingParams, account],
-      from: account
-    }, (err, { result }) => {
-      console.log(err, result)
-      commit('SIGN_IN', { account, signature: result })
-    })
-  },
-
-  updateCloverName ({ getters, commit }, clover) {
-    const { board, name } = clover
-    // if (!getters.authHeader) alert('Not signed in, this won\'t work')
-    return axios.put(apiUrl(`/clovers/${board}`), { name }, {
-      headers: {
-        Authorization: getters.authHeader
+  signIn({ state, commit }) {
+    const { account } = state;
+    if (!account) return;
+    global.web3.currentProvider.sendAsync(
+      {
+        method: "eth_signTypedData",
+        params: [signingParams, account],
+        from: account
+      },
+      (err, { result }) => {
+        console.log(err, result);
+        commit("SIGN_IN", { account, signature: result });
       }
-    }).then(({ data }) => {
-      console.log(data)
-    }).catch(console.log)
-  }
-}
+    );
+  },
 
-function apiUrl (path) {
-  return apiBase + path
+  updateCloverName({ getters, commit }, clover) {
+    const { board, name } = clover;
+    // if (!getters.authHeader) alert('Not signed in, this won\'t work')
+    return axios
+      .put(
+        apiUrl(`/clovers/${board}`),
+        { name },
+        {
+          headers: {
+            Authorization: getters.authHeader
+          }
+        }
+      )
+      .then(({ data }) => {
+        console.log(data);
+      })
+      .catch(console.log);
+  }
+};
+
+function apiUrl(path) {
+  return apiBase + path;
 }
