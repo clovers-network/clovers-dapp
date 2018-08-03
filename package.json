@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build && cp _redirects dist",
     "lint": "vue-cli-service lint --fix",
-    "precommit" : "echo 'lint' && npm run lint"
+    "pre-commit" : "echo 'lint' && npm run lint"
   },
   "dependencies": {
     "axios": "^0.18.0",
