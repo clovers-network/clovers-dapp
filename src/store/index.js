@@ -6,6 +6,10 @@ import actions from './actions'
 import getters from './getters'
 import mutations from './mutations'
 
+import Reversi from 'clovers-reversi'
+
+global.Reversi = new Reversi()
+
 Vue.use(Vuex)
 
 // const debug = process.env.NODE_ENV !== 'production'
@@ -32,7 +36,7 @@ const state = {
   // all pages get pushed to full list
   allClovers: [],
   // saved clovers, organized by account ID
-  // use getter savedClovers in views
+  // use getter 'picks' in views
   allSavedClovers: getSavedClovers(),
 
   users: [],

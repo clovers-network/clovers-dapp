@@ -19,23 +19,24 @@
       <div class="h-header"/>
       <nav class="flex-auto flex items-center justify-center">
         <ul class="h1 list-reset">
-          <li><router-link :to="{name: 'Find'}">Find Clovers</router-link></li>
-          <li class="mt2"><router-link to="/market">Market</router-link></li>
-          <li class="mt2"><router-link :to="{name: 'Wallet'}">Wallet</router-link></li>
-          <li class="mt2"><router-link :to="{name: 'About'}">About</router-link></li>
+          <li><router-link :to="{ name: 'Field' }">Find Clovers</router-link></li>
+          <li class="mt2"><router-link :to="{ name: 'Picks' }">Picks</router-link></li>
+          <li class="mt2"><router-link to="/market">Feed</router-link></li>
+          <li class="mt2"><router-link :to="{ name: 'About' }">About</router-link></li>
         </ul>
       </nav>
       <!-- miner -->
-      <div class="pb3">
-        <nav class="h3">
-          <h6 class="center">Clover Pig</h6>
-          <button>On/Off</button>
+      <div class="py3">
+        <nav>
+          <h6 class="center h3">Clover Pig</h6>
+          <!--<button>On/Off</button>-->
+          <toggle-btn class="mx-auto my3" :active="minerOn" @click="minerOn = !minerOn"></toggle-btn>
           <div class="flex justify-between items-center">
-            <div class="col-6 px2">
+            <div class="col-6 px2 h3">
               <div>Speed</div>
               <div class="font-exp mt1">0/s</div>
             </div>
-            <div class="col-6 px2">
+            <div class="col-6 px2 h3">
               <div>Rare&nbsp;Clovers&nbsp;Found</div>
               <div class="font-exp mt1">{{ symmsSinceOpened }}</div>
             </div>
@@ -49,14 +50,15 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 import Miner from '@/components/Miner'
-
+import ToggleBtn from '@/components/ToggleBtn'
 export default {
   name: 'AppHeader',
   data () {
     return {
       showMiner: false,
       symmsSinceOpened: 0,
-      showMenu: false
+      showMenu: false,
+      minerOn: false
     }
   },
   mounted () {
@@ -88,13 +90,22 @@ export default {
         this.showMiner = false
       }
     },
+    showMiner () {
+      this.symmsSinceOpened = 0
+    },
     toggleMinePanel () {
       this.showMiner = !this.showMiner
     }
   },
   computed: {
     userName () {
-      return this.username && this.username.name && (this.username.name.length > 9 ? this.username.name.slice(0, 9) + '&hellip;' : this.username.name)
+      return (
+        this.username &&
+        this.username.name &&
+        (this.username.name.length > 9
+          ? this.username.name.slice(0, 9) + '&hellip;'
+          : this.username.name)
+      )
     },
     mineText () {
       if (!this.mining) return 'Miner stopped'
@@ -112,10 +123,11 @@ export default {
       'mining'
     ]),
 
-    ...mapGetters(['username', 'cloversFound'])
+    ...mapGetters(['username', 'cloversFound', 'pickCount'])
   },
-  components: { Miner }
+  components: { Miner, ToggleBtn }
 }
 </script>
 
-<style></style>
+<style>
+</style>

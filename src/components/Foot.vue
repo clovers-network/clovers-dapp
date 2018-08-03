@@ -1,5 +1,5 @@
 <template>
-  <div class="absolute bottom-0 left-0 right-0 bg-dark-gray">
+  <div class="hide absolute bottom-0 left-0 right-0 bg-dark-gray">
     <div class="max-width-4 flex justify-center mx-auto">
       <a
         class="p2"
@@ -18,13 +18,10 @@
 
 <script>
 export default {
-
   name: 'Foot',
 
   data () {
-    return {
-
-    }
+    return {}
   }
 }
 </script>
