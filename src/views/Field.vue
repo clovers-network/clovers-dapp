@@ -5,7 +5,7 @@
         <img :src="cloverImage(clover)"/>
         <p class="h2">
           <span v-if="isSaved(clover)" class="green">&hearts;</span>
-          <a v-else @click="saveClover(clover)" class="pointer" style="opacity:.2">&hearts;</a>
+          <a v-else @click="saveClover(clover)" class="green pointer" style="opacity:.3">&hearts;</a>
         </p>
       </li>
     </ul>
