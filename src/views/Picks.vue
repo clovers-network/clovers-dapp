@@ -3,10 +3,7 @@
 </template>
 
 <script>
-export default {
-  name: 'Find'
-}
+  export default {
+    name: 'Picks'
+  }
 </script>
-
-<style>
-</style>

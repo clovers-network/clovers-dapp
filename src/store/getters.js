@@ -72,11 +72,11 @@ export default {
     return newClovers.length
   },
 
-  savedClovers ({ account, allSavedClovers }) {
+  picks ({ account, allSavedClovers }) {
     return allSavedClovers[account || 'anon'] || []
   },
-  cloversFound (_, { savedClovers }) {
-    return savedClovers.length
+  pickCount (_, { picks }) {
+    return picks.length
   },
 
   authHeader ({ account, tokens }) {

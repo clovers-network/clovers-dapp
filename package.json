@@ -22,6 +22,7 @@
     "basscss-type-scale": "^1.0.5",
     "basscss-typography": "^3.0.4",
     "bignumber.js": "^4.1.0",
+    "bottleneck": "^2.6.0",
     "clovers-contracts": "github:clovers-network/clovers-contracts",
     "clovers-reversi": "github:clovers-network/clovers-reversi",
     "copy-to-clipboard": "^3.0.8",

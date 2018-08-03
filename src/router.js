@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Welcome from '@/views/Welcome'
-import Find from '@/views/Find'
+import Field from '@/views/Field'
 import Market from '@/views/Market'
-import Wallet from '@/views/Wallet'
+import Picks from '@/views/Picks'
 import About from '@/views/About'
 // Old routes
 import AboutOld from '@/components/About'
@@ -25,9 +25,9 @@ export default new Router({
       component: Welcome
     },
     {
-      path: '/find',
-      name: 'Find',
-      component: Find
+      path: '/field',
+      name: 'Field',
+      component: Field
     },
     {
       path: '/market(/page/)?:page?',
@@ -36,8 +36,8 @@ export default new Router({
     },
     {
       path: '/wallet',
-      name: 'Wallet',
-      component: Wallet
+      name: 'Picks',
+      component: Picks
     },
     {
       path: '/about',
