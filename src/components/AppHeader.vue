@@ -17,16 +17,17 @@
         </ul>
       </nav>
       <!-- miner -->
-      <div class="pb3">
-        <nav class="h3">
-          <h6 class="center">Clover Pig</h6>
-          <button>On/Off</button>
+      <div class="py3">
+        <nav>
+          <h6 class="center h3">Clover Pig</h6>
+          <!--<button>On/Off</button>-->
+          <toggle-btn class="mx-auto my3" :active="minerOn" @click="minerOn = !minerOn"></toggle-btn>  
           <div class="flex justify-between items-center">
-            <div class="col-6 px2">
+            <div class="col-6 px2 h3">
               <div>Speed</div>
               <div class="font-exp mt1">0/s</div>
             </div>
-            <div class="col-6 px2">
+            <div class="col-6 px2 h3">
               <div>Rare&nbsp;Clovers&nbsp;Found</div>
               <div class="font-exp mt1">{{symmsSinceOpened}}</div>
             </div>
@@ -40,14 +41,15 @@
 <script>
   import { mapGetters, mapState } from 'vuex'
   import Miner from '@/components/Miner'
-
+  import ToggleBtn from '@/components/ToggleBtn'
   export default {
     name: 'AppHeader',
     data () {
       return {
         showMiner: false,
         symmsSinceOpened: 0,
-        showMenu: false
+        showMenu: false,
+        minerOn: false
       }
     },
     mounted () {
@@ -105,7 +107,7 @@
 
       ...mapGetters(['username', 'cloversFound'])
     },
-    components: { Miner }
+    components: { Miner, ToggleBtn }
   }
 </script>
 
