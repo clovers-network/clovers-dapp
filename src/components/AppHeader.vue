@@ -10,10 +10,10 @@
       <div class="h-header"></div>
       <nav class="flex-auto flex items-center justify-center">
         <ul class="h1 list-reset">
-          <li><router-link :to="{name: 'Find'}">Find Clovers</router-link></li>
-          <li class="mt2"><router-link to="/market">Market</router-link></li>
-          <li class="mt2"><router-link :to="{name: 'Wallet'}">Wallet</router-link></li>
-          <li class="mt2"><router-link :to="{name: 'About'}">About</router-link></li>
+          <li><router-link :to="{ name: 'Field' }">Find Clovers</router-link></li>
+          <li class="mt2"><router-link :to="{ name: 'Picks' }">Picks</router-link></li>
+          <li class="mt2"><router-link to="/market">Feed</router-link></li>
+          <li class="mt2"><router-link :to="{ name: 'About' }">About</router-link></li>
         </ul>
       </nav>
       <!-- miner -->
@@ -61,11 +61,6 @@
         this.showMenu = false
         this.showMiner = false
       },
-      cloversFound () {
-        if (this.allClovers && this.allClovers.length > 0) {
-          this.symmsSinceOpened++
-        }
-      },
       showMiner () {
         this.symmsSinceOpened = 0
       }
@@ -103,7 +98,7 @@
         'mining'
       ]),
 
-      ...mapGetters(['username', 'cloversFound'])
+      ...mapGetters(['username', 'pickCount'])
     },
     components: { Miner }
   }
