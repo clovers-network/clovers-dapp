@@ -18,6 +18,9 @@ export default {
   registeredEvents (state) {
     return state.logs.filter(log => log.name === 'Registered')
   },
+  cloversFound () {
+    return ['??????']
+  },
   minedClovers (state) {
     console.log('mined clovers calculated')
     // return state.allSavedClovers || []
