@@ -3,7 +3,7 @@ export default {
     state.submittingBoards.push(byteBoard)
   },
   SUBMITTED_CLOVER_DONE (state, byteBoard) {
-    let boardKey = state.submittingBoards.findIndex((b) => b === byteBoard)
+    let boardKey = state.submittingBoards.findIndex(b => b === byteBoard)
     if (boardKey > -1) {
       state.submittingBoards.splice(boardKey, 1)
     } else {
@@ -30,7 +30,6 @@ export default {
   TIME_INCREMENT (state, inc) {
     if (!inc) return
     state.mineTime = parseInt(state.mineTime) + parseInt(inc)
-
   },
   CORE_COUNT (state, count) {
     state.miningPower = count
@@ -48,7 +47,9 @@ export default {
   },
   REMOVE_SAVED_CLOVER (state, { board }) {
     const account = state.account || 'anon'
-    const index = state.allSavedClovers[account].findIndex(c = c.board === board)
+    const index = state.allSavedClovers[account].findIndex(
+      c => c.board === board
+    )
     if (index >= 0) {
       state.allSavedClovers.splice(index, 1)
       updateLocal('saved_clovers', state.allSavedClovers)
@@ -109,7 +110,7 @@ export default {
 
   // clovers on chain
   GOT_CLOVERS (state, data) {
-    data.forEach((obj) => {
+    data.forEach(obj => {
       if (!state.allClovers.find(v => v.board === obj.board)) {
         state.allClovers.push(obj)
       }
@@ -119,7 +120,9 @@ export default {
     state.allClovers.push(clover)
   },
   UPDATE_CLOVER (state, clover) {
-    let cloverKey = state.allClovers.findIndex((u) => u.board.toLowerCase() === clover.board.toLowerCase())
+    let cloverKey = state.allClovers.findIndex(
+      u => u.board.toLowerCase() === clover.board.toLowerCase()
+    )
     if (cloverKey > -1) {
       state.allClovers.splice(cloverKey, 1, clover)
     }
@@ -142,7 +145,9 @@ export default {
     state.users.push(user)
   },
   UPDATE_USER (state, user) {
-    let userKey = state.users.findIndex((u) => u.address.toLowerCase() === user.address.toLowerCase())
+    let userKey = state.users.findIndex(
+      u => u.address.toLowerCase() === user.address.toLowerCase()
+    )
     if (userKey > -1) {
       state.users.splice(userKey, 1, user)
     }
@@ -157,21 +162,27 @@ export default {
     state.mineTime = duration
   },
   ADD_REGISTERED_EVENT (state, event) {
-    let rIndex = state.registeredEvents.findIndex((e) => e.transactionHash === event.transactionHash)
+    let rIndex = state.registeredEvents.findIndex(
+      e => e.transactionHash === event.transactionHash
+    )
     if (rIndex < 0) state.registeredEvents.push(event)
   },
   ADD_REGISTERED_EVENTS (state, events) {
     state.registeredEvents.push(...events)
   },
   ADD_USERNAME_EVENT (state, event) {
-    let rIndex = state.usernameEvents.findIndex((e) => e.transactionHash === event.transactionHash)
+    let rIndex = state.usernameEvents.findIndex(
+      e => e.transactionHash === event.transactionHash
+    )
     if (rIndex < 0) state.usernameEvents.push(event)
   },
   ADD_USERNAME_EVENTS (state, events) {
     state.usernameEvents.push(...events)
   },
   ADD_CLOVERNAME_EVENT (state, event) {
-    let rIndex = state.clovernameEvents.findIndex((e) => e.transactionHash === event.transactionHash)
+    let rIndex = state.clovernameEvents.findIndex(
+      e => e.transactionHash === event.transactionHash
+    )
     if (rIndex < 0) state.clovernameEvents.push(event)
   },
   ADD_CLOVERNAME_EVENTS (state, events) {
@@ -181,7 +192,7 @@ export default {
     state.messages.push(msg)
   },
   REMOVE_MSG (state, msgId) {
-    let msgKey = state.messages.findIndex((m) => m.id === msgId)
+    let msgKey = state.messages.findIndex(m => m.id === msgId)
     if (msgKey < 0) return
     state.messages.splice(msgKey, 1)
   }

@@ -9,73 +9,67 @@
         <router-link :to="nextPage">Next page</router-link>
       </li>
     </nav>
-    <ul class="list-reset flex flex-wrap">
-      <li v-for="clover in clovers" class="pr4 pb4">
-        <img :src="cloverImage(clover)"/>
+    <ul>
+      <li v-for="(clover, key) in clovers" :key="key">
+        {{ clover.board }}
       </li>
     </ul>
   </div>
 </template>
 
 <script>
-  import store from '@/store'
-  import { mapGetters } from 'vuex'
-  import { cloverImage } from '@/utils'
-  const pageSize = 12
+import store from '@/store'
+import { mapGetters } from 'vuex'
+const pageSize = 12
 
-  export default {
-    name: 'Market',
-    computed: {
-      page () {
-        return Number(this.$route.params.page) || 1
-      },
-      clovers () {
-        const start = (this.page - 1) * pageSize
-        const end = this.page * pageSize
-        return this.$store.state.allClovers.slice(start, end)
-      },
-      allLoadedCloverCount () {
-        return this.$store.state.allClovers.length
-      },
-      nextPage () {
-        if (this.clovers.length < 12) return false
-        return `/market/page/${this.page + 1}`
-      },
-      prevPage () {
-        if (this.page === 1) {
-          return false
-        } else if (this.page === 2) {
-          return '/market'
-        } else {
-          return `/market/page/${this.page - 1}`
-        }
-      },
-
-      ...mapGetters([
-        'newCloversCount'
-      ])
+export default {
+  name: 'Market',
+  computed: {
+    page () {
+      return Number(this.$route.params.page) || 1
     },
-    methods: {
-      cloverImage
+    clovers () {
+      const start = (this.page - 1) * pageSize
+      const end = this.page * pageSize
+      return this.$store.state.allClovers.slice(start, end)
     },
-    watch: {
-      page (newVal, oldVal) {
-        if (Number(newVal) > Number(oldVal)) {
-          store.dispatch('getClovers', newVal)
-        }
+    allLoadedCloverCount () {
+      return this.$store.state.allClovers.length
+    },
+    nextPage () {
+      if (this.clovers.length < 12) return false
+      return `/market/page/${this.page + 1}`
+    },
+    prevPage () {
+      if (this.page === 1) {
+        return false
+      } else if (this.page === 2) {
+        return '/market'
+      } else {
+        return `/market/page/${this.page - 1}`
       }
     },
-    beforeRouteEnter (to, from, next) {
-      let { page } = to.params
-      return store.dispatch('getClovers', page).then(() => {
-        next()
-      })
-    },
-    mounted () {
-      if (!this.clovers.length) {
-        let lastPage = Math.ceil(this.allLoadedCloverCount / 12)
-        this.$router.replace(`/market/page/${lastPage}`)
+
+    ...mapGetters(['newCloversCount'])
+  },
+  watch: {
+    page (newVal, oldVal) {
+      if (Number(newVal) > Number(oldVal)) {
+        store.dispatch('getClovers', newVal)
       }
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    let { page } = to.params
+    return store.dispatch('getClovers', page).then(() => {
+      next()
+    })
+  },
+  mounted () {
+    if (!this.clovers.length) {
+      let lastPage = Math.ceil(this.allLoadedCloverCount / 12)
+      this.$router.replace(`/market/page/${lastPage}`)
+    }
   }
+}
 </script>

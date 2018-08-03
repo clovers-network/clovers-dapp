@@ -1,7 +1,7 @@
 <template>
   <div class="p2 my4">
     <ul class="list-reset flex flex-wrap">
-      <li v-for="clover in generated" class="pr4 pb4">
+      <li v-for="(clover, i) in generated" :key="i" class="pr4 pb4">
         <img :src="cloverImage(clover)"/>
         <p class="h2">
           <span v-if="isSaved(clover)" class="green">&hearts;</span>
@@ -18,65 +18,62 @@
 </template>
 
 <script>
-  import { mapGetters, mapMutations } from 'vuex'
-  import Bottleneck from 'bottleneck'
-  import Reversi from 'clovers-reversi'
-  import { pad0x, cloverImage } from '@/utils'
+import { mapGetters, mapMutations } from 'vuex'
+import Bottleneck from 'bottleneck'
+import Reversi from 'clovers-reversi'
+import { pad0x, cloverImage } from '@/utils'
 
-  const limiter = new Bottleneck({
-    minTime: 250
-  })
-  const clover = new Reversi()
+const limiter = new Bottleneck({
+  minTime: 250
+})
+const clover = new Reversi()
 
-  export default {
-    name: 'Field',
-    data () {
-      return {
-        growing: false,
-        generated: []
+export default {
+  name: 'Field',
+  data () {
+    return {
+      growing: false,
+      generated: []
+    }
+  },
+  computed: {
+    ...mapGetters(['picks', 'pickCount'])
+  },
+  methods: {
+    cloverImage,
+
+    getNext () {
+      if (this.growing) return
+      this.growing = true
+      for (let i = 30; i; i--) {
+        limiter.submit(this.mineOne, i === 1, this.miningDone)
       }
     },
-    computed: {
-      ...mapGetters([
-        'picks',
-        'pickCount'
-      ])
-    },
-    methods: {
-      cloverImage,
-
-      getNext () {
-        if (this.growing) return
-        this.growing = true
-        for (let i = 30; i; i--) {
-          limiter.submit(this.mineOne, i === 1, this.miningDone)
-        }
-      },
-      mineOne (last) {
-        clover.mine()
-        this.generated.push({
-          board: pad0x(clover.byteBoard),
-          movesString: clover.movesString,
-          createdAt: new Date()
-        })
-        if (last) {
-          this.growing = false
-        }
-      },
-      miningDone () {
-        // no op
-      },
-      isSaved ({ board }) {
-        if (!this.picks.length) return false
-        return this.picks.findIndex(c => c.board === board) >= 0
-      },
-
-      ...mapMutations({
-        saveClover: 'SAVE_CLOVER'
+    mineOne (last) {
+      clover.mine()
+      this.generated.push({
+        board: pad0x(clover.byteBoard),
+        movesString: clover.movesString,
+        createdAt: new Date()
       })
+      if (last) {
+        this.growing = false
+      }
     },
-    beforeMount () {
-      this.getNext()
-    }
+    miningDone () {
+      // no op
+    },
+    isSaved ({ board }) {
+      if (!this.picks.length) return false
+      return this.picks.findIndex(c => c.board === board) >= 0
+    },
+
+    ...mapMutations({
+      saveClover: 'SAVE_CLOVER'
+    })
+  },
+  beforeMount () {
+    this.getNext()
   }
+}
 </script>

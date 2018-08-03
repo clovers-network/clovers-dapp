@@ -7,6 +7,9 @@
     "build": "vue-cli-service build && cp _redirects dist",
     "lint": "vue-cli-service lint --fix"
   },
+  "pre-commit": [
+    "lint"
+  ],
   "dependencies": {
     "axios": "^0.18.0",
     "basscss-addons": "^1.0.0",
@@ -22,24 +25,27 @@
     "basscss-type-scale": "^1.0.5",
     "basscss-typography": "^3.0.4",
     "bignumber.js": "^4.1.0",
-    "bottleneck": "^2.6.0",
     "clovers-contracts": "^1.0.2",
-    "clovers-reversi": "github:clovers-network/clovers-reversi",
+    "clovers-reversi": "^1.0.14",
     "copy-to-clipboard": "^3.0.8",
     "ethjs": "^0.2.9",
     "fs": "0.0.1-security",
     "moment": "^2.21.0",
     "node-emoji": "^1.8.1",
+    "pug": "^2.0.3",
+    "pug-loader": "^2.4.0",
+    "pug-plain-loader": "^1.0.0",
     "register-service-worker": "^1.0.0",
     "shelljs": "^0.7.8",
     "socket.io": "^2.0.4",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
     "truffle-contract": "^2.0.5",
     "vue": "^2.5.13",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1",
     "web3": "^1.0.0-beta.18",
     "web3-provider-engine": "^13.6.6",
-    "web3-utils": "^1.0.0-beta.31",
     "ws": "^3.3.3",
     "xss": "^0.3.7"
   },
@@ -55,6 +61,7 @@
     "postcss-color-function": "^4.0.1",
     "postcss-import": "^11.1.0",
     "postcss-reporter": "^5.0.0",
+    "pre-commit": "^1.2.2",
     "precss": "^3.1.2",
     "sass-loader": "^6.0.6",
     "vue-template-compiler": "^2.5.13",
@@ -66,12 +73,23 @@
     ]
   },
   "eslintConfig": {
+    "rules": {
+      "no-unused-vars": 0,
+      "no-console": 0,
+      "no-inner-declarations": 0,
+      "import/no-webpack-loader-syntax": 0,
+      "no-mixed-operators": 0
+    },
     "root": false,
     "extends": [
       "plugin:vue/essential",
-      "eslint:recommended"
+      "standard"
     ],
     "globals": {
+      "require": true,
+      "process": true,
+      "global": true,
+      "module": true,
       "web3": true,
       "ga": true
     }
