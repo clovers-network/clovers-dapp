@@ -9,9 +9,9 @@
         <router-link :to="nextPage">Next page</router-link>
       </li>
     </nav>
-    <ul>
-      <li v-for="clover in clovers">
-        {{ clover.board }}
+    <ul class="list-reset flex flex-wrap">
+      <li v-for="clover in clovers" class="pr4 pb4">
+        <img :src="cloverImage(clover)"/>
       </li>
     </ul>
   </div>
@@ -20,6 +20,7 @@
 <script>
   import store from '@/store'
   import { mapGetters } from 'vuex'
+  import { cloverImage } from '@/utils'
   const pageSize = 12
 
   export default {
@@ -53,6 +54,9 @@
       ...mapGetters([
         'newCloversCount'
       ])
+    },
+    methods: {
+      cloverImage
     },
     watch: {
       page (newVal, oldVal) {

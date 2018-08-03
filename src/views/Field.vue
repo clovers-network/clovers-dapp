@@ -21,9 +21,8 @@
   import { mapGetters, mapMutations } from 'vuex'
   import Bottleneck from 'bottleneck'
   import Reversi from 'clovers-reversi'
-  import { pad0x } from '@/utils'
+  import { pad0x, cloverImage } from '@/utils'
 
-  const apiBase = process.env.VUE_APP_API_URL
   const limiter = new Bottleneck({
     minTime: 250
   })
@@ -43,6 +42,8 @@
       ])
     },
     methods: {
+      cloverImage,
+
       getNext () {
         for (let i = 30; i; i--) {
           limiter.submit(this.mineOne)
@@ -55,9 +56,6 @@
           movesString: clover.movesString,
           createdAt: new Date()
         })
-      },
-      cloverImage ({ board }) {
-        return `${apiBase}/clovers/svg/${board}/200`
       },
       isSaved ({ board }) {
         if (!this.picks.length) return false
