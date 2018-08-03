@@ -9,6 +9,4 @@ import clubTokenArtifacts from '../../../build/contracts/ClubToken.json'
 const ClubToken = contract(clubTokenArtifacts)
 ClubToken.setProvider(web3.currentProvider)
 
-export {
-  ClubToken
-}
+export { ClubToken }

@@ -25,22 +25,22 @@ const pageSize = 12
 export default {
   name: 'Market',
   computed: {
-    page() {
+    page () {
       return Number(this.$route.params.page) || 1
     },
-    clovers() {
+    clovers () {
       const start = (this.page - 1) * pageSize
       const end = this.page * pageSize
       return this.$store.state.allClovers.slice(start, end)
     },
-    allLoadedCloverCount() {
+    allLoadedCloverCount () {
       return this.$store.state.allClovers.length
     },
-    nextPage() {
+    nextPage () {
       if (this.clovers.length < 12) return false
       return `/market/page/${this.page + 1}`
     },
-    prevPage() {
+    prevPage () {
       if (this.page === 1) {
         return false
       } else if (this.page === 2) {
@@ -53,19 +53,19 @@ export default {
     ...mapGetters(['newCloversCount'])
   },
   watch: {
-    page(newVal, oldVal) {
+    page (newVal, oldVal) {
       if (Number(newVal) > Number(oldVal)) {
         store.dispatch('getClovers', newVal)
       }
     }
   },
-  beforeRouteEnter(to, from, next) {
+  beforeRouteEnter (to, from, next) {
     let { page } = to.params
     return store.dispatch('getClovers', page).then(() => {
       next()
     })
   },
-  mounted() {
+  mounted () {
     if (!this.clovers.length) {
       let lastPage = Math.ceil(this.allLoadedCloverCount / 12)
       this.$router.replace(`/market/page/${lastPage}`)
