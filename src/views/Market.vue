@@ -10,7 +10,9 @@
       </li>
     </nav>
     <ul>
-      <li v-for="(clover, key) in clovers" :key="key">
+      <li
+        v-for="(clover, key) in clovers"
+        :key="key">
         {{ clover.board }}
       </li>
     </ul>
@@ -18,58 +20,58 @@
 </template>
 
 <script>
-import store from "@/store";
-import { mapGetters } from "vuex";
-const pageSize = 12;
+import store from '@/store'
+import { mapGetters } from 'vuex'
+const pageSize = 12
 
 export default {
-  name: "Market",
+  name: 'Market',
   computed: {
-    page() {
-      return Number(this.$route.params.page) || 1;
+    page () {
+      return Number(this.$route.params.page) || 1
     },
-    clovers() {
-      const start = (this.page - 1) * pageSize;
-      const end = this.page * pageSize;
-      return this.$store.state.allClovers.slice(start, end);
+    clovers () {
+      const start = (this.page - 1) * pageSize
+      const end = this.page * pageSize
+      return this.$store.state.allClovers.slice(start, end)
     },
-    allLoadedCloverCount() {
-      return this.$store.state.allClovers.length;
+    allLoadedCloverCount () {
+      return this.$store.state.allClovers.length
     },
-    nextPage() {
-      if (this.clovers.length < 12) return false;
-      return `/market/page/${this.page + 1}`;
+    nextPage () {
+      if (this.clovers.length < 12) return false
+      return `/market/page/${this.page + 1}`
     },
-    prevPage() {
+    prevPage () {
       if (this.page === 1) {
-        return false;
+        return false
       } else if (this.page === 2) {
-        return "/market";
+        return '/market'
       } else {
-        return `/market/page/${this.page - 1}`;
+        return `/market/page/${this.page - 1}`
       }
     },
 
-    ...mapGetters(["newCloversCount"])
+    ...mapGetters(['newCloversCount'])
   },
   watch: {
-    page(newVal, oldVal) {
+    page (newVal, oldVal) {
       if (Number(newVal) > Number(oldVal)) {
-        store.dispatch("getClovers", newVal);
+        store.dispatch('getClovers', newVal)
       }
     }
   },
-  beforeRouteEnter(to, from, next) {
-    let { page } = to.params;
-    return store.dispatch("getClovers", page).then(() => {
-      next();
-    });
+  beforeRouteEnter (to, from, next) {
+    let { page } = to.params
+    return store.dispatch('getClovers', page).then(() => {
+      next()
+    })
   },
-  mounted() {
+  mounted () {
     if (!this.clovers.length) {
-      let lastPage = Math.ceil(this.allLoadedCloverCount / 12);
-      this.$router.replace(`/market/page/${lastPage}`);
+      let lastPage = Math.ceil(this.allLoadedCloverCount / 12)
+      this.$router.replace(`/market/page/${lastPage}`)
     }
   }
-};
+}
 </script>

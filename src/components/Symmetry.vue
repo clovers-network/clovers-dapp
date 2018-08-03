@@ -1,40 +1,46 @@
 <template>
-  <ul :class="{absolute:absolute, 'all-symmetries': horizontal}" class=" list-reset ">
-    <li v-for="(sym, i) in symmetries" :key="i" :class="[sym, {'inline-block': horizontal}]" class="symmetry-type"></li>
+  <ul
+    :class="{absolute:absolute, 'all-symmetries': horizontal}"
+    class=" list-reset ">
+    <li
+      v-for="(sym, i) in symmetries"
+      :key="i"
+      :class="[sym, {'inline-block': horizontal}]"
+      class="symmetry-type"/>
   </ul>
 </template>
 
 <script>
-  export default {
-    name: 'symmetry',
-    props: {
-      board: {
-        type: Object,
-        required: true
-      },
-      horizontal: {
-        type: Boolean,
-        default: true
-      },
-      absolute: {
-        type: Boolean,
-        default: true
-      }
+export default {
+  name: 'Symmetry',
+  props: {
+    board: {
+      type: Object,
+      required: true
     },
-    computed: {
-      symmetries () {
-        let list = []
-        let types = ['RotSym', 'Y0Sym', 'X0Sym', 'XYSym', 'XnYSym']
-        for (let key in this.board) {
-          if (types.includes(key) && this.board[key]) list.push(key)
-        }
-        // if (!list.length) {
-
-        // }
-        return list
+    horizontal: {
+      type: Boolean,
+      default: true
+    },
+    absolute: {
+      type: Boolean,
+      default: true
+    }
+  },
+  computed: {
+    symmetries () {
+      let list = []
+      let types = ['RotSym', 'Y0Sym', 'X0Sym', 'XYSym', 'XnYSym']
+      for (let key in this.board) {
+        if (types.includes(key) && this.board[key]) list.push(key)
       }
+      // if (!list.length) {
+
+      // }
+      return list
     }
   }
+}
 </script>
 
 <style lang="scss">

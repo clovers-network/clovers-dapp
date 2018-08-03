@@ -1,11 +1,21 @@
 <template>
-  <router-link :to="link" tag="div" class="pointer gridItem relative">
-    <div class="center muted mb2 h5" v-text="timeAgo"></div>
+  <router-link
+    :to="link"
+    tag="div"
+    class="pointer gridItem relative">
+    <div
+      class="center muted mb2 h5"
+      v-text="timeAgo"/>
     <!-- <div class="center silver mb2">by {{board.previousOwners[0]}}</div> -->
     <div>
-    <clv :show-flags="true" :no-click="true" :byteBoard="board.board"></clv>
-      <div class="h1 center mt2 max-fit overflow-hidden" ><code v-html="boardName"></code></div>
-      <div class="center mt2 max-fit overflow-hidden" v-html="boardOwner"></div>
+      <clv
+        :show-flags="true"
+        :no-click="true"
+        :byte-board="board.board"/>
+      <div class="h1 center mt2 max-fit overflow-hidden" ><code v-html="boardName"/></div>
+      <div
+        class="center mt2 max-fit overflow-hidden"
+        v-html="boardOwner"/>
       <div class="center mt2">
         <span>{{ price }}</span> &clubs; /
         <span>{{ flippers }}</span> &orarr;
@@ -15,12 +25,12 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
-import moment from "moment";
+import { mapState, mapGetters } from 'vuex'
+import moment from 'moment'
 export default {
-  name: "clover-grid-item",
-  data() {
-    return {};
+  name: 'CloverGridItem',
+  data () {
+    return {}
   },
   props: {
     board: {
@@ -33,62 +43,62 @@ export default {
     }
   },
   computed: {
-    boardName() {
-      let name = this.board.name || this.board.board;
-      return name && (name.length > 9 ? name.slice(0, 9) + "&hellip;" : name);
+    boardName () {
+      let name = this.board.name || this.board.board
+      return name && (name.length > 9 ? name.slice(0, 9) + '&hellip;' : name)
     },
-    boardOwner() {
+    boardOwner () {
       let address =
         this.board.previousOwners &&
-        this.board.previousOwners[this.board.previousOwners.length - 1];
-      let owner = this.users.find(u => u.address === address);
-      owner = (owner && owner.address && owner.name) || address;
+        this.board.previousOwners[this.board.previousOwners.length - 1]
+      let owner = this.users.find(u => u.address === address)
+      owner = (owner && owner.address && owner.name) || address
       return (
         owner &&
-        "Owned By: " +
-          (owner.length > 9 ? owner.slice(0, 9) + "&hellip;" : owner)
-      );
+        'Owned By: ' +
+          (owner.length > 9 ? owner.slice(0, 9) + '&hellip;' : owner)
+      )
     },
-    flippers() {
+    flippers () {
       return (
         this.board &&
         this.board.previousOwners &&
         this.board.previousOwners.length - 1
-      );
+      )
     },
-    price() {
+    price () {
       if (!this.flippers) {
-        return this.board.lastPaidAmount.toLocaleString();
+        return this.board.lastPaidAmount.toLocaleString()
       }
-      return (this.board.lastPaidAmount * 2).toLocaleString();
+      return (this.board.lastPaidAmount * 2).toLocaleString()
     },
-    link() {
-      return `/clovers/${this.board.board}`;
+    link () {
+      return `/clovers/${this.board.board}`
     },
-    timeAgo() {
-      return this.byFlip && this.flippers ? this.flipped : this.discovered;
+    timeAgo () {
+      return this.byFlip && this.flippers ? this.flipped : this.discovered
     },
-    discovered() {
+    discovered () {
       return (
-        "Found " +
+        'Found ' +
         moment(this.board.created * 1000)
-          .startOf("hour")
+          .startOf('hour')
           .fromNow()
-      );
+      )
     },
-    flipped() {
+    flipped () {
       return (
-        "Flipped " +
+        'Flipped ' +
         moment(this.board.modified * 1000)
-          .startOf("hour")
+          .startOf('hour')
           .fromNow()
-      );
+      )
     },
 
     ...mapState(['users']),
     ...mapGetters(['symmetries'])
   }
-};
+}
 </script>
 <style lang="scss" >
 .gridItemBadge {

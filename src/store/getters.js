@@ -1,4 +1,4 @@
-import Clover from "../assets/clovers";
+import Clover from '../assets/clovers'
 
 // import xss from 'xss'
 
@@ -16,17 +16,17 @@ export default {
     )
   },
   registeredEvents (state) {
-    return state.logs.filter(log => log.name === "Registered")
+    return state.logs.filter(log => log.name === 'Registered')
   },
   minedClovers (state) {
-    console.log("mined clovers calculated")
+    console.log('mined clovers calculated')
     // return state.allSavedClovers || []
     return (
       (state.allSavedClovers.length &&
         state.allSavedClovers.map(c => {
           let clover =
             state.allClovers &&
-            state.allClovers.find(ac => ac.board === "0x" + c.byteBoard)
+            state.allClovers.find(ac => ac.board === '0x' + c.byteBoard)
           if (clover) {
             c.claimed = clover.created
           }
@@ -36,26 +36,26 @@ export default {
     )
   },
   symmetries (state) {
-    console.log("symmetries calculated");
+    console.log('symmetries calculated')
     // return {Symmetricals: 0, RotSym: 0, X0Sym: 0, Y0Sym: 0, XYSym: 0, XnYSym: 0, PayMultiplier: 100}
-    let Symmetricals = 0;
-    let RotSym = 0;
-    let X0Sym = 0;
-    let Y0Sym = 0;
-    let XYSym = 0;
-    let XnYSym = 0;
-    let reversi = new Clover();
+    let Symmetricals = 0
+    let RotSym = 0
+    let X0Sym = 0
+    let Y0Sym = 0
+    let XYSym = 0
+    let XnYSym = 0
+    let reversi = new Clover()
     for (let i = 0; i < state.allClovers.length; i++) {
-      let clover = state.allClovers[i];
-      reversi.byteBoard = clover.board;
-      reversi.byteBoardPopulateBoard();
-      reversi.isSymmetrical();
-      Symmetricals += reversi.symmetrical;
-      RotSym += reversi.RotSym;
-      X0Sym += reversi.X0Sym;
-      Y0Sym += reversi.Y0Sym;
-      XYSym += reversi.XYSym;
-      XnYSym += reversi.XnYSym;
+      let clover = state.allClovers[i]
+      reversi.byteBoard = clover.board
+      reversi.byteBoardPopulateBoard()
+      reversi.isSymmetrical()
+      Symmetricals += reversi.symmetrical
+      RotSym += reversi.RotSym
+      X0Sym += reversi.X0Sym
+      Y0Sym += reversi.Y0Sym
+      XYSym += reversi.XYSym
+      XnYSym += reversi.XnYSym
     }
     return {
       Symmetricals,

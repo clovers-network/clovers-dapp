@@ -1,90 +1,122 @@
 <template>
   <div class="relative z1">
     <div class="bg-green  white pb2 md-p3 flex justify-around">
-      <div class="center" v-for="(sym, i) in symTypes" :key="i">
-        <div class='px1'>{{symmetries[sym]}} x</div>
-        <div :class="sym" class="symmetry-type"></div>
-        <!-- <div>{{symValues[sym]}} ♧</div> -->
+      <div
+        class="center"
+        v-for="(sym, i) in symTypes"
+        :key="i">
+        <div class='px1'>{{ symmetries[sym] }} x</div>
+        <div
+          :class="sym"
+          class="symmetry-type"/>
+          <!-- <div>{{symValues[sym]}} ♧</div> -->
       </div>
     </div>
 
-    <div id="break-up" class="bg-gray white p2 md-p3 flex justify-around shadow-bottom">
+    <div
+      id="break-up"
+      class="bg-gray white p2 md-p3 flex justify-around shadow-bottom">
       <div>{{ allClovers.length }} Clovers Claimed</div>
       <div>{{ symmetries.RotSym }} Rotational</div>
       <div>{{ symmetries.X0Sym + symmetries.Y0Sym }} Perpendicular</div>
       <div>{{ symmetries.XYSym + symmetries.XnYSym }} Diagonal</div>
     </div>
 
-    <div v-if="allClovers.length" class="mt2 px2">
+    <div
+      v-if="allClovers.length"
+      class="mt2 px2">
       <email />
       <div class="hide">
         <form
           class="border-bottom inline-block my1"
           @submit.prevent="search">
-          <input class="input" v-model="search" placeholder="search">
+          <input
+            class="input"
+            v-model="search"
+            placeholder="search">
         </form>
       </div>
 
-       <div class=" max-width-4 mx-auto flex justify-between align-middle py3" >
-          <div class=" " :class="{hide: pagedTotal === 1}">
-            <button
+      <div class=" max-width-4 mx-auto flex justify-between align-middle py3" >
+        <div
+          class=" "
+          :class="{hide: pagedTotal === 1}">
+          <button
             class="btn btn-outline mb1 blue"
             :disabled="!prevPossible"
             @click="chPage(-1)">←</button>&nbsp;
-          </div>
+        </div>
 
         <div class="">
           <span
-          @click="clickSort(i)"
-          :class="sortableClass(i)"
-          class="inline-block mx2 pointer no-select"
-          v-html="sort"
-          :key="i"
-          v-for="(sort, i) in sortable"></span>
+            @click="clickSort(i)"
+            :class="sortableClass(i)"
+            class="inline-block mx2 pointer no-select"
+            v-html="sort"
+            :key="i"
+            v-for="(sort, i) in sortable"/>
         </div>
 
-          <div class=" " :class="{hide: pagedTotal === 1}">
-            <button
+        <div
+          class=" "
+          :class="{hide: pagedTotal === 1}">
+          <button
             class="btn btn-outline mb1 blue"
             :disabled="!nextPossible"
             @click="chPage(1)">→</button>&nbsp;
-          </div>
         </div>
+      </div>
 
-      <ul ref="cloverList" class="list-reset max-width-5 mx-auto flex flex-wrap mxn2 center justify-center">
-        <li v-for="board in cloversSliced" :key="board.board" class="px2 mb3">
-          <clover-grid-item :by-flip="sortableIndex == 0 || sortableIndex == 3" :key="board.board" :board="board"></clover-grid-item>
+      <ul
+        ref="cloverList"
+        class="list-reset max-width-5 mx-auto flex flex-wrap mxn2 center justify-center">
+        <li
+          v-for="board in cloversSliced"
+          :key="board.board"
+          class="px2 mb3">
+          <clover-grid-item
+            :by-flip="sortableIndex == 0 || sortableIndex == 3"
+            :key="board.board"
+            :board="board"/>
         </li>
-        <li class="list-reset flex flex-wrap mxn2 center justify-center" v-if="cloversSliced.length === 0">Go claim some Clovers...
+        <li
+          class="list-reset flex flex-wrap mxn2 center justify-center"
+          v-if="cloversSliced.length === 0">Go claim some Clovers...
 
         </li>
       </ul>
       <div class="hide">
         <span
-        class="btn btn-outline mb1 orange"
-        @click="limit = amount"
-        v-for="(amount, i) in limits"
-        :key="i"
-        :class="{'bg-red': limit === amount}"
-        v-html="amount"></span>
+          class="btn btn-outline mb1 orange"
+          @click="limit = amount"
+          v-for="(amount, i) in limits"
+          :key="i"
+          :class="{'bg-red': limit === amount}"
+          v-html="amount"/>
       </div>
       <div class=" max-width-4 mx-auto flex justify-between align-middle pb4" >
-        <div class=" " :class="{hide: pagedTotal === 1}">
+        <div
+          class=" "
+          :class="{hide: pagedTotal === 1}">
           <button
-          class="btn btn-outline mb1 blue"
-          :disabled="!prevPossible"
-          @click="chPage(-1)">←</button>&nbsp;
+            class="btn btn-outline mb1 blue"
+            :disabled="!prevPossible"
+            @click="chPage(-1)">←</button>&nbsp;
         </div>
 
-        <div class="center mb2"  :class="{hide: pagedTotal === 0}">
-          <span>{{paged}} / {{pagedTotal}}</span>
+        <div
+          class="center mb2"
+          :class="{hide: pagedTotal === 0}">
+          <span>{{ paged }} / {{ pagedTotal }}</span>
         </div>
 
-        <div class=" " :class="{hide: pagedTotal === 1}">
+        <div
+          class=" "
+          :class="{hide: pagedTotal === 1}">
           <button
-          class="btn btn-outline mb1 blue"
-          :disabled="!nextPossible"
-          @click="chPage(1)">→</button>&nbsp;
+            class="btn btn-outline mb1 blue"
+            :disabled="!nextPossible"
+            @click="chPage(1)">→</button>&nbsp;
         </div>
       </div>
 
@@ -93,32 +125,32 @@
 </template>
 
 <script>
-import Email from "@/components/Email";
+import Email from '@/components/Email'
 
-import { mapGetters, mapState } from "vuex";
+import { mapGetters, mapState } from 'vuex'
 export default {
-  name: "CloverList",
+  name: 'CloverList',
   components: { Email },
-  data() {
+  data () {
     return {
       paged: 1,
       limit: 18,
       limits: [5, 10, 20, 50, 100],
       asc: true,
       sortableIndex: 0,
-      symTypes: ["RotSym", "Y0Sym", "X0Sym", "XYSym", "XnYSym"],
+      symTypes: ['RotSym', 'Y0Sym', 'X0Sym', 'XYSym', 'XnYSym'],
       sortable: [
-        "Date Flipped",
-        "Date Found",
-        "Current Price",
-        "Times Flipped"
+        'Date Flipped',
+        'Date Found',
+        'Current Price',
+        'Times Flipped'
       ],
       search: null
-    };
+    }
   },
   watch: {
-    limit() {
-      this.paged = 1;
+    limit () {
+      this.paged = 1
     }
   },
   props: {
@@ -128,37 +160,37 @@ export default {
     }
   },
   computed: {
-    symValues() {
+    symValues () {
       return {
         // RotSym: this.clover.calcFindersFees(this.symmetries, true),
         // Y0Sym: this.clover.calcFindersFees(this.symmetries, false, true),
         // X0Sym: this.clover.calcFindersFees(this.symmetries, false, false, true),
         // XYSym: this.clover.calcFindersFees(this.symmetries, false, false, false, true),
         // XnYSym: this.clover.calcFindersFees(this.symmetries, false, false, false, false, true)
-      };
+      }
     },
-    pagedTotal() {
+    pagedTotal () {
       return (
         Math.floor(this.cloversSorted.length / this.limit) +
         (this.cloversSorted.length % this.limit && 1)
-      );
+      )
     },
-    prevPossible() {
-      return this.paged > 1;
+    prevPossible () {
+      return this.paged > 1
     },
-    nextPossible() {
-      return this.paged < this.pagedTotal;
+    nextPossible () {
+      return this.paged < this.pagedTotal
     },
-    startSlice() {
-      return this.limit * (this.paged - 1);
+    startSlice () {
+      return this.limit * (this.paged - 1)
     },
-    endSlice() {
-      return this.limit * this.paged;
+    endSlice () {
+      return this.limit * this.paged
     },
-    cloversSliced() {
-      return this.cloversSorted.slice(this.startSlice, this.endSlice);
+    cloversSliced () {
+      return this.cloversSorted.slice(this.startSlice, this.endSlice)
     },
-    cloversSorted() {
+    cloversSorted () {
       return this.allClovers
         .slice(0)
         .sort((a, b) => {
@@ -166,69 +198,69 @@ export default {
             case 0:
               return this.asc
                 ? b.modified - a.modified
-                : a.modified - b.modified;
+                : a.modified - b.modified
             case 1:
-              return this.asc ? b.created - a.created : a.created - b.created;
+              return this.asc ? b.created - a.created : a.created - b.created
             case 2:
               return this.asc
                 ? this.currPrice(b) - this.currPrice(a)
-                : this.currPrice(a) - this.currPrice(b);
+                : this.currPrice(a) - this.currPrice(b)
             case 3:
               return this.asc
                 ? b.previousOwners.length - a.previousOwners.length
-                : a.previousOwners.length - b.previousOwners.length;
+                : a.previousOwners.length - b.previousOwners.length
           }
         })
         .filter(c => {
-          if (!this.search && !this.filter) return c;
+          if (!this.search && !this.filter) return c
           return (
             c.previousOwners.slice(-1).filter(p => {
-              return p.search(this.search || this.filter) > -1;
+              return p.search(this.search || this.filter) > -1
             }).length || // owner
             c.previousOwners.slice(0, 1).filter(p => {
-              return p.search(this.search || this.filter) > -1;
+              return p.search(this.search || this.filter) > -1
             }).length || // founder
             (c.name && c.name.search(this.search || this.filter) > -1) || // board name
             c.first32Moves.search(this.search || this.filter) > -1 || // moves
             c.first32Moves.search(this.search || this.filter) > -1 || // moves
             c.lastMoves.search(this.search || this.filter) > -1 || // moves
             c.board.search(this.search || this.filter) > -1
-          ); // board
-        });
+          ) // board
+        })
     },
-    ...mapState(["allClovers"]),
-    ...mapGetters(["clover", "symmetries"])
+    ...mapState(['allClovers']),
+    ...mapGetters(['clover', 'symmetries'])
   },
   methods: {
-    chPage(amount) {
-      window.scrollTo(0, this.$refs.cloverList.offsetTop - 150);
+    chPage (amount) {
+      window.scrollTo(0, this.$refs.cloverList.offsetTop - 150)
       this.$nextTick(() => {
-        this.paged += amount;
-      });
+        this.paged += amount
+      })
     },
-    currPrice(c) {
+    currPrice (c) {
       return c.previousOwners.length === 1
         ? c.lastPaidAmount
-        : c.lastPaidAmount * 2;
+        : c.lastPaidAmount * 2
     },
-    sortableClass(i) {
-      if (i !== this.sortableIndex) return "muted";
+    sortableClass (i) {
+      if (i !== this.sortableIndex) return 'muted'
       return {
         gray: true,
         asc: this.asc,
         desc: !this.asc
-      };
+      }
     },
-    clickSort(i) {
+    clickSort (i) {
       if (i !== this.sortableIndex) {
-        this.sortableIndex = i;
-        this.paged = 1;
+        this.sortableIndex = i
+        this.paged = 1
       } else {
-        this.asc = !this.asc;
+        this.asc = !this.asc
       }
     }
   }
-};
+}
 </script>
 
 <style lang="scss">

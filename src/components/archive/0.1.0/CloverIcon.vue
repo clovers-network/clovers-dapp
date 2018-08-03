@@ -4,7 +4,7 @@
 </template>
 
 <script>
-  export default {
-    name: 'clover-icon'
-  }
+export default {
+  name: 'CloverIcon'
+}
 </script>
