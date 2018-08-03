@@ -5,7 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build && cp _redirects dist",
-    "lint": "vue-cli-service lint --fix"
+    "lint": "vue-cli-service lint --fix",
+    "precommit" : "npm run lint"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -29,9 +30,14 @@
     "fs": "0.0.1-security",
     "moment": "^2.21.0",
     "node-emoji": "^1.8.1",
+    "pug": "^2.0.3",
+    "pug-loader": "^2.4.0",
+    "pug-plain-loader": "^1.0.0",
     "register-service-worker": "^1.0.0",
     "shelljs": "^0.7.8",
     "socket.io": "^2.0.4",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
     "truffle-contract": "^2.0.5",
     "vue": "^2.5.13",
     "vue-router": "^3.0.1",
