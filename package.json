@@ -6,10 +6,10 @@
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build && cp _redirects dist",
     "lint": "vue-cli-service lint --fix",
-    "pre-commit": [
-      "lint"
-    ]
   },
+  "pre-commit": [
+    "lint"
+  ],
   "dependencies": {
     "axios": "^0.18.0",
     "basscss-addons": "^1.0.0",
