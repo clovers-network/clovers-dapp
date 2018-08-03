@@ -27,7 +27,7 @@ import { mapGetters, mapMutations, mapActions, mapState } from 'vuex'
 
 export default {
   name: 'App',
-  data() {
+  data () {
     return {
       attemptConnect: false,
       sortBy: null,
@@ -37,38 +37,38 @@ export default {
     }
   },
   watch: {
-    notRinkeby() {
+    notRinkeby () {
       if (this.$route.path !== '/' && this.notRinkeby) {
         this.$router.push('/')
       }
     }
   },
   computed: {
-    pagedTotal() {
+    pagedTotal () {
       return (
         Math.floor(this.allClovers.length / this.limit) +
         (this.allClovers.length % this.limit && 1)
       )
     },
-    prevPossible() {
+    prevPossible () {
       return this.paged > 1
     },
-    nextPossible() {
+    nextPossible () {
       return this.paged < this.pagedTotal
     },
-    startSlice() {
+    startSlice () {
       return this.limit * (this.paged - 1)
     },
-    endSlice() {
+    endSlice () {
       return this.limit * this.paged
     },
-    cloversSorted() {
+    cloversSorted () {
       return this.allClovers
         .slice(0)
         .sort((a, b) => b.modified - a.modified)
         .slice(this.startSlice, this.endSlice)
     },
-    hideMainCloverList() {
+    hideMainCloverList () {
       return this.$route.meta.hideMainCloverList
     },
 
@@ -77,7 +77,7 @@ export default {
     ...mapGetters(['notRinkeby'])
   },
   methods: {
-    seenit() {
+    seenit () {
       this.seen = true
     },
 
@@ -91,7 +91,7 @@ export default {
       newClovernameEvents: 'ADD_CLOVERNAME_EVENTS'
     })
   },
-  mounted() {
+  mounted () {
     console.log('mounted')
     this.setUpSocket()
     console.log('INIT-0')
@@ -109,7 +109,7 @@ export default {
         console.error(error)
       })
   },
-  destroyed() {
+  destroyed () {
     this.stopWeb3Polling()
   },
   components: { AppHeader, Messages, Instructions, Foot }
