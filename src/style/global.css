@@ -32,6 +32,9 @@ svg {
   max-height: 100%;
 }
 
+.inline-flex {
+  display: inline-flex;
+}
 a {
   /* color: var(--blue); */
   color:inherit;
@@ -191,6 +194,9 @@ hr {
   z-index:0;
   position: relative;
 
+  &.small-clover {
+    font-size: var(--small-font-size);
+  }
   &.no-border {
     border: 0px !important;
   }
@@ -370,7 +376,7 @@ textarea {
 .textarea,
 .btn,
 button {
-  
+
   &:focus {
     border-color: currentColor;
     outline: none;

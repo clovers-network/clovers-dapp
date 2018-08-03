@@ -8,7 +8,7 @@
   --rem: 10px;
   --body-font: "gt-amer-st-reg", -apple-system,system-ui,"San Francisco",BlinkMacSystemFont,"Helvetica Neue",Helvetica,Ubuntu,Roboto,Noto,"Segoe UI",Arial,sans-serif;
   --base-font-size: 16px;
-
+  --small-font-size: 0.6em;
   /* colors */
   --aqua:  #7FDBFF;
   --blue:  #0074D9;
