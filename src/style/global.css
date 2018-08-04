@@ -78,7 +78,7 @@ input::-webkit-inner-spin-button {
 }
 
 h1 {
-  line-height: 1.2;
+  line-height: 1.15;
 }
 
 /*h1, h2, h3,
@@ -154,8 +154,8 @@ blockquote {
 }
 
 hr {
-  margin-top: 1.5em;
-  margin-bottom: 1.5em;
+  margin-top: 2.5em;
+  margin-bottom: 2.5em;
   border: 0;
   border-bottom-width: 1px;
   border-bottom-style: solid;
