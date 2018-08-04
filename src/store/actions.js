@@ -31,7 +31,7 @@ export default {
     console.log('reset')
     commit('setQuerying', true)
     try {
-      await dispatch('getContracts')
+      dispatch('getContracts')
       commit('setQuerying', false)
       if (state.tryAgain) {
         commit('setTryAgain', false)
@@ -104,7 +104,7 @@ export default {
       return new Error('account-locked')
     }
   },
-  async getContracts ({ state, commit }) {
+  getContracts ({ state, commit }) {
     for (var name in contracts) {
       if (!contracts.hasOwnProperty(name)) return
       let contract = contracts[name]
