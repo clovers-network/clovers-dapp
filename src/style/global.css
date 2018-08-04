@@ -5,6 +5,7 @@
 * {
   margin:0; padding:0;
   box-sizing: border-box;
+  border-width:1px;
 }
 
 html{
@@ -57,6 +58,25 @@ button{
   padding:0;
 }
 
+input{
+  appearance:none;
+  border:none;
+  font-size:inherit;
+  background:none;
+  color:inherit;
+  &:focus{
+    outline:none;
+  }
+}
+
+/* hide input[number] arrows */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
 /*h1, h2, h3,
 h4, h5, h6 {
   font-weight: 600;
@@ -65,10 +85,10 @@ h4, h5, h6 {
   margin-bottom: var(--space-2);
   margin-top: var(--space-3);
 }
-*/
 .h1, .h2, .h3 {
   letter-spacing: .02em;
 }
+*/
 
 /*h1 { font-size: 2rem }
 h2 { font-size: 1.5rem }
