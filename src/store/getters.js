@@ -2,6 +2,33 @@ import Reversi from 'clovers-reversi'
 import { CurationMarket } from 'clovers-contracts'
 
 export default {
+  sortedClovers ({ sortBy, feedFilter, allClovers }) {
+    return allClovers.slice(0).sort((a, b) => {
+      return Number(b[sortBy]) - Number(a[sortBy])
+    }).filter((clover) => {
+      if (feedFilter === 'market') {
+        return clover.price.gt(0)
+      }
+      return true
+    })
+  },
+
+  newCloversCount ({ newClovers }) {
+    return newClovers.length
+  },
+
+  picks ({ account, allSavedClovers }) {
+    return allSavedClovers[account || 'anon'] || []
+  },
+  pickCount (_, { picks }) {
+    return picks.length
+  },
+
+  authHeader ({ account, tokens }) {
+    if (!account || !tokens || !tokens[account]) return null
+    return `Basic ${btoa(`${account}:${tokens[account]}`)}`
+  },
+
   notRinkeby: state => state.networkId !== state.correctNetwork,
 
   curationMarketAddress ({ correctNetwork }) {
@@ -41,21 +68,5 @@ export default {
       XnYSym,
       PayMultiplier: 100
     }
-  },
-
-  newCloversCount ({ newClovers }) {
-    return newClovers.length
-  },
-
-  picks ({ account, allSavedClovers }) {
-    return allSavedClovers[account || 'anon'] || []
-  },
-  pickCount (_, { picks }) {
-    return picks.length
-  },
-
-  authHeader ({ account, tokens }) {
-    if (!account || !tokens || !tokens[account]) return null
-    return `Basic ${btoa(`${account}:${tokens[account]}`)}`
   }
 }

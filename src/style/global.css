@@ -370,14 +370,25 @@ textarea {
   display: block;
   position: relative;
 
+  select {
+    background: transparent;
+    border: none;
+    color: inherit;
+    font: inherit;
+    height: 39px;
+    outline: none;
+    padding: 0 var(--space-2);
+    width: 100%;
+  }
+
   &:after {
-    color: var(--gray);
+    color: var(--green);
     content: '\232A';
     pointer-events: none;
     position: absolute;
     right: var(--space-2);
-    text-shadow: 1px 0px 0px var(--gray);
-    top: var(--space-2);
+    text-shadow: 1px 0px 0px var(--green);
+    top: var(--space-1);
     transform: rotate(90deg) translateX(20%);
   }
 }
@@ -483,4 +494,11 @@ image-rendering: optimize-contrast;         /* CSS3 Proposed       */
   from { transform: scale(1.4); }
   50% { transform: scale(1.2); }
   to { transform: scale(1.4); }
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity var(--anim-timing-medium);
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
