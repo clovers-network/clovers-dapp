@@ -10,7 +10,8 @@
         class="menu-btn pointer p2"
         @click="showMenu = !showMenu"
         aria-label="Toggle Menu">===</button>
-      <h1 class="font-exp h3">{{showMenu ? 'Clovers' : $route.meta.title}}</h1>
+      <h1 v-if="showMenu" class="font-exp h3"><router-link :to="{ name: 'Welcome' }">Clovers</router-link></h1>
+      <h1 v-else class="font-exp h3">{{$route.meta.title}}</h1>
       <router-link class="block p2" :to="{name: 'Account'}"><person-icon></person-icon></router-link>
     </div>
     <!-- nav -->
@@ -20,9 +21,9 @@
       <div class="h-header"/>
       <nav class="flex-auto flex items-center justify-center">
         <ul class="h1 list-reset">
-          <li><router-link :to="{ name: 'Field' }">Find Clovers</router-link></li>
+          <li><router-link :to="{ name: 'Welcome' }">About</router-link></li>
+          <li class="mt2"><router-link :to="{ name: 'Field' }">Find Clovers</router-link></li>
           <li class="mt2"><router-link to="/market">Feed</router-link></li>
-          <li class="mt2"><router-link :to="{ name: 'About' }">About</router-link></li>
         </ul>
       </nav>
       <pig/>
