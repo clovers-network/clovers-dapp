@@ -1,23 +1,7 @@
 import io from 'socket.io-client'
 
-import {
-  ClubToken,
-  ClubTokenController,
-  Clovers,
-  CloversController,
-  SimpleCloversMarket,
-  CurationMarket
-} from 'clovers-contracts'
+import * as contracts from 'clovers-contracts'
 import axios from 'axios'
-
-const contracts = {
-  ClubToken,
-  ClubTokenController,
-  Clovers,
-  CloversController,
-  SimpleCloversMarket,
-  CurationMarket
-}
 
 const apiBase = process.env.VUE_APP_API_URL
 const signingParams = [
