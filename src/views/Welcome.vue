@@ -11,18 +11,25 @@
           :noMoves="true"
           :autoPlay="true"
           :moveString="c == 3 ? heart : random()")
-      button Start Now
+      router-link(
+        :to="{ name: 'Field' }")
+          dot-btn(
+            label="Start Now"
+            text="white"
+            bg="green")
       hr
       h2.h2.green.font-exp What is Clovers?
-      .py2 Clovers is a game centered around discovering, collecting and trading mathematically generated artworks.
+      .p2 Clovers is a game centered around discovering, collecting and trading mathematically generated artworks.
       button Tell Me More
       hr
       h2.h2.green.font-exp The Field
-      .py2 Like looking for shapes in clouds you can browse through the Field of clovers as they're grown in real time looking for rare or interesting shapes.
+      .p2 Like looking for shapes in clouds you can browse through the Field of clovers as they're grown in real time looking for rare or interesting shapes.
 </template>
 
 <script>
 import Reversi from 'clovers-reversi'
+import DotBtn from '@/components/DotBtn'
+
 export default {
   name: 'Welcome',
   data () {
@@ -53,7 +60,8 @@ export default {
       reversi.mine()
       return reversi.movesString
     }
-  }
+  },
+  components: { DotBtn }
 }
 </script>
 
