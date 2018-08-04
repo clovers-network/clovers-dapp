@@ -1,7 +1,7 @@
 <template>
   <div
     id="app"
-    class='mt3-5 pb4'>
+    class='pb4'>
     <app-header/>
     <main>
       <router-view/>

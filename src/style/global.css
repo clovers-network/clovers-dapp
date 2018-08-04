@@ -41,7 +41,7 @@ a {
   color:inherit;
   outline: 0;
   text-decoration: none;
-  transition: all var(--anim-timing-medium);
+  /* transition: all var(--anim-timing-medium); */
 }
 
 h1,h2,h3,h4,h5,h6{
