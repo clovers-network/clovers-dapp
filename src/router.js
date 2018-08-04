@@ -5,6 +5,7 @@ import Field from '@/views/Field'
 import Market from '@/views/Market'
 import Account from '@/views/Account'
 import Picks from '@/views/Picks'
+import Trade from '@/views/Trade'
 import About from '@/views/About'
 // Old routes
 // import Home from '@/components/Home'
@@ -48,7 +49,7 @@ export default new Router({
         {
           path: 'trade',
           name: 'Account/Trade',
-          component: Picks,
+          component: Trade,
           meta: {title: 'Account'}
         },
         {

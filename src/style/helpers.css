@@ -7,6 +7,7 @@
 .h-header{height:var(--height-header);}
 .h-bttm-bar{height:var(--height-bttm-bar);}
 .h-100vh{height:100vh}
+.min-h-100vh{min-height: 100vh}
 
 .lh1 { line-height: 1;}
 .lh2 { line-height: 1.25;}

@@ -6,7 +6,7 @@
         span.block Name
       //- change name form goes here
     section
-      nav.sticky.flex.relative.h-header.border-bottom
+      nav.sticky.top-0.left-0.flex.relative.h-header.border-bottom
         //- TODO: proper font-size (smaller)
         router-link(:to="{name: 'Account'}").col-4.flex.pointer.opacity-50
           span.block.m-auto Picks
@@ -27,7 +27,7 @@ export default {
 
 <style scoped>
 .router-link-active{
-  opacity:1;  
+  opacity:1;
 }
 /* highlight bar */
 [data-view="Account/Clovers"]{transform:translateX(100%);}
