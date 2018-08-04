@@ -226,43 +226,70 @@ export default {
       .catch(console.log)
   },
 
-  // contract Interactions
+  // Contract Interactions
   async buy ({ dispatch, state, commit }, clover) {
+    // if clover exists it must be in SimpleCloversMarket
+    // otherwise it is a claimClover
     if (dispatch('cloverExists', clover.board)) {
-      // confirm clover is actually for sale
+      // get current price
+      let currentPrice = await contracts.SimpleCloversMarket.methods
+        .sellPrice(clover.board)
+        .call()
+      // if 0 then it's not actually for sale
+      if (currentPrice.eq(0)) throw new Error('cant-buy-not-for-sale')
+
+      // get balance of user in ClubToken
+      let balanceOf = await contracts.ClubToken.methods
+        .balanceOf(state.account)
+        .call()
+      let value = 0
+      // if it's less than the price then find the Eth needed to buy enough
+      if (balanceOf.lt(currentPrice)) {
+        value = getLowestPrice(contracts.ClubToken, balanceOf.sub(currentPrice))
+      }
+      await contracts.SimpleCloversMarket.methods.buy(clover.board).send({
+        from: state.account,
+        value
+      })
     } else {
-      // mint clover w option _keep = true
+      // claim clover w option _keep = true
       await claimClover({ keep: true, clover, account: state.account })
     }
   },
   async sell ({ state, dispatch, commit }, { clover, price }) {
-    // confirm clover exists (and is not a claim Clover sell)
+    // if clover exists it must be in SimpleCloversMarket
+    // otherwise it is a claimClover
     if (dispatch('cloverExists', clover.board)) {
-      // check if it is owned by this user
+      // get the owner of the clover
       let owner = await contracts.Clovers.methods.ownerOf(clover.board).call()
+      // if not current user, then error
       if (owner.toLowerCase() !== state.account.toLowerCase()) {
         throw new Error('cant-sell-dont-own')
       }
+      // if the price = 0, really they are removing it from the market
+      // otherwise they should sell it
       if (price.eq(0)) {
+        // remove from market
+        await contracts.SimpleCloversMarket.methods
+          .removeSell(clover.board)
+          .send({
+            from: state.account
+          })
       } else {
-        let currentPrice = await contracts.SimpleCloversMarket.methods.sellPrice(
-          clover.board
-        )
-        if (!currentPrice.eq(price)) {
-          await contracts.SimpleCloversMarket.methods
-            .sell(clover.board, price)
-            .send({
-              from: state.account
-            })
-        } else {
-          // update price
-        }
+        // sell clover (update price)
+        await contracts.SimpleCloversMarket.methods
+          .sell(clover.board, price)
+          .send({
+            from: state.account
+          })
       }
     } else {
-      // mint clover w option _keep = false
+      // claim clover w option _keep = false
       await claimClover({ keep: false, clover, account: state.account })
     }
-  }
+  },
+  async invest ({ state }, { clover, amount }) {},
+  async divest ({ state }, { clover, amount }) {}
 }
 
 function apiUrl (path) {
@@ -307,7 +334,6 @@ async function claimClover ({ keep, account, clover }) {
 
   if (keep) {
     let mintPrice = await getMintPrice({ _symmetries })
-
     let balance = await contracts.ClubToken.balanceOf(account).call()
     if (balance.lt(mintPrice)) {
       let clubTokenToBuy = balance.sub(mintPrice)
