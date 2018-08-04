@@ -34,9 +34,11 @@
       <div class="h-header"/>
       <nav class="flex-auto flex items-center justify-center" @click="showMenu = !showMenu">
         <ul class="h1 list-reset">
+
           <li><router-link :to="{ name: 'Welcome' }">About</router-link></li>
           <li class="mt2"><router-link :to="{ name: 'Field' }">Find Clovers</router-link></li>
           <li class="mt2"><router-link to="/market">Feed</router-link></li>
+
         </ul>
       </nav>
       <pig/>

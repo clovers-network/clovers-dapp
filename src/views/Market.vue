@@ -2,16 +2,19 @@
   <div>
     <div class="sticky border-bottom green flex font-mono bg-white relative" style="top:46px">
       <div class="center col-6">
-        <div class="relative p1">
+        <div @click="toggleFilters" class="relative p1 pointer">
           <div :style="filterBorderStyles" class="filters-btn"></div>
-          <span @click="toggleFilters" class="h3">Filter</span>
+          <span class="h3">Filter</span>
+          <div class="absolute top-0 right-0 mr2 mt2 line-height-1">
+            <img :style="dropArrowRotate" src="~../assets/icons/chevron-down.svg" width="14" height="14"/>
+          </div>
         </div>
         <transition name="fade">
           <div
             v-if="filtersVisible"
             class="absolute top-100 left-0 right-0 border-bottom bg-white">
             <div class="flex left-align">
-              <div class="col-6 p2 border-top border-white">
+              <div class="col-6 py2 pl2 pr1 border-top border-white">
                 <div class="flex flex-column">
                   <p class="h6 mb1 font-reg">Type</p>
                   <div class="border center h3 select">
@@ -22,7 +25,7 @@
                   </div>
                 </div>
               </div>
-              <div class="col-6 p2 border-top">
+              <div class="col-6 py2 pr2 pl1 border-top">
                 <div class="flex flex-column">
                   <p class="h6 mb1 font-reg">Sort</p>
                   <div class="border center h3 select">
@@ -37,7 +40,7 @@
           </div>
         </transition>
       </div>
-      <div class="border-left p1 center col-6">
+      <div class="border-left p1 center col-6 not-allowed">
         <span class="h3">Search</span>
       </div>
     </div>
@@ -51,12 +54,12 @@
     <ul class="list-reset md-flex flex-wrap justify-around items-center m0">
       <li v-for="(clover, i) in clovers" :key="i" class="md-col6">
         <div is="router-link" tag="div" :to="cloverLink(clover)" class="flex py2 border-bottom green">
-          <div class="col-3 center">
+          <div class="col-4 center">
             <img :src="cloverImage(clover, 64)" width="64" height="64"/>
           </div>
 
           <template v-if="inCurationMarket(clover)">
-            <div class="col-4 flex flex-column justify-center pr2">
+            <div class="col-54 flex flex-column justify-center pr3">
               <p class="h7 m0">Market Cap &clubs;</p>
               <p class="h4 m0 truncate">0</p>
             </div>
@@ -67,10 +70,9 @@
           </template>
 
           <template v-else>
-            <div class="col-4 flex flex-column justify-center pr2">
+            <div class="col-4 flex flex-column justify-center pr3">
               <p class="h7 m0">Name</p>
               <p class="h4 m0 truncate">{{ clover.name }}</p>
-              <p class="h5 m0">{{ clover.modified }}</p>
             </div>
             <div class="col-3 flex flex-column justify-center pr2">
               <p class="h7 m0">Cost &clubs;</p>
@@ -79,8 +81,8 @@
             </div>
           </template>
 
-          <div class="col-2 center flex flex-column justify-center">
-            <span class="h1 m0">&rarr;</span>
+          <div class="col-1 center flex flex-column justify-center">
+            <img src="~../assets/icons/arrow-right.svg" width="18" height="18"/>
           </div>
         </div>
       </li>
@@ -163,6 +165,12 @@ export default {
         this.$router.push('/market')
         this.updateFilter(newVal)
         this.toggleFilters()
+      }
+    },
+    dropArrowRotate () {
+      if (!this.filtersVisible) return
+      return {
+        transform: 'rotate(180deg)'
       }
     },
 

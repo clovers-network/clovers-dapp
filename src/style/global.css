@@ -387,13 +387,16 @@ textarea {
 
   &:after {
     color: var(--green);
-    content: '\232A';
+    content: '';
+    background: url(./assets/icons/chevron-down.svg) no-repeat center;
+    width: 15px;
+    height: 15px;
     pointer-events: none;
     position: absolute;
     right: var(--space-2);
     text-shadow: 1px 0px 0px var(--green);
     top: var(--space-1);
-    transform: rotate(90deg) translateX(20%);
+    transform: translateY(7px);
   }
 }
 
