@@ -1,8 +1,9 @@
 <template>
   <div class="p2 my4">
+    <single-view v-show="viewSingle" :clover="viewSingle" @close="viewSingle = null"></single-view>
     <ul class="list-reset flex flex-wrap">
       <li v-for="(clover, i) in generated" :key="i" class="pr4 pb4">
-        <img :src="cloverImage(clover)"/>
+        <img class="pointer" :src="cloverImage(clover)" @click="viewSingle = clover"/>
         <p class="h2">
           <span v-if="isSaved(clover)" class="green">&hearts;</span>
           <a v-else @click="saveClover(clover)" class="green pointer" style="opacity:.3">&hearts;</a>
@@ -19,10 +20,10 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
+import SingleView from '@/views/FieldSingle'
 import Bottleneck from 'bottleneck'
 import Reversi from 'clovers-reversi'
 import { pad0x, cloverImage } from '@/utils'
-
 const limiter = new Bottleneck({
   minTime: 250
 })
@@ -30,10 +31,12 @@ const clover = new Reversi()
 
 export default {
   name: 'Field',
+  components: { SingleView },
   data () {
     return {
       growing: false,
-      generated: []
+      generated: [],
+      viewSingle: null
     }
   },
   computed: {
