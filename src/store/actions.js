@@ -1,29 +1,23 @@
-// var Socket = require('simple-websocket')
-// var socket = new Socket('ws://localhost:3333')
-// socket.on('connect', () => {
-//   console.log('connected')
-//   // socket is connected!
-//   socket.send('sup!')
-// })
-
-// const WebSocket = require('ws')
-
-// const ws = new WebSocket('ws://localhost:3333')
-
-// ws.on('open', function open () {
-//   console.log('open')
-//   ws.send('something')
-// })
-
-// ws.on('message', function incoming (data) {
-//   console.log(data)
-// })
-
-// import {Clovers} from 'clovers-contracts'
-
 import io from 'socket.io-client'
-import Clover from '../assets/clovers'
+
+import {
+  ClubToken,
+  ClubTokenController,
+  Clovers,
+  CloversController,
+  SimpleCloversMarket,
+  CurationMarket
+} from 'clovers-contracts'
 import axios from 'axios'
+
+const contracts = {
+  ClubToken,
+  ClubTokenController,
+  Clovers,
+  CloversController,
+  SimpleCloversMarket,
+  CurationMarket
+}
 
 const apiBase = process.env.VUE_APP_API_URL
 const signingParams = [
@@ -34,78 +28,119 @@ const signingParams = [
   }
 ]
 
-let polling = null
-global.clover = new Clover()
-
 export default {
-  initWeb3 ({ commit, dispatch }) {
-    console.log('INIT-1')
-    return global.clover.initWeb3().then((network, readOnly) => {
-      console.log('INIT-2')
-      console.log('network', network)
-      commit('UPDATE_NETWORK_ID', network)
-      console.log('readOnly', readOnly)
-      commit('UPDATE_READONLY', readOnly)
-      dispatch('startWeb3Polling')
-    })
+  // web3 stuff
+  async begin ({ commit, dispatch }) {
+    console.log('begin')
+    try {
+      dispatch('poll')
+    } catch (error) {
+      console.log('begin failed')
+      console.error(error)
+    }
   },
-  startWeb3Polling ({ dispatch }) {
-    polling =
-      polling ||
-      setInterval(() => {
-        dispatch('checkAccount')
-      }, 1000)
+  async reset ({ state, commit, dispatch }) {
+    if (state.querying) {
+      commit('setTryAgain', true)
+      return
+    }
+    console.log('reset')
+    commit('setQuerying', true)
+    try {
+      await dispatch('getContracts')
+      commit('setQuerying', false)
+      if (state.tryAgain) {
+        commit('setTryAgain', false)
+        dispatch('reset')
+      }
+    } catch (error) {
+      console.log('begin failed')
+      console.error(error)
+    }
   },
-  stopWeb3Polling () {
-    clearInterval(polling)
+  async poll ({ state, commit, dispatch }) {
+    try {
+      let networkId = parseInt(state.networkId) + 0
+      await dispatch('getNetwork')
+      if (networkId !== state.networkId) dispatch('reset')
+      await dispatch('getAccount')
+      setTimeout(() => {
+        dispatch('poll')
+      }, 3000)
+    } catch (error) {
+      console.error(error)
+      let title, body
+      let poll = true
+      switch (error.message) {
+        case 'User denied transaction signature.':
+          title = 'Error Connecting To The Network'
+          body = `Looks like you aren't connected to the Ethereum Network.
+            The popup you just dismissed is a free wallet service called
+            <a target='_blank' href='https://portis.io/'>Portis</a> that you
+            can use by refreshing the page. If you'd like to hear about other
+            wallet options including <a target='_blank' href='https://metamask.io/'>
+            Metamask</a> and <a target='_blank' href='https://www.uport.me/'>
+            uPort</a> please check out our help section.`
+          poll = false
+          break
+        case 'account-locked':
+          title = 'Wallet is Locked'
+          body = `Looks like your wallet is locked. Please unlock it if you'd like to
+             interact with the contracts. If you'd like more information about
+             this error, please see out help page.`
+          break
+        default:
+          title = 'Error Connecting To The Network'
+          body = error.message
+      }
+      console.log({ title, body })
+      if (poll) {
+        setTimeout(() => {
+          dispatch('poll')
+        }, 3000)
+      } else {
+        // user deined portis popup...
+      }
+    }
   },
-  checkAccount ({ commit, state }) {
-    if (state.readOnly) return
-    global.clover
-      .getAccounts()
-      .then(accounts => {
-        if (accounts.length && state.account !== accounts[0]) {
-          commit('UPDATE_ACCOUNT', accounts[0])
-          state.account &&
-            global.clover
-              .clubTokenBalanceOf(state.account)
-              .then(balance => {
-                if (balance !== state.balance) {
-                  commit('UPDATE_BALANCE', balance)
-                }
-              })
-              .catch(err => console.log(err))
-        } else if (state.account && !accounts.length) {
-          commit('UPDATE_ACCOUNT', null)
-        }
-      })
-      .catch(error => {
-        console.error(error)
-      })
+  async getNetwork ({ commit, state }) {
+    const networkId = await global.web3.eth.net.getId()
+    if (state.networkId !== networkId) {
+      commit('setNetwork', networkId)
+    }
   },
-  checkBlock ({ commit }) {
-    global.clover
-      .currentBlock()
-      .then(block => {
-        commit('UPDATE_CURRENT_BLOCK', block.number)
-      })
-      .catch(error => {
-        console.error(error)
-      })
+  async getAccount ({ commit, state }) {
+    let accounts = await global.web3.eth.getAccounts()
+    if (accounts.length && state.account !== accounts[0]) {
+      commit('setUnlocked', true)
+      commit('setAccount', accounts[0])
+    } else if (!accounts.length && (state.account || state.unlocked)) {
+      commit('setUnlocked', false)
+      commit('setAccount', null)
+      return new Error('account-locked')
+    }
   },
+  async getContracts ({ state, commit }) {
+    for (var name in contracts) {
+      if (!contracts.hasOwnProperty(name)) return
+      let contract = contracts[name]
+      if (contract.networks[state.networkId]) {
+        contract.instance = new global.web3.eth.Contract(
+          contract.abi,
+          contract.networks[state.networkId].address
+        )
+      } else {
+        new Error('No contract on that network')
+      }
+    }
+  },
+
+  // api stuff
   setUpSocket ({ commit }) {
     const socket = io(process.env.VUE_APP_API_URL)
     socket.on('disconnect', () => {
       console.log('disconnected')
     })
-
-    // socket.on("init", ({ clovers, users, logs }) => {
-    //   console.log("got init")
-    //   commit("UPDATE_ALLCLOVERS", clovers)
-    //   commit("UPDATE_LOGS", logs)
-    //   commit("UPDATE_USERS", users)
-    // })
-
     socket.on('newUser', user => {
       commit('ADD_USER', user)
       console.log(user)
@@ -121,19 +156,9 @@ export default {
       commit('UPDATE_CLOVER', clover)
       console.log(clover)
     })
-    socket.on('newUserName', log => {
-      console.log(log)
-      commit('ADD_LOG', log)
-    })
-    socket.on('newCloverName', log => {
-      console.log(log)
-      commit('ADD_LOG', log)
-    })
-    socket.on('Registered', log => {
-      console.log(log)
-      commit('ADD_LOG', log)
-    })
   },
+
+  // logs
   selfDestructMsg ({ commit }, msg) {
     let msgId = commit('ADD_MSG', msg)
     setTimeout(() => {
@@ -150,7 +175,6 @@ export default {
     console.log(byteBoard)
     return state.allClovers.findIndex(c => c.board === byteBoard) > -1
   },
-
   getClovers ({ state, commit }, page = 1) {
     let cloverCount = state.allClovers.length
     let params = { page }

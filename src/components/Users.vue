@@ -16,13 +16,10 @@
 import { mapState } from 'vuex'
 import xss from 'xss'
 export default {
-
   name: 'Users',
 
   data () {
-    return {
-
-    }
+    return {}
   },
   methods: {
     filter (text) {
@@ -35,9 +32,7 @@ export default {
     }
   },
   computed: {
-    ...mapState([
-      'users'
-    ])
+    ...mapState(['users'])
   }
 }
 </script>

@@ -1,4 +1,19 @@
 export default {
+  setQuerying (state, bool) {
+    state.querying = bool
+  },
+  setTryAgain (state, bool) {
+    state.tryAgain = bool
+  },
+  setUnlocked (state, unlocked) {
+    state.unlocked = unlocked
+  },
+  setAccount (state, account) {
+    state.account = account
+  },
+  setNetwork (state, networkId) {
+    state.networkId = networkId
+  },
   SUBMITTED_CLOVER (state, byteBoard) {
     state.submittingBoards.push(byteBoard)
   },
@@ -85,18 +100,6 @@ export default {
   UPDATE_CLOVER_PRICE (state, { byteBoard, newVal }) {
     // let i = state.allSavedClovers.findIndex(cl => cl.byteBoard === byteBoard)
     // Object.assign(state.allSavedClovers[i], { startPrice: newVal })
-  },
-  UPDATE_ACCOUNT (state, account) {
-    state.account = account
-  },
-  UPDATE_NETWORK_ID (state, network) {
-    state.network = network
-  },
-  UPDATE_CURRENT_BLOCK (state, blockNumber) {
-    state.currentBlock = blockNumber
-  },
-  UPDATE_READONLY (state, readOnly) {
-    state.readOnly = readOnly
   },
   UPDATE_BALANCE (state, balance) {
     state.balance = parseInt(balance)

@@ -19,13 +19,10 @@ import { mapMutations } from 'vuex'
 import xss from 'xss'
 
 export default {
-
   name: 'Messages',
 
   data () {
-    return {
-
-    }
+    return {}
   },
   computed: {
     messages () {

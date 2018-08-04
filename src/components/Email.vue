@@ -125,7 +125,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../style/animate.scss";
+@import '../style/animate.scss';
 ::-webkit-input-placeholder {
   /* Chrome/Opera/Safari */
   color: white;

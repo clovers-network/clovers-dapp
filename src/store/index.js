@@ -19,11 +19,14 @@ const state = {
   // stored signin tokens
   tokens: getTokens(),
 
-  currentBlock: null,
-  clubTokenSymbol: '♣',
-  network: null,
+  // web3 stuff
+  unlocked: false,
+  querying: false,
+  tryAgain: false,
   account: null,
-  readOnly: null,
+  networkId: null,
+  correctNetwork: 4,
+
   balance: 0,
   hashRate: 0,
   mineTime: 0,

@@ -81,16 +81,16 @@ export default {
 </script>
 
 <style>
-  .text-path {
-    bottom: -2em;
-    left: -2em;
-    right: -2em;
-    top: -2em;
-    font-size:1rem;
-    textPath {
-      font-family: monospace;
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-    }
+.text-path {
+  bottom: -2em;
+  left: -2em;
+  right: -2em;
+  top: -2em;
+  font-size: 1rem;
+  textPath {
+    font-family: monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
   }
+}
 </style>

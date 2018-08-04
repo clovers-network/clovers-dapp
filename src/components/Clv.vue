@@ -57,8 +57,8 @@ export default {
       animator: new Reversi(),
       animatedBoard: null,
       tileMap: {
-        'w': 't-w',
-        'b': 't-b',
+        w: 't-w',
+        b: 't-b',
         '-': 't-n',
         '2': 't-w',
         '1': 't-b',
@@ -81,12 +81,15 @@ export default {
   },
   computed: {
     mostRare () {
-      return this.symTypes.map((type) => {
-        return {
-          name: type,
-          num: (this.symmetries && this.symmetries[type]) || 0
-        }
-      }).sort((a, b) => b.num - a.num).pop()
+      return this.symTypes
+        .map(type => {
+          return {
+            name: type,
+            num: (this.symmetries && this.symmetries[type]) || 0
+          }
+        })
+        .sort((a, b) => b.num - a.num)
+        .pop()
     },
     badgeClass () {
       this.reversi.byteBoardPopulateBoard(this.byteBoard)
@@ -109,25 +112,35 @@ export default {
       }
     },
     board () {
-      return this.animatedBoard || this.rowArray || (this.byteBoard && this.reversi.byteBoardToRowArray(this.byteBoard)) || (this.moveString && this.reversi.playGameMovesString(this.moveString).byteBoardToRowArray())
+      return (
+        this.animatedBoard ||
+        this.rowArray ||
+        (this.byteBoard && this.reversi.byteBoardToRowArray(this.byteBoard)) ||
+        (this.moveString &&
+          this.reversi
+            .playGameMovesString(this.moveString)
+            .byteBoardToRowArray())
+      )
     },
     winner () {
       if (!this.board || !this.stop) return 'bg-green'
       let w = 0
       let b = 0
-      this.board.forEach((r) => r.forEach((t) => {
-        b += t === 'b' && 1
-        w += t === 'w' && 1
-      }))
+      this.board.forEach(r =>
+        r.forEach(t => {
+          b += t === 'b' && 1
+          w += t === 'w' && 1
+        })
+      )
       return {
         'w-b': b > w,
         'w-w': w > b,
         'w-t': w === b,
-        'active': this.isActive
+        active: this.isActive
       }
     },
 
-    ...mapGetters([ 'symmetries' ])
+    ...mapGetters(['symmetries'])
   },
   methods: {
     activate () {

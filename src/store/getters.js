@@ -1,9 +1,6 @@
-import Clover from '../assets/clovers'
-
-// import xss from 'xss'
-
+import Reversi from 'clovers-reversi'
 export default {
-  notRinkeby: state => state.network !== 4,
+  notRinkeby: state => state.networkId !== state.correctNetwork,
 
   username (state, getters) {
     console.log('username calculated')
@@ -20,6 +17,7 @@ export default {
   },
   cloversFound () {
     return ['??????']
+    // is this supposed to be pickcount now?
   },
   minedClovers (state) {
     console.log('mined clovers calculated')
@@ -47,7 +45,7 @@ export default {
     let Y0Sym = 0
     let XYSym = 0
     let XnYSym = 0
-    let reversi = new Clover()
+    let reversi = new Reversi()
     for (let i = 0; i < state.allClovers.length; i++) {
       let clover = state.allClovers[i]
       reversi.byteBoard = clover.board
