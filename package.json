@@ -26,7 +26,7 @@
     "basscss-typography": "^3.0.4",
     "bignumber.js": "^4.1.0",
     "bottleneck": "^2.6.0",
-    "clovers-contracts": "^1.0.5",
+    "clovers-contracts": "^1.0.6",
     "clovers-reversi": "^1.0.14",
     "copy-to-clipboard": "^3.0.8",
     "ethjs": "^0.2.9",
