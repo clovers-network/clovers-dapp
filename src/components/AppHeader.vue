@@ -21,7 +21,7 @@
       <nav class="flex-auto flex items-center justify-center">
         <ul class="h1 list-reset">
           <li><router-link :to="{ name: 'Field' }">Find Clovers</router-link></li>
-          <li class="mt2"><router-link to="/market">Feed</router-link></li>
+          <li class="mt2"><router-link to="/market">Market</router-link></li>
           <li class="mt2"><router-link :to="{ name: 'About' }">About</router-link></li>
         </ul>
       </nav>
