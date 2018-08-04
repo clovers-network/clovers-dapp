@@ -1,10 +1,43 @@
 <template>
   <div>
-    <div class="sticky border-bottom green flex font-mono bg-white" style="top:46px">
-      <div class="border-right p1 center col-6">
-        <span class="h3">Filter</span>
+    <div class="sticky border-bottom green flex font-mono bg-white relative" style="top:46px">
+      <div class="center col-6">
+        <div class="relative p1">
+          <div :style="filterBorderStyles" class="filters-btn"></div>
+          <span @click="toggleFilters" class="h3">Filter</span>
+        </div>
+        <transition name="fade">
+          <div
+            v-if="filtersVisible"
+            class="absolute top-100 left-0 right-0 border-bottom bg-white">
+            <div class="flex left-align">
+              <div class="col-6 p2 border-top border-white">
+                <div class="flex flex-column">
+                  <p class="h6 mb1 font-reg">Type</p>
+                  <div class="border center h3 select">
+                    <select v-model="feedFilter">
+                      <option value="all">All</option>
+                      <option value="market">For sale</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6 p2 border-top">
+                <div class="flex flex-column">
+                  <p class="h6 mb1 font-reg">Sort</p>
+                  <div class="border center h3 select">
+                    <select v-model="sortBy">
+                      <option value="modified">Date</option>
+                      <option value="price">Price</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </transition>
       </div>
-      <div class="p1 center col-6">
+      <div class="border-left p1 center col-6">
         <span class="h3">Search</span>
       </div>
     </div>
@@ -37,6 +70,7 @@
             <div class="col-4 flex flex-column justify-center pr2">
               <p class="h7 m0">Name</p>
               <p class="h4 m0 truncate">{{ clover.name }}</p>
+              <p class="h5 m0">{{ clover.modified }}</p>
             </div>
             <div class="col-3 flex flex-column justify-center pr2">
               <p class="h7 m0">Cost &clubs;</p>
@@ -73,6 +107,11 @@ const pageSize = 12
 
 export default {
   name: 'Market',
+  data () {
+    return {
+      filtersVisible: false
+    }
+  },
   computed: {
     page () {
       return Number(this.$route.params.page) || 1
@@ -80,7 +119,7 @@ export default {
     clovers () {
       const start = (this.page - 1) * pageSize
       const end = this.page * pageSize
-      return this.$store.state.allClovers.slice(start, end)
+      return this.$store.getters.sortedClovers.slice(start, end)
     },
     allLoadedCloverCount () {
       return this.$store.state.allClovers.length
@@ -100,6 +139,31 @@ export default {
     },
     newCloversCount () {
       return this.newClovers.length
+    },
+    filterBorderStyles () {
+      if (!this.filtersVisible) return
+      return {
+        borderTopColor: 'rgb(0, 180, 100)'
+      }
+    },
+    sortBy: {
+      get () {
+        return this.$store.state.sortBy
+      },
+      set (newVal) {
+        this.updateOrder(newVal)
+        this.toggleFilters()
+      }
+    },
+    feedFilter: {
+      get () {
+        return this.$store.state.feedFilter
+      },
+      set (newVal) {
+        this.$router.push('/market')
+        this.updateFilter(newVal)
+        this.toggleFilters()
+      }
     },
 
     ...mapState(['newClovers']),
@@ -123,9 +187,20 @@ export default {
     inCurationMarket ({ owner }) {
       return owner === this.curationMarketAddress
     },
+    toggleFilters () {
+      this.filtersVisible = !this.filtersVisible
+    },
+    showFilters () {
+      this.filtersVisible = true
+    },
+    hideFilters () {
+      this.filtersVisible = false
+    },
 
     ...mapMutations({
-      showNew: 'SHOW_NEW_CLOVERS'
+      showNew: 'SHOW_NEW_CLOVERS',
+      updateOrder: 'UPDATE_FEED_ORDER',
+      updateFilter: 'UPDATE_FEED_FILTER'
     })
   },
   watch: {
@@ -151,3 +226,18 @@ export default {
   }
 }
 </script>
+
+<style>
+  .filters-btn {
+    border-top-color: white;
+    border-top-style: solid;
+    border-top-width: 3;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transition: border .18s ease-in-out;
+  }
+</style>

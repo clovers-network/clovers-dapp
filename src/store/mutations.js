@@ -73,23 +73,12 @@ export default {
     }
   },
 
-  CLAIMED_CLOVER (state, byteBoard) {
-    console.log(byteBoard)
-    // let i = state.allSavedClovers.findIndex(cl => cl.byteBoard === byteBoard)
-    // // Object.assign(state.allSavedClovers[i], { claimed: new Date() })
-    // let clover = state.allSavedClovers[i]
-    // clover.claimed = new Date()
-    // state.allSavedClovers.splice(i, 1, clover)
-    // if (window.localstorage) {
-    //   window.localStorage.setItem(state.account + '_clovers', JSON.stringify(state.allSavedClovers))
-    // }
-  },
-
   SIGN_IN (state, { account, signature }) {
     state.tokens = { ...state.tokens, [account]: signature }
     updateLocal('clover_tokens', state.tokens)
   },
 
+  // marketplace
   NEW_CLOVER_FROM_CHAIN (state, clover) {
     // called when socket receives new clover
     clover.price = new BigNumber(clover.price)
@@ -98,6 +87,12 @@ export default {
   SHOW_NEW_CLOVERS (state) {
     // move new chain clovers to feed
     state.allClovers.unshift(...state.newClovers.splice(0))
+  },
+  UPDATE_FEED_ORDER (state, sortBy) {
+    state.sortBy = sortBy
+  },
+  UPDATE_FEED_FILTER (state, filter) {
+    state.feedFilter = filter
   },
 
   UPDATE_CLOVER_PRICE (state, { byteBoard, newVal }) {
@@ -133,13 +128,6 @@ export default {
     if (cloverKey > -1) {
       state.allClovers.splice(cloverKey, 1, clover)
     }
-  },
-  STORED_CLOVERS_FOUND (state, count) {
-    // count = parseInt(count)
-    // if (count < state.allSavedClovers.length) {
-    //   state.cloversFound = state.allSavedClovers.length
-    // }
-    // state.cloversFound = count
   },
 
   UPDATE_LOGS (state, logs) {

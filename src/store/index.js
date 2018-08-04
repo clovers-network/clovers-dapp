@@ -38,6 +38,9 @@ const state = {
   newClovers: [],
   // all pages get pushed to full list
   allClovers: [],
+  feedFilter: 'all', // 'all' || 'market'
+  sortBy: 'modified', // 'modified' || 'price'
+
   // saved clovers, organized by account ID
   // use getter 'picks' in views
   allSavedClovers: getSavedClovers(),
