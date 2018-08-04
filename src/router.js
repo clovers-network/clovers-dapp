@@ -3,7 +3,9 @@ import Router from 'vue-router'
 import Welcome from '@/views/Welcome'
 import Field from '@/views/Field'
 import Market from '@/views/Market'
+import Account from '@/views/Account'
 import Picks from '@/views/Picks'
+import Trade from '@/views/Trade'
 import About from '@/views/About'
 // Old routes
 // import Home from '@/components/Home'
@@ -20,12 +22,14 @@ export default new Router({
     {
       path: '/',
       name: 'Welcome',
-      component: Welcome
+      component: Welcome,
+      meta: {title: 'Clovers'}
     },
     {
       path: '/field',
       name: 'Field',
-      component: Field
+      component: Field,
+      meta: {title: 'Find Clovers'}
     },
     {
       path: '/market(/page/)?:page?',
@@ -33,9 +37,29 @@ export default new Router({
       component: Market
     },
     {
-      path: '/wallet',
-      name: 'Picks',
-      component: Picks
+      path: '/account',
+      component: Account,
+      children: [
+        {
+          path: 'clovers',
+          name: 'Account/Clovers',
+          component: Picks,
+          meta: {title: 'Account'}
+        },
+        {
+          path: 'trade',
+          name: 'Account/Trade',
+          component: Trade,
+          meta: {title: 'Account'}
+        },
+        {
+          // default
+          path: '',
+          name: 'Account',
+          component: Picks,
+          meta: {title: 'Account'}
+        }
+      ]
     },
     {
       path: '/about',

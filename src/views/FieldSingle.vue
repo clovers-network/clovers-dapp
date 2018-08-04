@@ -17,22 +17,22 @@
       div(v-show="view === 'keep'")
         .flex
           .col-6.p3.border-right
-            small Cost to Keep ♣
+            small.block.lh2 Cost to Keep ♣
             .font-exp.mt1 300
           .col-6.p3
-            small Balance ♣
+            small.block.lh2 Balance ♣
             .font-exp.mt1 22,438
         button.bg-green.white.font-exp.flex.col-12.h-bttm-bar.pointer
           span.block.m-auto Confirm
       div(v-show="view === 'sell'")
         .flex
           .col-6.p3.border-right.relative(:class="{'opacity-50': sellView !== 'sell'}", @click="sellView = 'sell'")
-            small Sell instantly for ♣
+            small.block.lh2 Sell instantly for ♣
             .font-exp.mt1 500
             button.absolute.top-0.right-0.p2.pointer(@click="sellView = 'sell'")
               .icon-radio(:class="{'icon-radio--selected': sellView === 'sell'}")
           .col-6.p3.relative(:class="{'opacity-50': sellView !== 'auction'}", @click="sellView = 'auction'")
-            small Auction on Market for ♣
+            small.block.lh2 Auction on Market for ♣
             input.font-exp.mt1.block.col-8.border-bottom.min-width-1(type="number", v-model="auctionPrice")
             button.absolute.top-0.right-0.p2.pointer(@click="sellView = 'auction'")
               .icon-radio(:class="{'icon-radio--selected': sellView === 'auction'}")
