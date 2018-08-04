@@ -1,10 +1,17 @@
+.sticky { position: sticky; }
+
 .min-width-1 { min-width: var(--width-0);}
 
-.h-header{height:var(--height-header);}
-.h-100vh{height:100vh}
+.h7 { font-size: .94rem; }
+.h8 { font-size: .75rem; }
+
+.h-header { height:var(--height-header); }
+.h-100vh { height:100vh }
 
 .lh1 { line-height: 1;}
 .lh2 { line-height: 1.25;}
+
+.strikethrough { text-decoration: line-through; }
 
 .mt3-5 { margin-top: 3.5rem; }
 .mln2-5 { margin-left: -1.5em; }

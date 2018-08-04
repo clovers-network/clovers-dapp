@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js'
+
 export default {
   setQuerying (state, bool) {
     state.querying = bool
@@ -90,6 +92,7 @@ export default {
 
   NEW_CLOVER_FROM_CHAIN (state, clover) {
     // called when socket receives new clover
+    clover.price = new BigNumber(clover.price)
     state.newClovers.unshift(clover)
   },
   SHOW_NEW_CLOVERS (state) {
@@ -115,6 +118,7 @@ export default {
   GOT_CLOVERS (state, data) {
     data.forEach(obj => {
       if (!state.allClovers.find(v => v.board === obj.board)) {
+        obj.price = new BigNumber(obj.price)
         state.allClovers.push(obj)
       }
     })
