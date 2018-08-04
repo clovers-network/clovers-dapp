@@ -24,9 +24,6 @@ import SingleView from '@/views/FieldSingle'
 import Bottleneck from 'bottleneck'
 import Reversi from 'clovers-reversi'
 import { pad0x, cloverImage } from '@/utils'
-const limiter = new Bottleneck({
-  minTime: 250
-})
 const clover = new Reversi()
 
 export default {
@@ -34,6 +31,9 @@ export default {
   components: { SingleView },
   data () {
     return {
+      limiter: new Bottleneck({
+        minTime: 250
+      }),
       growing: false,
       generated: [],
       viewSingle: null
@@ -49,7 +49,7 @@ export default {
       if (this.growing) return
       this.growing = true
       for (let i = 30; i; i--) {
-        limiter.submit(this.mineOne, i === 1, this.miningDone)
+        this.limiter.submit(this.mineOne, i === 1, this.miningDone)
       }
     },
     miningDone () { /* no op, `limiter` callback */ },
@@ -76,8 +76,9 @@ export default {
   beforeMount () {
     this.getNext()
   },
-  beforeRouteLeave () {
-    limiter.stop({ dropWaitingJobs: true })
+  beforeRouteLeave (to, from, next) {
+    this.limiter.stop({ dropWaitingJobs: true })
+    next()
   }
 }
 </script>
