@@ -13,7 +13,7 @@ html{
 }
 
 body {
-  color: var(--black);
+  color: var(--green);
   font-family: var(--body-font);
   font-size: var(--base-font-size);
   line-height: 1.5;
@@ -155,7 +155,7 @@ hr {
   border: 0;
   border-bottom-width: 1px;
   border-bottom-style: solid;
-  border-bottom-color: #ccc;
+  border-bottom-color: var(--green);
 }
 
 
