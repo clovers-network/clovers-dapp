@@ -10,8 +10,8 @@
         class="menu-btn pointer p2"
         @click="showMenu = !showMenu"
         aria-label="Toggle Menu">===</button>
-      <h1 class="font-exp h3">{{showMenu ? 'Clovers' : $route.meta.title}}</h1>
-      <router-link class="block p2" :to="{name: 'Account'}"><person-icon></person-icon></router-link>
+      <h1 is="router-link" to="/" tag="h1" class="font-exp h3">{{showMenu ? 'Clovers' : $route.meta.title}}</h1>
+      <router-link class="block p2" to="/account"><person-icon></person-icon></router-link>
     </div>
     <!-- nav -->
     <div
@@ -70,6 +70,3 @@ export default {
   components: { Pig, PersonIcon }
 }
 </script>
-
-<style>
-</style>

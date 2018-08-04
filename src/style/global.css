@@ -505,3 +505,13 @@ image-rendering: optimize-contrast;         /* CSS3 Proposed       */
 .fade-enter, .fade-leave-to {
   opacity: 0;
 }
+
+.lazyload,
+.lazyloading {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+.lazyloaded {
+  opacity: 1;
+  transition: opacity 300ms;
+}

@@ -42,6 +42,13 @@ export default new Router({
       component: Account,
       children: [
         {
+          // default
+          path: '/',
+          name: 'Account',
+          component: Picks,
+          meta: {title: 'Account'}
+        },
+        {
           path: 'clovers',
           name: 'Account/Clovers',
           component: Picks,
@@ -51,13 +58,6 @@ export default new Router({
           path: 'trade',
           name: 'Account/Trade',
           component: Trade,
-          meta: {title: 'Account'}
-        },
-        {
-          // default
-          path: '',
-          name: 'Account',
-          component: Picks,
           meta: {title: 'Account'}
         }
       ]
