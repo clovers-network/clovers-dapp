@@ -113,7 +113,8 @@ export default {
   GOT_CLOVERS (state, data) {
     data.forEach(obj => {
       if (!state.allClovers.find(v => v.board === obj.board)) {
-        obj.price = new BigNumber(obj.price)
+        obj.price = new BigNumber(parseInt(Math.random() * 1000))
+        // obj.price = new BigNumber(obj.price)
         state.allClovers.push(obj)
       }
     })
