@@ -7,36 +7,8 @@ export default {
   curationMarketAddress ({ correctNetwork }) {
     return CurationMarket.networks[correctNetwork].address
   },
-
-  username (state, getters) {
-    console.log('username calculated')
-    return (
-      state.users.find(
-        u =>
-          getters.account &&
-          u.address.toLowerCase() === getters.account.toLowerCase()
-      ) || { address: getters.account, name: getters.account }
-    )
-  },
   registeredEvents (state) {
     return state.logs.filter(log => log.name === 'Registered')
-  },
-  minedClovers (state) {
-    console.log('mined clovers calculated')
-    // return state.allSavedClovers || []
-    return (
-      (state.allSavedClovers.length &&
-        state.allSavedClovers.map(c => {
-          let clover =
-            state.allClovers &&
-            state.allClovers.find(ac => ac.board === '0x' + c.byteBoard)
-          if (clover) {
-            c.claimed = clover.created
-          }
-          return c
-        })) ||
-      []
-    )
   },
   symmetries (state) {
     console.log('symmetries calculated')

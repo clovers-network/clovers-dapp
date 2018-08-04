@@ -129,13 +129,15 @@ export default {
     })
   },
   watch: {
-    page (newVal, oldVal) {
-      if (Number(newVal) > Number(oldVal)) {
-        store.dispatch('getClovers', newVal)
-      }
-    }
+    /* -------- paginated version ---------------- */
+    // page (newVal, oldVal) {
+    //   if (Number(newVal) > Number(oldVal)) {
+    //     store.dispatch('getClovers', newVal)
+    //   }
+    // }
   },
   beforeRouteEnter (to, from, next) {
+    if (store.state.allClovers.length) return next()
     let { page } = to.params
     return store.dispatch('getClovers', page).then(() => {
       next()

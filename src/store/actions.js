@@ -177,21 +177,30 @@ export default {
     return state.allClovers.findIndex(c => c.board === byteBoard) > -1
   },
   getClovers ({ state, commit }, page = 1) {
-    let cloverCount = state.allClovers.length
-    let params = { page }
-    if (!cloverCount) {
-      // all prev, up to end of requested page
-      params.all = true
-    } else {
-      // can just get next page (offset in case of new)
-      params.before = state.allClovers[cloverCount - 1].modified
-    }
+    if (state.allClovers.length) return
     return axios
-      .get(apiUrl('/clovers'), { params })
+      .get(apiUrl('/clovers'))
       .then(({ data }) => {
         commit('GOT_CLOVERS', data)
       })
       .catch(console.log)
+
+    /* -------- paginated version ---------------- */
+    // let cloverCount = state.allClovers.length
+    // let params = { page }
+    // if (!cloverCount) {
+    //   // all prev, up to end of requested page
+    //   params.all = true
+    // } else {
+    //   // can just get next page (offset in case of new)
+    //   params.before = state.allClovers[cloverCount - 1].modified
+    // }
+    // return axios
+    //   .get(apiUrl('/clovers'), { params })
+    //   .then(({ data }) => {
+    //     commit('GOT_CLOVERS', data)
+    //   })
+    //  .catch(console.log)
   },
 
   signIn ({ state, commit }) {
