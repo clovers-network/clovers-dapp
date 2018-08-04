@@ -22,7 +22,9 @@
           .col-6.p3
             small.block.lh2 Balance ♣
             .font-exp.mt1 22,438
-        button.bg-green.white.font-exp.flex.col-12.h-bttm-bar.pointer
+        button.bg-green.white.font-exp.flex.col-12.h-bttm-bar.pointer(
+          @click="clickButton"
+          )
           span.block.m-auto Confirm
       div(v-show="view === 'sell'")
         .flex
@@ -36,11 +38,14 @@
             input.font-exp.mt1.block.col-8.border-bottom.min-width-1(type="number", v-model="auctionPrice")
             button.absolute.top-0.right-0.p2.pointer(@click="sellView = 'auction'")
               .icon-radio(:class="{'icon-radio--selected': sellView === 'auction'}")
-        button.bg-green.white.font-exp.flex.col-12.h-bttm-bar.pointer
+        button.bg-green.white.font-exp.flex.col-12.h-bttm-bar.pointer(
+          @click="clickButton"
+          )
           span.block.m-auto Confirm
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import { cloverImage } from '@/utils'
 export default {
   name: 'FieldSingle',
@@ -58,16 +63,24 @@ export default {
       this.$emit('close')
       this.view = 'keep'
       this.sellView = 'sell'
-    }
+    },
+    async clickButton () {
+      try {
+        await this.buy(this.clover)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    ...mapActions(['buy'])
   }
 }
 </script>
 
-<style scoped>
-figure > div{
-  width:calc(100% - 2rem);
-  height:calc(100% - 4rem);
-  top:2rem;
-  left:1rem;
+<style lang="css" scoped>
+figure > div {
+  width: calc(100% - 2rem);
+  height: calc(100% - 4rem);
+  top: 2rem;
+  left: 1rem;
 }
 </style>
