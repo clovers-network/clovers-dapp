@@ -9,3 +9,7 @@ export function pad0x (string) {
 export function cloverImage ({ board }) {
   return `${apiBase}/clovers/svg/${board}/200`
 }
+
+export function pluralize (word, count) {
+  return `${word}${count !== 1 ? 's' : ''}`
+}

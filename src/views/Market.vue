@@ -1,6 +1,5 @@
 <template>
   <div class="p2 mt4">
-    <h1>The Market 💹</h1>
     <nav>
       <li v-if="prevPage">
         <router-link :to="prevPage">Previous page</router-link>
@@ -9,17 +8,23 @@
         <router-link :to="nextPage">Next page</router-link>
       </li>
     </nav>
-    <ul>
-      <li v-for="(clover, key) in clovers" :key="key">
-        {{ clover.board }}
+    <ul class="list-reset flex flex-wrap justify-around items-center">
+      <li v-for="(clover, i) in clovers" :key="i" class="pr4 pb4">
+        <img :src="cloverImage(clover)"/>
       </li>
     </ul>
+    <div v-if="newCloversCount" class="fixed left-0 right-0 bottom-0 bg-green white p2">
+      <span class="mr2">{{ newCloversCount }} new {{ pluralize('Clover', newCloversCount) }}</span>
+      <a @click="showNewClovers" class="pointer">Show</a>
+    </div>
   </div>
 </template>
 
 <script>
 import store from '@/store'
-import { mapGetters } from 'vuex'
+import { mapState, mapGetters, mapMutations } from 'vuex'
+import { cloverImage, pluralize } from '@/utils'
+
 const pageSize = 12
 
 export default {
@@ -49,8 +54,25 @@ export default {
         return `/market/page/${this.page - 1}`
       }
     },
+    newCloversCount () {
+      return this.newClovers.length
+    },
 
+    ...mapState(['newClovers']),
     ...mapGetters(['newCloversCount'])
+  },
+  methods: {
+    cloverImage,
+    pluralize,
+
+    showNewClovers () {
+      this.$router.push('/market')
+      this.showNew()
+    },
+
+    ...mapMutations({
+      showNew: 'SHOW_NEW_CLOVERS'
+    })
   },
   watch: {
     page (newVal, oldVal) {

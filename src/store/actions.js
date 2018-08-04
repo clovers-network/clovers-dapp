@@ -125,18 +125,21 @@ export default {
     socket.on('disconnect', () => {
       console.log('disconnected')
     })
-    socket.on('newUser', user => {
+    socket.on('newUser', (user) => {
       commit('ADD_USER', user)
       console.log(user)
     })
-    socket.on('updateUser', user => {
-      commit('UPDATE_USER', user)
-      console.log(user)
+    socket.on('updateUser', (user) => {
+      console.log(`userUpdate: ${user.name}`)
+      // list of users is empty rn, so this does nothing
+      // commit('UPDATE_USER', user)
+      // console.log(user)
     })
-    socket.on('newClover', clover => {
+    socket.on('addClover', (clover) => {
+      console.log(`addClover: ${clover.board}`)
       commit('NEW_CLOVER_FROM_CHAIN', clover)
     })
-    socket.on('updateClover', clover => {
+    socket.on('updateClover', (clover) => {
       commit('UPDATE_CLOVER', clover)
       console.log(clover)
     })
