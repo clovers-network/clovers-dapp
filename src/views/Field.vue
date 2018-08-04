@@ -84,8 +84,8 @@ export default {
   },
   mounted () {
     window.onscroll = debounce(() => {
-      let nearBottom = (scrollEl.scrollTop + scrollEl.clientHeight)
-        > scrollEl.scrollHeight - (scrollEl.clientHeight / 2)
+      let nearBottom = (scrollEl.scrollTop + scrollEl.clientHeight) >
+        scrollEl.scrollHeight - (scrollEl.clientHeight / 2)
       console.log(nearBottom)
       if (nearBottom) this.getNext()
     }, 200)
