@@ -259,9 +259,9 @@ hr {
 
 .t-b, .t-w, .t-n {
   display: inline-block;
-  height: .8em;
+  height: .6em;
   line-height: 0;
-  width: .8em;
+  width: .6em;
   border-radius: 50%;
   margin: .06em;
   border: 1px solid transparent;

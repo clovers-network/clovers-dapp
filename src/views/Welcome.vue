@@ -1,9 +1,9 @@
 <template lang="pug">
   .div.pt4
-    h1.h1.center.green.font-exp.strong(@click="scrollTo") Find Rare<br>Clovers
+    h1.h1.center.green.font-exp.strong.pb3(@click="scrollTo") Find Rare<br>Clovers
     .center.my3.relative
       .wide.h1.inline-flex.overflow-auto.pb4(ref="wide")
-        clv.small-clover.inline.mx2.no-hover(
+        clv.small-clover.inline.mx3.no-hover(
           v-for="(c, i) in 5"
           :class="cloverClass(c)"
           :foo="c == 3"
@@ -11,16 +11,14 @@
           :noMoves="true"
           :autoPlay="true"
           :moveString="c == 3 ? heart : random()")
-      router-link(
+      router-link.block.mb3(
         :to="{ name: 'Field' }")
-          dot-btn(
+          dot-btn.mb3(
             label="Start Now"
             text="white"
             bg="green")
-      hr
-      h2.h2.green.font-exp What is Clovers?
-      .p2 Clovers is a game centered around discovering, collecting and trading mathematically generated artworks.
-      button Tell Me More
+      .p2 Clovers is a game about discovering, collecting and trading mathematically generated artworks.
+      button Read More
       hr
       h2.h2.green.font-exp The Field
       .p2 Like looking for shapes in clouds you can browse through the Field of clovers as they're grown in real time looking for rare or interesting shapes.
