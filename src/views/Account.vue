@@ -5,7 +5,7 @@
         span.block Name
       //- change name form goes here
     section
-      view-nav(:items="[{lbl: 'Picks', value: 'Account'}, {lbl: 'My Clovers', value: 'Account/Clovers'}, {lbl: '<span class=font-mono>34,484 ♣</span>', value: 'Account/Trade'}]", :initial="$route.name" @change="$router.push({name: $event})")
+      view-nav(ref="nav", :items="[{lbl: 'Picks', value: 'Account'}, {lbl: 'My Clovers', value: 'Account/Clovers'}, {lbl: '<span class=font-mono>34,484 ♣</span>', value: 'Account/Trade'}]", :initial="$route.name" @change="$router.push({name: $event})")
       router-view
 </template>
 
@@ -13,7 +13,12 @@
 import ViewNav from '@/components/ViewNav'
 export default {
   name: 'Account',
-  components: { ViewNav }
+  components: { ViewNav },
+  watch: {
+    '$route.name' (val) {
+      this.$refs.nav.setActive(val)
+    }
+  }
 }
 </script>
 

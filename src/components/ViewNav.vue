@@ -36,14 +36,15 @@ export default {
       this.active = index
       this.$emit('change', item.value)
     },
-    setInitialActive () {
+    setActive (val) {
+      val = !val ? this.initial : val
       this.items.forEach((item, index) => {
-        if (this.initial === item.value) this.active = index
+        if (val === item.value) this.active = index
       })
     }
   },
   created () {
-    this.setInitialActive()
+    this.setActive()
   }
 }
 </script>
