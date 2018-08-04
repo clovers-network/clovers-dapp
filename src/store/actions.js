@@ -1,6 +1,8 @@
-import io from 'socket.io-client'
-
 import * as contracts from 'clovers-contracts'
+import Reversi from 'clovers-reversi'
+import BigNumber from 'bignumber.js'
+import io from 'socket.io-client'
+import utils from 'web3-utils'
 import axios from 'axios'
 
 const apiBase = process.env.VUE_APP_API_URL
@@ -11,7 +13,11 @@ const signingParams = [
     value: 'To avoid bad things, sign below to authenticate with Clovers'
   }
 ]
-
+let networks = {
+  4: 'Rinkeby',
+  5777: 'Ganache',
+  1: 'Mainnet'
+}
 export default {
   // web3 stuff
   async begin ({ commit, dispatch }) {
@@ -23,23 +29,18 @@ export default {
       console.error(error)
     }
   },
-  async reset ({ state, commit, dispatch }) {
+  reset ({ state, commit, dispatch }) {
     if (state.querying) {
       commit('setTryAgain', true)
       return
     }
     console.log('reset')
     commit('setQuerying', true)
-    try {
-      dispatch('getContracts')
-      commit('setQuerying', false)
-      if (state.tryAgain) {
-        commit('setTryAgain', false)
-        dispatch('reset')
-      }
-    } catch (error) {
-      console.log('begin failed')
-      console.error(error)
+    dispatch('getContracts')
+    commit('setQuerying', false)
+    if (state.tryAgain) {
+      commit('setTryAgain', false)
+      dispatch('reset')
     }
   },
   async poll ({ state, commit, dispatch }) {
@@ -73,6 +74,13 @@ export default {
              interact with the contracts. If you'd like more information about
              this error, please see out help page.`
           break
+        case 'wrong-network':
+          title = 'Wrong Network'
+          body = `Looks like you're connected to the wrong network. Please switch to
+          Network ${
+  networks[state.correctNetwork]
+} to interact with the blockchain.`
+          break
         default:
           title = 'Error Connecting To The Network'
           body = error.message
@@ -101,20 +109,23 @@ export default {
     } else if (!accounts.length && (state.account || state.unlocked)) {
       commit('setUnlocked', false)
       commit('setAccount', null)
-      return new Error('account-locked')
+      throw new Error('account-locked')
     }
   },
   getContracts ({ state, commit }) {
+    console.log('getContracts')
     for (var name in contracts) {
-      if (!contracts.hasOwnProperty(name)) return
+      if (!contracts.hasOwnProperty(name)) continue
       let contract = contracts[name]
       if (contract.networks[state.networkId]) {
         contract.instance = new global.web3.eth.Contract(
           contract.abi,
           contract.networks[state.networkId].address
         )
+        console.log('instantiated ' + name)
       } else {
-        new Error('No contract on that network')
+        console.log(name + ' not deployed on this network')
+        throw new Error('wrong-network')
       }
     }
   },
@@ -122,6 +133,10 @@ export default {
   // api stuff
   setUpSocket ({ commit }) {
     const socket = io(process.env.VUE_APP_API_URL)
+
+    socket.on('connect', () => {
+      console.log('connected')
+    })
     socket.on('disconnect', () => {
       console.log('disconnected')
     })
@@ -156,7 +171,6 @@ export default {
     return msg.id
   },
   cloverExists ({ state }, byteBoard) {
-    console.log(byteBoard)
     return state.allClovers.findIndex(c => c.board === byteBoard) > -1
   },
   getClovers ({ state, commit }, page = 1) {
@@ -210,9 +224,112 @@ export default {
         console.log(data)
       })
       .catch(console.log)
+  },
+
+  // contract Interactions
+  async buy ({ dispatch, state, commit }, clover) {
+    if (dispatch('cloverExists', clover.board)) {
+      // confirm clover is actually for sale
+    } else {
+      // mint clover w option _keep = true
+      await claimClover({ keep: true, clover, account: state.account })
+    }
+  },
+  async sell ({ state, dispatch, commit }, { clover, price }) {
+    // confirm clover exists (and is not a claim Clover sell)
+    if (dispatch('cloverExists', clover.board)) {
+      // check if it is owned by this user
+      let owner = await contracts.Clovers.methods.ownerOf(clover.board).call()
+      if (owner.toLowerCase() !== state.account.toLowerCase()) {
+        throw new Error('cant-sell-dont-own')
+      }
+      if (price.eq(0)) {
+      } else {
+        let currentPrice = await contracts.SimpleCloversMarket.methods.sellPrice(
+          clover.board
+        )
+        if (!currentPrice.eq(price)) {
+          await contracts.SimpleCloversMarket.methods
+            .sell(clover.board, price)
+            .send({
+              from: state.account
+            })
+        } else {
+          // update price
+        }
+      }
+    } else {
+      // mint clover w option _keep = false
+      await claimClover({ keep: false, clover, account: state.account })
+    }
   }
 }
 
 function apiUrl (path) {
   return apiBase + path
+}
+
+async function getLowestPrice (
+  contract,
+  targetAmount,
+  currentPrice = new BigNumber('0'),
+  useLittle = false
+) {
+  if (typeof targetAmount !== 'object') {
+    targetAmount = new BigNumber(targetAmount)
+  }
+  let littleIncrement = new BigNumber(utils.toWei('0.001'))
+  let bigIncrement = new BigNumber(utils.toWei('0.1'))
+  currentPrice = currentPrice.add(useLittle ? littleIncrement : bigIncrement)
+  let resultOfSpend = await contract.getBuy(currentPrice)
+  if (resultOfSpend.gt(targetAmount)) {
+    return useLittle
+      ? currentPrice
+      : getLowestPrice(
+        contract,
+        targetAmount,
+        currentPrice.sub(bigIncrement),
+        true
+      )
+  }
+  return getLowestPrice(contract, targetAmount, currentPrice, useLittle)
+}
+
+async function claimClover ({ keep, account, clover }) {
+  let reversi = new Reversi()
+  reversi.playGameMovesString(clover.moves)
+  let moves = reversi.returnByteMoves()
+  let _tokenId = clover.board
+  let _symmetries = reversi.returnSymmetriesAsBN().toString(10)
+  let _keep = keep
+  let from = account
+  let value = '0'
+
+  if (keep) {
+    let mintPrice = await getMintPrice({ _symmetries })
+
+    let balance = await contracts.ClubToken.balanceOf(account).call()
+    if (balance.lt(mintPrice)) {
+      let clubTokenToBuy = balance.sub(mintPrice)
+      value = await getLowestPrice(
+        contracts.ClubTokenController,
+        clubTokenToBuy
+      )
+    }
+  }
+
+  await contracts.CloversController.instance.methods
+    .claimClover(moves, _tokenId, _symmetries, _keep)
+    .send({ from, value })
+  // .on('transactionHash', hash => {})
+}
+
+async function getMintPrice ({ _symmetries }) {
+  let reward = await contracts.CloversController.instance.methods
+    .calculateReward(_symmetries)
+    .call()
+  let basePrice = await contracts.CloversController.instance.methods
+    .basePrice()
+    .call()
+  return reward.add(basePrice)
 }
