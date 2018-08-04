@@ -15,10 +15,6 @@ export default {
   registeredEvents (state) {
     return state.logs.filter(log => log.name === 'Registered')
   },
-  cloversFound () {
-    return ['??????']
-    // is this supposed to be pickcount now?
-  },
   minedClovers (state) {
     console.log('mined clovers calculated')
     // return state.allSavedClovers || []

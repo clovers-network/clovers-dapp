@@ -30,7 +30,7 @@ let reversi = new Reversi()
 
 export default {
   name: 'Pig',
-  data () {
+  data() {
     return {
       miners: [],
       interval: null,
@@ -43,70 +43,70 @@ export default {
   },
   watch: {
     watch: {
-      cloversFound () {
-        if (this.allClovers && this.allClovers.length > 0) {
+      pickCount() {
+        if (this.pickCount && this.pickCount.length > 0) {
           this.symmsSinceOpened++
         }
       },
-      showMiner () {
+      showMiner() {
         this.symmsSinceOpened = 0
       }
     }
   },
   computed: {
-    ...mapGetters(['cloversFound', 'pickCount']),
+    ...mapGetters(['pickCount']),
     mining: {
-      get () {
+      get() {
         return this.$store.state.mining
       },
-      set (newVal) {
+      set(newVal) {
         this.toggleMiner(newVal)
       }
     },
     hashRate: {
-      get () {
+      get() {
         return this.$store.state.hashRate
       },
-      set (newVal) {
+      set(newVal) {
         this.newHashRate(newVal)
       }
     },
     totalMined: {
-      get () {
+      get() {
         return this.$store.state.totalMined
       },
-      set (newVal) {
+      set(newVal) {
         this.addMineTotal(newVal)
       }
     },
     mineTime: {
-      get () {
+      get() {
         return this.$store.state.mineTime
       },
-      set (newVal) {
+      set(newVal) {
         this.addMineTime(newVal)
       }
     },
     miningPower: {
-      get () {
+      get() {
         return this.$store.state.miningPower
       },
-      set (newVal) {
+      set(newVal) {
         this.changePower(newVal)
       }
     },
-    mineBtn () {
+    mineBtn() {
       return this.miners.length ? 'More power' : 'Start mining'
     },
-    stopBtn () {
+    stopBtn() {
       return this.miners.length === 1 ? 'Stop mining' : 'Slow down!'
     },
-    timeSpent () {
+    timeSpent() {
       return moment.utc(this.mineTime * 1000).format('HH:mm:ss')
     }
   },
   methods: {
-    mine () {
+    mine() {
       this.mining = true
       if (!this.start) this.start = new Date()
       let miner = new CloverWorker()
@@ -115,7 +115,7 @@ export default {
       this.miners.push(miner)
       this.miningPower = this.miners.length
     },
-    stop () {
+    stop() {
       console.log('stop')
       if (this.miners.length) {
         let removed = this.miners.pop()
@@ -129,14 +129,14 @@ export default {
         this.mining = false
       }
     },
-    stopAll () {
+    stopAll() {
       console.log('stop all')
       this.stop()
       while (this.miners.length > 0) {
         this.stop()
       }
     },
-    minerEvent (event) {
+    minerEvent(event) {
       let { data } = event
       if ('hashRate' in data) {
         this.hashRate = data.hashRate
@@ -154,7 +154,7 @@ export default {
           })
       }
     },
-    timer () {
+    timer() {
       if (this.mining) {
         this.mineTime = 1
       }
@@ -169,10 +169,10 @@ export default {
       saveClover: 'SAVE_CLOVER'
     })
   },
-  mounted () {
+  mounted() {
     this.interval = setInterval(this.timer, 1000)
   },
-  destroyed () {
+  destroyed() {
     clearInterval(this.interval)
   },
   components: { ToggleBtn }
