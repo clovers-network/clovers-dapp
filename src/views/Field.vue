@@ -1,13 +1,13 @@
 <template>
-  <div class="p2 my4">
+  <div class="pt3">
     <single-view v-show="viewSingle" :clover="viewSingle" @close="viewSingle = null"></single-view>
-    <ul class="list-reset flex flex-wrap">
-      <li v-for="(clover, i) in generated" :key="i" class="pr4 pb4">
+    <ul class="list-reset flex flex-wrap justify-center mxn2 mt0 mb3 px1">
+      <li v-for="(clover, i) in generated" :key="i" class="px2 mb3 col-6 relative">
         <img class="pointer" :src="cloverImage(clover)" @click="viewSingle = clover"/>
-        <p class="h2">
+        <div class="h2 line-height-1 absolute top-0 right-0 mr2">
           <span v-if="isSaved(clover)" class="green">&hearts;</span>
           <a v-else @click="saveClover(clover)" class="green pointer" style="opacity:.3">&hearts;</a>
-        </p>
+        </div>
       </li>
     </ul>
     <button @click="getNext" class="btn btn-big btn-primary bg-green">Get some</button>
