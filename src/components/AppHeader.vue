@@ -9,7 +9,9 @@
       <button
         class="menu-btn pointer p2"
         @click="showMenu = !showMenu"
-        aria-label="Toggle Menu">===</button>
+        aria-label="Toggle Menu">
+          <img :src="showMenu ? require('../assets/icons/hamburger-white.svg') : require('../assets/icons/hamburger.svg')" />
+      </button>
       <h1 v-if="showMenu" class="font-exp h3"><router-link :to="{ name: 'Welcome' }">Clovers</router-link></h1>
       <h1 v-else class="font-exp h3">{{$route.meta.title}}</h1>
       <router-link class="block p2" :to="{name: 'Account'}"><person-icon></person-icon></router-link>
