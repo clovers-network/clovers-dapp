@@ -12,8 +12,15 @@
         aria-label="Toggle Menu">
           <img :src="showMenu ? require('../assets/icons/hamburger-white.svg') : require('../assets/icons/hamburger.svg')" />
       </button>
-      <h1 v-if="showMenu" class="font-exp h3"><router-link :to="{ name: 'Welcome' }">Clovers</router-link></h1>
-      <h1 v-else class="font-exp h3">{{$route.meta.title}}</h1>
+      <h1 class="font-exp h3">
+          <router-link
+            v-if="showMenu"
+            @click.native="showMenu = !showMenu"
+            :to="{ name: 'Welcome' }">
+            Clovers
+          </router-link>
+          <span v-else>{{$route.meta.title}}</span>
+      </h1>
       <router-link class="block p2" :to="{name: 'Account'}"><person-icon></person-icon></router-link>
     </div>
     <!-- nav -->
