@@ -52,6 +52,7 @@ export default {
         limiter.submit(this.mineOne, i === 1, this.miningDone)
       }
     },
+    miningDone () { /* no op, `limiter` callback */ },
     mineOne (last) {
       clover.mine()
       this.generated.push({
@@ -62,9 +63,6 @@ export default {
       if (last) {
         this.growing = false
       }
-    },
-    miningDone () {
-      // no op
     },
     isSaved ({ board }) {
       if (!this.picks.length) return false
@@ -77,6 +75,9 @@ export default {
   },
   beforeMount () {
     this.getNext()
+  },
+  beforeRouteLeave () {
+    limiter.stop({ dropWaitingJobs: true })
   }
 }
 </script>
