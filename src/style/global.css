@@ -13,10 +13,10 @@ html{
 }
 
 body {
-  color: var(--black);
+  color: var(--green);
   font-family: var(--body-font);
   font-size: var(--base-font-size);
-  line-height: 1.5;
+  line-height: 1.4;
   margin: 0;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -75,6 +75,10 @@ input::-webkit-inner-spin-button {
     /* display: none; <- Crashes Chrome on hover */
     -webkit-appearance: none;
     margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+h1 {
+  line-height: 1.15;
 }
 
 /*h1, h2, h3,
@@ -150,12 +154,12 @@ blockquote {
 }
 
 hr {
-  margin-top: 1.5em;
-  margin-bottom: 1.5em;
+  margin-top: 2.5em;
+  margin-bottom: 2.5em;
   border: 0;
   border-bottom-width: 1px;
   border-bottom-style: solid;
-  border-bottom-color: #ccc;
+  border-bottom-color: var(--green);
 }
 
 
@@ -255,9 +259,9 @@ hr {
 
 .t-b, .t-w, .t-n {
   display: inline-block;
-  height: .8em;
+  height: .6em;
   line-height: 0;
-  width: .8em;
+  width: .6em;
   border-radius: 50%;
   margin: .06em;
   border: 1px solid transparent;
