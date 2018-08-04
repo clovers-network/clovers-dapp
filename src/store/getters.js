@@ -1,6 +1,12 @@
 import Reversi from 'clovers-reversi'
+import { CurationMarket } from 'clovers-contracts'
+
 export default {
   notRinkeby: state => state.networkId !== state.correctNetwork,
+
+  curationMarketAddress ({ correctNetwork }) {
+    return CurationMarket.networks[correctNetwork].address
+  },
 
   username (state, getters) {
     console.log('username calculated')

@@ -1,7 +1,5 @@
 <template>
-  <div
-    id="app"
-    class='mt3-5 pb4'>
+  <div id="app">
     <app-header/>
     <main>
       <router-view/>
@@ -19,9 +17,6 @@ import { mapActions } from 'vuex'
 
 export default {
   name: 'App',
-  data () {
-    return {}
-  },
   methods: {
     ...mapActions(['begin', 'setUpSocket'])
   },
@@ -47,12 +42,6 @@ export default {
       right: -2.6em;
       top: -2.6em;
     }
-  }
-  .h7{
-    font-size: 0.6rem;
-  }
-  .h8{
-    font-size: 0.5rem;
   }
 
   #app {

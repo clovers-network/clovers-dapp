@@ -42,6 +42,12 @@ export default new Router({
       name: 'About',
       component: About
     },
+    {
+      path: '/clovers/:board',
+      name: 'Clover',
+      template: '<div class="mt4">Single clover</div>'
+    },
+
     //
     // =======================================
     // Old Paths
