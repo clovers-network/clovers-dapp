@@ -59,7 +59,7 @@
           </div>
 
           <template v-if="inCurationMarket(clover)">
-            <div class="col-54 flex flex-column justify-center pr3">
+            <div class="col-5 flex flex-column justify-center pr3">
               <p class="h7 m0">Market Cap &clubs;</p>
               <p class="h4 m0 truncate">0</p>
             </div>
@@ -70,7 +70,7 @@
           </template>
 
           <template v-else>
-            <div class="col-4 flex flex-column justify-center pr3">
+            <div class="col-5 flex flex-column justify-center pr3">
               <p class="h7 m0">Name</p>
               <p class="h4 m0 truncate">{{ clover.name }}</p>
             </div>

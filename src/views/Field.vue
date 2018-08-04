@@ -52,9 +52,8 @@ export default {
 
     getNext () {
       if (this.growing) return
-      console.log('getting next ones!')
       this.growing = true
-      for (let i = 30; i; i--) {
+      for (let i = 24; i; i--) {
         this.limiter.submit(this.mineOne, i === 1, this.miningDone)
       }
     },
@@ -85,10 +84,9 @@ export default {
   mounted () {
     window.onscroll = debounce(() => {
       let nearBottom = (scrollEl.scrollTop + scrollEl.clientHeight) >
-        scrollEl.scrollHeight - (scrollEl.clientHeight / 2)
-      console.log(nearBottom)
+        scrollEl.scrollHeight - (scrollEl.clientHeight - 140)
       if (nearBottom) this.getNext()
-    }, 200)
+    }, 30)
   },
   beforeRouteLeave (to, from, next) {
     this.limiter.stop({ dropWaitingJobs: true })
@@ -99,7 +97,7 @@ export default {
 
 <style>
   .mb-full-height {
-    margin-bottom: 100vh;
+    margin-bottom: calc(100vh - 275px);
   }
 
   .appear {
