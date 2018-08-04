@@ -1,6 +1,5 @@
 <template lang="pug">
   section.green
-    .h-header
     header.border-bottom
       h1.h-header.px2.flex.items-center
         span.block Name
