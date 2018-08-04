@@ -43,18 +43,12 @@ export default {
   },
   watch: {
     watch: {
-      pickCount() {
-        if (this.pickCount && this.pickCount.length > 0) {
-          this.symmsSinceOpened++
-        }
-      },
       showMiner() {
         this.symmsSinceOpened = 0
       }
     }
   },
   computed: {
-    ...mapGetters(['pickCount']),
     mining: {
       get() {
         return this.$store.state.mining
@@ -146,6 +140,7 @@ export default {
         this.cloverExists(data.byteBoard)
           .then(exists => {
             if (!exists) {
+              this.symmsSinceOpened++
               this.saveClover(data)
             }
           })
