@@ -26,13 +26,14 @@
     "basscss-typography": "^3.0.4",
     "bignumber.js": "^4.1.0",
     "bottleneck": "^2.6.0",
-    "clovers-contracts": "^1.0.2",
+    "clovers-contracts": "^1.0.5",
     "clovers-reversi": "^1.0.14",
     "copy-to-clipboard": "^3.0.8",
     "ethjs": "^0.2.9",
     "fs": "0.0.1-security",
     "moment": "^2.21.0",
     "node-emoji": "^1.8.1",
+    "portis": "^1.2.5",
     "pug": "^2.0.3",
     "pug-loader": "^2.4.0",
     "pug-plain-loader": "^1.0.0",
@@ -79,7 +80,8 @@
       "no-console": 0,
       "no-inner-declarations": 0,
       "import/no-webpack-loader-syntax": 0,
-      "no-mixed-operators": 0
+      "no-mixed-operators": 0,
+      "no-new": 0
     },
     "root": false,
     "extends": [

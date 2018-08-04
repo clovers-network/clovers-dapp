@@ -44,48 +44,48 @@ export default {
 </script>
 
 <style lang="scss">
-  .all-symmetries {
-    left: 50%;
-    margin-top: 2em;
-    transform: translateX(-50%);
-    text-align:center;
-  }
+.all-symmetries {
+  left: 50%;
+  margin-top: 2em;
+  transform: translateX(-50%);
+  text-align: center;
+}
 
-  .symmetry-type {
-    border-radius: 100%;
-    border: 1px solid;
+.symmetry-type {
+  border-radius: 100%;
+  border: 1px solid;
+  line-height: 0;
+  margin: 0.4em;
+  padding: 0.8em;
+  width: 1em;
+}
+
+.XnYSym {
+  background: linear-gradient(45deg, currentColor 1.1em, transparent 0);
+}
+
+.XYSym {
+  background: linear-gradient(-45deg, currentColor 1.1em, transparent 0);
+}
+
+.Y0Sym {
+  background: linear-gradient(0deg, currentColor 0.8em, transparent 0);
+}
+
+.X0Sym {
+  background: linear-gradient(90deg, transparent 0.8em, currentColor 0);
+}
+
+.RotSym {
+  position: relative;
+
+  &:before {
+    content: '\002938';
+    font-weight: bold;
+    left: 0.6em;
     line-height: 0;
-    margin: .4em;
-    padding: .8em;
-    width:1em;
+    position: absolute;
+    top: 0.7em;
   }
-
-  .XnYSym {
-    background: linear-gradient(45deg, currentColor 1.1em, transparent 0);
-  }
-
-  .XYSym {
-    background: linear-gradient(-45deg, currentColor 1.1em, transparent 0);
-  }
-
-  .Y0Sym {
-    background: linear-gradient(0deg, currentColor .8em, transparent 0);
-  }
-
-  .X0Sym {
-    background: linear-gradient(90deg, transparent .8em, currentColor 0);
-  }
-
-  .RotSym {
-    position: relative;
-
-    &:before {
-      content: '\002938';
-      font-weight: bold;
-      left: .6em;
-      line-height: 0;
-      position: absolute;
-      top: .7em;
-    }
-  }
+}
 </style>

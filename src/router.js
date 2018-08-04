@@ -6,12 +6,10 @@ import Market from '@/views/Market'
 import Picks from '@/views/Picks'
 import About from '@/views/About'
 // Old routes
-import AboutOld from '@/components/About'
-import Activity from '@/components/Activity'
-import Home from '@/components/Home'
-import Clover from '@/components/Clover'
-import User from '@/components/User'
-import Users from '@/components/Users'
+// import Home from '@/components/Home'
+// import Clover from '@/components/Clover'
+// import User from '@/components/User'
+// import Users from '@/components/Users'
 import CloverList from '@/components/CloverList'
 
 Vue.use(Router)
@@ -49,11 +47,11 @@ export default new Router({
     // Old Paths
     // =======================================
     //
-    {
-      path: '/home', // formerly "/"
-      name: 'Home',
-      component: Home
-    },
+    // {
+    //   path: '/home', // formerly "/"
+    //   name: 'Home',
+    //   component: Home
+    // },
     /*
     {
       path: '/about',
@@ -64,29 +62,29 @@ export default new Router({
       }
     },
     */
-    {
-      path: '/clovers/:board',
-      name: 'Clover',
-      component: Clover
-    },
-    {
-      path: '/activity',
-      name: 'Activity',
-      component: Activity
-    },
-    {
-      path: '/users/',
-      name: 'Users',
-      component: Users
-    },
-    {
-      path: '/users/:address',
-      name: 'User',
-      component: User,
-      meta: {
-        hideMainCloverList: true
-      }
-    },
+    // {
+    //   path: '/clovers/:board',
+    //   name: 'Clover',
+    //   component: Clover
+    // },
+    // {
+    //   path: '/activity',
+    //   name: 'Activity',
+    //   component: Activity
+    // },
+    // {
+    //   path: '/users/',
+    //   name: 'Users',
+    //   component: Users
+    // },
+    // {
+    //   path: '/users/:address',
+    //   name: 'User',
+    //   component: User,
+    //   meta: {
+    //     hideMainCloverList: true
+    //   }
+    // },
     // add on for reference
     {
       path: '/cloverlist',

@@ -25,40 +25,19 @@
           <li class="mt2"><router-link :to="{ name: 'About' }">About</router-link></li>
         </ul>
       </nav>
-      <!-- miner -->
-      <div class="py3">
-        <nav>
-          <h6 class="center h3">Clover Pig</h6>
-          <!--<button>On/Off</button>-->
-          <toggle-btn class="mx-auto my3" :active="minerOn" @click="minerOn = !minerOn"></toggle-btn>
-          <div class="flex justify-between items-center">
-            <div class="col-6 px2 h3">
-              <div>Speed</div>
-              <div class="font-exp mt1">0/s</div>
-            </div>
-            <div class="col-6 px2 h3">
-              <div>Rare&nbsp;Clovers&nbsp;Found</div>
-              <div class="font-exp mt1">{{ symmsSinceOpened }}</div>
-            </div>
-          </div>
-        </nav>
-      </div>
+      <pig/>
     </div>
   </header>
 </template>
 
 <script>
 import { mapGetters, mapState } from 'vuex'
-import Miner from '@/components/Miner'
-import ToggleBtn from '@/components/ToggleBtn'
+import Pig from '@/components/Pig'
 export default {
   name: 'AppHeader',
   data () {
     return {
-      showMiner: false,
-      symmsSinceOpened: 0,
-      showMenu: false,
-      minerOn: false
+      showMenu: false
     }
   },
   mounted () {
@@ -70,15 +49,6 @@ export default {
   watch: {
     '$route.fullPath': function () {
       this.showMenu = false
-      this.showMiner = false
-    },
-    cloversFound () {
-      if (this.allClovers && this.allClovers.length > 0) {
-        this.symmsSinceOpened++
-      }
-    },
-    showMiner () {
-      this.symmsSinceOpened = 0
     }
   },
   methods: {
@@ -87,42 +57,11 @@ export default {
     },
     checkEsc (e) {
       if (e.keyCode === 27) {
-        this.showMiner = false
+        this.showMenu = false
       }
-    },
-    toggleMinePanel () {
-      this.showMiner = !this.showMiner
     }
   },
-  computed: {
-    userName () {
-      return (
-        this.username &&
-        this.username.name &&
-        (this.username.name.length > 9
-          ? this.username.name.slice(0, 9) + '&hellip;'
-          : this.username.name)
-      )
-    },
-    mineText () {
-      if (!this.mining) return 'Miner stopped'
-      return `Mining at ${this.hashRate} g/s`
-    },
-    balanceString () {
-      return parseInt(this.balance).toLocaleString()
-    },
-
-    ...mapState([
-      'allClovers',
-      'clubTokenSymbol',
-      'balance',
-      'hashRate',
-      'mining'
-    ]),
-
-    ...mapGetters(['username', 'cloversFound', 'pickCount'])
-  },
-  components: { Miner, ToggleBtn }
+  components: { Pig }
 }
 </script>
 

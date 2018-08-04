@@ -2,13 +2,27 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import { PortisProvider } from 'portis'
+import Web3 from 'web3'
 
 import BN from 'bignumber.js'
 
 import Clv from '@/components/Clv'
-import CloverIcon from '@/components/CloverIcon'
 import CloverGridItem from '@/components/CloverGridItem'
 // import './registerServiceWorker'
+
+if (typeof web3 !== 'undefined') {
+  // Use Mist/MetaMask's provider
+  global.web3 = new Web3(web3.currentProvider)
+} else {
+  // Fallback - use Portis
+  global.web3 = new Web3(
+    new PortisProvider({
+      apiKey: 'e1d5ea735b084b248c33c221873d08dc',
+      network: 'rinkeby'
+    })
+  )
+}
 
 router.beforeEach((to, from, next) => {
   console.log('to.path', to.path)
@@ -30,7 +44,6 @@ router.afterEach(() => {
 Object.defineProperty(Vue.prototype, '$BN', { value: BN })
 
 Vue.component('clv', Clv)
-Vue.component('clover-icon', CloverIcon)
 Vue.component('clover-grid-item', CloverGridItem)
 
 Vue.config.productionTip = false

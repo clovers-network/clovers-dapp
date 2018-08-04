@@ -8,21 +8,21 @@
 
 <script>
 export default {
-  name: 'Switch',
+  name: 'ToggleBtn',
   props: {
-    active: {type: Boolean, default: false},
-    labels: {type: Array, default: () => ['On', 'Off']},
-    theme: {type: String, default: 'white'}
+    active: { type: Boolean, default: false },
+    labels: { type: Array, default: () => ['On', 'Off'] },
+    theme: { type: String, default: 'white' }
   }
 }
 </script>
 
 <style scoped>
-button{
-  max-width:36rem;
-  > div{
-    height:5rem;
-    > div{
+button {
+  max-width: 36rem;
+  > div {
+    height: 5rem;
+    > div {
       padding-bottom: 0.1em;
     }
   }
