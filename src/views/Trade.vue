@@ -11,14 +11,23 @@
       figure
         figcaption.pt2.pl3 7 Days, ETH
         img.block.col-12(src="/static/demo-chart.png")
+      view-nav(:items="[{lbl: 'Buy', value:'buy'}, {lbl: 'Sell', value:'sell'}]", @change="view = $event")
+      section.py3.px1
     footer.sticky.left-0.bottom-0
       button.h-bttm-bar.bg-green.white.flex.col-12
         span.block.m-auto.font-exp Confirm
 </template>
 
 <script>
+import ViewNav from '@/components/ViewNav'
 export default {
-  name: 'Trade'
+  name: 'Trade',
+  components: { ViewNav },
+  data () {
+    return {
+      view: 'buy'
+    }
+  }
 }
 </script>
 
