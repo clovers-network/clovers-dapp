@@ -24,6 +24,7 @@ export default {
 <style scoped>
 button {
   max-width: 36rem;
+  min-width: 66%;
   transform: translateX(-3px);
   > div {
     transform: translate(6px, -6px);
