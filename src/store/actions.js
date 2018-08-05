@@ -15,11 +15,18 @@ const signingParams = [
     value: 'To avoid bad things, sign below to authenticate with Clovers'
   }
 ]
-let networks = {
+const networks = {
   4: 'rinkeby',
   5777: 'ganache',
   1: 'mainnet'
 }
+const anonUser = {
+  address: null,
+  name: 'anon',
+  clovers: [],
+  modified: null
+}
+
 export default {
   // web3 stuff
   async begin ({ commit, dispatch }) {
@@ -33,15 +40,15 @@ export default {
   },
   reset ({ state, commit, dispatch }) {
     if (state.querying) {
-      commit('setTryAgain', true)
+      commit('SET_TRY_AGAIN', true)
       return
     }
     console.log('reset')
-    commit('setQuerying', true)
+    commit('SET_QUERYING', true)
     dispatch('getContracts')
-    commit('setQuerying', false)
+    commit('SET_QUERYING', false)
     if (state.tryAgain) {
-      commit('setTryAgain', false)
+      commit('SET_TRY_AGAIN', false)
       dispatch('reset')
     }
   },
@@ -99,7 +106,7 @@ export default {
   async getNetwork ({ commit, state }) {
     const networkId = await global.web3.eth.net.getId()
     if (state.networkId !== networkId) {
-      commit('setNetwork', networkId)
+      commit('SET_NETWORK', networkId)
     }
   },
   async getAnAccount ({ dispatch, commit, state }) {
@@ -124,14 +131,16 @@ export default {
       alert('unlock your web3 wallet')
     }
   },
-  async getAccount ({ commit, state }) {
+  async getAccount ({ commit, dispatch, state }) {
     let accounts = await global.web3.eth.getAccounts()
     if (accounts.length && state.account !== accounts[0]) {
-      commit('setUnlocked', true)
-      commit('setAccount', accounts[0])
+      commit('SET_UNLOCKED', true)
+      commit('SET_ACCOUNT', accounts[0])
+      dispatch('getUser', accounts[0])
     } else if (!accounts.length && (state.account || state.unlocked)) {
-      commit('setUnlocked', false)
-      commit('setAccount', null)
+      commit('SET_UNLOCKED', false)
+      commit('SET_ACCOUNT', null)
+      dispatch('getUser', null)
       throw new Error('account-locked')
     }
   },
@@ -150,6 +159,18 @@ export default {
         throw new Error('wrong-network')
       }
     }
+  },
+  async getUser ({ commit }, account) {
+    if (!account) {
+      commit('SET_USER', anonUser)
+      return
+    }
+    const user = await axios.get(apiUrl(`/users/${account}`)).then(({ data }) => {
+      if (!data.address) {
+        data = Object.assign(anonUser, { address: account, name: account })
+      }
+      commit('SET_USER', data)
+    })
   },
 
   // api stuff

@@ -16,6 +16,10 @@ export default {
       return true
     })
   },
+  userClovers ({ user }) {
+    if (!user) return []
+    return user.clovers
+  },
 
   newCloversCount ({ newClovers }) {
     return newClovers.length

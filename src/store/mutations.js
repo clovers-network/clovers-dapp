@@ -1,19 +1,22 @@
 import BigNumber from 'bignumber.js'
 
 export default {
-  setQuerying (state, bool) {
+  SET_QUERYING (state, bool) {
     state.querying = bool
   },
-  setTryAgain (state, bool) {
+  SET_TRY_AGAIN (state, bool) {
     state.tryAgain = bool
   },
-  setUnlocked (state, unlocked) {
+  SET_UNLOCKED (state, unlocked) {
     state.unlocked = unlocked
   },
-  setAccount (state, account) {
+  SET_ACCOUNT (state, account) {
     state.account = account
   },
-  setNetwork (state, networkId) {
+  SET_USER (state, user) {
+    state.user = user
+  },
+  SET_NETWORK (state, networkId) {
     state.networkId = networkId
   },
   SUBMITTED_CLOVER (state, byteBoard) {

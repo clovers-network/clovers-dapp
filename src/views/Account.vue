@@ -15,6 +15,7 @@ export default {
   name: 'Account',
   data () {
     return {
+      form: { name: null },
       navItems: [
         {lbl: 'Picks', value: 'Account'},
         {lbl: 'My Clovers', value: 'Account/Clovers'},
@@ -22,12 +23,12 @@ export default {
       ]
     }
   },
-  components: { ViewNav },
   watch: {
     '$route.name' (val) {
       this.$refs.nav.setActive(val)
     }
-  }
+  },
+  components: { ViewNav }
 }
 </script>
 
