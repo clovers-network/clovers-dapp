@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="375px" height="241px" viewBox="0 0 375 241" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 11</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <pattern id="pattern-1" width="6" height="6" x="-6" y="10" patternUnits="userSpaceOnUse">
+            <use xlink:href="#image-2"></use>
+        </pattern>
+        <image id="image-2" width="6" height="6" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABGdBTUEAALGOGCHvlwAAAAlwSFlzAAAWJQAAFiUBSVIk8AAAAG9JREFUKBVj/P//PwMyYNqagiLwz3sOI4o8MgfKbkQSQ2aDhRnRbUBSjJXJhFUUjyATyM1A3IBHDVgKpAasFqqwnpAGoDxYDelOgpqMERpYbASroX0osaBbDQ0xWCA0AmO6AVkNNk/DFIPUIbPB+gDkkx15VuOe1QAAAABJRU5ErkJggg=="></image>
+        <pattern id="pattern-3" width="6" height="6" x="308" y="10" patternUnits="userSpaceOnUse">
+            <use xlink:href="#image-4"></use>
+        </pattern>
+        <image id="image-4" width="6" height="6" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABGdBTUEAALGOGCHvlwAAAAlwSFlzAAAWJQAAFiUBSVIk8AAAAG9JREFUKBVj/P//PwMyYNqagiLwz3sOI4o8MgfKbkQSQ2aDhRnRbUBSjJXJhFUUjyATyM1A3IBHDVgKpAasFqqwnpAGoDxYDelOgpqMERpYbASroX0osaBbDQ0xWCA0AmO6AVkNNk/DFIPUIbPB+gDkkx15VuOe1QAAAABJRU5ErkJggg=="></image>
+    </defs>
+    <g id="Mobile" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Landing-Page-Copy-2" transform="translate(-18.000000, -1537.000000)">
+            <g id="Group-11" transform="translate(18.000000, 1537.000000)">
+                <g id="Group-10" stroke="#01B463" stroke-width="2">
+                    <rect id="Rectangle-8-Copy" fill="url(#pattern-1)" x="1" y="17" width="358" height="223"></rect>
+                    <rect id="Rectangle-8" fill="#FFFFFF" x="16" y="1" width="358" height="223"></rect>
+                    <path d="M17,46.25 L373.652344,46.25" id="Path-16"></path>
+                    <circle id="Oval-9" cx="294" cy="24" r="8"></circle>
+                    <circle id="Oval-9-Copy" fill="url(#pattern-3)" cx="322" cy="24" r="8"></circle>
+                    <circle id="Oval-9-Copy-2" fill="#01B463" cx="349" cy="24" r="8"></circle>
+                </g>
+                <path d="M196.50036,84 C172.478924,84 153,103.475322 153,127.50036 C153,146.719959 165.464177,163.02575 182.748201,168.777727 C184.922211,169.180402 185.720356,167.834072 185.720356,166.685117 C185.720356,165.647816 185.680017,162.221122 185.661288,158.586247 C173.559445,161.217677 171.005812,153.453769 171.005812,153.453769 C169.027017,148.425742 166.175881,147.088777 166.175881,147.088777 C162.229095,144.388913 166.473384,144.44438 166.473384,144.44438 C170.841573,144.751248 173.141644,148.927104 173.141644,148.927104 C177.021437,155.577355 183.317996,153.654746 185.800315,152.54325 C186.190743,149.731733 187.318087,147.812726 188.562128,146.726442 C178.900103,145.626471 168.7432,141.89651 168.7432,125.228383 C168.7432,120.479131 170.442501,116.598617 173.225204,113.552267 C172.773546,112.456618 171.284587,108.032242 173.646607,102.040389 C173.646607,102.040389 177.299491,100.871265 185.612304,106.499342 C189.082219,105.535516 192.803535,105.052163 196.50036,105.035595 C200.197185,105.052163 203.921383,105.535516 207.397781,106.499342 C215.700509,100.871265 219.34835,102.040389 219.34835,102.040389 C221.716133,108.032242 220.226454,112.456618 219.774796,113.552267 C222.563983,116.598617 224.251757,120.479131 224.251757,125.228383 C224.251757,141.936129 214.075405,145.614945 204.388888,146.691865 C205.949162,148.041797 207.339433,150.689075 207.339433,154.747514 C207.339433,160.567924 207.289008,165.252345 207.289008,166.685117 C207.289008,167.842716 208.072026,169.199131 210.277011,168.771964 C227.55167,163.013504 240,146.713475 240,127.50036 C240,103.475322 220.523958,84 196.50036,84" id="Fill-5" fill="#01B463"></path>
+            </g>
+        </g>
+    </g>
+</svg>

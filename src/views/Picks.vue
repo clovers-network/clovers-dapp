@@ -1,19 +1,20 @@
 <template>
   <div>
+    <single-view v-show="viewSingle" :clover="viewSingle" @close="viewSingle = null"></single-view>
     <ul class="list-reset md-flex flex-wrap justify-around items-center m0">
       <li v-for="(clover, i) in picks" :key="i" class="md-col6">
         <div class="flex py2 border-bottom justify-between items-center green">
           <div class="col-3 center">
             <img :src="cloverImage(clover, 58)" width="58" height="58"/>
           </div>
-          <div class="pr2 h7 font-mono">
+          <div class="col-3 pr2 h7 font-mono">
             {{ fromNow(clover) }}
           </div>
           <div class="pr2 h6 font-mono">
-            <button class="btn btn-big btn-outline regular">Remove</button>
+            <button @click="removeClover(clover)" class="btn btn-big border border-green regular">Remove</button>
           </div>
           <div class="pr3 h6 font-mono">
-            <button class="btn btn-big bg-green white nowrap regular">Keep/Sell</button>
+            <button @click="viewSingle = clover" class="btn btn-big bg-green white nowrap regular">Keep/Sell</button>
           </div>
         </div>
       </li>
@@ -25,12 +26,18 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 import { cloverImage } from '@/utils'
+import SingleView from '@/views/FieldSingle'
 import moment from 'moment'
 
 export default {
   name: 'Picks',
+  data () {
+    return {
+      viewSingle: null
+    }
+  },
   computed: {
     ...mapGetters(['picks', 'pickCount'])
   },
@@ -39,7 +46,12 @@ export default {
 
     fromNow ({ createdAt }) {
       return moment(createdAt).fromNow()
-    }
-  }
+    },
+
+    ...mapMutations({
+      removeClover: 'REMOVE_SAVED_CLOVER'
+    })
+  },
+  components: { SingleView }
 }
 </script>

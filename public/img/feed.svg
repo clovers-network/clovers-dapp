@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="359px" height="194px" viewBox="0 0 359 194" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 8</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <pattern id="pattern-1" width="6" height="6" x="270" y="14" patternUnits="userSpaceOnUse">
+            <use xlink:href="#image-2"></use>
+        </pattern>
+        <image id="image-2" width="6" height="6" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABGdBTUEAALGOGCHvlwAAAAlwSFlzAAAWJQAAFiUBSVIk8AAAAG9JREFUKBVj/P//PwMyYNqagiLwz3sOI4o8MgfKbkQSQ2aDhRnRbUBSjJXJhFUUjyATyM1A3IBHDVgKpAasFqqwnpAGoDxYDelOgpqMERpYbASroX0osaBbDQ0xWCA0AmO6AVkNNk/DFIPUIbPB+gDkkx15VuOe1QAAAABJRU5ErkJggg=="></image>
+        <pattern id="pattern-3" width="6" height="6" x="270" y="77" patternUnits="userSpaceOnUse">
+            <use xlink:href="#image-4"></use>
+        </pattern>
+        <image id="image-4" width="6" height="6" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABGdBTUEAALGOGCHvlwAAAAlwSFlzAAAWJQAAFiUBSVIk8AAAAG9JREFUKBVj/P//PwMyYNqagiLwz3sOI4o8MgfKbkQSQ2aDhRnRbUBSjJXJhFUUjyATyM1A3IBHDVgKpAasFqqwnpAGoDxYDelOgpqMERpYbASroX0osaBbDQ0xWCA0AmO6AVkNNk/DFIPUIbPB+gDkkx15VuOe1QAAAABJRU5ErkJggg=="></image>
+        <pattern id="pattern-5" width="6" height="6" x="270" y="142" patternUnits="userSpaceOnUse">
+            <use xlink:href="#image-6"></use>
+        </pattern>
+        <image id="image-6" width="6" height="6" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABGdBTUEAALGOGCHvlwAAAAlwSFlzAAAWJQAAFiUBSVIk8AAAAG9JREFUKBVj/P//PwMyYNqagiLwz3sOI4o8MgfKbkQSQ2aDhRnRbUBSjJXJhFUUjyATyM1A3IBHDVgKpAasFqqwnpAGoDxYDelOgpqMERpYbASroX0osaBbDQ0xWCA0AmO6AVkNNk/DFIPUIbPB+gDkkx15VuOe1QAAAABJRU5ErkJggg=="></image>
+    </defs>
+    <g id="Mobile" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Landing-Page-Copy-2" transform="translate(-29.000000, -937.000000)">
+            <g id="Group-8" transform="translate(29.000000, 937.000000)">
+                <path d="M0,1 L358.25,1" id="Path-15" stroke="#01B463" stroke-width="2"></path>
+                <path d="M0,65 L358.25,65" id="Path-15-Copy" stroke="#01B463" stroke-width="2"></path>
+                <path d="M0,128.25 L358.25,128.25" id="Path-15-Copy-2" stroke="#01B463" stroke-width="2"></path>
+                <path d="M0,192.25 L358.25,192.25" id="Path-15-Copy-3" stroke="#01B463" stroke-width="2"></path>
+                <circle id="Oval-8" fill="#01B463" cx="29" cy="32" r="12"></circle>
+                <g id="Group-7" transform="translate(74.000000, 25.000000)" stroke="#01B463" stroke-width="3">
+                    <path d="M0,0.25 L171.220145,0.25" id="Path-7"></path>
+                    <path d="M0,12.25 L89.8392857,12.25" id="Path-7-Copy-3"></path>
+                </g>
+                <g id="Group-7-Copy" transform="translate(74.000000, 88.000000)" stroke="#01B463" stroke-width="3">
+                    <path d="M0,0.25 L171.220145,0.25" id="Path-7"></path>
+                    <path d="M0,12.25 L89.8392857,12.25" id="Path-7-Copy-3"></path>
+                </g>
+                <g id="Group-7-Copy-2" transform="translate(74.000000, 153.000000)" stroke="#01B463" stroke-width="3">
+                    <path d="M0,0.25 L171.220145,0.25" id="Path-7"></path>
+                    <path d="M0,12.25 L89.8392857,12.25" id="Path-7-Copy-3"></path>
+                </g>
+                <circle id="Oval-8-Copy" fill="#01B463" cx="29" cy="96" r="12"></circle>
+                <circle id="Oval-8-Copy-2" fill="#01B463" cx="29" cy="160" r="12"></circle>
+                <rect id="Rectangle-7" stroke="#01B463" stroke-width="2" fill="url(#pattern-1)" x="277" y="21" width="64" height="22"></rect>
+                <rect id="Rectangle-7-Copy" stroke="#01B463" stroke-width="2" fill="url(#pattern-3)" x="277" y="84" width="64" height="22"></rect>
+                <rect id="Rectangle-7-Copy-2" stroke="#01B463" stroke-width="2" fill="url(#pattern-5)" x="277" y="149" width="64" height="22"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

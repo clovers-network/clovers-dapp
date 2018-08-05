@@ -6,6 +6,7 @@
     <div
       class="relative z2 h-header flex items-center"
       :class="{'border-bottom': !showMenu}">
+      <!-- left col -->
       <div class="col-3 flex pl2 items-center">
         <!-- menu btn -->
         <button
@@ -30,9 +31,11 @@
           </router-link>
           <span class="nowrap" v-else>{{$route.meta.title}}</span>
       </h1>
-      <div class="col-3 flex justify-end">
-        <router-link class="block p2" :to="{name: 'Account'}">
-          <person-icon class="align-middle"></person-icon>
+      <!-- right col -->
+      <div class="col-3 flex justify-end items-center">
+        <!-- account btn -->
+        <router-link class="p2" :to="{name: 'Account'}" @click.native="showMenu = false">
+          <person-icon></person-icon>
         </router-link>
       </div>
     </div>
@@ -51,7 +54,7 @@
         </ul>
       </nav>
       <div class="px2">
-        <pig/>
+        <pig v-on:minerStatus="mining = $event"/>
       </div>
     </div>
   </header>
@@ -65,6 +68,7 @@ export default {
   name: 'AppHeader',
   data () {
     return {
+      mining: false,
       showMenu: false
     }
   },
@@ -79,11 +83,6 @@ export default {
   destroyed () {
     window.removeEventListener('keyup', this.checkEsc)
   },
-  watch: {
-    '$route.fullPath': function () {
-      this.showMenu = false
-    }
-  },
   methods: {
     toggleMenu () {
       this.showMenu = !this.showMenu
@@ -97,3 +96,38 @@ export default {
   components: { Pig, PersonIcon }
 }
 </script>
+
+<style>
+@keyframes wave {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 48px 0;
+  }
+}
+
+div#wave {
+  width:48px;
+  position:relative;
+  height: 14px;
+  background: url('../assets/icons/wave.svg') repeat-x 0%;
+  background-size: contain;
+  animation: 3s wave linear infinite;
+  box-shadow:inner 0 0 1rem rgba(red,1);
+
+  &.whiteWave {
+    background: url('../assets/icons/wave-white.svg') repeat-x 0%;
+  }
+
+  &::before{
+    content:"";
+    background:linear-gradient(90deg, rgba(white,0) 25%, rgba(white,1) 75%);
+    height:100%;
+    width:100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+}
+</style>

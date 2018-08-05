@@ -21,7 +21,25 @@
       .px3.py2 Discover, collect and trade mathematically generated artworks.
       hr
       h2.h2.green.font-exp The Field
+      img.p3(src="/img/cloud-face-animated.svg")
       .px3.py2 Like looking for shapes in clouds you can browse through the Field of clovers as they're grown in real time looking for rare or interesting shapes.
+      hr
+      h2.h2.green.font-exp The Feed
+      img.p3(src="/img/feed.svg")
+      .px3.py2 See, share and trade the latest Clovers that everyone has found!
+      hr
+      h2.h2.green.font-exp Club Tokens
+      img.p3(src="/img/club.svg")
+      .px3.py2 To register or buy Clovers, you use Club Tokens. You can get Club Tokens by blah blah blah.
+      hr
+      h2.h2.green.font-exp Contact
+      img.p3(src="/img/letter.svg")
+      .px3.py2 Feel free to contact us at email@domain.com or sign up for our newsletter here.
+      hr
+      h2.h2.green.font-exp Community
+      img.p3(src="/img/github.svg")
+      .px3.py2 Clovers is an open source project. You can #[a(href="//github.com/clovers-network") find us on Github.]
+
 </template>
 
 <script>
