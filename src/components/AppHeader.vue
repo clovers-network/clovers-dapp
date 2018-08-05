@@ -6,18 +6,20 @@
     <div
       class="relative z2 h-header flex items-center"
       :class="{'border-bottom': !showMenu}">
-      <!-- menu btn -->
-      <button
-        v-show="!$route.meta.backBtn"
-        class="menu-btn pointer p2 col-3 left-align"
-        @click="showMenu = !showMenu"
-        aria-label="Toggle Menu">
-          <img :src="showMenu
-            ? require('../assets/icons/hamburger-white.svg')
-            : require('../assets/icons/hamburger.svg')" />
-      </button>
-      <!-- back btn -->
-      <button v-show="$route.meta.backBtn" class="pointer p2 col-3 left-align" @click="$router.go(-1)">Back</button>
+      <div class="col-3 flex pl2 items-center">
+        <!-- menu btn -->
+        <button
+          v-show="!$route.meta.backBtn"
+          class="menu-btn pointer"
+          @click="showMenu = !showMenu"
+          aria-label="Toggle Menu">
+            <img :src="showMenu
+              ? require('../assets/icons/hamburger-white.svg')
+              : require('../assets/icons/hamburger.svg')" />
+        </button>
+        <!-- back btn -->
+        <button v-show="$route.meta.backBtn" class="pointer p2 col-3 left-align" @click="$router.go(-1)">Back</button>
+      </div>
       <!-- title -->
       <h1 class="font-exp h3 col-6 py1 center">
           <router-link
@@ -26,11 +28,13 @@
             :to="{ name: 'Welcome' }">
             Clovers
           </router-link>
-          <span v-else>{{$route.meta.title}}</span>
+          <span class="nowrap" v-else>{{$route.meta.title}}</span>
       </h1>
-      <router-link class="block p2 col-3 right-align" :to="{name: 'Account'}">
-        <person-icon class="align-middle"></person-icon>
-      </router-link>
+      <div class="col-3 flex justify-end">
+        <router-link class="block p2" :to="{name: 'Account'}">
+          <person-icon class="align-middle"></person-icon>
+        </router-link>
+      </div>
     </div>
     <!-- nav -->
     <div
@@ -46,7 +50,9 @@
 
         </ul>
       </nav>
-      <pig/>
+      <div class="px2">
+        <pig/>
+      </div>
     </div>
   </header>
 </template>
