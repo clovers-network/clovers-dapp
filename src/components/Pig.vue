@@ -34,7 +34,6 @@ export default {
     return {
       miners: [],
       interval: null,
-      hasStorage: !!window.localStorage,
       selectedClover: null,
       limit: true,
       minerOn: false,
@@ -89,12 +88,6 @@ export default {
         this.changePower(newVal)
       }
     },
-    mineBtn () {
-      return this.miners.length ? 'More power' : 'Start mining'
-    },
-    stopBtn () {
-      return this.miners.length === 1 ? 'Stop mining' : 'Slow down!'
-    },
     timeSpent () {
       return moment.utc(this.mineTime * 1000).format('HH:mm:ss')
     }
@@ -103,8 +96,11 @@ export default {
     pigToggler () {
       this.minerOn = !this.minerOn
       this.$emit('minerStatus', this.minerOn)
+      if (this.minerOn) this.mine()
+      else this.stop()
     },
     mine () {
+      console.log('start mining')
       this.mining = true
       if (!this.start) this.start = new Date()
       let miner = new CloverWorker()
