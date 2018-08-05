@@ -220,7 +220,6 @@ export default {
     // }
   },
   beforeRouteEnter (to, from, next) {
-    if (store.state.allClovers.length) return next()
     let { page } = to.params
     return store.dispatch('getClovers', page).then(() => {
       next()

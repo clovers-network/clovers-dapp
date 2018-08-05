@@ -16,9 +16,11 @@ export default {
       return true
     })
   },
-  userClovers ({ user }) {
+  userClovers ({ user, allClovers }) {
     if (!user) return []
-    return user.clovers
+    return user.clovers.map((id) => {
+      return allClovers.find((c => c.board === id))
+    })
   },
 
   newCloversCount ({ newClovers }) {

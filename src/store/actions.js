@@ -134,13 +134,14 @@ export default {
   async getAccount ({ commit, dispatch, state }) {
     let accounts = await global.web3.eth.getAccounts()
     if (accounts.length && state.account !== accounts[0]) {
+      dispatch('getUser', accounts[0])
       commit('SET_UNLOCKED', true)
       commit('SET_ACCOUNT', accounts[0])
-      dispatch('getUser', accounts[0])
+      commit('MOVE_ANON_CLOVERS')
     } else if (!accounts.length && (state.account || state.unlocked)) {
+      dispatch('getUser', null)
       commit('SET_UNLOCKED', false)
       commit('SET_ACCOUNT', null)
-      dispatch('getUser', null)
       throw new Error('account-locked')
     }
   },
@@ -160,7 +161,11 @@ export default {
       }
     }
   },
-  async getUser ({ commit }, account) {
+  async getUser ({ state, commit }, account) {
+    if (typeof account === 'string') {
+      account = account.toLowerCase()
+    }
+    if (state.account === account) return
     if (!account) {
       commit('SET_USER', anonUser)
       return
@@ -201,23 +206,18 @@ export default {
     socket.on('disconnect', () => {
       console.log('disconnected')
     })
-    socket.on('newUser', user => {
-      commit('ADD_USER', user)
-      console.log(user)
-    })
+    // socket.on('newUser', user => {
+    //   commit('ADD_USER', user)
+    //   console.log(user)
+    // })
     socket.on('updateUser', user => {
-      console.log(`userUpdate: ${user.name}`)
-      // list of users is empty rn, so this does nothing
-      // commit('UPDATE_USER', user)
-      // console.log(user)
+      commit('UPDATE_USER', user)
     })
     socket.on('addClover', clover => {
-      console.log(`addClover: ${clover.board}`)
       commit('NEW_CLOVER_FROM_CHAIN', clover)
     })
     socket.on('updateClover', clover => {
       commit('UPDATE_CLOVER', clover)
-      console.log(clover)
     })
   },
 
@@ -238,6 +238,7 @@ export default {
     return state.allClovers.findIndex(c => c.board === byteBoard) > -1
   },
   getClovers ({ state, commit }, page = 1) {
+    console.log('getting clovers')
     if (state.allClovers.length) return
     return axios
       .get(apiUrl('/clovers'))

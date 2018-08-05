@@ -22,6 +22,7 @@
 </template>
 
 <script>
+import store from '@/store'
 import { mapActions } from 'vuex'
 import ViewNav from '@/components/ViewNav'
 
@@ -78,6 +79,11 @@ export default {
   mounted () {
     if (!this.user) return
     this.form.name = this.user.name
+  },
+  beforeRouteEnter (to, from, next) {
+    return store.dispatch('getClovers').then(() => {
+      next()
+    })
   },
   components: { ViewNav }
 }
