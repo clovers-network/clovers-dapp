@@ -3,7 +3,7 @@
     <div class="py3">
       <nav>
         <h6 class="center h3">Clover Pig</h6>
-        <toggle-btn class="mx-auto my3" :active="minerOn" @click="minerOn = !minerOn"></toggle-btn>
+        <toggle-btn class="mx-auto my3" :active="minerOn" @click="pigToggler()"></toggle-btn>
         <div class="flex justify-between items-center">
           <div class="col-6 px2 h3">
             <div>Speed</div>
@@ -100,6 +100,10 @@ export default {
     }
   },
   methods: {
+    pigToggler () {
+      this.minerOn = !this.minerOn
+      this.$emit('minerStatus', this.minerOn)
+    },
     mine () {
       this.mining = true
       if (!this.start) this.start = new Date()
