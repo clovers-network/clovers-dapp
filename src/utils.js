@@ -9,7 +9,10 @@ export function pad0x (string) {
   return `0x${string}`
 }
 
-export function cloverImage ({ board }, size = 200) {
+export function cloverImage ({ board, byteBoard }, size = 200) {
+  if (byteBoard) {
+    board = byteBoard
+  }
   return `${apiBase}/clovers/svg/${board}/${size}`
 }
 
@@ -17,7 +20,10 @@ export function pluralize (word, count) {
   return `${word}${count !== 1 ? 's' : ''}`
 }
 
-export function cloverLink ({ board }) {
+export function cloverLink ({ board, byteBoard }) {
+  if (byteBoard) {
+    board = byteBoard
+  }
   return `/clovers/${board}`
 }
 

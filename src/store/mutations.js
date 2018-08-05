@@ -41,22 +41,21 @@ export default {
   ROUTE_CHANGED (state, { to, from }) {
     console.log('route changed from', from.name, 'to', to.name)
   },
-  TOGGLE_MINER (state, bool) {
-    state.mining = !!bool
-  },
-  HASH_RATE (state, rate) {
-    state.hashRate = rate * state.miningPower
-  },
+
   MINE_INCREMENT (state, increment) {
     if (!increment) return
-    state.totalMined = parseInt(state.totalMined) + parseInt(increment)
+    state.miningStats.totalMined = parseInt(state.miningStats.totalMined) + parseInt(increment)
+    updateLocal('clover_pig_stats', state.miningStats)
   },
   TIME_INCREMENT (state, inc) {
     if (!inc) return
-    state.mineTime = parseInt(state.mineTime) + parseInt(inc)
+    state.miningStats.mineTime = parseInt(state.miningStats.mineTime) + parseInt(inc)
+    updateLocal('clover_pig_stats', state.miningStats)
   },
-  CORE_COUNT (state, count) {
-    state.miningPower = count
+  SYMMS_INCREMENT (state, inc) {
+    if (!inc) return
+    state.miningStats.symms++
+    updateLocal('clover_pig_stats', state.miningStats)
   },
 
   // mining/saving clovers. Stored clovers are added to state on load
@@ -168,12 +167,12 @@ export default {
   // UPDATE_USERS (state, users) {
   //   state.users = users
   // },
-  STORED_COUNT (state, total) {
-    state.totalMined = total
-  },
-  STORED_DURATION (state, duration) {
-    state.mineTime = duration
-  },
+  // STORED_COUNT (state, total) {
+  //   state.totalMined = total
+  // },
+  // STORED_DURATION (state, duration) {
+  //   state.mineTime = duration
+  // },
   ADD_REGISTERED_EVENT (state, event) {
     let rIndex = state.registeredEvents.findIndex(
       e => e.transactionHash === event.transactionHash

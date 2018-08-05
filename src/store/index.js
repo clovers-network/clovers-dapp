@@ -29,11 +29,7 @@ const state = {
   correctNetwork: 4,
 
   balance: 0,
-  hashRate: 0,
-  mineTime: 0,
-  totalMined: 0,
-  mining: false,
-  miningPower: 0,
+  miningStats: getMiningStats(),
 
   // socket events pushed to clover queue
   newClovers: [],
@@ -73,4 +69,10 @@ function getSavedClovers (key = 'saved_clovers') {
     all['anon'] = []
   }
   return all
+}
+
+function getMiningStats (key = 'clover_pig_stats') {
+  let empty = { mineTime: 0, totalMined: 0, symms: 0 }
+  if (!window.localStorage) return empty
+  return JSON.parse(window.localStorage.getItem(key)) || empty
 }

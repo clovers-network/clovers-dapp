@@ -7,11 +7,13 @@
         <div class="flex justify-between items-center">
           <div class="col-6 px2 h3">
             <div>Speed</div>
-            <div class="font-exp mt1">0/s</div>
+            <div class="font-exp mt1">{{ hashRate }}/s</div>
+            <div class="h7 pt1">{{ timeSpent }}</div>
           </div>
           <div class="col-6 px2 h3">
-            <div>Rare&nbsp;Clovers&nbsp;Found</div>
-            <div class="font-exp mt1">{{ symmsSinceOpened }}</div>
+            <div class="nowrap">Rare Clovers</div>
+            <div class="font-exp mt1">{{ symms }}</div>
+            <div class="h7 pt1">~ {{ totalMined.toLocaleString() }} mined</div>
           </div>
         </div>
       </nav>
@@ -24,49 +26,26 @@ import ToggleBtn from '@/components/ToggleBtn'
 
 import { mapMutations, mapState, mapGetters, mapActions } from 'vuex'
 import CloverWorker from 'worker-loader!../assets/clover-worker'
-import Reversi from 'clovers-reversi'
 import moment from 'moment'
-let reversi = new Reversi()
 
 export default {
   name: 'Pig',
   data () {
     return {
+      mining: false,
+      hashRate: 0,
+      miningPower: 0,
       miners: [],
       interval: null,
       selectedClover: null,
       limit: true,
-      minerOn: false,
-      symmsSinceOpened: 0
-    }
-  },
-  watch: {
-    watch: {
-      showMiner () {
-        this.symmsSinceOpened = 0
-      }
+      minerOn: false
     }
   },
   computed: {
-    mining: {
-      get () {
-        return this.$store.state.mining
-      },
-      set (newVal) {
-        this.toggleMiner(newVal)
-      }
-    },
-    hashRate: {
-      get () {
-        return this.$store.state.hashRate
-      },
-      set (newVal) {
-        this.newHashRate(newVal)
-      }
-    },
     totalMined: {
       get () {
-        return this.$store.state.totalMined
+        return this.$store.state.miningStats.totalMined
       },
       set (newVal) {
         this.addMineTotal(newVal)
@@ -74,18 +53,18 @@ export default {
     },
     mineTime: {
       get () {
-        return this.$store.state.mineTime
+        return this.$store.state.miningStats.mineTime
       },
       set (newVal) {
         this.addMineTime(newVal)
       }
     },
-    miningPower: {
+    symms: {
       get () {
-        return this.$store.state.miningPower
+        return this.$store.state.miningStats.symms
       },
-      set (newVal) {
-        this.changePower(newVal)
+      set () {
+        this.incSymms(1)
       }
     },
     timeSpent () {
@@ -97,7 +76,7 @@ export default {
       this.minerOn = !this.minerOn
       this.$emit('minerStatus', this.minerOn)
       if (this.minerOn) this.mine()
-      else this.stop()
+      else this.stopAll()
     },
     mine () {
       console.log('start mining')
@@ -124,7 +103,6 @@ export default {
       }
     },
     stopAll () {
-      console.log('stop all')
       this.stop()
       while (this.miners.length > 0) {
         this.stop()
@@ -140,7 +118,8 @@ export default {
         this.cloverExists(data.byteBoard)
           .then(exists => {
             if (!exists) {
-              this.symmsSinceOpened++
+              this.symms = 1
+              data.createdAt = new Date()
               this.saveClover(data)
             }
           })
@@ -156,11 +135,9 @@ export default {
     },
     ...mapActions(['cloverExists']),
     ...mapMutations({
-      toggleMiner: 'TOGGLE_MINER',
-      newHashRate: 'HASH_RATE',
       addMineTotal: 'MINE_INCREMENT',
       addMineTime: 'TIME_INCREMENT',
-      changePower: 'CORE_COUNT',
+      incSymms: 'SYMMS_INCREMENT',
       saveClover: 'SAVE_CLOVER'
     })
   },
