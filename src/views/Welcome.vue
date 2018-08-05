@@ -17,11 +17,10 @@
             label="Start Now"
             text="white"
             bg="green")
-      .p2 Discover, collect and trade mathematically generated artworks.
-      button Read More
+      .px3.py2 Discover, collect and trade mathematically generated artworks.
       hr
       h2.h2.green.font-exp The Field
-      .p2 Like looking for shapes in clouds you can browse through the Field of clovers as they're grown in real time looking for rare or interesting shapes.
+      .px3.py2 Like looking for shapes in clouds you can browse through the Field of clovers as they're grown in real time looking for rare or interesting shapes.
 </template>
 
 <script>
