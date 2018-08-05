@@ -128,15 +128,15 @@ export default {
     },
     nextPage () {
       if (this.clovers.length < 12) return false
-      return `/market/page/${this.page + 1}`
+      return `/feed/page/${this.page + 1}`
     },
     prevPage () {
       if (this.page === 1) {
         return false
       } else if (this.page === 2) {
-        return '/market'
+        return '/feed'
       } else {
-        return `/market/page/${this.page - 1}`
+        return `/feed/page/${this.page - 1}`
       }
     },
     newCloversCount () {
@@ -162,7 +162,7 @@ export default {
         return this.$store.state.feedFilter
       },
       set (newVal) {
-        this.$router.push('/market')
+        this.$router.push('/feed')
         this.updateFilter(newVal)
         this.toggleFilters()
       }
@@ -183,7 +183,7 @@ export default {
     pluralize,
 
     showNewClovers () {
-      this.$router.push('/market')
+      this.$router.push('/feed')
       this.showNew()
     },
     cloverPrice ({ price }) {
@@ -229,7 +229,7 @@ export default {
   mounted () {
     if (!this.clovers.length) {
       let lastPage = Math.ceil(this.allLoadedCloverCount / 12)
-      this.$router.replace(`/market/page/${lastPage}`)
+      this.$router.replace(`/feed/page/${lastPage}`)
     }
   }
 }
