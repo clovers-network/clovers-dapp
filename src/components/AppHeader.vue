@@ -86,6 +86,3 @@ export default {
   components: { Pig, PersonIcon }
 }
 </script>
-
-<style>
-</style>

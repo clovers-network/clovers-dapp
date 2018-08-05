@@ -510,6 +510,16 @@ image-rendering: optimize-contrast;         /* CSS3 Proposed       */
   opacity: 0;
 }
 
+
+.lazyload,
+.lazyloading {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+.lazyloaded {
+  opacity: 1;
+  transition: opacity 300ms;
+}
 /* RESPONSIVE */
 @media only screen and (min-width: 769px) {
   #app {
@@ -524,4 +534,5 @@ image-rendering: optimize-contrast;         /* CSS3 Proposed       */
     width: 100%;
     overflow-x: scroll;
   }
+
 }
