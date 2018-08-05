@@ -69,7 +69,7 @@
     "precss": "^3.1.2",
     "sass-loader": "^6.0.6",
     "vue-template-compiler": "^2.5.13",
-    "worker-loader": "^1.1.1"
+    "worker-loader": "^2.0.0"
   },
   "babel": {
     "presets": [
