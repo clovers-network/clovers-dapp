@@ -73,7 +73,7 @@ export default new Router({
       name: 'Clover',
       component: Clover,
       props: true,
-      meta: {title: 'Title ?', backBtn: true}
+      meta: {title: '', backBtn: true}
     },
 
     //

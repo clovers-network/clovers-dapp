@@ -6,6 +6,7 @@ import utils from 'web3-utils'
 import axios from 'axios'
 import Web3 from 'web3'
 import { PortisProvider } from 'portis'
+import { formatClover } from '@/utils'
 
 const apiBase = process.env.VUE_APP_API_URL
 const signingParams = [
@@ -231,7 +232,7 @@ export default {
     if (found && found[0]) return Promise.resolve(found[0])
     return axios
       .get(apiUrl('/clovers/' + board))
-      .then(clvr => clvr && clvr.data)
+      .then(clvr => clvr && clvr.data && formatClover(clvr.data))
       .catch(console.error)
   },
 
