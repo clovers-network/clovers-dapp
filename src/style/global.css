@@ -509,3 +509,18 @@ image-rendering: optimize-contrast;         /* CSS3 Proposed       */
 .fade-enter, .fade-leave-to {
   opacity: 0;
 }
+
+/* RESPONSIVE */
+@media only screen and (min-width: 769px) {
+  body {
+    background: var(--green);
+  }
+  #app {
+    background: white;
+    margin: 0 auto;
+    max-width: 769px;
+    overflow: hidden;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+  }
+}
