@@ -2,11 +2,14 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Welcome from '@/views/Welcome'
 import Field from '@/views/Field'
-import Market from '@/views/Market'
+import Feed from '@/views/Feed'
 import Account from '@/views/Account'
 import Picks from '@/views/Picks'
 import Trade from '@/views/Trade'
 import About from '@/views/About'
+import Clover from '@/views/Clover'
+import MyClovers from '@/views/MyClovers'
+
 // Old routes
 // import Home from '@/components/Home'
 // import Clover from '@/components/Clover'
@@ -32,32 +35,32 @@ export default new Router({
       meta: {title: 'Find Clovers'}
     },
     {
-      path: '/market(/page/)?:page?',
-      name: 'Market',
-      component: Market,
-      meta: {title: 'Market'}
+      path: '/feed(/page/)?:page?',
+      name: 'Feed',
+      component: Feed,
+      meta: {title: 'Feed'}
     },
     {
       path: '/account',
       component: Account,
       children: [
         {
+          // default
+          path: '/',
+          name: 'Account',
+          component: Picks,
+          meta: {title: 'Account'}
+        },
+        {
           path: 'clovers',
           name: 'Account/Clovers',
-          component: Picks,
+          component: MyClovers,
           meta: {title: 'Account'}
         },
         {
           path: 'trade',
           name: 'Account/Trade',
           component: Trade,
-          meta: {title: 'Account'}
-        },
-        {
-          // default
-          path: '',
-          name: 'Account',
-          component: Picks,
           meta: {title: 'Account'}
         }
       ]
@@ -70,7 +73,9 @@ export default new Router({
     {
       path: '/clovers/:board',
       name: 'Clover',
-      template: '<div class="mt4">Single clover</div>'
+      component: Clover,
+      props: true,
+      meta: {title: '', backBtn: true}
     },
 
     //

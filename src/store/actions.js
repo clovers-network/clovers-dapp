@@ -4,6 +4,9 @@ import BigNumber from 'bignumber.js'
 import io from 'socket.io-client'
 import utils from 'web3-utils'
 import axios from 'axios'
+import Web3 from 'web3'
+import { PortisProvider } from 'portis'
+import { formatClover } from '@/utils'
 
 const apiBase = process.env.VUE_APP_API_URL
 const signingParams = [
@@ -13,11 +16,18 @@ const signingParams = [
     value: 'To avoid bad things, sign below to authenticate with Clovers'
   }
 ]
-let networks = {
-  4: 'Rinkeby',
-  5777: 'Ganache',
-  1: 'Mainnet'
+const networks = {
+  4: 'rinkeby',
+  5777: 'ganache',
+  1: 'mainnet'
 }
+const anonUser = {
+  address: null,
+  name: 'anon',
+  clovers: [],
+  modified: null
+}
+
 export default {
   // web3 stuff
   async begin ({ commit, dispatch }) {
@@ -31,15 +41,15 @@ export default {
   },
   reset ({ state, commit, dispatch }) {
     if (state.querying) {
-      commit('setTryAgain', true)
+      commit('SET_TRY_AGAIN', true)
       return
     }
     console.log('reset')
-    commit('setQuerying', true)
+    commit('SET_QUERYING', true)
     dispatch('getContracts')
-    commit('setQuerying', false)
+    commit('SET_QUERYING', false)
     if (state.tryAgain) {
-      commit('setTryAgain', false)
+      commit('SET_TRY_AGAIN', false)
       dispatch('reset')
     }
   },
@@ -66,13 +76,12 @@ export default {
             wallet options including <a target='_blank' href='https://metamask.io/'>
             Metamask</a> and <a target='_blank' href='https://www.uport.me/'>
             uPort</a> please check out our help section.`
-          poll = false
           break
         case 'account-locked':
           title = 'Wallet is Locked'
           body = `Looks like your wallet is locked. Please unlock it if you'd like to
-             interact with the contracts. If you'd like more information about
-             this error, please see out help page.`
+               interact with the contracts. If you'd like more information about
+               this error, please see out help page.`
           break
         case 'wrong-network':
           title = 'Wrong Network'
@@ -91,29 +100,53 @@ export default {
           dispatch('poll')
         }, 3000)
       } else {
-        // user deined portis popup...
+        // given a reason not to poll...
       }
     }
   },
   async getNetwork ({ commit, state }) {
     const networkId = await global.web3.eth.net.getId()
     if (state.networkId !== networkId) {
-      commit('setNetwork', networkId)
+      commit('SET_NETWORK', networkId)
     }
   },
-  async getAccount ({ commit, state }) {
+  async getAnAccount ({ dispatch, commit, state }) {
+    if (state.account) {
+      alert('you have an account!' + state.acount)
+    }
+    if (global.web3.currentProvider.zero) {
+      // user has no web3, ask them to do portis
+      // TODO Make this work
+      alert('should trigger portis wallet but it is not')
+      global.web3 = new Web3(
+        new PortisProvider({
+          apiKey: process.env.VUE_APP_PORTIS_KEY,
+          network: networks[state.correctNetwork]
+        })
+      )
+    } else if (global.web3.currentProvider.isPortis) {
+      // user has portis, but no account available, ask them to unlock it
+      alert('unlock your portis wallet')
+    } else {
+      // user has web3, but their wallet is not unlocked
+      alert('unlock your web3 wallet')
+    }
+  },
+  async getAccount ({ commit, dispatch, state }) {
     let accounts = await global.web3.eth.getAccounts()
     if (accounts.length && state.account !== accounts[0]) {
-      commit('setUnlocked', true)
-      commit('setAccount', accounts[0])
+      dispatch('getUser', accounts[0])
+      commit('SET_UNLOCKED', true)
+      commit('SET_ACCOUNT', accounts[0])
+      commit('MOVE_ANON_CLOVERS')
     } else if (!accounts.length && (state.account || state.unlocked)) {
-      commit('setUnlocked', false)
-      commit('setAccount', null)
+      dispatch('getUser', null)
+      commit('SET_UNLOCKED', false)
+      commit('SET_ACCOUNT', null)
       throw new Error('account-locked')
     }
   },
   getContracts ({ state, commit }) {
-    console.log('getContracts')
     for (var name in contracts) {
       if (!contracts.hasOwnProperty(name)) continue
       let contract = contracts[name]
@@ -129,6 +162,40 @@ export default {
       }
     }
   },
+  async getUser ({ state, commit }, account) {
+    if (typeof account === 'string') {
+      account = account.toLowerCase()
+    }
+    if (state.account === account) return
+    if (!account) {
+      commit('SET_USER', anonUser)
+      return
+    }
+    const user = await axios.get(apiUrl(`/users/${account}`)).then(({ data }) => {
+      if (!data.address) {
+        data = Object.assign(anonUser, { address: account, name: account })
+      }
+      commit('SET_USER', data)
+    })
+  },
+  async changeUsername ({ commit, getters }, { address, name }) {
+    if (!address) return
+    console.log('changing username')
+    return axios
+      .put(
+        apiUrl(`/users/${address}`),
+        { name },
+        {
+          headers: {
+            Authorization: getters.authHeader
+          }
+        }
+      )
+      .then(({ data }) => {
+        commit('UPDATE_CURRENT_USER', data)
+      })
+      .catch(console.log)
+  },
 
   // api stuff
   setUpSocket ({ commit }) {
@@ -140,23 +207,18 @@ export default {
     socket.on('disconnect', () => {
       console.log('disconnected')
     })
-    socket.on('newUser', (user) => {
-      commit('ADD_USER', user)
-      console.log(user)
+    // socket.on('newUser', user => {
+    //   commit('ADD_USER', user)
+    //   console.log(user)
+    // })
+    socket.on('updateUser', user => {
+      commit('UPDATE_USER', user)
     })
-    socket.on('updateUser', (user) => {
-      console.log(`userUpdate: ${user.name}`)
-      // list of users is empty rn, so this does nothing
-      // commit('UPDATE_USER', user)
-      // console.log(user)
-    })
-    socket.on('addClover', (clover) => {
-      console.log(`addClover: ${clover.board}`)
+    socket.on('addClover', clover => {
       commit('NEW_CLOVER_FROM_CHAIN', clover)
     })
-    socket.on('updateClover', (clover) => {
+    socket.on('updateClover', clover => {
       commit('UPDATE_CLOVER', clover)
-      console.log(clover)
     })
   },
 
@@ -177,6 +239,7 @@ export default {
     return state.allClovers.findIndex(c => c.board === byteBoard) > -1
   },
   getClovers ({ state, commit }, page = 1) {
+    console.log('getting clovers')
     if (state.allClovers.length) return
     return axios
       .get(apiUrl('/clovers'))
@@ -201,6 +264,16 @@ export default {
     //     commit('GOT_CLOVERS', data)
     //   })
     //  .catch(console.log)
+  },
+
+  getClover ({ state }, board) {
+    if (!board) return Promise.reject(new Error('Missing parameter: `board` (address)'))
+    const found = state.allClovers.filter(clvr => clvr.board === board)
+    if (found && found[0]) return Promise.resolve(found[0])
+    return axios
+      .get(apiUrl('/clovers/' + board))
+      .then(clvr => clvr && clvr.data && formatClover(clvr.data))
+      .catch(console.error)
   },
 
   signIn ({ state, commit }) {
@@ -242,7 +315,10 @@ export default {
   async buy ({ dispatch, state, commit }, clover) {
     // if clover exists it must be in SimpleCloversMarket
     // otherwise it is a claimClover
-    if (dispatch('cloverExists', clover.board)) {
+    // TODO Figure out why cloverExists is returning a promise
+    let cloverExists = await dispatch('cloverExists', clover.board)
+
+    if (cloverExists) {
       // get current price
       let currentPrice = await contracts.SimpleCloversMarket.methods
         .sellPrice(clover.board)
@@ -265,13 +341,18 @@ export default {
       })
     } else {
       // claim clover w option _keep = true
-      await claimClover({ keep: true, clover, account: state.account })
+      console.log(state.account)
+      if (!state.account) {
+        await dispatch('getAnAccount')
+      }
+      // await claimClover({ keep: true, clover, account: state.account })
     }
   },
   async sell ({ state, dispatch, commit }, { clover, price }) {
     // if clover exists it must be in SimpleCloversMarket
     // otherwise it is a claimClover
-    if (dispatch('cloverExists', clover.board)) {
+    // TODO Figure out why cloverExists is returning a promise
+    if (await dispatch('cloverExists', clover.board)) {
       // get the owner of the clover
       let owner = await contracts.Clovers.methods.ownerOf(clover.board).call()
       // if not current user, then error

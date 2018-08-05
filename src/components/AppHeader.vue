@@ -6,7 +6,9 @@
     <div
       class="relative z2 h-header flex items-center"
       :class="{'border-bottom': !showMenu}">
+      <!-- menu btn -->
       <button
+        v-show="!$route.meta.backBtn"
         class="menu-btn pointer p2 col-3 left-align"
         @click="showMenu = !showMenu"
         aria-label="Toggle Menu">
@@ -15,6 +17,9 @@
             ? require('../assets/icons/hamburger-white.svg')
             : require('../assets/icons/hamburger.svg')" />
       </button>
+      <!-- back btn -->
+      <button v-show="$route.meta.backBtn" class="pointer p2 col-3 left-align" @click="$router.go(-1)">Back</button>
+      <!-- title -->
       <h1 class="font-exp h3 col-6 py1 center">
           <router-link
             v-if="showMenu"
@@ -40,7 +45,7 @@
 
           <li><router-link :to="{ name: 'Welcome' }">About</router-link></li>
           <li class="mt2"><router-link :to="{ name: 'Field' }">Find Clovers</router-link></li>
-          <li class="mt2"><router-link to="/market">Feed</router-link></li>
+          <li class="mt2"><router-link :to="{ name: 'Feed' }">Feed</router-link></li>
 
         </ul>
       </nav>
