@@ -225,6 +225,16 @@ export default {
     //  .catch(console.log)
   },
 
+  getClover ({ state }, board) {
+    if (!board) return Promise.reject(new Error('Missing parameter: `board` (address)'))
+    const found = state.allClovers.filter(clvr => clvr.board === board)
+    if (found && found[0]) return Promise.resolve(found[0])
+    return axios
+      .get(apiUrl('/clovers/' + board))
+      .then(clvr => clvr && clvr.data)
+      .catch(console.error)
+  },
+
   signIn ({ state, commit }) {
     const { account } = state
     if (!account) return

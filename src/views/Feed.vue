@@ -108,7 +108,7 @@ import { cloverLink, cloverImage, pluralize } from '@/utils'
 const pageSize = 12
 
 export default {
-  name: 'Market',
+  name: 'Feed',
   data () {
     return {
       filtersVisible: false
