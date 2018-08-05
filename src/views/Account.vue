@@ -8,7 +8,7 @@
             div.py2
               label.h6.py2.regular.nowrap.claimed(for="uname") Change username
           form(@submit.prevent="updateName")
-            input#uname.input.font-mono(@focus="focusUsername", @blur="blurUsername", ref="nameInput", placeholder="name", v-model="form.name")
+            input#uname.input.font-mono(@focus="focusUsername", @blur="blurUsername", ref="nameInput", placeholder="name", v-model="form.name", autocomplete="off")
             transition(name="fade")
               button.absolute.right-0.top-0.p2(v-if="formFocussed", type="submit")
                 img(src="~../assets/icons/arrow-right.svg", width="18", height="18")
