@@ -19,7 +19,7 @@ export default {
   userClovers ({ user, allClovers }) {
     if (!user) return []
     return user.clovers.map((id) => {
-      return allClovers.find((c => c.board === id))
+      return allClovers.find(c => c.board === id)
     })
   },
 
