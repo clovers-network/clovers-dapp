@@ -20,7 +20,7 @@
       .px3.py2 Discover, collect and trade mathematically generated artworks.
       hr
       h2.h2.green.font-exp The Field
-      img.p3(src="/img/cloud-face.svg")
+      img.p3(src="/img/cloud-face-animated.svg")
       .px3.py2 Like looking for shapes in clouds you can browse through the Field of clovers as they're grown in real time looking for rare or interesting shapes.
       hr
       h2.h2.green.font-exp The Feed
