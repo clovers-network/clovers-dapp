@@ -63,12 +63,13 @@ export default {
     updateLocal('saved_clovers', state.allSavedClovers)
   },
   REMOVE_SAVED_CLOVER (state, { board }) {
+    console.log('removing', board)
     const account = state.account || 'anon'
     const index = state.allSavedClovers[account].findIndex(
       c => c.board === board
     )
     if (index >= 0) {
-      state.allSavedClovers.splice(index, 1)
+      state.allSavedClovers[account].splice(index, 1)
       updateLocal('saved_clovers', state.allSavedClovers)
     }
   },
