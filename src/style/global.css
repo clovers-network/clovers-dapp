@@ -523,16 +523,10 @@ image-rendering: optimize-contrast;         /* CSS3 Proposed       */
 /* RESPONSIVE */
 @media only screen and (min-width: 769px) {
   #app {
-    background: white;
     margin: 0 auto;
     max-width: 769px;
-    overflow: hidden;
+    /* overflow: hidden; — breaks sticky in chrome */
     border-left: 1px solid var(--green);
     border-right: 1px solid var(--green);
   }
-  .wide {
-    width: 100%;
-    overflow-x: scroll;
-  }
-
 }

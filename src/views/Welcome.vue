@@ -1,16 +1,17 @@
 <template lang="pug">
-  .div.pt4
-    h1.h1.center.green.font-exp.strong.pb3(@click="scrollTo") Find Rare<br>Clovers
+  .div.pt4.overflow-hidden
+    h1.h1.center.green.font-exp.strong.pb3 Find Rare<br>Clovers
     .center.my3.relative
-      .wide.h1.inline-flex.overflow-auto.pb4(ref="wide")
-        clv.small-clover.inline.mx3.no-hover(
-          v-for="(c, i) in 5"
-          :class="cloverClass(c)"
-          :foo="c == 3"
-          :key="i"
-          :noMoves="true"
-          :autoPlay="true"
-          :moveString="c == 3 ? heart : random()")
+      .col-12.overflow-x-scroll.invisible-scrollbar(ref="wide")
+        .h1.inline-flex.pb4
+          clv.small-clover.inline.mx3.no-hover(
+            v-for="(c, i) in 5"
+            :class="cloverClass(c)"
+            :foo="c == 3"
+            :key="i"
+            :noMoves="true"
+            :autoPlay="true"
+            :moveString="c == 3 ? heart : random()")
       router-link.block.mb3(
         :to="{ name: 'Field' }")
           dot-btn.mb3(
@@ -36,9 +37,7 @@ export default {
     }
   },
   mounted () {
-    this.$nextTick(() => {
-      this.scrollTo()
-    })
+    this.$nextTick(() => this.scrollTo())
   },
   methods: {
     cloverClass (c) {
@@ -48,9 +47,7 @@ export default {
       }
     },
     scrollTo () {
-      this.$refs.wide.scrollLeft =
-        this.$refs.wide.scrollWidth / 2 - window.innerWidth / 2 + 6
-      // + 6 because of the weird flex bug cutting off the final margin of the clover
+      this.$refs.wide.scrollLeft = this.$refs.wide.scrollWidth / 2 - this.$el.offsetWidth / 2
     },
     random () {
       const reversi = new Reversi()
@@ -61,8 +58,3 @@ export default {
   components: { DotBtn }
 }
 </script>
-
-<style lang="stylus" >
-  .wide
-    width 100vw
-</style>
