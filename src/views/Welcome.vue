@@ -17,7 +17,7 @@
             label="Start Now"
             text="white"
             bg="green")
-      .p2 Clovers is a game about discovering, collecting and trading mathematically generated artworks.
+      .p2 Discover, collect and trade mathematically generated artworks.
       button Read More
       hr
       h2.h2.green.font-exp The Field
