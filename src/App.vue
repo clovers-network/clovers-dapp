@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" class="relative min-h-100vh">
     <app-header/>
     <main>
       <router-view/>
@@ -42,10 +42,5 @@ export default {
       right: -2.6em;
       top: -2.6em;
     }
-  }
-
-  #app {
-    position:relative;
-    min-height:100vh;
   }
 </style>

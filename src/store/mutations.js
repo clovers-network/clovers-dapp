@@ -81,6 +81,7 @@ export default {
   },
   MOVE_ANON_CLOVERS (state) {
     if (state.account && state.allSavedClovers.anon.length) {
+      state.allSavedClovers = {[state.account]: [], ...state.allSavedClovers}
       state.allSavedClovers[state.account].push(
         ...state.allSavedClovers.anon.splice(0)
       )
