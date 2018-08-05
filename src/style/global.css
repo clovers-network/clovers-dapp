@@ -512,16 +512,13 @@ image-rendering: optimize-contrast;         /* CSS3 Proposed       */
 
 /* RESPONSIVE */
 @media only screen and (min-width: 769px) {
-  body {
-    background: var(--green);
-  }
   #app {
     background: white;
     margin: 0 auto;
     max-width: 769px;
     overflow: hidden;
-    border-left: 1px solid white;
-    border-right: 1px solid white;
+    border-left: 1px solid var(--green);
+    border-right: 1px solid var(--green);
   }
   .wide {
     width: 100%;
