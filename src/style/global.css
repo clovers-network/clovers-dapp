@@ -523,4 +523,8 @@ image-rendering: optimize-contrast;         /* CSS3 Proposed       */
     border-left: 1px solid white;
     border-right: 1px solid white;
   }
+  .wide {
+    width: 100%;
+    overflow-x: scroll;
+  }
 }
