@@ -21,7 +21,9 @@
             :to="{ name: 'Welcome' }">
             Clovers
           </router-link>
-          <span v-else>{{$route.meta.title}}</span>
+          <span v-else @click="showMenu = !showMenu">
+            {{$route.meta.title}}
+          </span>
       </h1>
       <router-link class="block p2 col-3 right-align" :to="{name: 'Account'}">
         <person-icon class="align-middle"></person-icon>
