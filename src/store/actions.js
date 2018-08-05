@@ -16,11 +16,18 @@ const signingParams = [
     value: 'To avoid bad things, sign below to authenticate with Clovers'
   }
 ]
-let networks = {
+const networks = {
   4: 'rinkeby',
   5777: 'ganache',
   1: 'mainnet'
 }
+const anonUser = {
+  address: null,
+  name: 'anon',
+  clovers: [],
+  modified: null
+}
+
 export default {
   // web3 stuff
   async begin ({ commit, dispatch }) {
@@ -34,15 +41,15 @@ export default {
   },
   reset ({ state, commit, dispatch }) {
     if (state.querying) {
-      commit('setTryAgain', true)
+      commit('SET_TRY_AGAIN', true)
       return
     }
     console.log('reset')
-    commit('setQuerying', true)
+    commit('SET_QUERYING', true)
     dispatch('getContracts')
-    commit('setQuerying', false)
+    commit('SET_QUERYING', false)
     if (state.tryAgain) {
-      commit('setTryAgain', false)
+      commit('SET_TRY_AGAIN', false)
       dispatch('reset')
     }
   },
@@ -100,7 +107,7 @@ export default {
   async getNetwork ({ commit, state }) {
     const networkId = await global.web3.eth.net.getId()
     if (state.networkId !== networkId) {
-      commit('setNetwork', networkId)
+      commit('SET_NETWORK', networkId)
     }
   },
   async getAnAccount ({ dispatch, commit, state }) {
@@ -125,14 +132,17 @@ export default {
       alert('unlock your web3 wallet')
     }
   },
-  async getAccount ({ commit, state }) {
+  async getAccount ({ commit, dispatch, state }) {
     let accounts = await global.web3.eth.getAccounts()
     if (accounts.length && state.account !== accounts[0]) {
-      commit('setUnlocked', true)
-      commit('setAccount', accounts[0])
+      dispatch('getUser', accounts[0])
+      commit('SET_UNLOCKED', true)
+      commit('SET_ACCOUNT', accounts[0])
+      commit('MOVE_ANON_CLOVERS')
     } else if (!accounts.length && (state.account || state.unlocked)) {
-      commit('setUnlocked', false)
-      commit('setAccount', null)
+      dispatch('getUser', null)
+      commit('SET_UNLOCKED', false)
+      commit('SET_ACCOUNT', null)
       throw new Error('account-locked')
     }
   },
@@ -152,6 +162,40 @@ export default {
       }
     }
   },
+  async getUser ({ state, commit }, account) {
+    if (typeof account === 'string') {
+      account = account.toLowerCase()
+    }
+    if (state.account === account) return
+    if (!account) {
+      commit('SET_USER', anonUser)
+      return
+    }
+    const user = await axios.get(apiUrl(`/users/${account}`)).then(({ data }) => {
+      if (!data.address) {
+        data = Object.assign(anonUser, { address: account, name: account })
+      }
+      commit('SET_USER', data)
+    })
+  },
+  async changeUsername ({ commit, getters }, { address, name }) {
+    if (!address) return
+    console.log('changing username')
+    return axios
+      .put(
+        apiUrl(`/users/${address}`),
+        { name },
+        {
+          headers: {
+            Authorization: getters.authHeader
+          }
+        }
+      )
+      .then(({ data }) => {
+        commit('UPDATE_CURRENT_USER', data)
+      })
+      .catch(console.log)
+  },
 
   // api stuff
   setUpSocket ({ commit }) {
@@ -163,23 +207,18 @@ export default {
     socket.on('disconnect', () => {
       console.log('disconnected')
     })
-    socket.on('newUser', user => {
-      commit('ADD_USER', user)
-      console.log(user)
-    })
+    // socket.on('newUser', user => {
+    //   commit('ADD_USER', user)
+    //   console.log(user)
+    // })
     socket.on('updateUser', user => {
-      console.log(`userUpdate: ${user.name}`)
-      // list of users is empty rn, so this does nothing
-      // commit('UPDATE_USER', user)
-      // console.log(user)
+      commit('UPDATE_USER', user)
     })
     socket.on('addClover', clover => {
-      console.log(`addClover: ${clover.board}`)
       commit('NEW_CLOVER_FROM_CHAIN', clover)
     })
     socket.on('updateClover', clover => {
       commit('UPDATE_CLOVER', clover)
-      console.log(clover)
     })
   },
 
@@ -200,6 +239,7 @@ export default {
     return state.allClovers.findIndex(c => c.board === byteBoard) > -1
   },
   getClovers ({ state, commit }, page = 1) {
+    console.log('getting clovers')
     if (state.allClovers.length) return
     return axios
       .get(apiUrl('/clovers'))

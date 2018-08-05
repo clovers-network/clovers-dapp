@@ -2,19 +2,25 @@ import BigNumber from 'bignumber.js'
 import { formatClover } from '@/utils'
 
 export default {
-  setQuerying (state, bool) {
+  SET_QUERYING (state, bool) {
     state.querying = bool
   },
-  setTryAgain (state, bool) {
+  SET_TRY_AGAIN (state, bool) {
     state.tryAgain = bool
   },
-  setUnlocked (state, unlocked) {
+  SET_UNLOCKED (state, unlocked) {
     state.unlocked = unlocked
   },
-  setAccount (state, account) {
+  SET_ACCOUNT (state, account) {
+    if (typeof account === 'string') {
+      account = account.toLowerCase()
+    }
     state.account = account
   },
-  setNetwork (state, networkId) {
+  SET_USER (state, user) {
+    state.user = user
+  },
+  SET_NETWORK (state, networkId) {
     state.networkId = networkId
   },
   SUBMITTED_CLOVER (state, byteBoard) {
@@ -64,12 +70,21 @@ export default {
     updateLocal('saved_clovers', state.allSavedClovers)
   },
   REMOVE_SAVED_CLOVER (state, { board }) {
+    console.log('removing', board)
     const account = state.account || 'anon'
     const index = state.allSavedClovers[account].findIndex(
       c => c.board === board
     )
     if (index >= 0) {
-      state.allSavedClovers.splice(index, 1)
+      state.allSavedClovers[account].splice(index, 1)
+      updateLocal('saved_clovers', state.allSavedClovers)
+    }
+  },
+  MOVE_ANON_CLOVERS (state) {
+    if (state.account && state.allSavedClovers.anon.length) {
+      state.allSavedClovers[state.account].push(
+        ...state.allSavedClovers.anon.splice(0)
+      )
       updateLocal('saved_clovers', state.allSavedClovers)
     }
   },
@@ -132,26 +147,27 @@ export default {
     }
   },
 
+  UPDATE_CURRENT_USER (state, user) {
+    state.user = Object.assign(state.user, user)
+  },
+  UPDATE_USER (state, user) {
+    if (state.account === user.address) {
+      state.user = user
+    }
+  },
+
   UPDATE_LOGS (state, logs) {
     state.logs = logs
   },
   ADD_LOG (state, log) {
     state.logs.push(log)
   },
-  ADD_USER (state, user) {
-    state.users.push(user)
-  },
-  UPDATE_USER (state, user) {
-    let userKey = state.users.findIndex(
-      u => u.address.toLowerCase() === user.address.toLowerCase()
-    )
-    if (userKey > -1) {
-      state.users.splice(userKey, 1, user)
-    }
-  },
-  UPDATE_USERS (state, users) {
-    state.users = users
-  },
+  // ADD_USER (state, user) {
+  //   state.users.push(user)
+  // },
+  // UPDATE_USERS (state, users) {
+  //   state.users = users
+  // },
   STORED_COUNT (state, total) {
     state.totalMined = total
   },

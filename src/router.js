@@ -8,6 +8,8 @@ import Picks from '@/views/Picks'
 import Trade from '@/views/Trade'
 import About from '@/views/About'
 import Clover from '@/views/Clover'
+import MyClovers from '@/views/MyClovers'
+
 // Old routes
 // import Home from '@/components/Home'
 // import Clover from '@/components/Clover'
@@ -52,7 +54,7 @@ export default new Router({
         {
           path: 'clovers',
           name: 'Account/Clovers',
-          component: Picks,
+          component: MyClovers,
           meta: {title: 'Account'}
         },
         {
