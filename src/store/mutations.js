@@ -14,6 +14,10 @@ export default {
     state.account = account
   },
   SET_USER (state, user) {
+    user.clovers.forEach((c) => {
+      c.price = new BigNumber(c.price)
+      c.reward = new BigNumber(c.reward)
+    })
     state.user = user
   },
   SET_NETWORK (state, networkId) {
@@ -142,6 +146,9 @@ export default {
   },
   ADD_USER (state, user) {
     state.users.push(user)
+  },
+  UPDATE_CURRENT_USER (state, user) {
+    state.user = Object.assign(state.user, user)
   },
   UPDATE_USER (state, user) {
     let userKey = state.users.findIndex(

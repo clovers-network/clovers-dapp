@@ -172,6 +172,24 @@ export default {
       commit('SET_USER', data)
     })
   },
+  async changeUsername ({ commit, getters }, { address, name }) {
+    if (!address) return
+    console.log('changing username')
+    return axios
+      .put(
+        apiUrl(`/users/${address}`),
+        { name },
+        {
+          headers: {
+            Authorization: getters.authHeader
+          }
+        }
+      )
+      .then(({ data }) => {
+        commit('UPDATE_CURRENT_USER', data)
+      })
+      .catch(console.log)
+  },
 
   // api stuff
   setUpSocket ({ commit }) {
