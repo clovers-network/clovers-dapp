@@ -25,6 +25,8 @@
 .mt-header-h{margin-top: var(--height-header);}
 .mt-deduct-header{margin-top: calc(-1 * var(--height-header));}
 
+.pb-100{padding-bottom: 100%;}
+
 .overlay{top:0;left:0;bottom:0;right:0;}
 
 .not-allowed { cursor: not-allowed; }
