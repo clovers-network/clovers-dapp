@@ -6,6 +6,7 @@ import utils from 'web3-utils'
 import axios from 'axios'
 import Web3 from 'web3'
 import { PortisProvider } from 'portis'
+import { formatClover } from '@/utils'
 
 const apiBase = process.env.VUE_APP_API_URL
 const signingParams = [
@@ -223,6 +224,16 @@ export default {
     //     commit('GOT_CLOVERS', data)
     //   })
     //  .catch(console.log)
+  },
+
+  getClover ({ state }, board) {
+    if (!board) return Promise.reject(new Error('Missing parameter: `board` (address)'))
+    const found = state.allClovers.filter(clvr => clvr.board === board)
+    if (found && found[0]) return Promise.resolve(found[0])
+    return axios
+      .get(apiUrl('/clovers/' + board))
+      .then(clvr => clvr && clvr.data && formatClover(clvr.data))
+      .catch(console.error)
   },
 
   signIn ({ state, commit }) {

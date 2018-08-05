@@ -1,8 +1,7 @@
 <template>
-  <ul
-    :class="{absolute:absolute, 'all-symmetries': horizontal}"
-    class=" list-reset ">
+  <ul :class="['m0', {'center': horizontal}]">
     <li
+      role="img"
       v-for="(sym, i) in symmetries"
       :key="i"
       :class="[sym, {'inline-block': horizontal}]"
@@ -19,10 +18,6 @@ export default {
       required: true
     },
     horizontal: {
-      type: Boolean,
-      default: true
-    },
-    absolute: {
       type: Boolean,
       default: true
     }
@@ -43,13 +38,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.all-symmetries {
-  left: 50%;
-  margin-top: 2em;
-  transform: translateX(-50%);
-  text-align: center;
-}
+<style scoped>
 
 .symmetry-type {
   border-radius: 100%;

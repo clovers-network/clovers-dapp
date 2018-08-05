@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import { formatClover } from '@/utils'
 
 export default {
   setQuerying (state, bool) {
@@ -113,7 +114,8 @@ export default {
   GOT_CLOVERS (state, data) {
     data.forEach(obj => {
       if (!state.allClovers.find(v => v.board === obj.board)) {
-        obj.price = new BigNumber(obj.price)
+        // obj.price = new BigNumber(obj.price)
+        obj = formatClover(obj)
         state.allClovers.push(obj)
       }
     })

@@ -18,9 +18,12 @@
 .lh2 { line-height: 1.25;}
 
 .strikethrough { text-decoration: line-through; }
+.txt-overflow-ellipsis{text-overflow: ellipsis;}
 
 .mt3-5 { margin-top: 3.5rem; }
 .mln2-5 { margin-left: -1.5em; }
+.mt-header-h{margin-top: var(--height-header);}
+.mt-deduct-header{margin-top: calc(-1 * var(--height-header));}
 
 .overlay{top:0;left:0;bottom:0;right:0;}
 
