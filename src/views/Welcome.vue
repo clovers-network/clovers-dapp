@@ -1,9 +1,9 @@
 <template lang="pug">
   .div.pt4
-    h1.h1.center.green.font-exp.strong(@click="scrollTo") Find Rare<br>Clovers
+    h1.h1.center.green.font-exp.strong.pb3(@click="scrollTo") Find Rare<br>Clovers
     .center.my3.relative
       .wide.h1.inline-flex.overflow-auto.pb4(ref="wide")
-        clv.small-clover.inline.mx2.no-hover(
+        clv.small-clover.inline.mx3.no-hover(
           v-for="(c, i) in 5"
           :class="cloverClass(c)"
           :foo="c == 3"
@@ -11,18 +11,23 @@
           :noMoves="true"
           :autoPlay="true"
           :moveString="c == 3 ? heart : random()")
-      button Start Now
-      hr
-      h2.h2.green.font-exp What is Clovers?
-      .py2 Clovers is a game centered around discovering, collecting and trading mathematically generated artworks.
-      button Tell Me More
+      router-link.block.mb3(
+        :to="{ name: 'Field' }")
+          dot-btn.mb3(
+            label="Start Now"
+            text="white"
+            bg="green")
+      .p2 Clovers is a game about discovering, collecting and trading mathematically generated artworks.
+      button Read More
       hr
       h2.h2.green.font-exp The Field
-      .py2 Like looking for shapes in clouds you can browse through the Field of clovers as they're grown in real time looking for rare or interesting shapes.
+      .p2 Like looking for shapes in clouds you can browse through the Field of clovers as they're grown in real time looking for rare or interesting shapes.
 </template>
 
 <script>
 import Reversi from 'clovers-reversi'
+import DotBtn from '@/components/DotBtn'
+
 export default {
   name: 'Welcome',
   data () {
@@ -53,7 +58,8 @@ export default {
       reversi.mine()
       return reversi.movesString
     }
-  }
+  },
+  components: { DotBtn }
 }
 </script>
 

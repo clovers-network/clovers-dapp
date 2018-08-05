@@ -4,25 +4,41 @@
     :class="{'bg-white green': !showMenu, 'white': showMenu}">
     <!-- top bar -->
     <div
-      class="relative z2 h-header flex justify-between items-center"
+      class="relative z2 h-header flex items-center"
       :class="{'border-bottom': !showMenu}">
       <button
-        class="menu-btn pointer p2"
+        class="menu-btn pointer p2 col-3 left-align"
         @click="showMenu = !showMenu"
-        aria-label="Toggle Menu">===</button>
-      <h1 is="router-link" to="/" tag="h1" class="font-exp h3">{{showMenu ? 'Clovers' : $route.meta.title}}</h1>
-      <router-link class="block p2" to="/account"><person-icon></person-icon></router-link>
+        aria-label="Toggle Menu">
+          <img :src="showMenu
+            ? require('../assets/icons/hamburger-white.svg')
+            : require('../assets/icons/hamburger.svg')" />
+      </button>
+      <h1 class="font-exp h3 col-6 py1 center">
+          <router-link
+            v-if="showMenu"
+            @click.native="showMenu = !showMenu"
+            :to="{ name: 'Welcome' }">
+            Clovers
+          </router-link>
+          <span v-else>{{$route.meta.title}}</span>
+      </h1>
+      <router-link class="block p2 col-3 right-align" :to="{name: 'Account'}">
+        <person-icon class="align-middle"></person-icon>
+      </router-link>
     </div>
     <!-- nav -->
     <div
       v-show="showMenu"
       class="absolute z1 h-100vh col-12 bg-green top-0 left-0 flex flex-column justify-between center">
       <div class="h-header"/>
-      <nav class="flex-auto flex items-center justify-center">
+      <nav class="flex-auto flex items-center justify-center" @click="showMenu = !showMenu">
         <ul class="h1 list-reset">
-          <li><router-link :to="{ name: 'Field' }">Find Clovers</router-link></li>
-          <li class="mt2"><router-link to="/market">Market</router-link></li>
-          <li class="mt2"><router-link :to="{ name: 'About' }">About</router-link></li>
+
+          <li><router-link :to="{ name: 'Welcome' }">About</router-link></li>
+          <li class="mt2"><router-link :to="{ name: 'Field' }">Find Clovers</router-link></li>
+          <li class="mt2"><router-link to="/market">Feed</router-link></li>
+
         </ul>
       </nav>
       <pig/>

@@ -32,9 +32,12 @@
 .bg-transparent { background-color: transparent;}
 .bg-dark-gray { background-color: var(--dark-gray);}
 .bg-current-color{background-color: currentColor;}
+.bg-green { background-color: var(--green); }
+.bg-white { background-color: white; }
 .bg-dots-white{background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'%3E%3Ccircle cx='6' cy='6' r='3'/%3E%3Ccircle cx='15' cy='15' r='3'/%3E%3C/g%3E%3C/svg%3E");}
 .bg-dots-green{background-image: url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2301b463' fill-opacity='1' fill-rule='evenodd'%3E%3Ccircle cx='6' cy='6' r='3'/%3E%3Ccircle cx='15' cy='15' r='3'/%3E%3C/g%3E%3C/svg%3E");}
 
+.border-green { border-color: var(--green); }
 .border-dark-gray { border-color: var(--dark-gray);}
 .outline-none { outline: 0;}
 
