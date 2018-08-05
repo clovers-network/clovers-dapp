@@ -31,7 +31,7 @@
           {{$route.meta.title}}
         </span>
       </h1>
-      <router-link class="block p2 col-3 right-align" :to="{name: 'Account'}">
+      <router-link @click.native="showMenu = !showMenu" class="block p2 col-3 right-align" :to="{name: 'Account'}">
         <person-icon class="align-middle"></person-icon>
       </router-link>
     </div>
