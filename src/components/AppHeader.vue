@@ -20,15 +20,15 @@
       <button v-show="$route.meta.backBtn" class="pointer p2 col-3 left-align" @click="$router.go(-1)">Back</button>
       <!-- title -->
       <h1 class="font-exp h3 col-6 py1 center">
-          <router-link
-            v-if="showMenu"
-            @click.native="showMenu = !showMenu"
-            :to="{ name: 'Welcome' }">
-            Clovers
-          </router-link>
-          <span v-else @click="showMenu = !showMenu">
-            {{$route.meta.title}}
-          </span>
+        <router-link
+          v-if="showMenu"
+          @click.native="showMenu = !showMenu"
+          :to="{ name: 'Welcome' }">
+          Clovers
+        </router-link>
+        <span v-else @click="showMenu = !showMenu">
+          {{$route.meta.title}}
+        </span>
       </h1>
       <router-link class="block p2 col-3 right-align" :to="{name: 'Account'}">
         <person-icon class="align-middle"></person-icon>
@@ -74,11 +74,6 @@ export default {
   },
   destroyed () {
     window.removeEventListener('keyup', this.checkEsc)
-  },
-  watch: {
-    '$route.fullPath': function () {
-      this.showMenu = false
-    }
   },
   methods: {
     toggleMenu () {
