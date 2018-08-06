@@ -14,8 +14,8 @@
           class="menu-btn pointer"
           @click="showMenu = !showMenu"
           aria-label="Toggle Menu">
-            <div v-if="mining" id="wave" :class="{ whiteWave : showMenu }"></div>
-            <img v-else :src="showMenu
+            <wavey-btn v-show="mining" :isWhite="showMenu"></wavey-btn>
+            <img class="block" v-show="!mining" :src="showMenu
               ? require('../assets/icons/hamburger-white.svg')
               : require('../assets/icons/hamburger.svg')" />
         </button>
@@ -30,7 +30,10 @@
             :to="{ name: 'Welcome' }">
             Clovers
           </router-link>
-          <span class="nowrap" v-else>{{$route.meta.title}}</span>
+          <span class="nowrap pointer" v-else
+            @click="showMenu = !showMenu">
+            {{$route.meta.title}}
+          </span>
       </h1>
       <!-- right col -->
       <div class="col-3 flex justify-end items-center">
@@ -51,12 +54,12 @@
           <li><router-link :to="{ name: 'Welcome' }">About</router-link></li>
           <li class="mt2"><router-link :to="{ name: 'Field' }">Find Clovers</router-link></li>
           <li class="mt2"><router-link :to="{ name: 'Feed' }">Feed</router-link></li>
-          <li class="mt2"><router-link :to="{ name: 'Account' }">Account</router-link></li>
+          <li class="mt2"><router-link :to="{ name: 'Account' }">My Clovers</router-link></li>
 
         </ul>
       </nav>
       <div class="px2">
-        <pig @minerStatus="mining = $event"/>
+        <pig @minerStatus="mining = $event" @viewPicks="viewPicks"/>
       </div>
     </div>
   </header>
@@ -64,6 +67,7 @@
 
 <script>
 import { mapGetters, mapState } from 'vuex'
+import WaveyBtn from '@/components/Icons/WaveyMenu'
 import Pig from '@/components/Pig'
 import PersonIcon from '@/components/Icons/PersonIcon'
 export default {
@@ -93,43 +97,14 @@ export default {
       if (e.keyCode === 27) {
         this.showMenu = false
       }
+    },
+    viewPicks () {
+      this.showMenu = false
+      this.$router.push({name: 'Picks'})
     }
   },
-  components: { Pig, PersonIcon }
+  components: { Pig, PersonIcon, WaveyBtn }
 }
 </script>
 
-<style>
-@keyframes wave {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    background-position: 48px 0;
-  }
-}
-
-div#wave {
-  width:48px;
-  position:relative;
-  height: 14px;
-  background: url('../assets/icons/wave.svg') repeat-x 0%;
-  background-size: contain;
-  animation: 3s wave linear infinite;
-  box-shadow:inner 0 0 1rem rgba(red,1);
-
-  &.whiteWave {
-    background: url('../assets/icons/wave-white.svg') repeat-x 0%;
-  }
-
-  &::before{
-    content:"";
-    background:linear-gradient(90deg, rgba(white,0) 25%, rgba(white,1) 75%);
-    height:100%;
-    width:100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-}
-</style>
+<style></style>

@@ -10,23 +10,23 @@
           <template v-if="inCurationMarket(clover)">
             <div class="col-5 flex flex-column justify-center pr3">
               <p class="h7 m0">Market Cap &clubs;</p>
-              <p class="h4 m0 truncate">0</p>
+              <p class="h4 m0 truncate font-mono">0</p>
             </div>
             <div class="col-3 flex flex-column justify-center pr2">
               <p class="h7 m0">&clubs; / Share</p>
-              <p class="h4 m0 truncate">0</p>
+              <p class="h4 m0 truncate font-mono">0</p>
             </div>
           </template>
 
           <template v-else>
             <div class="col-5 flex flex-column justify-center pr3">
               <p class="h7 m0">Name</p>
-              <p class="h4 m0 truncate">{{ clover.name }}</p>
+              <p class="h4 m0 truncate font-mono">{{ clover.name }}</p>
             </div>
             <div class="col-3 flex flex-column justify-center pr2">
               <p class="h7 m0">Cost &clubs;</p>
               <p v-if="forSale(clover)" class="h4 m0">{{ cloverPrice(clover) }}</p>
-              <p class="h4 m0 red">🛇</p>
+              <p class="h4 m0 font-mono">---</p>
             </div>
           </template>
 

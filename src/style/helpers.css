@@ -18,7 +18,7 @@
 .lh2 { line-height: 1.25;}
 
 .strikethrough { text-decoration: line-through; }
-.txt-overflow-ellipsis{text-overflow: ellipsis;}
+.capitalize{text-transform: capitalize;}
 
 .mt3-5 { margin-top: 3.5rem; }
 .mln2-5 { margin-left: -1.5em; }

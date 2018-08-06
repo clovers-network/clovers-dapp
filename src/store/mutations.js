@@ -65,6 +65,10 @@ export default {
     state.miningStats.symms++
     updateLocal('clover_pig_stats', state.miningStats)
   },
+  RESET_MINE_STATS (state) {
+    state.miningStats = { mineTime: 0, totalMined: 0, symms: 0 }
+    updateLocal('clover_pig_stats', state.miningStats)
+  },
 
   // mining/saving clovers. Stored clovers are added to state on load
   SAVE_CLOVER (state, clover) {

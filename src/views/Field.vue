@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import KeepClover from '@/views/KeepClover'
 import Bottleneck from 'bottleneck'
 import Reversi from 'clovers-reversi'
@@ -40,7 +40,7 @@ const scrollEl = document.scrollingElement
 export default {
   name: 'Field',
   components: { KeepClover },
-  data () {
+  data() {
     return {
       limiter: new Bottleneck({
         minTime: 260
@@ -57,40 +57,38 @@ export default {
     cloverImage,
     pluralize,
 
-    getNext () {
+    getNext() {
       if (this.growing) return
       this.growing = true
       for (let i = 24; i; i--) {
         this.limiter.submit(this.mineOne, i === 1, this.miningDone)
       }
     },
-    miningDone () {
+    miningDone() {
       /* no op, `limiter` callback */
     },
-    mineOne (last) {
+    async mineOne(last) {
       clover.mine()
-      this.generated.push({
-        board: pad0x(clover.byteBoard),
-        movesString: clover.movesString,
-        createdAt: new Date()
-      })
+      const clvr = await this.formatFoundClover(clover)
+      this.generated.push(clvr)
       if (last) {
         this.growing = false
       }
     },
-    isSaved ({ board }) {
+    isSaved({ board }) {
       if (!this.picks.length) return false
       return this.picks.findIndex(c => c.board === board) >= 0
     },
 
     ...mapMutations({
       saveClover: 'SAVE_CLOVER'
-    })
+    }),
+    ...mapActions(['formatFoundClover'])
   },
-  beforeMount () {
+  beforeMount() {
     this.getNext()
   },
-  mounted () {
+  mounted() {
     window.onscroll = debounce(() => {
       let nearBottom =
         scrollEl.scrollTop + scrollEl.clientHeight >
@@ -98,7 +96,7 @@ export default {
       if (nearBottom) this.getNext()
     }, 30)
   },
-  beforeRouteLeave (to, from, next) {
+  beforeRouteLeave(to, from, next) {
     this.limiter.stop({ dropWaitingJobs: true })
     next()
   }
@@ -106,11 +104,10 @@ export default {
 </script>
 
 <style>
-.mb-full-height {
-  margin-bottom: calc(150vh - 275px);
+.pb-full-height {
+  padding-bottom: calc(150vh - 275px);
 }
-
-[data-appear] img {
+img {
   animation-duration: 800ms;
 }
 [data-appear='0'] img {

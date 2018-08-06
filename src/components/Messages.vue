@@ -1,8 +1,8 @@
 <template>
-  <div class="fixed bottom-0 left-0 z3 m1">
+  <div class="fixed top-0 left-0 col-12 z3 mt2">
     <div
-      :class="buildClass(msg)"
-      class="block btn p2 m1"
+      :class="msgClass(msg)"
+      class="p2 flex items-center mx2 mb1 h6"
       @click="clickMessage(msg)"
       :key="msg.id"
       v-for="msg in messages" >
@@ -39,11 +39,11 @@ export default {
       }
       this.removeMessage(msg.id)
     },
-    buildClass (msg) {
+    msgClass (msg) {
       return {
-        'bg-green': msg.type === 'success',
-        'bg-orange': msg.type === 'progress',
-        'bg-red': msg.type === 'error'
+        'bg-green white': msg.type === 'success',
+        'bg-white green border': msg.type === 'progress',
+        'bg-red white': msg.type === 'error'
       }
     },
     ...mapMutations({
