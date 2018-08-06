@@ -134,7 +134,7 @@ export default {
   },
   async getAccount ({ commit, dispatch, state }) {
     let accounts = await global.web3.eth.getAccounts()
-    if (accounts.length && state.account !== accounts[0]) {
+    if (accounts.length && state.account !== accounts[0].toLowerCase()) {
       dispatch('getUser', accounts[0])
       commit('SET_UNLOCKED', true)
       commit('SET_ACCOUNT', accounts[0])
