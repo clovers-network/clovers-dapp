@@ -450,6 +450,19 @@ input:disabled,
   appearance: none;
 }
 
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color: var(--light-green);
+}
+::-moz-placeholder { /* Firefox 19+ */
+  color: var(--light-green);
+}
+:-ms-input-placeholder { /* IE 10+ */
+  color: var(--light-green);
+}
+:-moz-placeholder { /* Firefox 18- */
+  color: var(--light-green);
+}
+
 /* HELPERS */
 
 img.illustration {
