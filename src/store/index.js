@@ -44,7 +44,9 @@ const state = {
   users: [],
   logs: [],
   messages: [],
-  submittingBoards: []
+  submittingBoards: [],
+
+  basePrice: '100000' // wei
 }
 
 export default new Vuex.Store({

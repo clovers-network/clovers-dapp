@@ -27,7 +27,7 @@
     "bignumber.js": "^4.1.0",
     "bottleneck": "^2.6.0",
     "clovers-contracts": "^1.0.13",
-    "clovers-reversi": "^1.0.14",
+    "clovers-reversi": "^1.0.18",
     "copy-to-clipboard": "^3.0.8",
     "ethjs": "^0.2.9",
     "fs": "0.0.1-security",

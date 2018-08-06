@@ -1,6 +1,6 @@
 <template>
   <div class="mt2 mb-full-height">
-    <single-view v-show="viewSingle" :clover="viewSingle" @close="viewSingle = null"></single-view>
+    <single-view v-if="viewSingle" :clover="viewSingle" @close="viewSingle = null"></single-view>
     <ul class="list-reset flex flex-wrap mxn2 mt0 mb3 px2">
       <!-- item -->
       <li v-for="(clover, i) in generated" :key="i" class="p2 col-6 sm-col-4 relative appear-off" data-expand="-50" :data-appear="i % 3">
@@ -28,7 +28,7 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import SingleView from '@/views/FieldSingle'
+import SingleView from '@/views/KeepClover'
 import Bottleneck from 'bottleneck'
 import Reversi from 'clovers-reversi'
 import { pad0x, cloverImage, pluralize } from '@/utils'

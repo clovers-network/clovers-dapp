@@ -14,33 +14,43 @@
         .col-6.p3.border-right.relative(@click="action = 'keep'")
           div(:class="{'opacity-25': action !== 'keep'}")
             small.block.lh1 Keep for ♣
-            .font-exp.mt1 {{value}}
+            .font-exp.mt1.truncate {{tokenValue}}
             //- button.absolute.top-0.right-0.p2.pointer(@click="action = 'keep'")
               .icon-radio(:class="{'icon-radio--selected': action === 'keep'}")
         .col-6.p3.relative(@click="action = 'sell'")
           div(:class="{'opacity-25': action !== 'sell'}")
             small.block.lh1 Sell instantly for ♣
-            .font-exp.mt1 {{value}}
+            .font-exp.mt1.truncate {{tokenValue}}
             //- button.absolute.top-0.right-0.p2.pointer(@click="action = 'sell'")
               .icon-radio(:class="{'icon-radio--selected': action === 'sell'}")
-      button.bg-green.white.font-exp.flex.col-12.h-bttm-bar.pointer(@click="clickButton")
-        span.block.m-auto {{action === 'keep' ? 'Keep' : 'Sell'}}
+      //- keep btn
+      button.bg-green.white.font-exp.flex.col-12.h-bttm-bar.pointer(v-show="action === 'keep'", @click="keep")
+        span.block.m-auto Keep
+      //- sell btn
+      button.bg-green.white.font-exp.flex.col-12.h-bttm-bar.pointer(v-show="action === 'sell'", @click="keep")
+        span.block.m-auto Sell
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { cloverImage } from '@/utils'
+import { fromWei } from 'web3-utils'
+import Reversi from 'clovers-reversi'
+const reversi = new Reversi()
 export default {
-  name: 'FieldSingle',
+  name: 'KeepClover',
   props: ['clover'],
   data () {
     return {
       action: 'keep',
-      value: 500
+      value: null
     }
   },
   computed: {
-    ...mapGetters(['userBalance'])
+    ...mapGetters(['userBalance']),
+    tokenValue () {
+      return this.value ? fromWei(this.value) : '...'
+    }
   },
   methods: {
     cloverImage,
@@ -48,14 +58,25 @@ export default {
       this.$emit('close')
       this.action = 'keep'
     },
-    async clickButton () {
+    async keep () {
       try {
         await this.buy(this.clover)
       } catch (error) {
         console.log(error)
       }
     },
+    getValue () {
+      reversi.playGameMovesString(this.clover.movesString)
+      const syms = reversi.returnSymmetriesAsBN()
+      this.$store.dispatch('getReward', syms)
+        .then(wei => {
+          this.value = wei + this.$store.state.basePrice
+        })
+    },
     ...mapActions(['buy'])
+  },
+  mounted () {
+    this.getValue()
   }
 }
 </script>

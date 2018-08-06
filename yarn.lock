@@ -2556,9 +2556,9 @@ clovers-contracts@^1.0.13:
   version "1.0.13"
   resolved "https://registry.yarnpkg.com/clovers-contracts/-/clovers-contracts-1.0.13.tgz#486c2669a65bb0e211c5d302f0a8047d0a806d63"
 
-clovers-reversi@^1.0.14:
-  version "1.0.14"
-  resolved "https://registry.yarnpkg.com/clovers-reversi/-/clovers-reversi-1.0.14.tgz#3a307e79e0bb5210497d914d7796a6d26e857ca0"
+clovers-reversi@^1.0.18:
+  version "1.0.18"
+  resolved "https://registry.yarnpkg.com/clovers-reversi/-/clovers-reversi-1.0.18.tgz#dbe1644264e81a479068ef9fe85891aac61d5b04"
   dependencies:
     bn.js "^4.11.8"
 
