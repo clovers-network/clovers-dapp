@@ -1,5 +1,5 @@
 <template>
-  <div class="mt2 mb-full-height">
+  <div class="mt2 pb-full-height">
     <single-view v-if="viewSingle" :clover="viewSingle" @close="viewSingle = null"></single-view>
     <ul class="list-reset flex flex-wrap mxn2 mt0 mb3 px2">
       <!-- item -->
@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import SingleView from '@/views/KeepClover'
 import Bottleneck from 'bottleneck'
 import Reversi from 'clovers-reversi'
@@ -65,13 +65,10 @@ export default {
       }
     },
     miningDone () { /* no op, `limiter` callback */ },
-    mineOne (last) {
+    async mineOne (last) {
       clover.mine()
-      this.generated.push({
-        board: pad0x(clover.byteBoard),
-        movesString: clover.movesString,
-        createdAt: new Date()
-      })
+      const clvr = await this.formatFoundClover(clover)
+      this.generated.push(clvr)
       if (last) {
         this.growing = false
       }
@@ -83,7 +80,8 @@ export default {
 
     ...mapMutations({
       saveClover: 'SAVE_CLOVER'
-    })
+    }),
+    ...mapActions(['formatFoundClover'])
   },
   beforeMount () {
     this.getNext()
@@ -103,8 +101,8 @@ export default {
 </script>
 
 <style>
-  .mb-full-height {
-    margin-bottom: calc(150vh - 275px);
+  .pb-full-height {
+    padding-bottom: calc(150vh - 275px);
   }
 
   [data-appear] img{ animation-duration: 800ms; }

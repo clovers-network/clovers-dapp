@@ -6,7 +6,7 @@ import utils from 'web3-utils'
 import axios from 'axios'
 import Web3 from 'web3'
 import { PortisProvider } from 'portis'
-import { formatClover, makeBn } from '@/utils'
+import { pad0x, formatClover, makeBn } from '@/utils'
 
 const apiBase = process.env.VUE_APP_API_URL
 const signingParams = [
@@ -134,7 +134,7 @@ export default {
   },
   async getAccount ({ commit, dispatch, state }) {
     let accounts = await global.web3.eth.getAccounts()
-    if (accounts.length && state.account !== accounts[0]) {
+    if (accounts.length && state.account !== accounts[0].toLowerCase()) {
       dispatch('getUser', accounts[0])
       commit('SET_UNLOCKED', true)
       commit('SET_ACCOUNT', accounts[0])
@@ -305,6 +305,14 @@ export default {
       .catch(console.error)
   },
 
+  formatFoundClover (_, clover) {
+    return {
+      board: pad0x(clover.byteBoard),
+      movesString: clover.movesString,
+      createdAt: new Date()
+    }
+  },
+
   signIn ({ state, commit }) {
     const { account } = state
     if (!account) return
@@ -446,7 +454,7 @@ export default {
     // TODO Figure out why cloverExists is returning a promise
     if (await dispatch('cloverExists', clover.board)) {
       // get the owner of the clover
-      let owner = await contracts.Clovers.methods.ownerOf(clover.board).call()
+      let owner = await contracts.Clovers.instance.methods.ownerOf(clover.board).call()
       // if not current user, then error
       if (owner.toLowerCase() !== state.account.toLowerCase()) {
         throw new Error('cant-sell-dont-own')
@@ -536,6 +544,7 @@ async function claimClover ({ keep, account, clover }) {
   let stakeAmount = await contracts.CloversController.instance.methods
     .stakeAmount()
     .call()
+  value = new BigNumber(value)
   value = value.plus(stakeAmount)
   console.log('stake amount' + value.toString(10))
   console.log(moves, _tokenId, _symmetries, _keep, from, value)
