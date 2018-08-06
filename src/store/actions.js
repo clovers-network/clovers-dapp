@@ -6,7 +6,7 @@ import utils from 'web3-utils'
 import axios from 'axios'
 import Web3 from 'web3'
 import { PortisProvider } from 'portis'
-import { formatClover } from '@/utils'
+import { formatClover, makeBn } from '@/utils'
 
 const apiBase = process.env.VUE_APP_API_URL
 const signingParams = [
@@ -235,8 +235,8 @@ export default {
     commit('ADD_MSG', msg)
     return msg.id
   },
-  cloverExists ({ state }, byteBoard) {
-    return state.allClovers.findIndex(c => c.board === byteBoard) > -1
+  async cloverExists ({ state }, byteBoard) {
+    return axios.get(apiUrl(`/clovers/${byteBoard}`)).then(({ data }) => data)
   },
   getClovers ({ state, commit }, page = 1) {
     console.log('getting clovers')
@@ -286,7 +286,7 @@ export default {
         from: account
       },
       (err, { result }) => {
-        console.log(err, result)
+        console.error(err)
         commit('SIGN_IN', { account, signature: result })
       }
     )
@@ -320,28 +320,29 @@ export default {
 
     if (cloverExists) {
       // get current price
-      let currentPrice = await contracts.SimpleCloversMarket.methods
+      let currentPrice = await contracts.SimpleCloversMarket.instance.methods
         .sellPrice(clover.board)
         .call()
+      currentPrice = makeBn(currentPrice)
       // if 0 then it's not actually for sale
       if (currentPrice.eq(0)) throw new Error('cant-buy-not-for-sale')
 
       // get balance of user in ClubToken
-      let balanceOf = await contracts.ClubToken.methods
+      let balanceOf = await contracts.ClubToken.instance.methods
         .balanceOf(state.account)
         .call()
+      balanceOf = makeBn(balanceOf)
       let value = 0
       // if it's less than the price then find the Eth needed to buy enough
       if (balanceOf.lt(currentPrice)) {
         value = getLowestPrice(contracts.ClubToken, balanceOf.sub(currentPrice))
       }
-      await contracts.SimpleCloversMarket.methods.buy(clover.board).send({
+      await contracts.SimpleCloversMarket.instance.methods.buy(clover.board).send({
         from: state.account,
         value
       })
     } else {
       // claim clover w option _keep = true
-      console.log(state.account)
       if (!state.account) {
         await dispatch('getAnAccount')
       }

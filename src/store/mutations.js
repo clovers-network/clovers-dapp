@@ -115,9 +115,6 @@ export default {
     // let i = state.allSavedClovers.findIndex(cl => cl.byteBoard === byteBoard)
     // Object.assign(state.allSavedClovers[i], { startPrice: newVal })
   },
-  UPDATE_BALANCE (state, balance) {
-    state.balance = parseInt(balance)
-  },
   STORED_CLOVERS (state, clovers) {
     // state.allSavedClovers = clovers
   },

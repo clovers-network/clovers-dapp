@@ -28,7 +28,6 @@ const state = {
   networkId: null,
   correctNetwork: 4,
 
-  balance: 0,
   miningStats: getMiningStats(),
 
   // socket events pushed to clover queue
