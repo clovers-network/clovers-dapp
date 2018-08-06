@@ -24,14 +24,13 @@
             //- button.absolute.top-0.right-0.p2.pointer(@click="action = 'sell'")
               .icon-radio(:class="{'icon-radio--selected': action === 'sell'}")
       //- keep btn
-      button.bg-green.white.font-exp.flex.col-12.h-bttm-bar.pointer(v-show="action === 'keep'", @click="keep")
-        span.block.m-auto Keep
-      //- sell btn
-      button.bg-green.white.font-exp.flex.col-12.h-bttm-bar.pointer(v-show="action === 'sell'", @click="keep")
-        span.block.m-auto Sell
+      button.bg-green.white.font-exp.flex.col-12.h-bttm-bar.pointer(@click="keep", :class="{'pointer-events-none': submitting}")
+        span.block.m-auto(v-show="!submitting") Keep
+        wavey-menu.m-auto(v-show="submitting", :isWhite="true")
 </template>
 
 <script>
+import WaveyMenu from '@/components/Icons/WaveyMenu'
 import { mapGetters, mapActions } from 'vuex'
 import { cloverImage } from '@/utils'
 import { fromWei } from 'web3-utils'
@@ -43,7 +42,8 @@ export default {
   data () {
     return {
       action: 'keep',
-      value: null
+      value: null,
+      submitting: false
     }
   },
   computed: {
@@ -59,15 +59,20 @@ export default {
       this.action = 'keep'
     },
     async keep () {
+      this.submitting = true
       try {
-        var tx = await this.buy(this.clover)
+        const tx = await this.buy(this.clover)
+        this.submitting = false
         console.log('SUCCESS', tx)
       } catch (error) {
         console.log(error)
+        this.submitting = false
+        // notification
+        let msg = {type: 'error', msg: 'Error :-('}
         switch (error.message) {
-          case 'cant-buy-not-for-sale':
-            this.$store.dispatch('addMessage', {type: 'error', msg: 'Already Registered or Not for Sale :-('})
+          case 'cant-buy-not-for-sale': msg.msg = 'Already Registered or Not for Sale :-('
         }
+        this.$store.dispatch('addMessage', msg)
       }
     },
     getValue () {
@@ -81,7 +86,8 @@ export default {
   },
   mounted () {
     this.getValue()
-  }
+  },
+  components: { WaveyMenu }
 }
 </script>
 
