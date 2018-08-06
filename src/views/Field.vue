@@ -40,7 +40,7 @@ const scrollEl = document.scrollingElement
 export default {
   name: 'Field',
   components: { KeepClover },
-  data() {
+  data () {
     return {
       limiter: new Bottleneck({
         minTime: 260
@@ -57,17 +57,17 @@ export default {
     cloverImage,
     pluralize,
 
-    getNext() {
+    getNext () {
       if (this.growing) return
       this.growing = true
       for (let i = 24; i; i--) {
         this.limiter.submit(this.mineOne, i === 1, this.miningDone)
       }
     },
-    miningDone() {
+    miningDone () {
       /* no op, `limiter` callback */
     },
-    mineOne(last) {
+    mineOne (last) {
       clover.mine()
       this.generated.push({
         board: pad0x(clover.byteBoard),
@@ -78,7 +78,7 @@ export default {
         this.growing = false
       }
     },
-    isSaved({ board }) {
+    isSaved ({ board }) {
       if (!this.picks.length) return false
       return this.picks.findIndex(c => c.board === board) >= 0
     },
@@ -87,10 +87,10 @@ export default {
       saveClover: 'SAVE_CLOVER'
     })
   },
-  beforeMount() {
+  beforeMount () {
     this.getNext()
   },
-  mounted() {
+  mounted () {
     window.onscroll = debounce(() => {
       let nearBottom =
         scrollEl.scrollTop + scrollEl.clientHeight >
@@ -98,7 +98,7 @@ export default {
       if (nearBottom) this.getNext()
     }, 30)
   },
-  beforeRouteLeave(to, from, next) {
+  beforeRouteLeave (to, from, next) {
     this.limiter.stop({ dropWaitingJobs: true })
     next()
   }

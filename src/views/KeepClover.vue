@@ -36,12 +36,12 @@ import { mapGetters, mapActions } from 'vuex'
 import { cloverImage } from '@/utils'
 import { fromWei } from 'web3-utils'
 import Reversi from 'clovers-reversi'
-const reversi = new Reversi()
 import BigNumber from 'bignumber.js'
+const reversi = new Reversi()
 export default {
   name: 'KeepClover',
   props: ['clover'],
-  data() {
+  data () {
     return {
       action: 'keep',
       value: null
@@ -49,10 +49,10 @@ export default {
   },
   computed: {
     ...mapGetters(['userBalance']),
-    tokenValue() {
+    tokenValue () {
       return this.value ? fromWei(this.value.toString()) : '...'
     },
-    sellValue() {
+    sellValue () {
       return this.value
         ? fromWei(this.value.minus(this.$store.state.basePrice).toString())
         : '...'
@@ -60,11 +60,11 @@ export default {
   },
   methods: {
     cloverImage,
-    close() {
+    close () {
       this.$emit('close')
       this.action = 'keep'
     },
-    async keep() {
+    async keep () {
       try {
         var tx = await this.buy(this.clover)
         console.log('SUCCESS', tx)
@@ -72,7 +72,7 @@ export default {
         console.log(error)
       }
     },
-    getValue() {
+    getValue () {
       reversi.playGameMovesString(this.clover.movesString)
       const syms = reversi.returnSymmetriesAsBN()
       this.$store.dispatch('getReward', syms).then(wei => {
@@ -82,7 +82,7 @@ export default {
     },
     ...mapActions(['buy'])
   },
-  mounted() {
+  mounted () {
     this.getValue()
   }
 }
