@@ -1,12 +1,12 @@
 <template>
   <div>
     <single-view v-if="viewSingle" :clover="viewSingle" @close="viewSingle = null"></single-view>
-    <ul class="list-reset md-flex flex-wrap justify-around items-center m0">
-      <li v-for="(clover, i) in picks" :key="i" class="md-col6">
+    <ul class="list-reset md-flex flex-wrap items-center m0 md-px1 pb2">
+      <li v-for="(clover, i) in picks" :key="i" class="md-col-6 md-px1">
         <div class="flex py2 border-bottom justify-between items-center green">
           <div class="col-3 center relative">
             <div class="sym-badge absolute h7 p1" v-if="isSym(clover)">SYM</div>
-            <img :src="cloverImage(clover, 58)" width="58" height="58"/>
+            <img class="pointer" :src="cloverImage(clover, 58)" width="58" height="58" @click="viewSingle = clover"/>
           </div>
           <div class="col-3 pr2 h7 font-mono">
             {{ fromNow(clover) }}

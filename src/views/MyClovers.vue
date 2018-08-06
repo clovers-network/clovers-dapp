@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <ul class="list-reset md-flex flex-wrap justify-around items-center m0">
-      <li v-for="(clover, i) in userClovers" :key="i" class="md-col6">
+  <div class="md-pb3">
+    <ul class="list-reset md-flex flex-wrap justify-around items-center m0 md-px1">
+      <li v-for="(clover, i) in userClovers" :key="i" class="md-col-6 md-px1">
         <div is="router-link" tag="div" :to="cloverLink(clover)" class="flex py2 border-bottom green">
           <div class="col-4 center">
-            <img :src="cloverImage(clover, 64)" width="64" height="64"/>
+            <img class="pointer" :src="cloverImage(clover, 64)" width="64" height="64"/>
           </div>
 
           <template v-if="inCurationMarket(clover)">
@@ -31,7 +31,7 @@
           </template>
 
           <div class="col-1 center flex flex-column justify-center">
-            <img src="~../assets/icons/arrow-right.svg" width="18" height="18"/>
+            <img class="pointer" src="~../assets/icons/arrow-right.svg" width="18" height="18"/>
           </div>
         </div>
       </li>

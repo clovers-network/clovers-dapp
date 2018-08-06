@@ -1,32 +1,33 @@
 <template lang="pug">
-  article.green.fixed.z3.overlay.bg-white.flex.flex-column.justify-between
-    header
-      .h-header.border-bottom.flex.justify-between.items-center
-        .col-3.pl2
-          button.pointer(@click="close") Back
-        //- h1.col-6.font-exp.center.nowrap Keep or Sell
-        .col-9.pr2.right-align
-          router-link.font-mono(:to="{name: 'Account/Trade'}") {{userBalance}} ♣
-    figure.flex-auto.relative
-      .absolute.bg-contain.bg-no-repeat.bg-center(role="img", v-if="clover", :style="'background-image:url(' + cloverImage(clover) + ')'")
-    footer
-      .flex.border-top
-        .col-6.p3.border-right.relative(@click="action = 'keep'")
-          div(:class="{'opacity-25': action !== 'keep'}")
-            small.block.lh1 Keep for ♣
-            .font-exp.mt1.truncate {{tokenValue}}
-            //- button.absolute.top-0.right-0.p2.pointer(@click="action = 'keep'")
-              .icon-radio(:class="{'icon-radio--selected': action === 'keep'}")
-        .col-6.p3.relative(@click="action = 'sell'")
-          div(:class="{'opacity-25': action !== 'sell'}")
-            small.block.lh1 Sell instantly for ♣
-            .font-exp.mt1.truncate {{tokenValue}}
-            //- button.absolute.top-0.right-0.p2.pointer(@click="action = 'sell'")
-              .icon-radio(:class="{'icon-radio--selected': action === 'sell'}")
-      //- keep btn
-      button.bg-green.white.font-exp.flex.col-12.h-bttm-bar.pointer(@click="btnClick", :class="{'pointer-events-none': submitting}")
-        span.block.m-auto.capitalize(v-show="!submitting") {{action}}
-        wavey-menu.m-auto(v-show="submitting", :isWhite="true")
+  article.green.fixed.z3.overlay.bg-white.flex
+    .col-12.max-width-3.mx-auto.flex.flex-column.justify-between.outline
+      header
+        .h-header.border-bottom.flex.justify-between.items-center
+          .col-3.pl2
+            button.pointer(@click="close") Back
+          //- h1.col-6.font-exp.center.nowrap Keep or Sell
+          .col-9.pr2.right-align
+            router-link.font-mono(:to="{name: 'Account/Trade'}") {{userBalance}} ♣
+      figure.flex-auto.relative
+        .absolute.bg-contain.bg-no-repeat.bg-center(role="img", v-if="clover", :style="'background-image:url(' + cloverImage(clover) + ')'")
+      footer
+        .flex.border-top
+          .col-6.p3.border-right.relative(@click="action = 'keep'")
+            div(:class="{'opacity-25': action !== 'keep'}")
+              small.block.lh1 Keep for ♣
+              .font-exp.mt1.truncate {{tokenValue}}
+              //- button.absolute.top-0.right-0.p2.pointer(@click="action = 'keep'")
+                .icon-radio(:class="{'icon-radio--selected': action === 'keep'}")
+          .col-6.p3.relative(@click="action = 'sell'")
+            div(:class="{'opacity-25': action !== 'sell'}")
+              small.block.lh1 Sell instantly for ♣
+              .font-exp.mt1.truncate {{tokenValue}}
+              //- button.absolute.top-0.right-0.p2.pointer(@click="action = 'sell'")
+                .icon-radio(:class="{'icon-radio--selected': action === 'sell'}")
+        //- keep btn
+        button.bg-green.white.font-exp.flex.col-12.h-bttm-bar.pointer(@click="btnClick", :class="{'pointer-events-none': submitting}")
+          span.block.m-auto.capitalize(v-show="!submitting") {{action}}
+          wavey-menu.m-auto(v-show="submitting", :isWhite="true")
 </template>
 
 <script>

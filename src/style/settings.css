@@ -1,8 +1,8 @@
-@custom-media --breakpoint-xs (max-width: 35em);
-@custom-media --breakpoint-sm (min-width: 35em);
-@custom-media --breakpoint-sm-only (max-width: 52em);
-@custom-media --breakpoint-md (min-width: 52em);
-@custom-media --breakpoint-lg (min-width: 64em);
+@custom-media --breakpoint-xs (max-width: 559px);
+@custom-media --breakpoint-sm (min-width: 560px);
+@custom-media --breakpoint-sm-only (max-width: 768px);
+@custom-media --breakpoint-md (min-width: 769px);
+@custom-media --breakpoint-lg (min-width: 1024px);
 
 :root {
   --rem: 10px;
@@ -54,11 +54,11 @@
   --space-3: 2.4rem;
   --space-4: 4.8rem;
 
-  --width-0: 10rem;
-  --width-1: 24rem;
-  --width-2: 32rem;
-  --width-3: 48rem;
-  --width-4: 64rem;
+  --width-0: 16rem;
+  --width-1: 38.4rem;
+  --width-2: 51.2rem;
+  --width-3: 76.8rem;
+  --width-4: 102.4rem;
 
   --height-header: 4.6rem;
   --height-bttm-bar:7.2rem;

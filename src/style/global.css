@@ -534,13 +534,3 @@ image-rendering: optimize-contrast;         /* CSS3 Proposed       */
   opacity: 1;
   transition: opacity 300ms;
 }
-/* RESPONSIVE */
-@media only screen and (min-width: 769px) {
-  #app {
-    margin: 0 auto;
-    max-width: 769px;
-    /* overflow: hidden; — breaks sticky in chrome */
-    border-left: 1px solid var(--green);
-    border-right: 1px solid var(--green);
-  }
-}
