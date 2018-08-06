@@ -85,7 +85,7 @@ export default {
       return bnMinus(this.userBalance, this.clover.price, 0)
     },
     isMyClover () {
-      return this.clover.owner.toLowerCase() === this.account.toLowerCase()
+      return this.clover && this.clover.owner && this.account && this.clover.owner.toLowerCase() === this.account.toLowerCase()
     },
     canBuy () {
       if (!this.user) return false
