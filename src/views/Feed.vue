@@ -104,7 +104,7 @@
 import store from '@/store'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 import { cloverLink, cloverImage, pluralize } from '@/utils'
-
+import BigNumber from 'bignumber.js'
 const pageSize = 12
 
 export default {
@@ -190,6 +190,7 @@ export default {
       return price.toFormat(0)
     },
     forSale ({ price }) {
+      if (typeof price !== 'object') price = new BigNumber(price)
       return price.gt(0)
     },
     inCurationMarket ({ owner }) {
@@ -235,16 +236,16 @@ export default {
 </script>
 
 <style>
-  .filters-btn {
-    border-top-color: white;
-    border-top-style: solid;
-    border-top-width: 3;
-    bottom: 0;
-    left: 0;
-    pointer-events: none;
-    position: absolute;
-    right: 0;
-    top: 0;
-    transition: border .18s ease-in-out;
-  }
+.filters-btn {
+  border-top-color: white;
+  border-top-style: solid;
+  border-top-width: 3;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: border 0.18s ease-in-out;
+}
 </style>

@@ -234,6 +234,7 @@ export default {
     //   console.log(user)
     // })
     socket.on('updateUser', user => {
+      console.log('new user info!', user)
       commit('UPDATE_USER', user)
     })
     socket.on('addClover', clover => {
@@ -499,7 +500,7 @@ async function claimClover ({ keep, account, clover }) {
   let _symmetries = reversi.returnSymmetriesAsBN().toString(10)
   let _keep = keep
   let from = account
-  let value = '0'
+  let value = new BigNumber('0')
 
   if (keep) {
     let mintPrice = await getMintPrice({ _symmetries })
@@ -520,9 +521,7 @@ async function claimClover ({ keep, account, clover }) {
     .stakeAmount()
     .call()
   value = value.plus(stakeAmount)
-  console.log('stake amount' + value.toString(10))
-  console.log(moves, _tokenId, _symmetries, _keep, from, value)
-  await contracts.CloversController.instance.methods
+  return contracts.CloversController.instance.methods
     .claimClover(moves, _tokenId, _symmetries, _keep)
     .send({ from, value })
   // .on('transactionHash', hash => {})
