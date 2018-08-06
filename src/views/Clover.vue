@@ -13,7 +13,7 @@
       button.h-header.center.border-bottom.flex.pointer.col-12
         span.block.m-auto See Full History
     figure.flex-auto.relative
-      .absolute.p2
+      .absolute.p2.z1
         symmetry-icons.p1(:board="clover.symmetries")
       .absolute.bg-contain.bg-center.bg-no-repeat(role="img", :style="'background-image:url(' + cloverImage(clover) + ')'")
     footer.bg-green(v-if="!isMyClover && canBuy")
@@ -95,10 +95,10 @@ export default {
 
 <style scoped>
 figure > .bg-contain{
-  width:calc(100% - 4.8rem);
-  height:calc(100% - 4.8rem);
-  top:2.4rem;
-  left:2.4rem;
+  width: calc(100% - 4.8rem);
+  height: calc(100% - 4.8rem);
+  top: 2.4rem;
+  left: 2.4rem;
 }
 .confirm-enter-active,.confirm-leave-active{transition:max-height var(--anim-timing-long);}
 .confirm-enter, .confirm-leave-to{max-height: 0}
