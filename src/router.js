@@ -61,7 +61,12 @@ export default new Router({
           path: 'trade',
           name: 'Account/Trade',
           component: Trade,
-          meta: { title: 'Trade' }
+          meta: {title: 'Trade'}
+        },
+        {
+          path: 'picks',
+          name: 'Picks',
+          redirect: {name: 'Account'}
         }
       ]
     },
