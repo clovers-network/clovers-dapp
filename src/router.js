@@ -76,6 +76,7 @@ export default new Router({
       component: Clover,
       props: true,
       meta: { title: '', backBtn: true }
+      meta: {title: 'Buy', backBtn: true}
     },
 
     //

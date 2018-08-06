@@ -2,6 +2,12 @@ import BigNumber from 'bignumber.js'
 import { formatClover } from '@/utils'
 
 export default {
+  SET_BASE_PRICE (state, basePrice) {
+    state.basePrice = basePrice
+  },
+  SET_STAKE_AMOUNT (state, stakeAmount) {
+    state.stakeAmount = stakeAmount
+  },
   SET_QUERYING (state, bool) {
     state.querying = bool
   },
@@ -44,12 +50,14 @@ export default {
 
   MINE_INCREMENT (state, increment) {
     if (!increment) return
-    state.miningStats.totalMined = parseInt(state.miningStats.totalMined) + parseInt(increment)
+    state.miningStats.totalMined =
+      parseInt(state.miningStats.totalMined) + parseInt(increment)
     updateLocal('clover_pig_stats', state.miningStats)
   },
   TIME_INCREMENT (state, inc) {
     if (!inc) return
-    state.miningStats.mineTime = parseInt(state.miningStats.mineTime) + parseInt(inc)
+    state.miningStats.mineTime =
+      parseInt(state.miningStats.mineTime) + parseInt(inc)
     updateLocal('clover_pig_stats', state.miningStats)
   },
   SYMMS_INCREMENT (state, inc) {
@@ -81,7 +89,7 @@ export default {
   },
   MOVE_ANON_CLOVERS (state) {
     if (state.account && state.allSavedClovers.anon.length) {
-      state.allSavedClovers = {[state.account]: [], ...state.allSavedClovers}
+      state.allSavedClovers = { [state.account]: [], ...state.allSavedClovers }
       state.allSavedClovers[state.account].push(
         ...state.allSavedClovers.anon.splice(0)
       )
@@ -114,9 +122,6 @@ export default {
   UPDATE_CLOVER_PRICE (state, { byteBoard, newVal }) {
     // let i = state.allSavedClovers.findIndex(cl => cl.byteBoard === byteBoard)
     // Object.assign(state.allSavedClovers[i], { startPrice: newVal })
-  },
-  UPDATE_BALANCE (state, balance) {
-    state.balance = parseInt(balance)
   },
   STORED_CLOVERS (state, clovers) {
     // state.allSavedClovers = clovers

@@ -14,7 +14,8 @@
           class="menu-btn pointer"
           @click="showMenu = !showMenu"
           aria-label="Toggle Menu">
-            <img :src="showMenu
+            <div v-if="mining" id="wave" :class="{ whiteWave : showMenu }"></div>
+            <img v-else :src="showMenu
               ? require('../assets/icons/hamburger-white.svg')
               : require('../assets/icons/hamburger.svg')" />
         </button>
@@ -54,7 +55,7 @@
         </ul>
       </nav>
       <div class="px2">
-        <pig v-on:minerStatus="mining = $event"/>
+        <pig @minerStatus="mining = $event"/>
       </div>
     </div>
   </header>

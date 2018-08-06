@@ -1,6 +1,6 @@
 <template>
   <div>
-    <single-view v-show="viewSingle" :clover="viewSingle" @close="viewSingle = null"></single-view>
+    <single-view v-if="viewSingle" :clover="viewSingle" @close="viewSingle = null"></single-view>
     <ul class="list-reset md-flex flex-wrap justify-around items-center m0">
       <li v-for="(clover, i) in picks" :key="i" class="md-col6">
         <div class="flex py2 border-bottom justify-between items-center green">
@@ -28,7 +28,7 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex'
 import { cloverImage } from '@/utils'
-import SingleView from '@/views/FieldSingle'
+import SingleView from '@/views/KeepClover'
 import moment from 'moment'
 
 export default {
