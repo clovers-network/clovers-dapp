@@ -64,6 +64,10 @@ export default {
         console.log('SUCCESS', tx)
       } catch (error) {
         console.log(error)
+        switch (error.message) {
+          case 'cant-buy-not-for-sale':
+            this.$store.dispatch('addMessage', {type: 'error', msg: 'Already Registered or Not for Sale :-('})
+        }
       }
     },
     getValue () {
