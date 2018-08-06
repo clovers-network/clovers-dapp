@@ -1,6 +1,8 @@
 <template lang="pug">
   article.min-h-100vh.mt-deduct-header.flex.flex-column.justify-between(v-if="clover")
-    header.mt-header-h.flex.border-bottom
+    .mt-header-h.px3.py2.border-bottom
+      p.m0.truncate.center.font-mono {{ clover.name }}
+    header.flex.border-bottom
       .col-6.p3.border-right
         small.block.lh1.h6 Current Owner
         .font-exp.mt2.truncate.overflow-hidden {{ clover.owner }}
