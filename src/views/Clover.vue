@@ -14,7 +14,7 @@
       .absolute.p2
         symmetry-icons.p1(:board="clover.symmetries")
       .absolute.bg-contain.bg-center.bg-no-repeat(role="img", :style="'background-image:url(' + cloverImage(clover) + ')'")
-    footer.bg-green(v-show="!isMyClover && isForSale")
+    footer.bg-green(v-if="!isMyClover && canBuy")
       button.h-bttm-bar.white.flex.col-12.pointer(@click="confirmVisible = !confirmVisible")
         span.block.m-auto.font-exp Buy for {{price}} ♣
       transition(name="confirm")
@@ -26,13 +26,16 @@
             .col-6.p3
               small.block.lh1.h6 ♣ Balance After
               .font-exp.mt2 {{ balanceAfter }}
-          button.h-bttm-bar.white.border-top.flex.col-12.pointer
+          button(@click="buy(clover)").h-bttm-bar.white.border-top.flex.col-12.pointer
             span.block.m-auto.font-exp Confirm
+    footer(v-else).bg-green
+      .h-bttm-bar.white.border-top.flex.col-12
+        span.block.m-auto.font-exp Unavailable
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { cloverImage, prettyBigNumber, bnMinus } from '@/utils'
+import { mapState, mapActions } from 'vuex'
+import { cloverImage, prettyBigNumber, bnMinus, makeBn } from '@/utils'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 
 export default {
@@ -55,24 +58,30 @@ export default {
     },
     balanceAfter () {
       if (!this.user) return
-      return bnMinus(this.user.balance, this.clover.price, 2)
+      return bnMinus(this.user.balance, this.clover.price, 0)
     },
     isMyClover () {
       return this.clover.owner === this.account
     },
-    isForSale () {
-      return true
-    },
     balance () {
       if (!this.user) return
-      return this.user.balance && prettyBigNumber(this.user.balance, 2)
+      return prettyBigNumber(this.user.balance, 0)
+    },
+    canBuy () {
+      if (!this.user) return false
+      if (!makeBn(this.price).gt(0)) return false
+      return makeBn(this.balanceAfter).gte(0)
     },
 
     ...mapState(['account', 'user'])
   },
   methods: {
     cloverImage,
-    prettyBigNumber
+    prettyBigNumber,
+
+    ...mapActions([
+      'buy'
+    ])
   },
   created () {
     this.$store.dispatch('getClover', this.board)
