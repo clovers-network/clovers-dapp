@@ -30,7 +30,10 @@
             :to="{ name: 'Welcome' }">
             Clovers
           </router-link>
-          <span class="nowrap" v-else>{{$route.meta.title}}</span>
+          <span class="nowrap pointer" v-else
+            @click="showMenu = !showMenu">
+            {{$route.meta.title}}
+          </span>
       </h1>
       <!-- right col -->
       <div class="col-3 flex justify-end items-center">
