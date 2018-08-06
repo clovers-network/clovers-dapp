@@ -46,6 +46,7 @@
 .border-green { border-color: var(--green); }
 .border-dark-gray { border-color: var(--dark-gray);}
 .outline-none { outline: 0;}
+.outline{ outline:1px solid var(--green); }
 
 .pointer { cursor: pointer;}
 .no-pointer { cursor: default;}
