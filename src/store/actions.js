@@ -162,6 +162,10 @@ export default {
       }
     }
   },
+  async getOrders (_, market = 'ClubToken') {
+    const orders = await axios.get(apiUrl(`/orders/${market}`))
+    console.log(orders)
+  },
   async getUser ({ state, commit }, account) {
     if (typeof account === 'string') {
       account = account.toLowerCase()
@@ -171,12 +175,14 @@ export default {
       commit('SET_USER', anonUser)
       return
     }
-    const user = await axios.get(apiUrl(`/users/${account}`)).then(({ data }) => {
-      if (!data.address) {
-        data = Object.assign(anonUser, { address: account, name: account })
-      }
-      commit('SET_USER', data)
-    })
+    const user = await axios
+      .get(apiUrl(`/users/${account}`))
+      .then(({ data }) => {
+        if (!data.address) {
+          data = Object.assign(anonUser, { address: account, name: account })
+        }
+        commit('SET_USER', data)
+      })
   },
   async changeUsername ({ commit, getters }, { address, name }) {
     if (!address) return
@@ -267,7 +273,7 @@ export default {
   },
 
   getClover ({ state }, board) {
-    if (!board) return Promise.reject(new Error('Missing parameter: `board` (address)'))
+    if (!board) { return Promise.reject(new Error('Missing parameter: `board` (address)')) }
     const found = state.allClovers.filter(clvr => clvr.board === board)
     if (found && found[0]) return Promise.resolve(found[0])
     return axios
