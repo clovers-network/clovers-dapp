@@ -26,19 +26,19 @@ export default new Router({
       path: '/',
       name: 'Welcome',
       component: Welcome,
-      meta: {title: 'Clovers'}
+      meta: { title: 'Clovers' }
     },
     {
       path: '/field',
       name: 'Field',
       component: Field,
-      meta: {title: 'Find Clovers'}
+      meta: { title: 'Find Clovers' }
     },
     {
       path: '/feed(/page/)?:page?',
       name: 'Feed',
       component: Feed,
-      meta: {title: 'Feed'}
+      meta: { title: 'Feed' }
     },
     {
       path: '/account',
@@ -49,19 +49,19 @@ export default new Router({
           path: '/',
           name: 'Account',
           component: Picks,
-          meta: {title: 'Account'}
+          meta: { title: 'Account' }
         },
         {
           path: 'clovers',
           name: 'Account/Clovers',
           component: MyClovers,
-          meta: {title: 'Account'}
+          meta: { title: 'Account' }
         },
         {
           path: 'trade',
           name: 'Account/Trade',
           component: Trade,
-          meta: {title: 'Account'}
+          meta: {title: 'Trade'}
         },
         {
           path: 'picks',

@@ -176,6 +176,11 @@ export default {
       .call()
     commit('SET_STAKE_AMOUNT', stakeAmount)
   },
+  getOrders (_, market = 'ClubToken') {
+    return axios.get(apiUrl(`/orders/${market}`)).then(({ data }) => {
+      return data
+    })
+  },
   async getUser ({ state, commit }, account) {
     if (typeof account === 'string') {
       account = account.toLowerCase()
@@ -185,7 +190,7 @@ export default {
       commit('SET_USER', anonUser)
       return
     }
-    const user = await axios
+    return axios
       .get(apiUrl(`/users/${account}`))
       .then(({ data }) => {
         if (!data.address) {
@@ -344,11 +349,23 @@ export default {
   },
 
   // Contract Interactions
+  async getBuy (store, { market, amount }) {
+    if (!Number(amount) || Number(amount) < 0) return 0
+    amount = utils.toWei(amount)
+    let receive = await contracts[market].instance.methods.getBuy(amount).call()
+    return receive
+  },
+  async getSell ({ state }, { market, amount }) {
+    if (!Number(amount) || Number(amount) < 0) return 0
+    amount = utils.toWei(amount)
+    let receive = await contracts[market].instance.methods.getSell(amount).call()
+    return receive
+  },
   async invest ({ state }, { market, amount }) {
     if (market === 'ClubToken') {
       let balance = await global.web3.eth.getBalance(state.account)
       if (balance.gte(amount)) {
-        await contracts.ClubTokenController.methods.buy(state.account).send({
+        await contracts.ClubTokenController.instance.methods.buy(state.account).send({
           from: state.account,
           value: amount
         })
@@ -356,14 +373,14 @@ export default {
         throw new Error('insufficient-funds')
       }
     } else {
-      let balance = await contracts.ClubToken.methods
+      let balance = await contracts.ClubToken.instance.methods
         .balanceOf(state.account)
         .call()
       let value = '0'
       if (balance.lt(amount)) {
         value = await getLowestPrice(contracts.ClubTokenController, amount)
       }
-      await contracts.CurationMarket.methods.buy(market, amount).send({
+      await contracts.CurationMarket.instance.methods.buy(market, amount).send({
         from: state.account,
         value: amount
       })
@@ -371,23 +388,23 @@ export default {
   },
   async divest ({ state }, { market, amount }) {
     if (market === 'ClubToken') {
-      let balance = await contracts.ClubToken.methods
+      let balance = await contracts.ClubToken.instance.methods
         .balanceOf(state.account)
         .call()
       if (balance.lt(amount)) {
         throw new Error('balance too low: ' + balance.toString(10))
       }
-      await contracts.ClubToken.methods.sell(amount).send({
+      await contracts.ClubToken.instance.methods.sell(amount).send({
         from: state.account
       })
     } else {
-      let balance = await contracts.CurationMarket.methods
+      let balance = await contracts.CurationMarket.instance.methods
         .balanceOf(market, state.account)
         .call()
       if (balance.lt(amount)) {
         throw new Error('balance too low: ' + balance.toString(10))
       }
-      await contracts.CurationMarket.methods.sell(amount).send({
+      await contracts.CurationMarket.instance.methods.sell(amount).send({
         from: state.account
       })
     }
