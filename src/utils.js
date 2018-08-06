@@ -28,7 +28,6 @@ export function cloverLink ({ board, byteBoard }) {
 }
 
 export function prettyBigNumber (bigNumber = 0, decimalPlaces = 2) {
-  console.log(bigNumber.toString())
   bigNumber = utils.fromWei(bigNumber.toString())
   if (typeof bigNumber !== 'object') bigNumber = new BigNumber(bigNumber)
   return bigNumber.toFormat(decimalPlaces)
