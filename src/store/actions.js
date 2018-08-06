@@ -403,7 +403,7 @@ export default {
       if (balance.lt(amount)) {
         throw new Error('balance too low: ' + balance.toString(10))
       }
-      return contracts.ClubToken.instance.methods.sell(amount).send({
+      return contracts.ClubTokenController.instance.methods.sell(amount).send({
         from: state.account
       })
     } else {

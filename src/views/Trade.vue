@@ -24,8 +24,11 @@
             .relative
               input.input.border.font-exp(v-model="clubReceive", placeholder="♣ Tokens", disabled="true")
               span.absolute.top-0.right-0.p2.claimed ♣
-          button.h-bttm-bar.bg-green.white.sticky.bottom-0.col-12
-            span.block.m-auto.font-exp Buy
+          .h-bttm-bar.bg-green.white.sticky.bottom-0.col-12
+            button.h-bttm-bar.block.m-auto.font-exp(v-if="!working") Buy
+            .h-bttm-bar.block.m-auto.flex.justify-center.items-center(v-else)
+              wavey-menu(:is-white="true")
+
       section(v-else)
         form(@submit.prevent="sellTokens")
           .p2
@@ -38,8 +41,11 @@
             .relative
               input.input.border.font-exp(v-model="ethReceive", placeholder="ETH", disabled="true")
               span.absolute.top-0.right-0.p2.claimed ETH
-          button.h-bttm-bar.bg-green.white.sticky.bottom-0.col-12
-            span.block.m-auto.font-exp Sell
+          .h-bttm-bar.bg-green.white.sticky.bottom-0.col-12
+            button.h-bttm-bar.block.m-auto.font-exp(v-if="!working") Sell
+            .h-bttm-bar.block.m-auto.flex.justify-center.items-center(v-else)
+              wavey-menu(:is-white="true")
+
 </template>
 
 <script>
@@ -48,6 +54,7 @@ import { mapGetters, mapActions } from 'vuex'
 import ViewNav from '@/components/ViewNav'
 import Chart from '@/components/Chart'
 import { prettyBigNumber } from '@/utils'
+import WaveyMenu from '@/components/Icons/WaveyMenu'
 
 const market = 'ClubTokenController'
 
@@ -113,13 +120,34 @@ export default {
       })
     },
     buyTokens () {
+      this.working = true
       this.invest({ market, amount: this.buy }).then((res) => {
+        this.working = false
+        this.handleSuccess(`Success! You bought ${this.buy} ♣ token(s)`)
         console.log(res)
+      }).catch((err) => {
+        this.working = false
+        this.handleError(err)
       })
     },
     sellTokens () {
+      this.working = true
       this.divest({ market, amount: this.sell }).then((res) => {
+        this.working = false
+        this.handleSuccess(`Success! You sold ${this.sell} ♣ token(s)`)
         console.log(res)
+      }).catch((err) => {
+        this.working = false
+        this.handleError(err)
+      })
+    },
+    handleError (err) {
+      this.selfDestructMsg({ msg: err.message, type: 'error' })
+    },
+    handleSuccess (msg) {
+      this.addMessage({
+        msg,
+        type: 'success'
       })
     },
 
@@ -128,7 +156,9 @@ export default {
       'getBuy',
       'getSell',
       'invest',
-      'divest'
+      'divest',
+      'addMessage',
+      'selfDestructMsg'
     ])
   },
   mounted () {
@@ -138,6 +168,6 @@ export default {
     this.checkPrice()
     this.checkSell()
   },
-  components: { ViewNav, Chart }
+  components: { ViewNav, Chart, WaveyMenu }
 }
 </script>
