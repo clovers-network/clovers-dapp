@@ -1,5 +1,5 @@
 <template>
-  <div class="mt2 mb-full-height">
+  <div class="mt2 pb-full-height">
     <single-view v-if="viewSingle" :clover="viewSingle" @close="viewSingle = null"></single-view>
     <ul class="list-reset flex flex-wrap mxn2 mt0 mb3 px2">
       <!-- item -->
@@ -101,8 +101,8 @@ export default {
 </script>
 
 <style>
-  .mb-full-height {
-    margin-bottom: calc(150vh - 275px);
+  .pb-full-height {
+    padding-bottom: calc(150vh - 275px);
   }
 
   [data-appear] img{ animation-duration: 800ms; }

@@ -94,8 +94,8 @@
       </li>
     </nav>
 
-    <div v-if="newCloversCount" class="sticky bottom-0 bg-green white p2 center">
-      <a @click="showNewClovers" class="pointer">Show {{ newCloversCount }} new {{ pluralize('Clover', newCloversCount) }} ✨</a>
+    <div v-if="newCloversCount" class="sticky bottom-0 bg-green white p2 center h-bttm-bar flex">
+      <a @click="showNewClovers" class="pointer block m-auto font-exp">Show {{ newCloversCount }} new {{ pluralize('Clover', newCloversCount) }}</a>
     </div>
   </div>
 </template>
