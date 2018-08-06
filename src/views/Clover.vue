@@ -45,7 +45,7 @@ export default {
   props: {
     board: { type: String, required: true }
   },
-  data() {
+  data () {
     return {
       owner: null,
       clover: null,
@@ -53,28 +53,28 @@ export default {
     }
   },
   computed: {
-    price() {
+    price () {
       return (
         this.clover &&
         this.clover.price &&
         prettyBigNumber(this.clover.price, 0)
       )
     },
-    originalPrice() {
+    originalPrice () {
       return (
         this.clover &&
         this.clover.originalPrice &&
         prettyBigNumber(this.clover.price, 0)
       )
     },
-    balanceAfter() {
+    balanceAfter () {
       if (!this.userBalance) return false
       return bnMinus(this.userBalance, this.clover.price, 0)
     },
-    isMyClover() {
+    isMyClover () {
       return this.clover.owner === this.account
     },
-    canBuy() {
+    canBuy () {
       if (!this.user) return false
       if (!makeBn(this.price).gt(0)) return false
       return makeBn(this.balanceAfter).gte(0)
@@ -83,7 +83,7 @@ export default {
     ...mapGetters(['userBalance'])
   },
   watch: {
-    async clover() {
+    async clover () {
       this.owner = await this.addrToName(this.clover.owner)
     }
   },
@@ -92,7 +92,7 @@ export default {
     prettyBigNumber,
     ...mapActions(['buy', 'addrToName'])
   },
-  created() {
+  created () {
     this.$store.dispatch('getClover', this.board).then(clvr => {
       this.clover = clvr
     })
