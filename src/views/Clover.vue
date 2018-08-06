@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 import { cloverImage, prettyBigNumber, bnMinus, makeBn } from '@/utils'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 
@@ -57,15 +57,11 @@ export default {
       return this.clover && this.clover.originalPrice && prettyBigNumber(this.clover.price, 0)
     },
     balanceAfter () {
-      if (!this.user) return
-      return bnMinus(this.user.balance, this.clover.price, 0)
+      if (!this.userBalance) return false
+      return bnMinus(this.userBalance, this.clover.price, 0)
     },
     isMyClover () {
       return this.clover.owner === this.account
-    },
-    balance () {
-      if (!this.user) return
-      return prettyBigNumber(this.user.balance, 0)
     },
     canBuy () {
       if (!this.user) return false
@@ -73,7 +69,8 @@ export default {
       return makeBn(this.balanceAfter).gte(0)
     },
 
-    ...mapState(['account', 'user'])
+    ...mapState(['account', 'user']),
+    ...mapGetters(['userBalance'])
   },
   methods: {
     cloverImage,

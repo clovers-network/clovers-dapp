@@ -6,7 +6,7 @@
           button.pointer(@click="close") Back
         //- h1.col-6.font-exp.center.nowrap Keep or Sell
         .col-9.pr2.right-align
-          router-link.font-mono(:to="{name: 'Account/Trade'}") {{balance}} ♣
+          router-link.font-mono(:to="{name: 'Account/Trade'}") {{userBalance}} ♣
     figure.flex-auto.relative
       .absolute.bg-contain.bg-no-repeat.bg-center(role="img", v-if="clover", :style="'background-image:url(' + cloverImage(clover) + ')'")
     footer
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { cloverImage } from '@/utils'
 export default {
   name: 'FieldSingle',
@@ -40,7 +40,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['balance'])
+    ...mapGetters(['userBalance'])
   },
   methods: {
     cloverImage,
