@@ -10,7 +10,6 @@
 <script>
 import BigNumber from 'bignumber.js'
 import PriceChart from '@/components/PriceChart'
-import { mapActions } from 'vuex'
 
 export default {
   name: 'ChartTest',
@@ -18,11 +17,14 @@ export default {
     market: {
       type: String,
       default: 'ClubToken'
+    },
+    orders: {
+      type: Array,
+      required: true
     }
   },
   data () {
     return {
-      orders: [],
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -63,14 +65,6 @@ export default {
         ]
       }
     }
-  },
-  methods: {
-    ...mapActions(['getOrders'])
-  },
-  mounted () {
-    this.getOrders(this.market).then((orders) => {
-      this.orders.push(...orders)
-    })
   },
   components: { PriceChart }
 }
