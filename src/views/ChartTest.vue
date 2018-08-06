@@ -13,7 +13,7 @@ import { mapMutations, mapState, mapGetters, mapActions } from 'vuex'
 export default {
   name: 'ChartTest',
 
-  data() {
+  data () {
     return {
       chartData: {
         labels: ['January', 'February'],
@@ -35,10 +35,10 @@ export default {
     ...mapActions(['getOrders']),
     ...mapMutations([''])
   },
-  mounted() {
+  mounted () {
     this.getOrders()
   },
-  destroyed() {},
+  destroyed () {},
   components: { PriceChart }
 }
 </script>

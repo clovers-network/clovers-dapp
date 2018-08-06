@@ -4,7 +4,7 @@ export default {
   extends: Line,
   name: 'PriceChart',
   props: ['data', 'options'],
-  mounted() {
+  mounted () {
     this.renderChart(this.data, this.options)
   }
 }
