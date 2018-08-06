@@ -165,13 +165,13 @@ export default {
     dispatch('updateStakeAmount')
   },
   async updateBasePrice ({ commit }) {
-    let basePrice = await contracts.CloversController.instance
+    let basePrice = await contracts.CloversController.instance.methods
       .basePrice()
       .call()
     commit('SET_BASE_PRICE', basePrice)
   },
   async updateStakeAmount ({ commit }) {
-    let stakeAmount = await contracts.CloversController.instance
+    let stakeAmount = await contracts.CloversController.instance.methods
       .stakeAmount()
       .call()
     commit('SET_STAKE_AMOUNT', stakeAmount)
@@ -330,6 +330,54 @@ export default {
   },
 
   // Contract Interactions
+  async invest ({ state }, { market, amount }) {
+    if (market === 'ClubToken') {
+      let balance = await global.web3.eth.getBalance(state.account)
+      if (balance.gte(amount)) {
+        await contracts.ClubTokenController.methods.buy(state.account).send({
+          from: state.account,
+          value: amount
+        })
+      } else {
+        throw new Error('insufficient-funds')
+      }
+    } else {
+      let balance = await contracts.ClubToken.methods
+        .balanceOf(state.account)
+        .call()
+      let value = '0'
+      if (balance.lt(amount)) {
+        value = await getLowestPrice(contracts.ClubTokenController, amount)
+      }
+      await contracts.CurationMarket.methods.buy(market, amount).send({
+        from: state.account,
+        value: amount
+      })
+    }
+  },
+  async divest ({ state }, { market, amount }) {
+    if (market === 'ClubToken') {
+      let balance = await contracts.ClubToken.methods
+        .balanceOf(state.account)
+        .call()
+      if (balance.lt(amount)) {
+        throw new Error('balance too low: ' + balance.toString(10))
+      }
+      await contracts.ClubToken.methods.sell(amount).send({
+        from: state.account
+      })
+    } else {
+      let balance = await contracts.CurationMarket.methods
+        .balanceOf(market, state.account)
+        .call()
+      if (balance.lt(amount)) {
+        throw new Error('balance too low: ' + balance.toString(10))
+      }
+      await contracts.CurationMarket.methods.sell(amount).send({
+        from: state.account
+      })
+    }
+  },
   async buy ({ dispatch, state, commit }, clover) {
     // if clover exists it must be in SimpleCloversMarket
     // otherwise it is a claimClover
@@ -401,9 +449,7 @@ export default {
       // claim clover w option _keep = false
       await claimClover({ keep: false, clover, account: state.account })
     }
-  },
-  async invest ({ state }, { clover, amount }) {},
-  async divest ({ state }, { clover, amount }) {}
+  }
 }
 
 function apiUrl (path) {
