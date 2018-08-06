@@ -40,7 +40,7 @@ const reversi = new Reversi()
 export default {
   name: 'KeepClover',
   props: ['clover'],
-  data () {
+  data() {
     return {
       action: 'keep',
       value: null
@@ -48,34 +48,34 @@ export default {
   },
   computed: {
     ...mapGetters(['userBalance']),
-    tokenValue () {
+    tokenValue() {
       return this.value ? fromWei(this.value) : '...'
     }
   },
   methods: {
     cloverImage,
-    close () {
+    close() {
       this.$emit('close')
       this.action = 'keep'
     },
-    async keep () {
+    async keep() {
       try {
-        await this.buy(this.clover)
+        var tx = await this.buy(this.clover)
+        console.log('SUCCESS', tx)
       } catch (error) {
         console.log(error)
       }
     },
-    getValue () {
+    getValue() {
       reversi.playGameMovesString(this.clover.movesString)
       const syms = reversi.returnSymmetriesAsBN()
-      this.$store.dispatch('getReward', syms)
-        .then(wei => {
-          this.value = wei + this.$store.state.basePrice
-        })
+      this.$store.dispatch('getReward', syms).then(wei => {
+        this.value = wei + this.$store.state.basePrice
+      })
     },
     ...mapActions(['buy'])
   },
-  mounted () {
+  mounted() {
     this.getValue()
   }
 }

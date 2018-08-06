@@ -2556,7 +2556,7 @@ clone@^2.0.0, clone@^2.1.1:
   version "1.0.14"
   resolved "https://github.com/clovers-network/clovers-contracts#50975104a5952215aceb9554739f53ecc1826f09"
 
-clovers-reversi@^1.0.18:
+clovers-reversi@^1.0.14:
   version "1.0.18"
   resolved "https://registry.yarnpkg.com/clovers-reversi/-/clovers-reversi-1.0.18.tgz#dbe1644264e81a479068ef9fe85891aac61d5b04"
   dependencies:

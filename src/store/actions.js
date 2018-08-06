@@ -213,7 +213,9 @@ export default {
       .catch(console.log)
   },
   async getReward (_, _symmetries) {
-    let val = await contracts.CloversController.instance.methods.calculateReward(_symmetries.toString(16)).call()
+    let val = await contracts.CloversController.instance.methods
+      .calculateReward(_symmetries.toString(16))
+      .call()
     return val
   },
 
@@ -472,8 +474,9 @@ async function getLowestPrice (
   let littleIncrement = new BigNumber(utils.toWei('0.001'))
   let bigIncrement = new BigNumber(utils.toWei('0.1'))
   currentPrice = currentPrice.add(useLittle ? littleIncrement : bigIncrement)
-  let resultOfSpend = await contract.instance.methods.getBuy(currentPrice).call()
-  console.log(resultOfSpend)
+  let resultOfSpend = await contract.instance.methods
+    .getBuy(currentPrice)
+    .call()
   resultOfSpend = new BigNumber(resultOfSpend)
   if (resultOfSpend.gt(targetAmount)) {
     return useLittle
@@ -490,8 +493,8 @@ async function getLowestPrice (
 
 async function claimClover ({ keep, account, clover }) {
   let reversi = new Reversi()
-  reversi.playGameMovesString(clover.moves)
-  let moves = reversi.returnByteMoves()
+  reversi.playGameMovesString(clover.movesString)
+  let moves = reversi.returnByteMoves().map(m => '0x' + m)
   let _tokenId = clover.board
   let _symmetries = reversi.returnSymmetriesAsBN().toString(10)
   let _keep = keep
@@ -500,7 +503,10 @@ async function claimClover ({ keep, account, clover }) {
 
   if (keep) {
     let mintPrice = await getMintPrice({ _symmetries })
-    let balance = await contracts.ClubToken.instance.methods.balanceOf(account).call()
+
+    let balance = await contracts.ClubToken.instance.methods
+      .balanceOf(account)
+      .call()
     balance = new BigNumber(balance)
     if (balance.lt(mintPrice)) {
       let clubTokenToBuy = balance.sub(mintPrice)
@@ -510,7 +516,12 @@ async function claimClover ({ keep, account, clover }) {
       )
     }
   }
-
+  let stakeAmount = await contracts.CloversController.instance.methods
+    .stakeAmount()
+    .call()
+  value = value.plus(stakeAmount)
+  console.log('stake amount' + value.toString(10))
+  console.log(moves, _tokenId, _symmetries, _keep, from, value)
   await contracts.CloversController.instance.methods
     .claimClover(moves, _tokenId, _symmetries, _keep)
     .send({ from, value })
