@@ -8,6 +8,8 @@ import Web3 from 'web3'
 import { PortisProvider } from 'portis'
 import { formatClover, makeBn } from '@/utils'
 
+window.contracts = contracts
+
 const apiBase = process.env.VUE_APP_API_URL
 const signingParams = [
   {
@@ -354,10 +356,13 @@ export default {
     return receive
   },
   async invest ({ state }, { market, amount }) {
-    if (market === 'ClubToken') {
+    if (!Number(amount) || Number(amount) < 0) throw new Error('Invalid amount')
+    amount = utils.toWei(amount)
+    if (market === 'ClubTokenController') {
       let balance = await global.web3.eth.getBalance(state.account)
+      balance = new BigNumber(balance)
       if (balance.gte(amount)) {
-        await contracts.ClubTokenController.instance.methods.buy(state.account).send({
+        return contracts.ClubTokenController.instance.methods.buy(state.account).send({
           from: state.account,
           value: amount
         })
@@ -368,35 +373,40 @@ export default {
       let balance = await contracts.ClubToken.instance.methods
         .balanceOf(state.account)
         .call()
+      balance = new BigNumber(balance)
       let value = '0'
       if (balance.lt(amount)) {
         value = await getLowestPrice(contracts.ClubTokenController, amount)
       }
-      await contracts.CurationMarket.instance.methods.buy(market, amount).send({
+      return contracts.CurationMarket.instance.methods.buy(market, amount).send({
         from: state.account,
         value: amount
       })
     }
   },
   async divest ({ state }, { market, amount }) {
-    if (market === 'ClubToken') {
+    if (!Number(amount) || Number(amount) < 0) throw new Error('Invalid amount')
+    amount = utils.toWei(amount)
+    if (market === 'ClubTokenController') {
       let balance = await contracts.ClubToken.instance.methods
         .balanceOf(state.account)
         .call()
+      balance = new BigNumber(balance)
       if (balance.lt(amount)) {
         throw new Error('balance too low: ' + balance.toString(10))
       }
-      await contracts.ClubToken.instance.methods.sell(amount).send({
+      return contracts.ClubToken.instance.methods.sell(amount).send({
         from: state.account
       })
     } else {
       let balance = await contracts.CurationMarket.instance.methods
         .balanceOf(market, state.account)
         .call()
+      balance = new BigNumber(balance)
       if (balance.lt(amount)) {
         throw new Error('balance too low: ' + balance.toString(10))
       }
-      await contracts.CurationMarket.instance.methods.sell(amount).send({
+      return contracts.CurationMarket.instance.methods.sell(amount).send({
         from: state.account
       })
     }

@@ -2,8 +2,8 @@
   section
     header.flex.border-bottom
       .col-6.p3.border-right
-        small.lh2.block ♣ / ETH
-        .font-exp.mt1.truncate {{ lastEthPrice }}
+        small.lh2.block ETH / ♣
+        .font-exp.mt1.truncate {{ ethPriceNum }}
       .col-6.p3
         small.lh2.block Value (ETH)
         .font-exp.mt1.truncate {{ marketCap }}
@@ -13,11 +13,11 @@
         chart.border-bottom(market="ClubToken", :orders="orders")
       view-nav(:items="[{lbl: 'Buy', value:'buy'}, {lbl: 'Sell', value:'sell'}]", @change="view = $event")
       section(v-if="view === 'buy'")
-        form(@submit.prevent)
+        form(@submit.prevent="buyTokens")
           .p2
             p.h7.mb1 I want to spend
             .relative
-              input.input.border.font-exp(v-model="buy", placeholder="ETH", type="number", min="0")
+              input.input.border.font-exp(v-model="buy", placeholder="ETH", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed ETH
           .p2
             p.h7.mb1 I will receive
@@ -27,11 +27,11 @@
           button.h-bttm-bar.bg-green.white.sticky.bottom-0.col-12
             span.block.m-auto.font-exp Buy
       section(v-else)
-        form(@submit.prevent)
+        form(@submit.prevent="sellTokens")
           .p2
             p.h7.mb1 I want to sell
             .relative
-              input.input.border.font-exp(v-model="sell", placeholder="♣ Tokens", type="number", min="0")
+              input.input.border.font-exp(v-model="sell", placeholder="♣ Tokens", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed ♣
           .p2
             p.h7.mb1 I will receive
@@ -76,23 +76,25 @@ export default {
     ethPriceNum () {
       if (!this.orders.length) return 0
       let recent = this.orders[0]
-      return new BigNumber(recent.tokens)
-        .div(new BigNumber(recent.value)).toNumber()
+      return new BigNumber(recent.value)
+        .div(new BigNumber(recent.tokens)).toFormat(2)
     },
     lastEthPrice () {
       if (!this.orders.length) return 0
       let recent = this.orders[0]
+      return new BigNumber(recent.value)
+        .div(new BigNumber(recent.tokens))
+    },
+    lastTokenPrice () {
+      if (!this.orders.length) return 0
+      let recent = this.orders[0]
       return new BigNumber(recent.tokens)
-        .div(new BigNumber(recent.value)).toFormat(0)
+        .div(new BigNumber(recent.value))
     },
     marketCap () {
       if (!this.orders.length) return 0
       let recent = this.orders[0]
-      return prettyBigNumber(
-        new BigNumber(recent.tokenSupply)
-          .times(new BigNumber(this.lastEthPrice)),
-        0
-      )
+      return prettyBigNumber(this.lastTokenPrice.times(recent.tokenSupply).toFixed(0), 0)
     },
 
     ...mapGetters([
@@ -110,11 +112,23 @@ export default {
         this.ethReceive = prettyBigNumber(eths, 6)
       })
     },
+    buyTokens () {
+      this.invest({ market, amount: this.buy }).then((res) => {
+        console.log(res)
+      })
+    },
+    sellTokens () {
+      this.divest({ market, amount: this.sell }).then((res) => {
+        console.log(res)
+      })
+    },
 
     ...mapActions([
       'getOrders',
       'getBuy',
-      'getSell'
+      'getSell',
+      'invest',
+      'divest'
     ])
   },
   mounted () {
