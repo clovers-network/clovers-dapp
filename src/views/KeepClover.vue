@@ -20,7 +20,7 @@
         .col-6.p3.relative(@click="action = 'sell'")
           div(:class="{'opacity-25': action !== 'sell'}")
             small.block.lh1 Sell instantly for ♣
-            .font-exp.mt1.truncate {{tokenValue}}
+            .font-exp.mt1.truncate {{sellValue}}
             //- button.absolute.top-0.right-0.p2.pointer(@click="action = 'sell'")
               .icon-radio(:class="{'icon-radio--selected': action === 'sell'}")
       //- keep btn
@@ -37,10 +37,11 @@ import { cloverImage } from '@/utils'
 import { fromWei } from 'web3-utils'
 import Reversi from 'clovers-reversi'
 const reversi = new Reversi()
+import BigNumber from 'bignumber.js'
 export default {
   name: 'KeepClover',
   props: ['clover'],
-  data () {
+  data() {
     return {
       action: 'keep',
       value: null
@@ -48,17 +49,22 @@ export default {
   },
   computed: {
     ...mapGetters(['userBalance']),
-    tokenValue () {
-      return this.value ? fromWei(this.value) : '...'
+    tokenValue() {
+      return this.value ? fromWei(this.value.toString()) : '...'
+    },
+    sellValue() {
+      return this.value
+        ? fromWei(this.value.minus(this.$store.state.basePrice).toString())
+        : '...'
     }
   },
   methods: {
     cloverImage,
-    close () {
+    close() {
       this.$emit('close')
       this.action = 'keep'
     },
-    async keep () {
+    async keep() {
       try {
         var tx = await this.buy(this.clover)
         console.log('SUCCESS', tx)
@@ -66,16 +72,17 @@ export default {
         console.log(error)
       }
     },
-    getValue () {
+    getValue() {
       reversi.playGameMovesString(this.clover.movesString)
       const syms = reversi.returnSymmetriesAsBN()
       this.$store.dispatch('getReward', syms).then(wei => {
-        this.value = wei + this.$store.state.basePrice
+        wei = new BigNumber(wei)
+        this.value = wei.plus(this.$store.state.basePrice)
       })
     },
     ...mapActions(['buy'])
   },
-  mounted () {
+  mounted() {
     this.getValue()
   }
 }

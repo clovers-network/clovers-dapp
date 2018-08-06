@@ -1,6 +1,6 @@
 <template>
   <div class="mt2 mb-full-height">
-    <single-view v-if="viewSingle" :clover="viewSingle" @close="viewSingle = null"></single-view>
+    <keep-clover v-if="viewSingle" :clover="viewSingle" @close="viewSingle = null"></keep-clover>
     <ul class="list-reset flex flex-wrap mxn2 mt0 mb3 px2">
       <!-- item -->
       <li v-for="(clover, i) in generated" :key="i" class="p2 col-6 sm-col-4 relative appear-off" data-expand="-50" :data-appear="i % 3">
@@ -28,7 +28,7 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import SingleView from '@/views/KeepClover'
+import KeepClover from '@/views/KeepClover'
 import Bottleneck from 'bottleneck'
 import Reversi from 'clovers-reversi'
 import { pad0x, cloverImage, pluralize } from '@/utils'
@@ -39,8 +39,8 @@ const scrollEl = document.scrollingElement
 
 export default {
   name: 'Field',
-  components: { SingleView },
-  data () {
+  components: { KeepClover },
+  data() {
     return {
       limiter: new Bottleneck({
         minTime: 260
@@ -57,15 +57,17 @@ export default {
     cloverImage,
     pluralize,
 
-    getNext () {
+    getNext() {
       if (this.growing) return
       this.growing = true
       for (let i = 24; i; i--) {
         this.limiter.submit(this.mineOne, i === 1, this.miningDone)
       }
     },
-    miningDone () { /* no op, `limiter` callback */ },
-    mineOne (last) {
+    miningDone() {
+      /* no op, `limiter` callback */
+    },
+    mineOne(last) {
       clover.mine()
       this.generated.push({
         board: pad0x(clover.byteBoard),
@@ -76,7 +78,7 @@ export default {
         this.growing = false
       }
     },
-    isSaved ({ board }) {
+    isSaved({ board }) {
       if (!this.picks.length) return false
       return this.picks.findIndex(c => c.board === board) >= 0
     },
@@ -85,17 +87,18 @@ export default {
       saveClover: 'SAVE_CLOVER'
     })
   },
-  beforeMount () {
+  beforeMount() {
     this.getNext()
   },
-  mounted () {
+  mounted() {
     window.onscroll = debounce(() => {
-      let nearBottom = (scrollEl.scrollTop + scrollEl.clientHeight) >
+      let nearBottom =
+        scrollEl.scrollTop + scrollEl.clientHeight >
         scrollEl.scrollHeight - (scrollEl.clientHeight - 140)
       if (nearBottom) this.getNext()
     }, 30)
   },
-  beforeRouteLeave (to, from, next) {
+  beforeRouteLeave(to, from, next) {
     this.limiter.stop({ dropWaitingJobs: true })
     next()
   }
@@ -103,25 +106,50 @@ export default {
 </script>
 
 <style>
-  .mb-full-height {
-    margin-bottom: calc(150vh - 275px);
-  }
+.mb-full-height {
+  margin-bottom: calc(150vh - 275px);
+}
 
-  [data-appear] img{ animation-duration: 800ms; }
-  [data-appear="0"] img{ animation-name: appear0; }
-  [data-appear="1"] img{ animation-name: appear1; }
-  [data-appear="2"] img{ animation-name: appear2; }
+[data-appear] img {
+  animation-duration: 800ms;
+}
+[data-appear='0'] img {
+  animation-name: appear0;
+}
+[data-appear='1'] img {
+  animation-name: appear1;
+}
+[data-appear='2'] img {
+  animation-name: appear2;
+}
 
-  @keyframes appear0 {
-    from { opacity: 0; transform: translate(8%, 3%);}
-    to { opacity: 1; transform: none;}
+@keyframes appear0 {
+  from {
+    opacity: 0;
+    transform: translate(8%, 3%);
   }
-  @keyframes appear1 {
-    from { opacity: 0; transform: translate(-3%, 8%); }
-    to { opacity: 1; }
+  to {
+    opacity: 1;
+    transform: none;
   }
-  @keyframes appear2 {
-    from { opacity: 0; transform: translate(-8%, 3%);}
-    to { opacity: 1; transform: none;}
+}
+@keyframes appear1 {
+  from {
+    opacity: 0;
+    transform: translate(-3%, 8%);
   }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes appear2 {
+  from {
+    opacity: 0;
+    transform: translate(-8%, 3%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 </style>
