@@ -162,9 +162,10 @@ export default {
       }
     }
   },
-  async getOrders (_, market = 'ClubToken') {
-    const orders = await axios.get(apiUrl(`/orders/${market}`))
-    console.log(orders)
+  getOrders (_, market = 'ClubToken') {
+    return axios.get(apiUrl(`/orders/${market}`)).then(({ data }) => {
+      return data
+    })
   },
   async getUser ({ state, commit }, account) {
     if (typeof account === 'string') {
@@ -175,7 +176,7 @@ export default {
       commit('SET_USER', anonUser)
       return
     }
-    const user = await axios
+    return axios
       .get(apiUrl(`/users/${account}`))
       .then(({ data }) => {
         if (!data.address) {

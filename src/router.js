@@ -9,7 +9,6 @@ import Trade from '@/views/Trade'
 import About from '@/views/About'
 import Clover from '@/views/Clover'
 import MyClovers from '@/views/MyClovers'
-import ChartTest from '@/views/ChartTest'
 
 // Old routes
 // import Home from '@/components/Home'
@@ -23,10 +22,6 @@ Vue.use(Router)
 export default new Router({
   mode: 'history',
   routes: [
-    {
-      path: '/chart',
-      component: ChartTest
-    },
     {
       path: '/',
       name: 'Welcome',

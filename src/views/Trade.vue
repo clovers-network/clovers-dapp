@@ -8,9 +8,9 @@
         small.lh2.block Value (ETH)
         .font-exp.mt1 17,461.70
     section
-      figure
-        figcaption.pt2.pl3 7 Days, ETH
-        img.block.col-12(src="/static/demo-chart.png")
+      .relative
+        span.block.absolute.left-0.top-0.p2.z1 All time, ETH
+        chart.border-bottom(market="ClubToken")
       view-nav(:items="[{lbl: 'Buy', value:'buy'}, {lbl: 'Sell', value:'sell'}]", @change="view = $event")
       section.py3
         button.h-bttm-bar.bg-green.white.flex.col-12
@@ -18,17 +18,21 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import ViewNav from '@/components/ViewNav'
+import Chart from '@/components/Chart'
+
 export default {
   name: 'Trade',
-  components: { ViewNav },
   data () {
     return {
       view: 'buy'
     }
-  }
+  },
+  computed: {
+    ...mapGetters([])
+  },
+  components: { ViewNav, Chart }
 }
 </script>
 
-<style>
-</style>
