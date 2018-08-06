@@ -33,7 +33,7 @@ export default {
   async begin ({ commit, dispatch }) {
     console.log('begin')
     try {
-      dispatch('poll')
+      await dispatch('poll')
     } catch (error) {
       console.log('begin failed')
       console.error(error)
@@ -190,14 +190,12 @@ export default {
       commit('SET_USER', anonUser)
       return
     }
-    return axios
-      .get(apiUrl(`/users/${account}`))
-      .then(({ data }) => {
-        if (!data.address) {
-          data = Object.assign(anonUser, { address: account, name: account })
-        }
-        commit('SET_USER', data)
-      })
+    return axios.get(apiUrl(`/users/${account}`)).then(({ data }) => {
+      if (!data.address) {
+        data = Object.assign(anonUser, { address: account, name: account })
+      }
+      commit('SET_USER', data)
+    })
   },
   async changeUsername ({ commit, getters }, { address, name }) {
     if (!address) return
@@ -225,7 +223,7 @@ export default {
   },
 
   // api stuff
-  setUpSocket ({ commit }) {
+  async setUpSocket ({ commit }) {
     const socket = io(process.env.VUE_APP_API_URL)
 
     socket.on('connect', () => {
@@ -265,6 +263,22 @@ export default {
   },
   async cloverExists ({ state }, byteBoard) {
     return axios.get(apiUrl(`/clovers/${byteBoard}`)).then(({ data }) => data)
+  },
+  addrToName ({ state }, address) {
+    let userIndex = state.allUsers.findIndex(
+      u => u.address.toLowerCase() === address.toLowerCase()
+    )
+    return userIndex > -1 ? state.allUsers[userIndex].name || address : address
+  },
+  getAllUsers ({ state, commit }, page = 1) {
+    console.log('getting users')
+    if (state.allUsers.length) return
+    return axios
+      .get(apiUrl('/users'))
+      .then(({ data }) => {
+        commit('GOT_USERS', data)
+      })
+      .catch(console.log)
   },
   getClovers ({ state, commit }, page = 1) {
     console.log('getting clovers')
@@ -359,17 +373,21 @@ export default {
   async getSell ({ state }, { market, amount }) {
     if (!Number(amount) || Number(amount) < 0) return 0
     amount = utils.toWei(amount)
-    let receive = await contracts[market].instance.methods.getSell(amount).call()
+    let receive = await contracts[market].instance.methods
+      .getSell(amount)
+      .call()
     return receive
   },
   async invest ({ state }, { market, amount }) {
     if (market === 'ClubToken') {
       let balance = await global.web3.eth.getBalance(state.account)
       if (balance.gte(amount)) {
-        await contracts.ClubTokenController.instance.methods.buy(state.account).send({
-          from: state.account,
-          value: amount
-        })
+        await contracts.ClubTokenController.instance.methods
+          .buy(state.account)
+          .send({
+            from: state.account,
+            value: amount
+          })
       } else {
         throw new Error('insufficient-funds')
       }
@@ -455,7 +473,9 @@ export default {
     // TODO Figure out why cloverExists is returning a promise
     if (await dispatch('cloverExists', clover.board)) {
       // get the owner of the clover
-      let owner = await contracts.Clovers.instance.methods.ownerOf(clover.board).call()
+      let owner = await contracts.Clovers.instance.methods
+        .ownerOf(clover.board)
+        .call()
       // if not current user, then error
       if (owner.toLowerCase() !== state.account.toLowerCase()) {
         throw new Error('cant-sell-dont-own')

@@ -27,36 +27,39 @@ import ViewNav from '@/components/ViewNav'
 
 export default {
   name: 'Account',
-  data () {
+  data() {
     return {
       formFocussed: false,
       form: { name: null }
     }
   },
   computed: {
-    user () {
+    user() {
       return this.$store.state.user
     },
-    signedIn () {
+    signedIn() {
       return !!this.$store.getters.authHeader
     },
-    navItems () {
+    navItems() {
       return [
-        {lbl: 'Picks', value: 'Account'},
-        {lbl: 'My Clovers', value: 'Account/Clovers'},
-        {lbl: '<span class=font-mono>' + this.userBalance + ' ♣</span>', value: 'Account/Trade'}
+        { lbl: 'Picks', value: 'Account' },
+        { lbl: 'My Clovers', value: 'Account/Clovers' },
+        {
+          lbl: '<span class=font-mono>' + this.userBalance + ' ♣</span>',
+          value: 'Account/Trade'
+        }
       ]
     },
     ...mapGetters(['userBalance'])
   },
   methods: {
-    focusUsername () {
+    focusUsername() {
       this.formFocussed = true
     },
-    blurUsername () {
+    blurUsername() {
       this.formFocussed = false
     },
-    updateName () {
+    updateName() {
       this.$refs.nameInput.blur()
       this.changeUsername({
         address: this.user.address,
@@ -64,27 +67,25 @@ export default {
       })
     },
 
-    ...mapActions([
-      'changeUsername',
-      'signIn'
-    ])
+    ...mapActions(['changeUsername', 'signIn'])
   },
   watch: {
-    '$route.name' (val) {
+    '$route.name'(val) {
       this.$refs.nav.setActive(val)
     },
-    user (newVal) {
+    user(newVal) {
       if (!newVal) return
       this.form.name = newVal.name
     }
   },
-  mounted () {
+  mounted() {
     if (!this.user) return
     this.form.name = this.user.name
   },
-  beforeRouteEnter (to, from, next) {
+  beforeRouteEnter(to, from, next) {
     return store.dispatch('getClovers').then(() => {
       next()
+      store.dispatch('getAllUsers')
     })
   },
   components: { ViewNav }
@@ -92,10 +93,14 @@ export default {
 </script>
 
 <style scoped>
-.router-link-active{
-  opacity:1;
+.router-link-active {
+  opacity: 1;
 }
 /* highlight bar */
-[data-view="Account/Clovers"]{transform:translateX(100%);}
-[data-view="Account/Trade"]{transform:translateX(200%);}
+[data-view='Account/Clovers'] {
+  transform: translateX(100%);
+}
+[data-view='Account/Trade'] {
+  transform: translateX(200%);
+}
 </style>

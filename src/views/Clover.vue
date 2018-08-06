@@ -5,7 +5,7 @@
     header.flex.border-bottom
       .col-6.p3.border-right
         small.block.lh1.h6 Current Owner
-        .font-exp.mt2.truncate.overflow-hidden {{ clover.owner }}
+        .font-exp.mt2.truncate.overflow-hidden {{ owner}}
       .col-6.p3
         small.block.lh1.h6 Original Price
         .font-exp.mt2 {{ originalPrice }} ♣
@@ -45,59 +45,79 @@ export default {
   props: {
     board: { type: String, required: true }
   },
-  data () {
+  data() {
     return {
+      owner: null,
       clover: null,
       confirmVisible: false
     }
   },
   computed: {
-    price () {
-      return this.clover && this.clover.price && prettyBigNumber(this.clover.price, 0)
+    price() {
+      return (
+        this.clover &&
+        this.clover.price &&
+        prettyBigNumber(this.clover.price, 0)
+      )
     },
-    originalPrice () {
-      return this.clover && this.clover.originalPrice && prettyBigNumber(this.clover.price, 0)
+    originalPrice() {
+      return (
+        this.clover &&
+        this.clover.originalPrice &&
+        prettyBigNumber(this.clover.price, 0)
+      )
     },
-    balanceAfter () {
+    balanceAfter() {
       if (!this.userBalance) return false
       return bnMinus(this.userBalance, this.clover.price, 0)
     },
-    isMyClover () {
+    isMyClover() {
       return this.clover.owner === this.account
     },
-    canBuy () {
+    canBuy() {
       if (!this.user) return false
       if (!makeBn(this.price).gt(0)) return false
       return makeBn(this.balanceAfter).gte(0)
     },
-
     ...mapState(['account', 'user']),
     ...mapGetters(['userBalance'])
+  },
+  watch: {
+    async clover() {
+      this.owner = await this.addrToName(this.clover.owner)
+    }
   },
   methods: {
     cloverImage,
     prettyBigNumber,
-
-    ...mapActions([
-      'buy'
-    ])
+    ...mapActions(['buy', 'addrToName'])
   },
-  created () {
-    this.$store.dispatch('getClover', this.board)
-      .then(clvr => { this.clover = clvr })
+  created() {
+    this.$store.dispatch('getClover', this.board).then(clvr => {
+      this.clover = clvr
+    })
   },
   components: { SymmetryIcons }
 }
 </script>
 
 <style scoped>
-figure > .bg-contain{
+figure > .bg-contain {
   width: calc(100% - 4.8rem);
   height: calc(100% - 4.8rem);
   top: 2.4rem;
   left: 2.4rem;
 }
-.confirm-enter-active,.confirm-leave-active{transition:max-height var(--anim-timing-long);}
-.confirm-enter, .confirm-leave-to{max-height: 0}
-.confirm-leave, .confirm-enter-to{max-height: 24rem}
+.confirm-enter-active,
+.confirm-leave-active {
+  transition: max-height var(--anim-timing-long);
+}
+.confirm-enter,
+.confirm-leave-to {
+  max-height: 0;
+}
+.confirm-leave,
+.confirm-enter-to {
+  max-height: 24rem;
+}
 </style>

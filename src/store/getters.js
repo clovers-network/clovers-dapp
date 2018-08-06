@@ -8,22 +8,24 @@ export default {
     return prettyBigNumber(user.balance, 0)
   },
   sortedClovers ({ sortBy, feedFilter, allClovers }) {
-    return allClovers.slice(0).sort((a, b) => {
-      if (typeof a[sortBy] === 'object') {
-        return a[sortBy].gt(b[sortBy]) ? -1
-          : a[sortBy].lt(b[sortBy]) ? 1 : 0
-      }
-      return Number(b[sortBy]) - Number(a[sortBy])
-    }).filter((clover) => {
-      if (feedFilter === 'market') {
-        return clover.price.gt(0)
-      }
-      return true
-    })
+    return allClovers
+      .slice(0)
+      .sort((a, b) => {
+        if (typeof a[sortBy] === 'object') {
+          return a[sortBy].gt(b[sortBy]) ? -1 : a[sortBy].lt(b[sortBy]) ? 1 : 0
+        }
+        return Number(b[sortBy]) - Number(a[sortBy])
+      })
+      .filter(clover => {
+        if (feedFilter === 'market') {
+          return clover.price.gt(0)
+        }
+        return true
+      })
   },
   userClovers ({ user, allClovers }) {
     if (!user) return []
-    return user.clovers.map((id) => {
+    return user.clovers.map(id => {
       return allClovers.find(c => c.board === id)
     })
   },
