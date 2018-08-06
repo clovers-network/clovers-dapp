@@ -414,7 +414,7 @@ export default {
       if (!state.account) {
         await dispatch('getAnAccount')
       }
-      // await claimClover({ keep: true, clover, account: state.account })
+      await claimClover({ keep: true, clover, account: state.account })
     }
   },
   async sell ({ state, dispatch, commit }, { clover, price }) {
