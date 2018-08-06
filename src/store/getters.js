@@ -1,7 +1,12 @@
 import Reversi from 'clovers-reversi'
 import { CurationMarket } from 'clovers-contracts'
+import { prettyBigNumber } from '@/utils'
 
 export default {
+  userBalance ({ user }) {
+    if (!user) return
+    return prettyBigNumber(user.balance, 0)
+  },
   sortedClovers ({ sortBy, feedFilter, allClovers }) {
     return allClovers.slice(0).sort((a, b) => {
       if (typeof a[sortBy] === 'object') {
