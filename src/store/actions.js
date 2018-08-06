@@ -212,6 +212,10 @@ export default {
       })
       .catch(console.log)
   },
+  async getReward (_, _symmetries) {
+    let val = await contracts.CloversController.instance.methods.calculateReward(_symmetries.toString(16)).call()
+    return val
+  },
 
   // api stuff
   setUpSocket ({ commit }) {
@@ -468,7 +472,9 @@ async function getLowestPrice (
   let littleIncrement = new BigNumber(utils.toWei('0.001'))
   let bigIncrement = new BigNumber(utils.toWei('0.1'))
   currentPrice = currentPrice.add(useLittle ? littleIncrement : bigIncrement)
-  let resultOfSpend = await contract.getBuy(currentPrice)
+  let resultOfSpend = await contract.instance.methods.getBuy(currentPrice).call()
+  console.log(resultOfSpend)
+  resultOfSpend = new BigNumber(resultOfSpend)
   if (resultOfSpend.gt(targetAmount)) {
     return useLittle
       ? currentPrice
@@ -494,7 +500,8 @@ async function claimClover ({ keep, account, clover }) {
 
   if (keep) {
     let mintPrice = await getMintPrice({ _symmetries })
-    let balance = await contracts.ClubToken.balanceOf(account).call()
+    let balance = await contracts.ClubToken.instance.methods.balanceOf(account).call()
+    balance = new BigNumber(balance)
     if (balance.lt(mintPrice)) {
       let clubTokenToBuy = balance.sub(mintPrice)
       value = await getLowestPrice(
@@ -517,5 +524,6 @@ async function getMintPrice ({ _symmetries }) {
   let basePrice = await contracts.CloversController.instance.methods
     .basePrice()
     .call()
-  return reward.add(basePrice)
+  reward = new BigNumber(reward)
+  return reward.plus(basePrice)
 }
