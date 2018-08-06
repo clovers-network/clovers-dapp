@@ -57,7 +57,7 @@ export default {
             lineTension: 0,
             data: this.orders.map((p) => {
               return {
-                y: new BigNumber(p.tokens).div(new BigNumber(p.value)).toNumber(0),
+                y: new BigNumber(p.value).div(new BigNumber(p.tokens)).toNumber(0),
                 x: parseInt(p.created)
               }
             })

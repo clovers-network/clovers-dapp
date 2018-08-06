@@ -51,8 +51,8 @@
       </li>
     </nav>
 
-    <ul class="list-reset md-flex flex-wrap justify-around items-center m0">
-      <li v-for="(clover, i) in clovers" :key="i" class="md-col6">
+    <ul class="list-reset md-flex flex-wrap justify-around items-center m0 md-px1">
+      <li v-for="(clover, i) in clovers" :key="i" class="md-col-6 md-px1">
         <div is="router-link" tag="div" :to="cloverLink(clover)" class="flex py2 border-bottom green">
           <div class="col-4 center">
             <img :src="cloverImage(clover, 64)" width="64" height="64"/>

@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="relative min-h-100vh">
+  <div id="app" class="relative min-h-100vh max-width-3 mx-auto outline">
     <app-header/>
     <main>
       <router-view/>
