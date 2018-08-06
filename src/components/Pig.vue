@@ -75,8 +75,9 @@ export default {
     pigToggler () {
       this.minerOn = !this.minerOn
       this.$emit('minerStatus', this.minerOn)
-      if (this.minerOn) this.mine()
-      else this.stopAll()
+      if (this.minerOn) return this.mine()
+      this.stopAll()
+      this.resetStats()
     },
     mine () {
       this.mining = true
@@ -135,7 +136,8 @@ export default {
       addMineTotal: 'MINE_INCREMENT',
       addMineTime: 'TIME_INCREMENT',
       incSymms: 'SYMMS_INCREMENT',
-      saveClover: 'SAVE_CLOVER'
+      saveClover: 'SAVE_CLOVER',
+      resetStats: 'RESET_MINE_STATS'
     })
   },
   mounted () {
