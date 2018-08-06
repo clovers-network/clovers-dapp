@@ -3,7 +3,7 @@
     <div class="py3">
       <nav>
         <h6 class="center h3">Clover Pig</h6>
-        <toggle-btn class="mx-auto my3" :active="minerOn" @click="pigToggler()"></toggle-btn>
+        <toggle-btn class="mx-auto my3" :active="minerOn" @click="pigToggler"></toggle-btn>
         <div class="flex justify-between items-center">
           <div class="col-6 px2 h3">
             <div>Speed</div>
@@ -79,7 +79,6 @@ export default {
       else this.stopAll()
     },
     mine () {
-      console.log('start mining')
       this.mining = true
       if (!this.start) this.start = new Date()
       let miner = new CloverWorker()
@@ -89,7 +88,6 @@ export default {
       this.miningPower = this.miners.length
     },
     stop () {
-      console.log('stop')
       if (this.miners.length) {
         let removed = this.miners.pop()
         removed.postMessage('stop')

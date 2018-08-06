@@ -27,13 +27,23 @@ export function cloverLink ({ board, byteBoard }) {
   return `/clovers/${board}`
 }
 
-export function prettyBigNumber (bigNumber, decimalPlaces = 2) {
+export function prettyBigNumber (bigNumber = 0, decimalPlaces = 2) {
   bigNumber = utils.fromWei(bigNumber.toString())
   if (typeof bigNumber !== 'object') bigNumber = new BigNumber(bigNumber)
   return bigNumber.toFormat(decimalPlaces)
 }
 
+export function bnMinus (one = 0, two = 0, float = 0) {
+  one = new BigNumber(one)
+  two = new BigNumber(two)
+  return prettyBigNumber(one.minus(two), float)
+}
+
 export function formatClover (clover) {
   clover.price = new BigNumber(clover.price)
   return clover
+}
+
+export function makeBn (v = 0) {
+  return new BigNumber(v)
 }
