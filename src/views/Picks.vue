@@ -4,7 +4,8 @@
     <ul class="list-reset md-flex flex-wrap justify-around items-center m0">
       <li v-for="(clover, i) in picks" :key="i" class="md-col6">
         <div class="flex py2 border-bottom justify-between items-center green">
-          <div class="col-3 center">
+          <div class="col-3 center relative">
+            <div class="sym-badge absolute h7 p1" v-if="isSym(clover)">SYM</div>
             <img :src="cloverImage(clover, 58)" width="58" height="58"/>
           </div>
           <div class="col-3 pr2 h7 font-mono">
@@ -48,6 +49,10 @@ export default {
       return moment(createdAt).fromNow()
     },
 
+    isSym (clover) {
+      return clover.symmetrical
+    },
+
     ...mapMutations({
       removeClover: 'REMOVE_SAVED_CLOVER'
     })
@@ -55,3 +60,13 @@ export default {
   components: { SingleView }
 }
 </script>
+
+<style lang="css" scoped>
+  div.sym-badge {
+    background: var(--green);
+    color: white;
+    left: 0.8em;
+    top: -0.6em;
+    border-radius: 32px;
+  }
+</style>
