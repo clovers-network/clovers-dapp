@@ -65,7 +65,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['getOrders']),
+    ...mapActions(['getOrders'])
   },
   mounted () {
     this.getOrders(this.market).then((orders) => {

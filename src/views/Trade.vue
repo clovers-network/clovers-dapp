@@ -35,4 +35,3 @@ export default {
   components: { ViewNav, Chart }
 }
 </script>
-
