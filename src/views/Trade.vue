@@ -17,7 +17,7 @@
           .p2
             p.h7.mb1 I want to spend
             .relative
-              input.input.border.font-exp(v-model="buy", min="0", placeholder="ETH")
+              input.input.border.font-exp(v-model="buy", placeholder="ETH", type="number", min="0")
               span.absolute.top-0.right-0.p2.claimed ETH
           .p2
             p.h7.mb1 I will receive
@@ -25,7 +25,7 @@
               input.input.border.font-exp(v-model="clubReceive", placeholder="♣ Tokens", disabled="true")
               span.absolute.top-0.right-0.p2.claimed ♣
           button.h-bttm-bar.bg-green.white.sticky.bottom-0.col-12
-            span.block.m-auto.font-exp Confirm
+            span.block.m-auto.font-exp Buy
       section(v-else)
         form(@submit.prevent)
           .p2
@@ -39,7 +39,7 @@
               input.input.border.font-exp(v-model="ethReceive", placeholder="ETH", disabled="true")
               span.absolute.top-0.right-0.p2.claimed ETH
           button.h-bttm-bar.bg-green.white.sticky.bottom-0.col-12
-            span.block.m-auto.font-exp Confirm
+            span.block.m-auto.font-exp Sell
 </template>
 
 <script>

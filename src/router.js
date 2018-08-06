@@ -61,7 +61,7 @@ export default new Router({
           path: 'trade',
           name: 'Account/Trade',
           component: Trade,
-          meta: { title: 'Account' }
+          meta: { title: 'Trade' }
         }
       ]
     },
