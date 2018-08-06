@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div>
     <div class="py3">
       <nav>
         <h6 class="center h3">Clover Pig</h6>
@@ -17,6 +17,12 @@
           </div>
         </div>
       </nav>
+      <audio v-if="minerOn" id="pigs" loop autoplay>
+        <source type="audio/mpeg" src="/pigs.mp3"/>
+      </audio>
+      <audio id="squeal">
+        <source type="audio/mpeg" src="/squeal.mp3"/>
+      </audio>
     </div>
   </div>
 </template>
@@ -144,6 +150,12 @@ export default {
   },
   destroyed () {
     clearInterval(this.interval)
+  },
+  watch: {
+    symms: function () {
+      console.log('sym found')
+      document.getElementById('squeal').play()
+    }
   },
   components: { ToggleBtn }
 }

@@ -78,3 +78,9 @@ export default {
   components: { DotBtn }
 }
 </script>
+
+<style lang="css" scoped>
+  img {
+    max-width: 380px;
+  }
+</style>
