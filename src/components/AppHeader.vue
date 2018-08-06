@@ -51,6 +51,7 @@
           <li><router-link :to="{ name: 'Welcome' }">About</router-link></li>
           <li class="mt2"><router-link :to="{ name: 'Field' }">Find Clovers</router-link></li>
           <li class="mt2"><router-link :to="{ name: 'Feed' }">Feed</router-link></li>
+          <li class="mt2"><router-link :to="{ name: 'Account' }">Account</router-link></li>
 
         </ul>
       </nav>
