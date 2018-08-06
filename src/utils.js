@@ -33,6 +33,12 @@ export function prettyBigNumber (bigNumber, decimalPlaces = 2) {
   return bigNumber.toFormat(decimalPlaces)
 }
 
+export function bnMinus (one, two, float = 0) {
+  one = new BigNumber(one)
+  two = new BigNumber(two)
+  return prettyBigNumber(one.minus(two), float)
+}
+
 export function formatClover (clover) {
   clover.price = new BigNumber(clover.price)
   return clover

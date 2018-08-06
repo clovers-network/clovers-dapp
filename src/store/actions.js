@@ -286,7 +286,7 @@ export default {
         from: account
       },
       (err, { result }) => {
-        console.log(err, result)
+        console.error(err)
         commit('SIGN_IN', { account, signature: result })
       }
     )

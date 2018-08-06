@@ -3,10 +3,10 @@
     header.mt-header-h.flex.border-bottom
       .col-6.p3.border-right
         small.block.lh1.h6 Current Owner
-        .font-exp.mt2.txt-overflow-ellipsis.overflow-hidden {{clover.owner}}
+        .font-exp.mt2.truncate.overflow-hidden {{ clover.owner }}
       .col-6.p3
         small.block.lh1.h6 Original Price
-        .font-exp.mt2 {{clover.original_price}} ♣
+        .font-exp.mt2 {{ originalPrice }} ♣
     //- section
       button.h-header.center.border-bottom.flex.pointer.col-12
         span.block.m-auto See Full History
@@ -22,22 +22,24 @@
           .border-top.flex.border-bottom
             .col-6.p3.border-right
               small.block.lh1.h6 ♣ Current Balance
-              .font-exp.mt2 {{balance}}
+              .font-exp.mt2 {{ balance }}
             .col-6.p3
               small.block.lh1.h6 ♣ Balance After
-              .font-exp.mt2 {{balanceAfter}}
+              .font-exp.mt2 {{ balanceAfter }}
           button.h-bttm-bar.white.border-top.flex.col-12.pointer
             span.block.m-auto.font-exp Confirm
 </template>
 
 <script>
 import { mapState } from 'vuex'
-import { cloverImage, prettyBigNumber } from '@/utils'
+import { cloverImage, prettyBigNumber, bnMinus } from '@/utils'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
+
 export default {
   name: 'Clover',
-  props: ['board'],
-  components: { SymmetryIcons },
+  props: {
+    board: { type: String, required: true }
+  },
   data () {
     return {
       clover: null,
@@ -45,19 +47,28 @@ export default {
     }
   },
   computed: {
-    ...mapState(['account', 'balance']),
     price () {
       return this.clover && this.clover.price && prettyBigNumber(this.clover.price, 0)
     },
+    originalPrice () {
+      return this.clover && this.clover.originalPrice && prettyBigNumber(this.clover.price, 0)
+    },
     balanceAfter () {
-      return this.balance - Number(this.price)
+      if (!this.user) return
+      return bnMinus(this.user.balance, this.clover.price, 2)
     },
     isMyClover () {
       return this.clover.owner === this.account
     },
     isForSale () {
       return true
-    }
+    },
+    balance () {
+      if (!this.user) return
+      return this.user.balance && prettyBigNumber(this.user.balance, 2)
+    },
+
+    ...mapState(['account', 'user'])
   },
   methods: {
     cloverImage,
@@ -66,7 +77,8 @@ export default {
   created () {
     this.$store.dispatch('getClover', this.board)
       .then(clvr => { this.clover = clvr })
-  }
+  },
+  components: { SymmetryIcons }
 }
 </script>
 
