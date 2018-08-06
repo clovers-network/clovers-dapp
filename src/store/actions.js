@@ -146,7 +146,7 @@ export default {
       throw new Error('account-locked')
     }
   },
-  getContracts ({ state, commit }) {
+  getContracts ({ dispatch, state, commit }) {
     for (var name in contracts) {
       if (!contracts.hasOwnProperty(name)) continue
       let contract = contracts[name]
@@ -161,6 +161,20 @@ export default {
         throw new Error('wrong-network')
       }
     }
+    dispatch('updateBasePrice')
+    dispatch('updateStakeAmount')
+  },
+  async updateBasePrice ({ commit }) {
+    let basePrice = await contracts.CloversController.instance
+      .basePrice()
+      .call()
+    commit('SET_BASE_PRICE', basePrice)
+  },
+  async updateStakeAmount ({ commit }) {
+    let stakeAmount = await contracts.CloversController.instance
+      .stakeAmount()
+      .call()
+    commit('SET_STAKE_AMOUNT', stakeAmount)
   },
   async getUser ({ state, commit }, account) {
     if (typeof account === 'string') {
@@ -171,12 +185,14 @@ export default {
       commit('SET_USER', anonUser)
       return
     }
-    const user = await axios.get(apiUrl(`/users/${account}`)).then(({ data }) => {
-      if (!data.address) {
-        data = Object.assign(anonUser, { address: account, name: account })
-      }
-      commit('SET_USER', data)
-    })
+    const user = await axios
+      .get(apiUrl(`/users/${account}`))
+      .then(({ data }) => {
+        if (!data.address) {
+          data = Object.assign(anonUser, { address: account, name: account })
+        }
+        commit('SET_USER', data)
+      })
   },
   async changeUsername ({ commit, getters }, { address, name }) {
     if (!address) return
@@ -267,7 +283,9 @@ export default {
   },
 
   getClover ({ state }, board) {
-    if (!board) return Promise.reject(new Error('Missing parameter: `board` (address)'))
+    if (!board) {
+      return Promise.reject(new Error('Missing parameter: `board` (address)'))
+    }
     const found = state.allClovers.filter(clvr => clvr.board === board)
     if (found && found[0]) return Promise.resolve(found[0])
     return axios
@@ -337,10 +355,12 @@ export default {
       if (balanceOf.lt(currentPrice)) {
         value = getLowestPrice(contracts.ClubToken, balanceOf.sub(currentPrice))
       }
-      await contracts.SimpleCloversMarket.instance.methods.buy(clover.board).send({
-        from: state.account,
-        value
-      })
+      await contracts.SimpleCloversMarket.instance.methods
+        .buy(clover.board)
+        .send({
+          from: state.account,
+          value
+        })
     } else {
       // claim clover w option _keep = true
       if (!state.account) {

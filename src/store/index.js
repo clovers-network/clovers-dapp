@@ -1,13 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createLogger from 'vuex/dist/logger'
-
+import utils from 'web3-utils'
 import actions from './actions'
 import getters from './getters'
 import mutations from './mutations'
 
 import Reversi from 'clovers-reversi'
-
+import BigNumber from 'bignumber.js'
 global.Reversi = new Reversi()
 
 Vue.use(Vuex)
@@ -44,7 +44,12 @@ const state = {
   users: [],
   logs: [],
   messages: [],
-  submittingBoards: []
+  submittingBoards: [],
+  basePrice: utils.toWei('0.001'),
+  stakeAmount: new BigNumber(96842)
+    .mul(1000000000)
+    .mul(40)
+    .toString()
 }
 
 export default new Vuex.Store({
