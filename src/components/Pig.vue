@@ -10,7 +10,7 @@
             <div class="font-exp mt1">{{ hashRate }}/s</div>
             <div class="h7 pt1">{{ timeSpent }}</div>
           </div>
-          <div class="col-6 px2 h3">
+          <div class="col-6 px2 h3" @click="$emit('viewPicks')">
             <div class="nowrap">Rare Clovers</div>
             <div class="font-exp mt1">{{ symms }}</div>
             <div class="h7 pt1">~ {{ totalMined.toLocaleString() }} mined</div>
@@ -106,24 +106,23 @@ export default {
         this.stop()
       }
     },
-    minerEvent (event) {
+    async minerEvent (event) {
       let { data } = event
       if ('hashRate' in data) {
         this.hashRate = data.hashRate
         this.totalMined = data.hashRate
       }
       if ('symmetrical' in data) {
-        this.cloverExists(data.byteBoard)
-          .then(exists => {
-            if (!exists) {
-              this.symms = 1
-              data.createdAt = new Date()
-              this.saveClover(data)
-            }
-          })
-          .catch(err => {
-            console.log(err)
-          })
+        try {
+          const exists = await this.cloverExists(data.byteBoard)
+          if (!exists) {
+            this.symms = 1
+            const clvr = await this.formatFoundClover(data)
+            this.saveClover(clvr)
+          }
+        } catch (error) {
+          console.error(error)
+        }
       }
     },
     timer () {
@@ -131,7 +130,7 @@ export default {
         this.mineTime = 1
       }
     },
-    ...mapActions(['cloverExists']),
+    ...mapActions(['cloverExists', 'formatFoundClover']),
     ...mapMutations({
       addMineTotal: 'MINE_INCREMENT',
       addMineTime: 'TIME_INCREMENT',

@@ -62,6 +62,11 @@ export default new Router({
           name: 'Account/Trade',
           component: Trade,
           meta: {title: 'Account'}
+        },
+        {
+          path: 'picks',
+          name: 'Picks',
+          redirect: {name: 'Account'}
         }
       ]
     },

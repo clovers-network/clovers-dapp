@@ -55,7 +55,7 @@
         </ul>
       </nav>
       <div class="px2">
-        <pig @minerStatus="mining = $event"/>
+        <pig @minerStatus="mining = $event" @viewPicks="viewPicks"/>
       </div>
     </div>
   </header>
@@ -93,6 +93,10 @@ export default {
       if (e.keyCode === 27) {
         this.showMenu = false
       }
+    },
+    viewPicks () {
+      this.showMenu = false
+      this.$router.push({name: 'Picks'})
     }
   },
   components: { Pig, PersonIcon, WaveyBtn }

@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import SingleView from '@/views/KeepClover'
 import Bottleneck from 'bottleneck'
 import Reversi from 'clovers-reversi'
@@ -65,13 +65,10 @@ export default {
       }
     },
     miningDone () { /* no op, `limiter` callback */ },
-    mineOne (last) {
+    async mineOne (last) {
       clover.mine()
-      this.generated.push({
-        board: pad0x(clover.byteBoard),
-        movesString: clover.movesString,
-        createdAt: new Date()
-      })
+      const clvr = await this.formatFoundClover(clover)
+      this.generated.push(clvr)
       if (last) {
         this.growing = false
       }
@@ -83,7 +80,8 @@ export default {
 
     ...mapMutations({
       saveClover: 'SAVE_CLOVER'
-    })
+    }),
+    ...mapActions(['formatFoundClover'])
   },
   beforeMount () {
     this.getNext()

@@ -24,8 +24,8 @@
             //- button.absolute.top-0.right-0.p2.pointer(@click="action = 'sell'")
               .icon-radio(:class="{'icon-radio--selected': action === 'sell'}")
       //- keep btn
-      button.bg-green.white.font-exp.flex.col-12.h-bttm-bar.pointer(@click="keep", :class="{'pointer-events-none': submitting}")
-        span.block.m-auto(v-show="!submitting") Keep
+      button.bg-green.white.font-exp.flex.col-12.h-bttm-bar.pointer(@click="btnClick", :class="{'pointer-events-none': submitting}")
+        span.block.m-auto.capitalize(v-show="!submitting") {{action}}
         wavey-menu.m-auto(v-show="submitting", :isWhite="true")
 </template>
 
@@ -58,6 +58,10 @@ export default {
       this.$emit('close')
       this.action = 'keep'
     },
+    btnClick () {
+      if (this.action === 'keep') return this.keep()
+      if (this.action === 'sell') return this.sellToBank()
+    },
     async keep () {
       this.submitting = true
       try {
@@ -75,6 +79,23 @@ export default {
         this.$store.dispatch('addMessage', msg)
       }
     },
+    async sellToBank () {
+      this.submitting = true
+      try {
+        const tx = await this.sell({clover: this.clover})
+        this.submitting = false
+        console.log('SUCCESS', tx)
+      } catch (error) {
+        console.log(error)
+        this.submitting = false
+        // notification
+        let msg = {type: 'error', msg: 'Error :-('}
+        switch (error.message) {
+          case 'cant-sell-dont-own': msg.msg = "Can't Sell, this belongs to another owner"
+        }
+        this.$store.dispatch('addMessage', msg)
+      }
+    },
     getValue () {
       reversi.playGameMovesString(this.clover.movesString)
       const syms = reversi.returnSymmetriesAsBN()
@@ -82,7 +103,7 @@ export default {
         this.value = wei + this.$store.state.basePrice
       })
     },
-    ...mapActions(['buy'])
+    ...mapActions(['buy', 'sell'])
   },
   mounted () {
     this.getValue()
