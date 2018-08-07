@@ -108,6 +108,12 @@ export default {
   },
   SHOW_NEW_CLOVERS (state) {
     // move new chain clovers to feed
+    let i = state.newClovers.length
+    while (i--) {
+      if (state.allClovers.findIndex(c => c.board === state.newClovers[i].board) > -1) {
+        state.newClovers.splice(i, 1)
+      }
+    }
     state.allClovers.unshift(...state.newClovers.splice(0))
   },
   UPDATE_FEED_ORDER (state, sortBy) {

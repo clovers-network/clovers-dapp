@@ -20,8 +20,8 @@
         </div>
       </li>
     </ul>
-    <div class="bg-green white center p2 font-exp">
-      <router-link to="/field">Find more</router-link>
+    <div is="router-link" tag="div" to="/field" class="bg-green white center p2 font-exp flex pointer h-bttm-bar">
+      <span class="m-auto">Find more</span>
     </div>
   </div>
 </template>

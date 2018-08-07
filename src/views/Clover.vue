@@ -14,7 +14,7 @@
               img(src="~../assets/icons/arrow-right.svg", width="18", height="18")
       //- else, Login
       .h-header.font-mono.flex.px2.relative(v-else)
-        .p2.m-auto {{ clover.name }}
+        .p2.m-auto.truncate {{ clover.name }}
         button.absolute.top-0.right-0.h-100.px2.block.regular(v-if="isMyClover", @click="signIn")
           span Login
     header.flex.border-bottom
@@ -190,6 +190,7 @@ export default {
       this.formFocussed = false
     },
     updateName () {
+      if (!this.form.name.length) return
       this.$refs.nameInput.blur()
       let clv = {
         board: this.clover.board,
