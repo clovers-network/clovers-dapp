@@ -1,6 +1,8 @@
 .top-100 { top: 100%; }
 .sticky { position: sticky; }
 
+.momentum { -webkit-overflow-scrolling: touch; }
+
 .min-width-1 { min-width: var(--width-0);}
 
 .h7 { font-size: .94rem; }

@@ -2,7 +2,7 @@
   .div.pt4.overflow-hidden
     h1.h1.center.green.font-exp.strong.pb3 Find Rare<br>Clovers
     .center.my3.relative
-      .col-12.overflow-x-scroll.invisible-scrollbar(ref="wide")
+      .col-12.overflow-x-scroll.invisible-scrollbar.momentum(ref="wide")
         .h1.inline-flex.pb4
           clv.small-clover.inline.mx3.no-hover(
             v-for="(c, i) in list"
