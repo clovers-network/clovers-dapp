@@ -133,10 +133,10 @@ export default {
       })
     },
     handleSuccess (msg, clover) {
-      // this.selfDestructMsg({
-      //   msg,
-      //   type: 'success'
-      // })
+      this.selfDestructMsg({
+        msg,
+        type: 'success'
+      })
       this.submitted = msg
       this.$store.commit('REMOVE_SAVED_CLOVER', clover)
     },
