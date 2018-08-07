@@ -519,13 +519,31 @@ export default {
       // claim clover w option _keep = false
       await claimClover({ keep: false, clover, account: state.account })
     }
+  },
+  async makeRFT ({ state }, { board, investmentInWei = 0 }) {
+    // logged in ?
+    if (!state.account) return Promise.reject(new Error('You must log-in'))
+    // exists ?
+    const exists = await contracts.CurationMarket.instance.methods.marketExists(board).call()
+    if (!exists) return Promise.reject(new Error("Clover doesn't exist"))
+    // account is owner ?
+    const ownedBy = await contracts.Clovers.instance.methods.exists(board).call()
+    if (state.account.toLowerCase() !== ownedBy.toLowerCase()) return Promise.reject(new Error("You are not the owner of the Clover"))
+    // isn't in the Simple Market ?
+    let price = contracts.SimpleCloversMarket.instance.methods.sellPrice(board).call()
+    price = new BigNumber(price)
+    if (!price.eq(0)) return Promise.reject(new Error("Clover is listed in the Market. Please remove before making an RFT"))
+    // min Amnt
+    investmentInWei = investmentInWei < 0 ? 0 : investmentInWei
+    // go !
+    await contracts.CurationMarket.instance.methods.addCloverToMarket(board, investmentInWei).send({from: state.account, value: investmentInWei})
   }
 }
 
 function apiUrl (path) {
   return apiBase + path
 }
-
+ 
 async function getLowestPrice (
   contract,
   targetAmount,
