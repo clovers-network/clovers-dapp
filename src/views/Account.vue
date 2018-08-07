@@ -34,9 +34,6 @@ export default {
     }
   },
   computed: {
-    user () {
-      return this.$store.state.user
-    },
     signedIn () {
       return !!this.$store.getters.authHeader
     },
@@ -50,7 +47,7 @@ export default {
         }
       ]
     },
-    ...mapGetters(['prettyUserBalance'])
+    ...mapGetters(['prettyUserBalance', 'user'])
   },
   methods: {
     focusUsername () {

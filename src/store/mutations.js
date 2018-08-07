@@ -23,9 +23,6 @@ export default {
     }
     state.account = account
   },
-  SET_USER (state, user) {
-    state.user = user
-  },
   SET_NETWORK (state, networkId) {
     state.networkId = networkId
   },
@@ -161,9 +158,6 @@ export default {
     }
   },
 
-  UPDATE_CURRENT_USER (state, user) {
-    state.user = Object.assign(state.user, user)
-  },
   UPDATE_USER (state, user) {
     let userKey = state.allUsers.findIndex(
       u => u.address.toLowerCase() === user.address.toLowerCase()
