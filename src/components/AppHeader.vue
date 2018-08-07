@@ -26,7 +26,7 @@
             </div>
         </button>
         <!-- back btn -->
-        <button v-show="$route.meta.backBtn" class="pointer p2 col-3 left-align" @click="$router.go(-1)">Back</button>
+        <button v-show="$route.meta.backBtn" class="pointer left-align" @click="$router.go(-1)">Back</button>
       </div>
       <!-- title -->
       <h1 class="font-exp h3 col-6 py1 center">
