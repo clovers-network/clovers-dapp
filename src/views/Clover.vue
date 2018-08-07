@@ -1,7 +1,22 @@
 <template lang="pug">
   article.min-h-100vh.mt-deduct-header.flex.flex-column.justify-between(v-if="clover")
     .mt-header-h.px3.py2.border-bottom
-      p.m0.truncate.center.font-mono {{ clover.name }}
+      //- username, editable
+      .h-header.relative.flex.items-center.justify-center(v-if="signedIn && isMyClover")
+        div.absolute.top-0.left-0.right-0.bg-white.flex(v-show="!formFocussed")
+          label.input.truncate.flex-auto.center.px4.font-mono(v-text="form.name")
+          label.absolute.top-0.right-0.h-100.px2.block.regular.nowrap.flex(for="clvname")
+            span.block.flip-x.m-auto ✎
+        form.col-12(@submit.prevent="updateName")
+          input#clvname.input.font-mono.center.col-12(@focus="focusCloverName", @blur="blurCloverName", ref="nameInput", placeholder="name", v-model="form.name", autocomplete="off")
+          transition(name="fade")
+            button.absolute.right-0.top-0.p2(v-if="formFocussed", type="submit")
+              img(src="~../assets/icons/arrow-right.svg", width="18", height="18")
+      //- else, Login
+      .h-header.font-mono.flex.px2.relative(v-else)
+        .p2.m-auto {{ clover.name }}
+        button.absolute.top-0.right-0.h-100.px2.block.regular(v-if="isMyClover", @click="signIn")
+          span Login
     header.flex.border-bottom
       //- owner
       .col-6.p3.border-right
@@ -77,6 +92,8 @@ export default {
   },
   data () {
     return {
+      formFocussed: false,
+      form: { name: null },
       localClover: null,
       confirmVisible: false,
       sellView: false,
@@ -85,6 +102,12 @@ export default {
     }
   },
   computed: {
+    user () {
+      return this.$store.state.user
+    },
+    signedIn () {
+      return !!this.$store.getters.authHeader
+    },
     showSalePrice () {
       return this.clover && this.clover.price && this.clover.price.gt(0)
     },
@@ -133,6 +156,9 @@ export default {
     ...mapGetters(['prettyUserBalance', 'userBalance'])
   },
   methods: {
+    cloverImage,
+    prettyBigNumber,
+
     async makeBuy () {
       if (this.loading) return
       try {
@@ -153,15 +179,36 @@ export default {
       }
       this.loading = false
     },
-    cloverImage,
-    prettyBigNumber,
-    ...mapActions(['buy', 'sell'])
+    focusCloverName () {
+      this.formFocussed = true
+    },
+    blurCloverName () {
+      this.formFocussed = false
+    },
+    updateName () {
+      this.$refs.nameInput.blur()
+      let clv = {
+        board: this.clover.board,
+        name: this.form.name
+      }
+      this.updateCloverName(clv)
+    },
+
+    ...mapActions([
+      'buy',
+      'sell',
+      'updateCloverName',
+      'signIn'
+    ])
   },
   created () {
     if (this.clover) return
     this.$store.dispatch('getClover', this.board).then(clvr => {
       this.localClover = clvr
     })
+  },
+  mounted () {
+    this.form.name = this.clover.name || this.clover.board
   },
   components: { SymmetryIcons, WaveyMenu }
 }
