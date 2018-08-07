@@ -109,28 +109,28 @@ const pageSize = 12
 
 export default {
   name: 'Feed',
-  data() {
+  data () {
     return {
       filtersVisible: false
     }
   },
   computed: {
-    page() {
+    page () {
       return Number(this.$route.params.page) || 1
     },
-    clovers() {
+    clovers () {
       const start = (this.page - 1) * pageSize
       const end = this.page * pageSize
       return this.$store.getters.sortedClovers.slice(start, end)
     },
-    allLoadedCloverCount() {
+    allLoadedCloverCount () {
       return this.$store.state.allClovers.length
     },
-    nextPage() {
+    nextPage () {
       if (this.clovers.length < 12) return false
       return `/feed/page/${this.page + 1}`
     },
-    prevPage() {
+    prevPage () {
       if (this.page === 1) {
         return false
       } else if (this.page === 2) {
@@ -139,35 +139,35 @@ export default {
         return `/feed/page/${this.page - 1}`
       }
     },
-    newCloversCount() {
+    newCloversCount () {
       return this.newClovers.length
     },
-    filterBorderStyles() {
+    filterBorderStyles () {
       if (!this.filtersVisible) return
       return {
         borderTopColor: 'rgb(0, 180, 100)'
       }
     },
     sortBy: {
-      get() {
+      get () {
         return this.$store.state.sortBy
       },
-      set(newVal) {
+      set (newVal) {
         this.updateOrder(newVal)
         this.toggleFilters()
       }
     },
     feedFilter: {
-      get() {
+      get () {
         return this.$store.state.feedFilter
       },
-      set(newVal) {
+      set (newVal) {
         this.$router.push('/feed')
         this.updateFilter(newVal)
         this.toggleFilters()
       }
     },
-    dropArrowRotate() {
+    dropArrowRotate () {
       if (!this.filtersVisible) return
       return {
         transform: 'rotate(180deg)'
@@ -182,27 +182,27 @@ export default {
     cloverImage,
     pluralize,
 
-    showNewClovers() {
+    showNewClovers () {
       this.$router.push('/feed')
       this.showNew()
     },
-    cloverPrice({ price }) {
+    cloverPrice ({ price }) {
       return price.toFormat(0)
     },
-    forSale({ price }) {
+    forSale ({ price }) {
       if (typeof price !== 'object') price = new BigNumber(price)
       return price.gt(0)
     },
-    inCurationMarket({ owner }) {
+    inCurationMarket ({ owner }) {
       return owner === this.curationMarketAddress
     },
-    toggleFilters() {
+    toggleFilters () {
       this.filtersVisible = !this.filtersVisible
     },
-    showFilters() {
+    showFilters () {
       this.filtersVisible = true
     },
-    hideFilters() {
+    hideFilters () {
       this.filtersVisible = false
     },
 
@@ -220,7 +220,7 @@ export default {
     //   }
     // }
   },
-  mounted() {
+  mounted () {
     if (!this.clovers.length) {
       let lastPage = Math.ceil(this.allLoadedCloverCount / 12)
       this.$router.replace(`/feed/page/${lastPage}`)
