@@ -20,7 +20,7 @@ export default {
   methods: {
     ...mapActions(['begin', 'setUpSocket', 'getAllUsers', 'getClovers'])
   },
-  async mounted() {
+  async mounted () {
     await this.setUpSocket()
     await this.begin()
     await this.getClovers()

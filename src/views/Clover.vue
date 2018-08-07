@@ -75,7 +75,7 @@ export default {
   props: {
     board: { type: String, required: true }
   },
-  data() {
+  data () {
     return {
       localClover: null,
       confirmVisible: false,
@@ -85,33 +85,33 @@ export default {
     }
   },
   computed: {
-    showSalePrice() {
+    showSalePrice () {
       return this.clover && this.clover.price && this.clover.price.gt(0)
     },
-    sellPriceWei() {
+    sellPriceWei () {
       return this.sellPrice ? utils.toWei(this.sellPrice) : '0'
     },
-    owner() {
+    owner () {
       return addrToUser(this.allUsers, this.clover.owner)
     },
-    prettyPrice() {
+    prettyPrice () {
       return prettyBigNumber(this.clover.price, 0)
     },
-    price() {
+    price () {
       return this.clover && this.clover.price
     },
-    originalPrice() {
+    originalPrice () {
       return (
         this.clover &&
         this.clover.originalPrice &&
         prettyBigNumber(this.clover.price, 0)
       )
     },
-    balanceAfter() {
+    balanceAfter () {
       if (!this.userBalance) return false
       return bnMinus(this.userBalance, this.price, 0)
     },
-    isMyClover() {
+    isMyClover () {
       return (
         this.clover &&
         this.clover.owner &&
@@ -119,11 +119,11 @@ export default {
         this.clover.owner.toLowerCase() === this.account.toLowerCase()
       )
     },
-    clover() {
+    clover () {
       let cloverIndex = this.allClovers.findIndex(c => c.board === this.board)
       return cloverIndex >= 0 ? this.allClovers[cloverIndex] : this.localClover
     },
-    canBuy() {
+    canBuy () {
       if (!this.user) return false
       if (!makeBn(this.price).gt(0)) return false
       // return makeBn(this.balanceAfter).gte(0)
@@ -133,7 +133,7 @@ export default {
     ...mapGetters(['prettyUserBalance', 'userBalance'])
   },
   methods: {
-    async makeBuy() {
+    async makeBuy () {
       if (this.loading) return
       try {
         this.loading = true
@@ -143,7 +143,7 @@ export default {
       }
       this.loading = false
     },
-    async makeSell() {
+    async makeSell () {
       if (this.loading) return
       try {
         this.loading = true
@@ -157,7 +157,7 @@ export default {
     prettyBigNumber,
     ...mapActions(['buy', 'sell'])
   },
-  created() {
+  created () {
     if (this.clover) return
     this.$store.dispatch('getClover', this.board).then(clvr => {
       this.localClover = clvr
