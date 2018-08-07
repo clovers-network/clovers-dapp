@@ -20,11 +20,11 @@ export default {
   methods: {
     ...mapActions(['begin', 'setUpSocket', 'getAllUsers', 'getClovers'])
   },
-  async mounted () {
-    await this.setUpSocket()
-    await this.begin()
-    await this.getClovers()
-    await this.getAllUsers()
+  mounted () {
+    this.setUpSocket()
+    this.begin()
+    this.getClovers()
+    this.getAllUsers()
   },
   components: { AppHeader, Foot, Messages }
 }
