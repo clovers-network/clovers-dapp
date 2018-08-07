@@ -189,7 +189,7 @@ export default {
       this.showNew()
     },
     cloverPrice ({ price }) {
-      return prettyBigNumber(price, 3)
+      return prettyBigNumber(price, 0)
     },
     forSale ({ price }) {
       if (typeof price !== 'object') price = new BigNumber(price)
