@@ -282,6 +282,8 @@ textarea {
   margin-bottom: var(--space-1);
 }
 
+.email, .button { border-radius: 0; }
+
 .input {
   background-color: transparent;
   border-style: unset;
@@ -289,6 +291,7 @@ textarea {
   font-size: var(--h4);
   padding: var(--space-2);
   width: 100%;
+  border-radius: 0;
 
   &.big {
     font-size: var(--h1);
