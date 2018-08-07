@@ -19,7 +19,9 @@
         symmetry-icons.p1(:board="clover.symmetries")
       .absolute.bg-contain.bg-center.bg-no-repeat(role="img", :style="'background-image:url(' + cloverImage(clover) + ')'")
     footer
+      //- Owner Options
       div(v-if="isMyClover")
+        //- Sell / RFT Options
         small.border-top.center.p2.block.h6(v-show="!view") You currently own this Clover
         .bg-green.flex.white.font-exp.h-bttm-bar.justify-center(v-show="!view")
           button.col-6.flex.border-right(@click="view = 'sell'")
@@ -45,11 +47,13 @@
             p.mb3 Convert this clover into a publicly traded asset.
             label.block.h6 Initial invesment&nbsp; <span class="opacity-50">(optional)</span>
             .relative
-              input.block.col-12.mt1.border-bottom.font-exp.py1.pr3(type="number", v-model="investTkns", min="0")
+              input.block.col-12.mt1.border-bottom.font-exp.py1.pr3(type="number", v-model="invesment", min="0")
               span.absolute.top-0.right-0.h-100.opacity-50.flex
                 span.block.m-auto ♣
-          button.h-bttm-bar.font-exp.flex.border-top.col-12
-            span.block.m-auto Confirm
+          button.h-bttm-bar.flex.border-top.col-12(@click="makeRFT")
+            span(v-if="!loading").block.m-auto.font-exp Confirm
+            wavey-menu.m-auto(v-else :isWhite="true")
+      //- Buy
       .bg-green(v-else-if="canBuy")
         button.h-bttm-bar.white.flex.col-12.pointer(@click="confirmVisible = !confirmVisible")
           span.block.m-auto.font-exp Buy for {{prettyPrice}} ♣
@@ -65,6 +69,7 @@
             button(@click="makeBuy").h-bttm-bar.white.border-top.flex.col-12.pointer
               span(v-if="!loading").block.m-auto.font-exp Confirm
               wavey-menu.m-auto(v-else :isWhite="true")
+      //- Unavailable
       .bg-green(v-else)
         .h-bttm-bar.white.border-top.flex.col-12
           span.block.m-auto.font-exp Unavailable
@@ -94,7 +99,7 @@ export default {
       confirmVisible: false,
       view: null,
       sellPrice: 0,
-      investTkns: 0,
+      invesment: 0,
       loading: false
     }
   },
@@ -113,6 +118,9 @@ export default {
     },
     price () {
       return this.clover && this.clover.price
+    },
+    investmentInWei () {
+      return this.invesment ? utils.toWei(this.invesment) : '0'
     },
     originalPrice () {
       return (
@@ -167,9 +175,19 @@ export default {
       }
       this.loading = false
     },
+    async makeRFT () {
+      if (this.loading) return
+      try {
+        this.loading = true
+        await this.makeCloverRFT({ board: this.clover.board, investmentInWei: this.investmentInWei })
+      } catch (error) {
+        console.error(error)
+      }
+      this.loading = false
+    },
     cloverImage,
     prettyBigNumber,
-    ...mapActions(['buy', 'sell'])
+    ...mapActions(['buy', 'sell', 'makeCloverRFT'])
   },
   created () {
     if (this.clover) return
