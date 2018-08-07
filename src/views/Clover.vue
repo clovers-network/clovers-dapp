@@ -1,15 +1,15 @@
 <template lang="pug">
   article.min-h-100vh.mt-deduct-header.flex.flex-column.justify-between(v-if="clover")
     header
-      .mt-header-h.px3.border-bottom
+      .mt-header-h.border-bottom
         //- username, editable
         .h-header.relative.flex.items-center.justify-center(v-if="signedIn && isMyClover")
-          div.absolute.top-0.left-0.right-0.bg-white.flex(v-show="!formFocussed")
+          div.absolute.overlay.bg-white.flex(v-show="!formFocussed")
             label.input.truncate.flex-auto.center.px4.font-mono(v-text="form.name")
             label.absolute.top-0.right-0.h-100.px2.block.regular.nowrap.flex(for="clvname")
               span.block.flip-x.m-auto ✎
           form.col-12(@submit.prevent="updateName")
-            input#clvname.input.font-mono.center.col-12(@focus="focusCloverName", @blur="blurCloverName", ref="nameInput", placeholder="name", v-model="form.name", autocomplete="off")
+            input#clvname.input.font-mono.center.col-12.px4(@focus="focusCloverName", @blur="blurCloverName", ref="nameInput", placeholder="name", v-model="form.name", autocomplete="off")
             transition(name="fade")
               button.absolute.right-0.top-0.p2(v-if="formFocussed", type="submit")
                 img(src="~../assets/icons/arrow-right.svg", width="18", height="18")
@@ -304,6 +304,9 @@ export default {
         type: 'success'
       })
     },
+    setFormName (clover) {
+      if (clover) this.form.name = clover.name || clover.board
+    },
 
     ...mapActions([
       'buy',
@@ -323,9 +326,12 @@ export default {
       this.localClover = clvr
     })
   },
+  mounted () {
+    this.setFormName(this.clover)
+  },
   watch: {
-    clover ({ name, board }) {
-      this.form.name = name || board
+    clover (clvr) {
+      this.setFormName(clvr)
     }
   },
   components: { SymmetryIcons, WaveyMenu, Clv }
