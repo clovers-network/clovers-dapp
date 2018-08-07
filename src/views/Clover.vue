@@ -129,8 +129,8 @@ export default {
       // return makeBn(this.balanceAfter).gte(0)
       return true
     },
-    ...mapState(['account', 'user', 'allUsers', 'allClovers']),
-    ...mapGetters(['prettyUserBalance', 'userBalance'])
+    ...mapState(['account', 'allUsers', 'allClovers']),
+    ...mapGetters(['prettyUserBalance', 'user', 'userBalance'])
   },
   methods: {
     async makeBuy () {

@@ -137,12 +137,10 @@ export default {
   async getAccount ({ commit, dispatch, state }) {
     let accounts = await global.web3.eth.getAccounts()
     if (accounts.length && state.account !== accounts[0].toLowerCase()) {
-      dispatch('getUser', accounts[0])
       commit('SET_UNLOCKED', true)
       commit('SET_ACCOUNT', accounts[0])
       commit('MOVE_ANON_CLOVERS')
     } else if (!accounts.length && (state.account || state.unlocked)) {
-      dispatch('getUser', null)
       commit('SET_UNLOCKED', false)
       commit('SET_ACCOUNT', null)
       throw new Error('account-locked')
@@ -183,22 +181,22 @@ export default {
       return data
     })
   },
-  async getUser ({ state, commit }, account) {
-    if (typeof account === 'string') {
-      account = account.toLowerCase()
-    }
-    if (state.account === account) return
-    if (!account) {
-      commit('SET_USER', anonUser)
-      return
-    }
-    return axios.get(apiUrl(`/users/${account}`)).then(({ data }) => {
-      if (!data.address) {
-        data = Object.assign(anonUser, { address: account, name: account })
-      }
-      commit('SET_USER', data)
-    })
-  },
+  // async getUser ({ state, commit }, account) {
+  //   if (typeof account === 'string') {
+  //     account = account.toLowerCase()
+  //   }
+  //   if (state.account === account) return
+  //   if (!account) {
+  //     commit('SET_USER', anonUser)
+  //     return
+  //   }
+  //   return axios.get(apiUrl(`/users/${account}`)).then(({ data }) => {
+  //     if (!data.address) {
+  //       data = Object.assign(anonUser, { address: account, name: account })
+  //     }
+  //     commit('SET_USER', data)
+  //   })
+  // },
   async changeUsername ({ commit, getters }, { address, name }) {
     if (!address) return
     console.log('changing username')
@@ -213,7 +211,7 @@ export default {
         }
       )
       .then(({ data }) => {
-        commit('UPDATE_CURRENT_USER', data)
+        commit('UPDATE_USER', data)
       })
       .catch(console.log)
   },
