@@ -20,21 +20,29 @@
             bg="green")
       .px3.py2 Discover, collect and trade mathematically generated artworks.
       hr
-      h2.h2.green.font-exp The Field
-      img.p3(src="/img/cloud-face-animated.svg")
-      .px3.py2 Like looking for shapes in clouds you can browse through the Field of clovers as they're grown in real time looking for rare or interesting shapes.
+      router-link.block.mb3(
+        :to="{ name: 'Field' }")
+        h2.h2.green.font-exp The Field
+        img.p3(src="/img/cloud-face-animated.svg")
+        .px3.py2 Like looking for shapes in clouds you can browse through the Field of clovers as they're grown in real time looking for rare or interesting shapes.
       hr
-      h2.h2.green.font-exp The Feed
-      img.p3(src="/img/feed.svg")
-      .px3.py2 See, share and trade the latest Clovers that everyone has found!
+      router-link.block.mb3(
+        :to="{ name: 'Feed' }")
+        h2.h2.green.font-exp The Feed
+        img.p3(src="/img/feed.svg")
+        .px3.py2 See, share and trade the latest Clovers that everyone has found!
       hr
-      h2.h2.green.font-exp Club Tokens
-      img.p3(src="/img/club.svg")
-      .px3.py2 To register or buy Clovers, you use Club Tokens. You can get Club Tokens by blah blah blah.
+      router-link.block.mb3(
+        :to="{ name: 'Feed' }")
+        h2.h2.green.font-exp Club Tokens
+        img.p3(src="/img/club.svg")
+        .px3.py2 Trade or sell Clovers with Club Tokens! You can get Club Tokens by selling the Clovers you find or buying them in your account.
       hr
       h2.h2.green.font-exp Contact
-      img.p3(src="/img/letter.svg")
-      .px3.py2 Feel free to contact us at email@domain.com or sign up for our newsletter here.
+      span(@click="showNewsletterSignup = !showNewsletterSignup")
+        img.p3(src="/img/letter.svg")
+      .px3.py2 #[span.pointer(@click="showNewsletterSignup = !showNewsletterSignup") Click to sign up for our newsletter] or also feel free to email us at #[a(href="mailto:info@clovers.network") info@clovers.network].
+      newsletter-signup(v-if="showNewsletterSignup")
       hr
       h2.h2.green.font-exp Community
       img.p3(src="/img/github.svg")
@@ -44,11 +52,13 @@
 
 <script>
 import DotBtn from '@/components/DotBtn'
+import NewsletterSignup from '@/components/NewsletterSignup'
 
 export default {
   name: 'Welcome',
   data () {
     return {
+      showNewsletterSignup: false,
       list: [
         'c4c3c2e3f5b2f4g5g3e6d2e1d7e7a2c1f7e2f2g4g6b4b3d6a5a1c6h7d3a3g7g2b1c7f1h5f6a4g1c5g8h1b5h6f8h8d8h2h4f3d1h3b7a6b6e8c8a8b8a7',
         'c4c3d3e3f4f5c2c6f2g3h4b4g6f3d6e6a5d2c1b3c5h3e2a4d7e7a3g1c7b8b7g4b5d8h2g2c8d1e1h7a8g5e8f6h5b6h1a2a7b1a1f8f1b2f7a6g8h6h8g7',
@@ -75,7 +85,7 @@ export default {
       this.$refs.wide.scrollLeft = this.$refs.wide.scrollWidth / 2 - this.$el.offsetWidth / 2
     }
   },
-  components: { DotBtn }
+  components: { DotBtn, NewsletterSignup }
 }
 </script>
 

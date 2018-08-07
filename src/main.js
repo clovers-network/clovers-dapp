@@ -12,6 +12,8 @@ import CloverGridItem from '@/components/CloverGridItem'
 // import './registerServiceWorker'
 import ZeroClientProvider from 'web3-provider-engine/zero.js'
 
+import autofocus from 'vue-autofocus-directive'
+
 if (typeof web3 !== 'undefined') {
   // Use Mist/MetaMask's provider
   global.web3 = new Web3(web3.currentProvider)
@@ -31,6 +33,8 @@ Object.defineProperty(Vue.prototype, '$BN', { value: BN })
 
 Vue.component('clv', Clv)
 Vue.component('clover-grid-item', CloverGridItem)
+
+Vue.directive('autofocus', autofocus)
 
 Vue.config.productionTip = false
 Vue.config.devtools = true
