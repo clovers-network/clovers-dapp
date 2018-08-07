@@ -10,23 +10,23 @@
           <template v-if="inCurationMarket(clover)">
             <div class="col-5 flex flex-column justify-center pr3">
               <p class="h7 m0">Market Cap &clubs;</p>
-              <p class="h4 m0 truncate font-mono">0</p>
+              <p class="h4 m0 truncate font-mono truncate">0</p>
             </div>
             <div class="col-3 flex flex-column justify-center pr2">
               <p class="h7 m0">&clubs; / Share</p>
-              <p class="h4 m0 truncate font-mono">0</p>
+              <p class="h4 m0 truncate font-mono truncate">0</p>
             </div>
           </template>
 
           <template v-else>
             <div class="col-5 flex flex-column justify-center pr3">
               <p class="h7 m0">Name</p>
-              <p class="h4 m0 truncate font-mono">{{ clover.name }}</p>
+              <p class="h4 m0 truncate font-mono truncate">{{ clover.name }}</p>
             </div>
             <div class="col-3 flex flex-column justify-center pr2">
               <p class="h7 m0">Cost &clubs;</p>
               <p v-if="forSale(clover)" class="h4 m0">{{ cloverPrice(clover) }}</p>
-              <p class="h4 m0 font-mono">---</p>
+              <p v-else class="h4 m0 font-mono truncate">---</p>
             </div>
           </template>
 
@@ -41,7 +41,7 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-import { cloverLink, cloverImage, pluralize } from '@/utils'
+import { cloverLink, cloverImage, pluralize, prettyBigNumber } from '@/utils'
 
 export default {
   name: 'MyClovers',
@@ -54,7 +54,7 @@ export default {
     pluralize,
 
     cloverPrice ({ price }) {
-      return price.toFormat(0)
+      return prettyBigNumber(price, 0)
     },
     forSale ({ price }) {
       return price.gt(0)
