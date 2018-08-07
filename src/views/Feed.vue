@@ -103,7 +103,7 @@
 <script>
 import store from '@/store'
 import { mapState, mapGetters, mapMutations } from 'vuex'
-import { cloverLink, cloverImage, pluralize } from '@/utils'
+import { cloverLink, cloverImage, pluralize, prettyBigNumber } from '@/utils'
 import BigNumber from 'bignumber.js'
 const pageSize = 12
 
@@ -187,7 +187,7 @@ export default {
       this.showNew()
     },
     cloverPrice ({ price }) {
-      return price.toFormat(0)
+      return prettyBigNumber(price, 0)
     },
     forSale ({ price }) {
       if (typeof price !== 'object') price = new BigNumber(price)
