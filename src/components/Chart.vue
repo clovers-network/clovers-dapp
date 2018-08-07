@@ -1,5 +1,5 @@
 <template>
-  <article class="relative" style="padding-top: 55%">
+  <article class="relative" style="padding-top:calc(100vh - 524px);">
     <price-chart
       class="absolute top-0 left-0 right-0 bottom-0 bg-dots-green"
       :chart-data="chartData"
