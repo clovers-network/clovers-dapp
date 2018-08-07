@@ -11,7 +11,7 @@
         <!-- menu btn -->
         <button
           v-show="!$route.meta.backBtn"
-          class="menu-btn pointer relative"
+          class="menu-btn pointer relative py2 pr2"
           @click="showMenu = !showMenu"
           aria-label="Toggle Menu">
             <wavey-btn v-show="mining" :isWhite="showMenu"></wavey-btn>

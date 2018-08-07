@@ -181,25 +181,9 @@ export default {
       return data
     })
   },
-  // async getUser ({ state, commit }, account) {
-  //   if (typeof account === 'string') {
-  //     account = account.toLowerCase()
-  //   }
-  //   if (state.account === account) return
-  //   if (!account) {
-  //     commit('SET_USER', anonUser)
-  //     return
-  //   }
-  //   return axios.get(apiUrl(`/users/${account}`)).then(({ data }) => {
-  //     if (!data.address) {
-  //       data = Object.assign(anonUser, { address: account, name: account })
-  //     }
-  //     commit('SET_USER', data)
-  //   })
-  // },
-  async changeUsername ({ commit, getters }, { address, name }) {
+
+  async changeUsername ({ commit, getters, dispatch }, { address, name }) {
     if (!address) return
-    console.log('changing username')
     return axios
       .put(
         apiUrl(`/users/${address}`),
@@ -212,8 +196,22 @@ export default {
       )
       .then(({ data }) => {
         commit('UPDATE_USER', data)
+        dispatch('selfDestructMsg', {
+          type: 'success',
+          msg: 'Username updated'
+        })
       })
-      .catch(console.log)
+      .catch((err) => {
+        dispatch('selfDestructMsg', {
+          type: 'error',
+          msg: err.message
+        })
+        if ('response' in err) {
+          if (err.response.status === 401) {
+            commit('SIGN_OUT')
+          }
+        }
+      })
   },
   async getReward (_, _symmetries) {
     let val = await contracts.CloversController.instance.methods
@@ -324,9 +322,15 @@ export default {
     }
   },
 
-  signIn ({ state, commit }) {
+  signIn ({ state, commit, dispatch }) {
     const { account } = state
-    if (!account) return
+    if (!account) {
+      dispatch('selfDestructMsg', {
+        type: 'error',
+        msg: 'No ETH account to sign in with'
+      })
+      return
+    }
     global.web3.currentProvider.sendAsync(
       {
         method: 'eth_signTypedData',
@@ -334,13 +338,19 @@ export default {
         from: account
       },
       (err, { result }) => {
-        console.error(err)
+        if (err) {
+          dispatch('selfDestructMsg', {
+            type: 'error',
+            msg: 'Could not sign in'
+          })
+          return
+        }
         commit('SIGN_IN', { account, signature: result })
       }
     )
   },
 
-  updateCloverName ({ getters, commit }, clover) {
+  updateCloverName ({ getters, commit, dispatch }, clover) {
     const { board, name } = clover
     // if (!getters.authHeader) alert('Not signed in, this won\'t work')
     return axios
@@ -354,9 +364,17 @@ export default {
         }
       )
       .then(({ data }) => {
-        console.log(data)
+        dispatch('selfDestructMsg', {
+          type: 'success',
+          msg: 'Clover name updated'
+        })
       })
-      .catch(console.log)
+      .catch((err) => {
+        dispatch('selfDestructMsg', {
+          type: 'error',
+          msg: err.message
+        })
+      })
   },
 
   // Contract Interactions
