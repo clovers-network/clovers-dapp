@@ -38,6 +38,8 @@
 
 @import 'basscss-addons/modules/all';
 
+@import 'animate.css';
+
 @import './settings';
 
 @import './helpers';

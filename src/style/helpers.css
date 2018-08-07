@@ -60,7 +60,7 @@
 .transl-x-100{ transform: translateX(100%); }
 .flip-x{transform:scaleX(-1);}
 
-.trans-transform{ transition: transform var(--anim-timing-long); }
+.trans-transform{ transition: transform var(--anim-timing-medium); }
 .trans-opacity-long{ transition: opacity var(--anim-timing-long); }
 
 .pre {white-space: pre;}

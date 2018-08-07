@@ -1,6 +1,6 @@
 <template>
   <header
-    class="sticky top-0 z1"
+    class="sticky top-0 z2"
     :class="{'bg-white green': !showMenu, 'white': showMenu}">
     <!-- top bar -->
     <div
@@ -11,13 +11,19 @@
         <!-- menu btn -->
         <button
           v-show="!$route.meta.backBtn"
-          class="menu-btn pointer"
+          class="menu-btn pointer relative"
           @click="showMenu = !showMenu"
           aria-label="Toggle Menu">
             <wavey-btn v-show="mining" :isWhite="showMenu"></wavey-btn>
             <img class="block" v-show="!mining" :src="showMenu
               ? require('../assets/icons/hamburger-white.svg')
               : require('../assets/icons/hamburger.svg')" />
+            <div v-if="showBadge"
+              class="found-badge border border-green bounceIn animated">
+                <span class="block">
+                  {{ symms }}
+                </span>
+            </div>
         </button>
         <!-- back btn -->
         <button v-show="$route.meta.backBtn" class="pointer p2 col-3 left-align" @click="$router.go(-1)">Back</button>
@@ -75,12 +81,26 @@ export default {
   data () {
     return {
       mining: false,
-      showMenu: false
+      showMenu: false,
+      showBadge: false
     }
   },
   computed: {
     title () {
       return this.$route.meta.title || 'Clovers'
+    },
+    symms: {
+      get () {
+        return this.$store.state.miningStats.symms
+      }
+    }
+  },
+  watch: {
+    symms: function () {
+      this.showBadge = true
+    },
+    showMenu: function () {
+      this.showBadge = false
     }
   },
   mounted () {
@@ -107,4 +127,17 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="css" scoped>
+  .found-badge {
+    position: absolute;
+    left: 15px;
+    top: -3px;
+    border-radius: 16px;
+    padding: 3px;
+    padding-left: 7px;
+    padding-right: 7px;
+    background: var(--green);
+    color: white;
+    font-size: var(--small-font-size);
+  }
+</style>
