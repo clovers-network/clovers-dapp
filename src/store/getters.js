@@ -3,14 +3,14 @@ import { Clovers, CurationMarket } from 'clovers-contracts'
 import { prettyBigNumber } from '@/utils'
 
 export default {
-  userBalance ({ user }) {
+  userBalance (_, { user }) {
     return user && user.balance
   },
-  prettyUserBalance ({ user }) {
-    if (!user) return
+  prettyUserBalance (_, { user }) {
+    if (!user) return '0'
     return prettyBigNumber(user.balance, 0)
   },
-  sortedClovers ({ sortBy, feedFilter, allClovers }) {
+  sortedClovers ({ sortBy, feedFilter, allClovers }, {curationMarketAddress}) {
     return allClovers
       .slice(0)
       .sort((a, b) => {
@@ -21,7 +21,14 @@ export default {
       })
       .filter(clover => {
         if (feedFilter === 'market') {
+          if (clover.board === '0x955565555995665965956565565a5556') {
+            console.log(clover.price)
+            console.log(clover.price.toString(10))
+            console.log(clover.price.gt(0))
+          }
           return clover.price.gt(0)
+        } else if (feedFilter === 'curationMarket') {
+          return clover.owner.toLowerCase() === curationMarketAddress.toLowerCase()
         }
         return true
       })
@@ -33,7 +40,16 @@ export default {
     })
   },
   user ({ allUsers, account }) {
-    return allUsers.find(u => u.address.toLowerCase() === account.toLowerCase())
+    if (!account) return { address: null, name: 'anon', clovers: [] }
+    let current = allUsers.find(u => u.address.toLowerCase() === account.toLowerCase())
+    if (!current) {
+      return {
+        address: account,
+        name: account,
+        clovers: []
+      }
+    }
+    return current
   },
   newCloversCount ({ newClovers }) {
     return newClovers.length

@@ -181,25 +181,9 @@ export default {
       return data
     })
   },
-  // async getUser ({ state, commit }, account) {
-  //   if (typeof account === 'string') {
-  //     account = account.toLowerCase()
-  //   }
-  //   if (state.account === account) return
-  //   if (!account) {
-  //     commit('SET_USER', anonUser)
-  //     return
-  //   }
-  //   return axios.get(apiUrl(`/users/${account}`)).then(({ data }) => {
-  //     if (!data.address) {
-  //       data = Object.assign(anonUser, { address: account, name: account })
-  //     }
-  //     commit('SET_USER', data)
-  //   })
-  // },
-  async changeUsername ({ commit, getters }, { address, name }) {
+
+  async changeUsername ({ commit, getters, dispatch }, { address, name }) {
     if (!address) return
-    console.log('changing username')
     return axios
       .put(
         apiUrl(`/users/${address}`),
@@ -212,8 +196,22 @@ export default {
       )
       .then(({ data }) => {
         commit('UPDATE_USER', data)
+        dispatch('selfDestructMsg', {
+          type: 'success',
+          msg: 'Username updated'
+        })
       })
-      .catch(console.log)
+      .catch((err) => {
+        dispatch('selfDestructMsg', {
+          type: 'error',
+          msg: err.message
+        })
+        if ('response' in err) {
+          if (err.response.status === 401) {
+            commit('SIGN_OUT')
+          }
+        }
+      })
   },
   async getReward (_, _symmetries) {
     let val = await contracts.CloversController.instance.methods
@@ -235,10 +233,6 @@ export default {
     socket.on('disconnect', () => {
       console.log('disconnected')
     })
-    // socket.on('newUser', user => {
-    //   commit('ADD_USER', user)
-    //   console.log(user)
-    // })
     socket.on('updateUser', user => {
       console.log('new user info!', user)
       commit('UPDATE_USER', user)
@@ -328,9 +322,15 @@ export default {
     }
   },
 
-  signIn ({ state, commit }) {
+  signIn ({ state, commit, dispatch }) {
     const { account } = state
-    if (!account) return
+    if (!account) {
+      dispatch('selfDestructMsg', {
+        type: 'error',
+        msg: 'No ETH account to sign in with'
+      })
+      return
+    }
     global.web3.currentProvider.sendAsync(
       {
         method: 'eth_signTypedData',
@@ -338,13 +338,19 @@ export default {
         from: account
       },
       (err, { result }) => {
-        console.error(err)
+        if (err) {
+          dispatch('selfDestructMsg', {
+            type: 'error',
+            msg: 'Could not sign in'
+          })
+          return
+        }
         commit('SIGN_IN', { account, signature: result })
       }
     )
   },
 
-  updateCloverName ({ getters, commit }, clover) {
+  updateCloverName ({ getters, commit, dispatch }, clover) {
     const { board, name } = clover
     // if (!getters.authHeader) alert('Not signed in, this won\'t work')
     return axios
@@ -358,25 +364,31 @@ export default {
         }
       )
       .then(({ data }) => {
-        console.log(data)
+        dispatch('selfDestructMsg', {
+          type: 'success',
+          msg: 'Clover name updated'
+        })
       })
-      .catch(console.log)
+      .catch((err) => {
+        dispatch('selfDestructMsg', {
+          type: 'error',
+          msg: err.message
+        })
+      })
   },
 
   // Contract Interactions
   async getBuy (store, { market, amount }) {
     if (!Number(amount) || Number(amount) < 0) return 0
     amount = utils.toWei(amount)
-    let receive = await contracts[market].instance.methods.getBuy(amount).call()
-    return receive
+    return contracts[market].instance.methods.getBuy(amount).call()
   },
   async getSell ({ state }, { market, amount }) {
     if (!Number(amount) || Number(amount) < 0) return 0
     amount = utils.toWei(amount)
-    let receive = await contracts[market].instance.methods
+    return contracts[market].instance.methods
       .getSell(amount)
       .call()
-    return receive
   },
   async invest ({ state }, { market, amount }) {
     if (!Number(amount) || Number(amount) < 0) throw new Error('Invalid amount')
@@ -443,6 +455,12 @@ export default {
       })
     }
   },
+  syncClover (_, clover) {
+    axios.get(apiUrl(`/clover/sync/${clover.board}`)).catch((error) => {
+      console.log('sync broken clover didn\'t work')
+      console.log(error)
+    })
+  },
   async buy ({ dispatch, state, commit }, clover) {
     // if clover exists it must be in SimpleCloversMarket
     // otherwise it is a claimClover
@@ -455,7 +473,10 @@ export default {
         .call()
       currentPrice = makeBn(currentPrice)
       // if 0 then it's not actually for sale
-      if (currentPrice.eq(0)) throw new Error('cant-buy-not-for-sale')
+      if (currentPrice.eq(0)) {
+        dispatch('syncClover', clover)
+        throw new Error('cant-buy-not-for-sale')
+      }
 
       // get balance of user in ClubToken
       let balanceOf = await contracts.ClubToken.instance.methods
@@ -467,7 +488,7 @@ export default {
       if (balanceOf.lt(currentPrice)) {
         value = getLowestPrice(contracts.ClubToken, balanceOf.sub(currentPrice))
       }
-      await contracts.SimpleCloversMarket.instance.methods
+      return contracts.SimpleCloversMarket.instance.methods
         .buy(clover.board)
         .send({
           from: state.account,
@@ -478,7 +499,7 @@ export default {
       if (!state.account) {
         await dispatch('getAnAccount')
       }
-      await claimClover({ keep: true, clover, account: state.account })
+      return claimClover({ keep: true, clover, account: state.account })
     }
   },
   async sell ({ state, dispatch, commit }, { clover, price }) {
@@ -500,14 +521,14 @@ export default {
       // otherwise they should sell it
       if (price.eq(0)) {
         // remove from market
-        await contracts.SimpleCloversMarket.instance.methods
+        return contracts.SimpleCloversMarket.instance.methods
           .removeSell(clover.board)
           .send({
             from: state.account
           })
       } else {
         // sell clover (update price)
-        await contracts.SimpleCloversMarket.instance.methods
+        return contracts.SimpleCloversMarket.instance.methods
           .sell(clover.board, price)
           .send({
             from: state.account
@@ -515,7 +536,7 @@ export default {
       }
     } else {
       // claim clover w option _keep = false
-      await claimClover({ keep: false, clover, account: state.account })
+      return claimClover({ keep: false, clover, account: state.account })
     }
   },
   async makeCloverRFT ({ state }, { board, investmentInWei = 0 }) {

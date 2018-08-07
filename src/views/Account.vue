@@ -3,12 +3,12 @@
     header.border-bottom
       //- username, editable
       .h-header.relative.flex.items-center.justify-center(v-if="signedIn")
-        div.absolute.top-0.left-0.right-0.bg-white.flex(v-show="!formFocussed")
-          label.input.truncate.flex-auto.center.px4.font-mono(v-text="form.name")
-          label.absolute.top-0.right-0.h-100.px2.block.regular.nowrap.flex(for="uname")
+        div.absolute.top-0.left-0.right-0.bottom-0.bg-white.flex(v-show="!formFocussed")
+          label.h-100.input.truncate.flex-auto.center.px4.font-mono(v-text="form.name")
+          label.absolute.top-0.right-0.h-100.px2.block.regular.nowrap.flex.pointer(for="uname")
             span.block.flip-x.m-auto ✎
-        form(@submit.prevent="updateName")
-          input#uname.input.font-mono.center(@focus="focusUsername", @blur="blurUsername", ref="nameInput", placeholder="name", v-model="form.name", autocomplete="off")
+        form.col-12(@submit.prevent="updateName")
+          input#uname.input.font-mono.center.col-12.px4(@focus="focusUsername", @blur="blurUsername", ref="nameInput", placeholder="name", v-model="form.name", autocomplete="off")
           transition(name="fade")
             button.absolute.right-0.top-0.p2(v-if="formFocussed", type="submit")
               img(src="~../assets/icons/arrow-right.svg", width="18", height="18")
@@ -51,12 +51,17 @@ export default {
   },
   methods: {
     focusUsername () {
-      this.formFocussed = true
+      setTimeout(() => {
+        this.formFocussed = true
+      }, 100)
     },
     blurUsername () {
-      this.formFocussed = false
+      setTimeout(() => {
+        this.formFocussed = false
+      }, 50)
     },
     updateName () {
+      if (!this.form.name.length || !this.user) return
       this.$refs.nameInput.blur()
       this.changeUsername({
         address: this.user.address,

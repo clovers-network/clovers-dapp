@@ -1,8 +1,23 @@
 <template lang="pug">
-  article.min-h-100vh.mt-deduct-header.flex.flex-column.justify-between
+  article.min-h-100vh.mt-deduct-header.flex.flex-column.justify-between(v-if="clover")
     header
-      .mt-header-h.px3.py2.border-bottom
-        p.m0.truncate.center.font-mono(v-if="clover") {{ clover.name }}
+      .mt-header-h.px3.border-bottom
+        //- username, editable
+        .h-header.relative.flex.items-center.justify-center(v-if="signedIn && isMyClover")
+          div.absolute.top-0.left-0.right-0.bg-white.flex(v-show="!formFocussed")
+            label.input.truncate.flex-auto.center.px4.font-mono(v-text="form.name")
+            label.absolute.top-0.right-0.h-100.px2.block.regular.nowrap.flex(for="clvname")
+              span.block.flip-x.m-auto ✎
+          form.col-12(@submit.prevent="updateName")
+            input#clvname.input.font-mono.center.col-12(@focus="focusCloverName", @blur="blurCloverName", ref="nameInput", placeholder="name", v-model="form.name", autocomplete="off")
+            transition(name="fade")
+              button.absolute.right-0.top-0.p2(v-if="formFocussed", type="submit")
+                img(src="~../assets/icons/arrow-right.svg", width="18", height="18")
+        //- else, Login
+        .h-header.font-mono.flex.px2.relative(v-else)
+          .p2.m-auto.truncate {{ clover.name }}
+          button.absolute.top-0.right-0.h-100.px2.block.regular(v-if="isMyClover", @click="signIn")
+            span Login
       .flex.border-bottom.h-bttm-bar
         //- owner
         .col-6.px3.border-right.flex
@@ -15,12 +30,11 @@
             small.block.lh1.h6 {{ isRFT ? 'Share Price' : showSalePrice ? 'For Sale' : 'Original Price'}}
             .font-exp.mt1 {{ isRFT ? 'n/a' : showSalePrice ? prettyPrice : originalPrice }} ♣
     //- clover image
-    figure.flex-auto.relative.p3.md-p4.flex.items-center.justify-center(@click="view = false")
+    figure.flex-auto.relative.p3.md-p4.flex.items-center.justify-center.overflow-hidden(@click="view = false")
       .absolute.p2.z1.top-0.left-0
-        symmetry-icons(v-if="clover", :board="clover.symmetries")
-      clv.col-12(v-if="clover", :moveString="cloverMovesString", :isRFT="isRFT", :style="'max-width:' + maxImgW + 'px'")
-      //- sizer
-      .img-sizer.absolute(ref="sizer")
+        symmetry-icons(:board="clover.symmetries")
+      .absolute.overlay.flex.items-center.justify-center.p3
+        clv.col-10.mx-auto(:moveString="cloverMovesString", :isRFT="isRFT")
     footer
       //- Owner Options
       div(v-if="isMyClover")
@@ -86,9 +100,13 @@
               .col-6.p3
                 small.block.lh1.h6 ♣ Balance After
                 .font-exp.mt2 {{ balanceAfter }}
-            button(@click="makeBuy").h-bttm-bar.white.border-top.flex.col-12.pointer
+            //- confirm, if can buy
+            button(@click="makeBuy", v-if="canAfford").h-bttm-bar.white.border-top.flex.col-12.pointer
               span(v-if="!loading").block.m-auto.font-exp Confirm
               wavey-menu.m-auto(v-else :isWhite="true")
+            //- can't buy
+            div(v-else).h-bttm-bar.white.border-top.flex.col-12.pointer
+              span.block.m-auto.font-exp Insufficient Funds
       //- Unavailable
       .bg-green(v-else)
         .h-bttm-bar.white.border-top.flex.col-12
@@ -118,16 +136,23 @@ export default {
   },
   data () {
     return {
+      formFocussed: false,
+      form: { name: null },
       localClover: null,
       confirmVisible: false,
       view: null,
       sellPrice: 0,
       invesment: 0,
-      loading: false,
-      maxImgW: 0
+      loading: false
     }
   },
   computed: {
+    user () {
+      return this.$store.state.user
+    },
+    signedIn () {
+      return !!this.$store.getters.authHeader
+    },
     showSalePrice () {
       return this.clover && this.clover.price && this.clover.price.gt(0)
     },
@@ -138,7 +163,7 @@ export default {
       return this.clover && addrToUser(this.allUsers, this.clover.owner)
     },
     prettyPrice () {
-      return prettyBigNumber(this.clover.price, 0)
+      return prettyBigNumber(this.clover.price, 3)
     },
     price () {
       return this.clover && this.clover.price
@@ -153,9 +178,13 @@ export default {
         prettyBigNumber(this.clover.price, 0)
       )
     },
-    balanceAfter () {
-      if (!this.userBalance) return false
+    balanceAfterBn () {
+      if (!this.userBalance) return '0'
       return bnMinus(this.userBalance, this.price, 0)
+    },
+    balanceAfter () {
+      if (!this.userBalance) return '0'
+      return prettyBigNumber(this.balanceAfterBn, 0)
     },
     isMyClover () {
       return (
@@ -184,15 +213,20 @@ export default {
       return mvs && reversi.byteMovesToStringMoves(...mvs)
     },
     canBuy () {
-      if (!this.user) return false
+      if (!this.user || !this.price) return false
       if (!makeBn(this.price).gt(0)) return false
-      // return makeBn(this.balanceAfter).gte(0)
       return true
+    },
+    canAfford () {
+      return this.canBuy && this.balanceAfterBn.gte(0)
     },
     ...mapState(['account', 'allUsers', 'allClovers']),
     ...mapGetters(['prettyUserBalance', 'user', 'userBalance', 'curationMarketAddress'])
   },
   methods: {
+    cloverImage,
+    prettyBigNumber,
+
     async makeBuy () {
       if (this.loading) return
       try {
@@ -223,12 +257,27 @@ export default {
       }
       this.loading = false
     },
-    setImgSizer () {
-      this.maxImgW = this.$refs.sizer && this.$refs.sizer.offsetHeight
+    focusCloverName () {
+      setTimeout(() => {
+        this.formFocussed = true
+      }, 100)
     },
-    cloverImage,
-    prettyBigNumber,
-    ...mapActions(['buy', 'sell', 'makeCloverRFT'])
+    blurCloverName () {
+      setTimeout(() => {
+        this.formFocussed = false
+      }, 50)
+    },
+    updateName () {
+      if (!this.form.name.length) return
+      this.$refs.nameInput.blur()
+      let clv = {
+        board: this.clover.board,
+        name: this.form.name
+      }
+      this.updateCloverName(clv)
+    },
+
+    ...mapActions(['buy', 'sell', 'makeCloverRFT', 'updateCloverName', 'signIn'])
   },
   created () {
     if (this.clover) return
@@ -236,8 +285,10 @@ export default {
       this.localClover = clvr
     })
   },
-  mounted () {
-    this.setImgSizer()
+  watch: {
+    clover ({ name, board }) {
+      this.form.name = name || board
+    }
   },
   components: { SymmetryIcons, WaveyMenu, Clv }
 }
@@ -262,4 +313,7 @@ figure > .img-sizer {
 .confirm-enter-to {
   max-height: 24rem;
 }
+
+.imgsizer-enter-active{transition:opacity 100ms;}
+.imgsizer-enter{opacity:0;}
 </style>

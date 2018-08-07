@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import BigNumber from 'bignumber.js'
 import { formatClover } from '@/utils'
 
@@ -99,6 +100,11 @@ export default {
     state.tokens = { ...state.tokens, [account]: signature }
     updateLocal('clover_tokens', state.tokens)
   },
+  SIGN_OUT (state) {
+    if (!state.account) return
+    Vue.delete(state.tokens, state.account)
+    updateLocal('clover_tokens', state.tokens)
+  },
 
   // marketplace
   NEW_CLOVER_FROM_CHAIN (state, clover) {
@@ -108,6 +114,12 @@ export default {
   },
   SHOW_NEW_CLOVERS (state) {
     // move new chain clovers to feed
+    let i = state.newClovers.length
+    while (i--) {
+      if (state.allClovers.findIndex(c => c.board === state.newClovers[i].board) > -1) {
+        state.newClovers.splice(i, 1)
+      }
+    }
     state.allClovers.unshift(...state.newClovers.splice(0))
   },
   UPDATE_FEED_ORDER (state, sortBy) {
@@ -137,11 +149,7 @@ export default {
   },
   ADD_CLOVER (state, clover) {
     clover = formatClover(clover)
-    let cloverIndex = state.allClovers.findIndex(v => {
-      console.log(v.board, clover.board, v.board === clover.board)
-      return v.board === clover.board
-    })
-    console.log(cloverIndex)
+    let cloverIndex = state.allClovers.findIndex(v => v.board === clover.board)
     if (cloverIndex < 0) {
       // clover.price = new BigNumber(clover.price)
       state.allClovers.push(clover)
@@ -164,6 +172,8 @@ export default {
     )
     if (userKey > -1) {
       state.allUsers.splice(userKey, 1, user)
+    } else {
+      state.allUsers.push(user)
     }
   },
 
@@ -173,9 +183,6 @@ export default {
   ADD_LOG (state, log) {
     state.logs.push(log)
   },
-  // ADD_USER (state, user) {
-  //   state.users.push(user)
-  // },
   // UPDATE_USERS (state, users) {
   //   state.users = users
   // },

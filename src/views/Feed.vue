@@ -21,6 +21,7 @@
                     <select v-model="feedFilter">
                       <option value="all">All</option>
                       <option value="market">For sale</option>
+                      <option value="curationMarket">RFT</option>
                     </select>
                   </div>
                 </div>
@@ -77,7 +78,7 @@
             <div class="col-3 flex flex-column justify-center pr2">
               <p class="h7 m0">Cost &clubs;</p>
               <p v-if="forSale(clover)" class="h4 m0">{{ cloverPrice(clover) }}</p>
-              <p class="h4 m0 font-mono">---</p>
+              <p v-else class="h4 m0 font-mono">---</p>
             </div>
           </template>
 
@@ -86,6 +87,7 @@
           </div>
         </div>
       </li>
+      <li v-if="!clovers.length">Sorry No Clovers Here!</li>
     </ul>
 
     <nav v-if="nextPage" class="list-reset">
@@ -94,8 +96,8 @@
       </li>
     </nav>
 
-    <div v-if="newCloversCount" class="sticky bottom-0 bg-green white p2 center h-bttm-bar flex">
-      <a @click="showNewClovers" class="pointer block m-auto font-exp">Show {{ newCloversCount }} new {{ pluralize('Clover', newCloversCount) }}</a>
+    <div v-if="newCloversCount" @click="showNewClovers" class="sticky bottom-0 bg-green white p2 center h-bttm-bar flex pointer">
+      <span class="block m-auto font-exp">Show {{ newCloversCount }} new {{ pluralize('Clover', newCloversCount) }}</span>
     </div>
   </div>
 </template>
@@ -103,7 +105,7 @@
 <script>
 import store from '@/store'
 import { mapState, mapGetters, mapMutations } from 'vuex'
-import { cloverLink, cloverImage, pluralize } from '@/utils'
+import { cloverLink, cloverImage, pluralize, prettyBigNumber } from '@/utils'
 import BigNumber from 'bignumber.js'
 const pageSize = 12
 
@@ -187,7 +189,7 @@ export default {
       this.showNew()
     },
     cloverPrice ({ price }) {
-      return price.toFormat(0)
+      return prettyBigNumber(price, 3)
     },
     forSale ({ price }) {
       if (typeof price !== 'object') price = new BigNumber(price)

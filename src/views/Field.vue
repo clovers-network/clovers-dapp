@@ -1,7 +1,7 @@
 <template>
   <div class="mt2 pb-full-height">
     <keep-clover v-if="viewSingle" :clover="viewSingle" @close="viewSingle = null"></keep-clover>
-    <ul class="list-reset flex flex-wrap mxn2 mt0 mb3 px2">
+    <ul class="list-reset flex flex-wrap mxn2 mt0 mb3 px2 pb-full-height">
       <!-- item -->
       <li v-for="(clover, i) in generated" :key="i" class="p2 col-6 sm-col-4 relative appear-off" data-expand="-50" :data-appear="i % 3">
         <div class="pb-100 relative">
@@ -18,7 +18,7 @@
       </li>
     </ul>
     <!-- <button @click="getNext" class="btn btn-big btn-primary bg-green">Get some</button> -->
-    <div class="fixed left-0 right-0 bottom-0 bg-green white center p2">
+    <div class="sticky left-0 right-0 bottom-0 bg-green white center p2">
       <router-link to="/account">
         <span class="h3 font-exp">{{ pickCount }} {{ pluralize('Pick', pickCount) }}</span>
       </router-link>
@@ -105,7 +105,7 @@ export default {
 
 <style>
 .pb-full-height {
-  padding-bottom: calc(150vh - 275px);
+  padding-bottom: calc(100vh - 375px);
 }
 img {
   animation-duration: 800ms;
