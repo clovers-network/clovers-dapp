@@ -9,6 +9,13 @@ export function pad0x (string) {
   return `0x${string}`
 }
 
+export function addrToUser (allUsers, address) {
+  let userIndex = allUsers.findIndex(
+    u => u.address.toLowerCase() === address.toLowerCase()
+  )
+  return userIndex > -1 ? allUsers[userIndex].name || address : address
+}
+
 export function cloverImage ({ board, byteBoard }, size = 200) {
   if (byteBoard) {
     board = byteBoard

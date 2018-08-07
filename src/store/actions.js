@@ -266,12 +266,6 @@ export default {
   async cloverExists ({ state }, byteBoard) {
     return axios.get(apiUrl(`/clovers/${byteBoard}`)).then(({ data }) => data)
   },
-  addrToName ({ state }, address) {
-    let userIndex = state.allUsers.findIndex(
-      u => u.address.toLowerCase() === address.toLowerCase()
-    )
-    return userIndex > -1 ? state.allUsers[userIndex].name || address : address
-  },
   getAllUsers ({ state, commit }, page = 1) {
     console.log('getting users')
     if (state.allUsers.length) return
@@ -422,7 +416,12 @@ export default {
         .call()
       balance = new BigNumber(balance)
       if (balance.lt(amount)) {
-        throw new Error('balance too low: ' + balance.toString(10))
+        throw new Error(
+          'balance too low: ' +
+            balance.toString(10) +
+            ' < ' +
+            amount.toString(10)
+        )
       }
       return contracts.ClubTokenController.instance.methods.sell(amount).send({
         from: state.account
@@ -496,14 +495,14 @@ export default {
       // otherwise they should sell it
       if (price.eq(0)) {
         // remove from market
-        await contracts.SimpleCloversMarket.methods
+        await contracts.SimpleCloversMarket.instance.methods
           .removeSell(clover.board)
           .send({
             from: state.account
           })
       } else {
         // sell clover (update price)
-        await contracts.SimpleCloversMarket.methods
+        await contracts.SimpleCloversMarket.instance.methods
           .sell(clover.board, price)
           .send({
             from: state.account
