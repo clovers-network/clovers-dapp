@@ -198,11 +198,11 @@ export default {
       return this.clover && this.clover.owner.toLowerCase() === this.curationMarketAddress
     },
     currentOwner () {
-      const owner = this.clover && this.clover.owner
+      const owner = this.owner
       return !owner ? '-'
         : this.isMyClover ? 'You'
           : this.isRFT ? 'Curation Mrkt.'
-            : owner.toLowerCase() === this.cloversBankAddress ? this.price > 0 ? 'Clovers' : 'Pending...' : owner
+            : owner.toLowerCase() === this.$store.getters.cloversBankAddress ? this.price > 0 ? 'Clovers' : 'Pending...' : owner
     },
     clover () {
       let cloverIndex = this.allClovers.findIndex(c => c.board === this.board)
