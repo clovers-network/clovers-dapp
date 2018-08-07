@@ -33,7 +33,16 @@ export default {
     })
   },
   user ({ allUsers, account }) {
-    return allUsers.find(u => u.address.toLowerCase() === account.toLowerCase())
+    if (!account) return { address: null, name: 'anon', clovers: [] }
+    let current = allUsers.find(u => u.address.toLowerCase() === account.toLowerCase())
+    if (!current) {
+      return {
+        address: account,
+        name: account,
+        clovers: []
+      }
+    }
+    return current
   },
   newCloversCount ({ newClovers }) {
     return newClovers.length

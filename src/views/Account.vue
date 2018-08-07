@@ -3,8 +3,8 @@
     header.border-bottom
       //- username, editable
       .h-header.relative.flex.items-center.justify-center(v-if="signedIn")
-        div.absolute.top-0.left-0.right-0.bg-white.flex(v-show="!formFocussed")
-          label.input.truncate.flex-auto.center.px4.font-mono(v-text="form.name")
+        div.absolute.top-0.left-0.right-0.bottom-0.bg-white.flex(v-show="!formFocussed")
+          label.h-100.input.truncate.flex-auto.center.px4.font-mono(v-text="form.name")
           label.absolute.top-0.right-0.h-100.px2.block.regular.nowrap.flex(for="uname")
             span.block.flip-x.m-auto ✎
         form.col-12(@submit.prevent="updateName")
