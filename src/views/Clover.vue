@@ -6,7 +6,7 @@
       //- owner
       .col-6.p3.border-right
         small.block.lh1.h6 Current Owner
-        .font-exp.mt2.truncate.overflow-hidden {{ isMyClover ? 'You' : owner }}
+        .font-exp.mt2.truncate.overflow-hidden {{currentOwner}}
       //- price / value
       .col-6.p3
         small.block.lh1.h6 {{showSalePrice ? 'For Sale' : 'Original Price'}}
@@ -138,8 +138,18 @@ export default {
         this.clover &&
         this.clover.owner &&
         this.account &&
-        this.clover.owner.toLowerCase() === this.account.toLowerCase()
+        this.clover.owner.toLowerCase() === this.account
       )
+    },
+    isInCurationMarket () {
+      return this.clover.owner.toLowerCase() === this.curationMarketAddress
+    },
+    currentOwner () {
+      if (this.isMyClover) return 'You'
+      if (this.isInCurationMarket) return 'Curation Mrkt.'
+      const isOwnedByBank = this.clover.owner.toLowerCase() === this.cloversBankAddress
+      if (isOwnedByBank && this.price > 0) return 'Clovers'
+      else return 'Pending...'
     },
     clover () {
       let cloverIndex = this.allClovers.findIndex(c => c.board === this.board)
@@ -152,7 +162,7 @@ export default {
       return true
     },
     ...mapState(['account', 'allUsers', 'allClovers']),
-    ...mapGetters(['prettyUserBalance', 'user', 'userBalance'])
+    ...mapGetters(['prettyUserBalance', 'user', 'userBalance', 'curationMarketAddress'])
   },
   methods: {
     async makeBuy () {
