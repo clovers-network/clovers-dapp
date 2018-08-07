@@ -33,12 +33,12 @@
         .px3.py2 See, share and trade the latest Clovers that everyone has found!
       hr
       router-link.block.mb3(
-        :to="{ name: 'Feed' }")
+        :to="{ name: 'Account' }")
         h2.h2.green.font-exp Club Tokens
         img.p3(src="/img/club.svg")
         .px3.py2 Trade or sell Clovers with Club Tokens! You can get Club Tokens by selling the Clovers you find or buying them in your account.
       hr
-      h2.h2.green.font-exp Contact
+      h2.h2.green.font-exp Newsletter
       span(@click="showNewsletterSignup = !showNewsletterSignup")
         img.p3(src="/img/letter.svg")
       .px3.py2 #[span.pointer(@click="showNewsletterSignup = !showNewsletterSignup") Click to sign up for our newsletter] or also feel free to email us at #[a(href="mailto:info@clovers.network") info@clovers.network].
