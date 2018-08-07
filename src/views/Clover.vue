@@ -14,20 +14,20 @@
     //- section
       button.h-header.center.border-bottom.flex.pointer.col-12
         span.block.m-auto See Full History
-    figure.flex-auto.relative(@click="sellView = false")
+    figure.flex-auto.relative(@click="view = false")
       .absolute.p2.z1
         symmetry-icons.p1(:board="clover.symmetries")
       .absolute.bg-contain.bg-center.bg-no-repeat(role="img", :style="'background-image:url(' + cloverImage(clover) + ')'")
     footer
       div(v-if="isMyClover")
-        small.border-top.center.p2.block.h6(v-show="!sellView") You currently own this Clover
-        .bg-green.flex.white.font-exp.h-bttm-bar.justify-center(v-show="!sellView")
-          button.col-6.flex(:class="{'border-right': !sellView}", @click="sellView = !sellView")
+        small.border-top.center.p2.block.h6(v-show="!view") You currently own this Clover
+        .bg-green.flex.white.font-exp.h-bttm-bar.justify-center(v-show="!view")
+          button.col-6.flex.border-right(@click="view = 'sell'")
             span.block.m-auto Sell
-          button.col-6.flex(v-show="!sellView")
+          button.col-6.flex(@click="view = 'RFT'")
             span.block.m-auto RFT
         //- sellView
-        .bg-green.white(v-show="sellView")
+        .bg-green.white(v-show="view === 'sell'")
           .p3.border-top.border-bottom
             label.h6.lh1.block List for
             .relative
@@ -37,6 +37,19 @@
           button(@click="makeSell").h-bttm-bar.flex.col-12.border-top.pointer
             span(v-if="!loading").block.m-auto.font-exp Confirm
             wavey-menu.m-auto(v-else :isWhite="true")
+        //- RFTview
+        .bg-green.white(v-show="view === 'RFT'")
+          .h-bttm-bar.font-exp.flex.border-bottom
+            span.block.m-auto Make Public
+          .p3
+            p.mb3 Convert this clover into a publicly traded asset.
+            label.block.h6 Initial invesment&nbsp; <span class="opacity-50">(optional)</span>
+            .relative
+              input.block.col-12.mt1.border-bottom.font-exp.py1.pr3(type="number", v-model="investTkns", min="0")
+              span.absolute.top-0.right-0.h-100.opacity-50.flex
+                span.block.m-auto ♣
+          button.h-bttm-bar.font-exp.flex.border-top.col-12
+            span.block.m-auto Confirm
       .bg-green(v-else-if="canBuy")
         button.h-bttm-bar.white.flex.col-12.pointer(@click="confirmVisible = !confirmVisible")
           span.block.m-auto.font-exp Buy for {{prettyPrice}} ♣
@@ -79,8 +92,9 @@ export default {
     return {
       localClover: null,
       confirmVisible: false,
-      sellView: false,
+      view: null,
       sellPrice: 0,
+      investTkns: 0,
       loading: false
     }
   },
