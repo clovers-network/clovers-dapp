@@ -77,7 +77,7 @@
             <div class="col-3 flex flex-column justify-center pr2">
               <p class="h7 m0">Cost &clubs;</p>
               <p v-if="forSale(clover)" class="h4 m0">{{ cloverPrice(clover) }}</p>
-              <p class="h4 m0 font-mono">---</p>
+              <p v-else class="h4 m0 font-mono">---</p>
             </div>
           </template>
 
