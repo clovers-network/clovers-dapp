@@ -437,6 +437,12 @@ export default {
       })
     }
   },
+  syncClover (_, clover) {
+    axios.get(apiUrl(`/clover/sync/${clover.board}`)).catch((error) => {
+      console.log('sync broken clover didn\'t work')
+      console.log(error)
+    })
+  },
   async buy ({ dispatch, state, commit }, clover) {
     // if clover exists it must be in SimpleCloversMarket
     // otherwise it is a claimClover
@@ -449,7 +455,10 @@ export default {
         .call()
       currentPrice = makeBn(currentPrice)
       // if 0 then it's not actually for sale
-      if (currentPrice.eq(0)) throw new Error('cant-buy-not-for-sale')
+      if (currentPrice.eq(0)) {
+        dispatch('syncClover', clover)
+        throw new Error('cant-buy-not-for-sale')
+      }
 
       // get balance of user in ClubToken
       let balanceOf = await contracts.ClubToken.instance.methods

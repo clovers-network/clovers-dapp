@@ -21,6 +21,7 @@
                     <select v-model="feedFilter">
                       <option value="all">All</option>
                       <option value="market">For sale</option>
+                      <option value="curationMarket">RFT</option>
                     </select>
                   </div>
                 </div>
@@ -86,6 +87,7 @@
           </div>
         </div>
       </li>
+      <li v-if="!clovers.length">Sorry No Clovers Here!</li>
     </ul>
 
     <nav v-if="nextPage" class="list-reset">
@@ -187,7 +189,7 @@ export default {
       this.showNew()
     },
     cloverPrice ({ price }) {
-      return prettyBigNumber(price, 0)
+      return prettyBigNumber(price, 3)
     },
     forSale ({ price }) {
       if (typeof price !== 'object') price = new BigNumber(price)

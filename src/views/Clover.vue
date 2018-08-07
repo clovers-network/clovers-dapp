@@ -120,7 +120,7 @@ export default {
       return addrToUser(this.allUsers, this.clover.owner)
     },
     prettyPrice () {
-      return prettyBigNumber(this.clover.price, 0)
+      return prettyBigNumber(this.clover.price, 3)
     },
     price () {
       return this.clover && this.clover.price
