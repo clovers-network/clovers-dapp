@@ -11,6 +11,7 @@
     "lint"
   ],
   "dependencies": {
+    "animate.css": "^3.7.0",
     "axios": "^0.18.0",
     "basscss-addons": "^1.0.0",
     "basscss-align": "^1.0.2",
