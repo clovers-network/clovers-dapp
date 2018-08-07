@@ -57,6 +57,7 @@ export default {
       this.formFocussed = false
     },
     updateName () {
+      if (!this.form.name.length) return
       this.$refs.nameInput.blur()
       this.changeUsername({
         address: this.user.address,

@@ -190,6 +190,7 @@ export default {
       this.formFocussed = false
     },
     updateName () {
+      if (!this.form.name.length) return
       this.$refs.nameInput.blur()
       let clv = {
         board: this.clover.board,
