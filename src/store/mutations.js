@@ -137,11 +137,7 @@ export default {
   },
   ADD_CLOVER (state, clover) {
     clover = formatClover(clover)
-    let cloverIndex = state.allClovers.findIndex(v => {
-      console.log(v.board, clover.board, v.board === clover.board)
-      return v.board === clover.board
-    })
-    console.log(cloverIndex)
+    let cloverIndex = state.allClovers.findIndex(v => v.board === clover.board)
     if (cloverIndex < 0) {
       // clover.price = new BigNumber(clover.price)
       state.allClovers.push(clover)
@@ -164,6 +160,8 @@ export default {
     )
     if (userKey > -1) {
       state.allUsers.splice(userKey, 1, user)
+    } else {
+      state.allUsers.push(user)
     }
   },
 
@@ -173,9 +171,6 @@ export default {
   ADD_LOG (state, log) {
     state.logs.push(log)
   },
-  // ADD_USER (state, user) {
-  //   state.users.push(user)
-  // },
   // UPDATE_USERS (state, users) {
   //   state.users = users
   // },

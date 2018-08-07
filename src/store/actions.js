@@ -235,10 +235,6 @@ export default {
     socket.on('disconnect', () => {
       console.log('disconnected')
     })
-    // socket.on('newUser', user => {
-    //   commit('ADD_USER', user)
-    //   console.log(user)
-    // })
     socket.on('updateUser', user => {
       console.log('new user info!', user)
       commit('UPDATE_USER', user)

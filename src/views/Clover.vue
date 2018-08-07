@@ -49,9 +49,11 @@
               .col-6.p3
                 small.block.lh1.h6 ♣ Balance After
                 .font-exp.mt2 {{ balanceAfter }}
-            button(@click="makeBuy").h-bttm-bar.white.border-top.flex.col-12.pointer
+            button(@click="makeBuy", v-if="canAfford").h-bttm-bar.white.border-top.flex.col-12.pointer
               span(v-if="!loading").block.m-auto.font-exp Confirm
               wavey-menu.m-auto(v-else :isWhite="true")
+            div(v-else).h-bttm-bar.white.border-top.flex.col-12.pointer
+              span.block.m-auto.font-exp Insufficient Funds
       .bg-green(v-else)
         .h-bttm-bar.white.border-top.flex.col-12
           span.block.m-auto.font-exp Unavailable
@@ -126,8 +128,10 @@ export default {
     canBuy () {
       if (!this.user) return false
       if (!makeBn(this.price).gt(0)) return false
-      // return makeBn(this.balanceAfter).gte(0)
       return true
+    },
+    canAfford () {
+      return this.canBuy && makeBn(this.balanceAfter).gte(0)
     },
     ...mapState(['account', 'allUsers', 'allClovers']),
     ...mapGetters(['prettyUserBalance', 'user', 'userBalance'])

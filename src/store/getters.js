@@ -3,11 +3,11 @@ import { CurationMarket } from 'clovers-contracts'
 import { prettyBigNumber } from '@/utils'
 
 export default {
-  userBalance ({ user }) {
+  userBalance (_, { user }) {
     return user && user.balance
   },
-  prettyUserBalance ({ user }) {
-    if (!user) return
+  prettyUserBalance (_, { user }) {
+    if (!user) return "0"
     return prettyBigNumber(user.balance, 0)
   },
   sortedClovers ({ sortBy, feedFilter, allClovers }) {
