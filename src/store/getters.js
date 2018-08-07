@@ -26,13 +26,15 @@ export default {
         return true
       })
   },
-  userClovers ({ user, allClovers }) {
+  userClovers ({ allClovers }, { user }) {
     if (!user) return []
     return user.clovers.map(id => {
-      return allClovers.find(c => c.board === id)
+      return allClovers.find(c => c.board.toLowerCase() === id.toLowerCase())
     })
   },
-
+  user ({ allUsers, account }) {
+    return allUsers.find(u => u.address.toLowerCase() === account.toLowerCase())
+  },
   newCloversCount ({ newClovers }) {
     return newClovers.length
   },

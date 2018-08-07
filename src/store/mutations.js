@@ -23,9 +23,6 @@ export default {
     }
     state.account = account
   },
-  SET_USER (state, user) {
-    state.user = user
-  },
   SET_NETWORK (state, networkId) {
     state.networkId = networkId
   },
@@ -131,15 +128,7 @@ export default {
   //   state.allClovers = allClovers
   // },
   GOT_USERS (state, data) {
-    data.forEach(obj => {
-      if (
-        !state.allUsers.find(
-          u => u.address.toLowerCase() === obj.address.toLowerCase()
-        )
-      ) {
-        state.allUsers.push(obj)
-      }
-    })
+    state.allUsers = data
   },
 
   // clovers on chain
@@ -169,12 +158,12 @@ export default {
     }
   },
 
-  UPDATE_CURRENT_USER (state, user) {
-    state.user = Object.assign(state.user, user)
-  },
   UPDATE_USER (state, user) {
-    if (state.account === user.address) {
-      state.user = user
+    let userKey = state.allUsers.findIndex(
+      u => u.address.toLowerCase() === user.address.toLowerCase()
+    )
+    if (userKey > -1) {
+      state.allUsers.splice(userKey, 1, user)
     }
   },
 

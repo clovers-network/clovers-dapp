@@ -18,7 +18,6 @@ const debug = false
 const state = {
   // stored signin tokens
   tokens: getTokens(),
-  user: null,
 
   // web3 stuff
   unlocked: false,
