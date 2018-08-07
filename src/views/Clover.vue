@@ -34,7 +34,7 @@
       .absolute.p2.z1.top-0.left-0
         symmetry-icons(:board="clover.symmetries")
       .absolute.overlay.flex.items-center.justify-center.p3
-        clv.col-10.mx-auto(:moveString="cloverMovesString", :isRFT="isRFT")
+        clv.col-10.sm-col-6.mx-auto(:moveString="cloverMovesString", :isRFT="isRFT")
     footer
       //- Owner Options
       div(v-if="isMyClover")
@@ -86,7 +86,7 @@
           button.col-6.flex.border-right
             span.block.m-auto Sell
           button.col-6.flex
-            span.block.m-auto Buy
+            span.block.m-auto(@click="buyStake") Buy
       //- Buy
       .bg-green(v-else-if="canBuy")
         button.h-bttm-bar.white.flex.col-12.pointer(@click="confirmVisible = !confirmVisible")
@@ -276,8 +276,46 @@ export default {
       }
       this.updateCloverName(clv)
     },
+    buyStake () {
+      this.loading = true
+      this.invest({
+        market: 'CurationMarket',
+        clover: this.clover.board,
+        amount: '1'
+      })
+        .then((res) => {
+          this.loading = false
+          this.handleSuccess(`Success! You bought a stake!`)
+          console.log(res)
+        }).catch((err) => {
+          this.loading = false
+          this.handleError(err)
+        })
+    },
+    handleError ({ message }) {
+      this.selfDestructMsg({
+        msg: message.replace('Error: ', ''),
+        type: 'error'
+      })
+    },
+    handleSuccess (msg) {
+      this.addMessage({
+        msg,
+        type: 'success'
+      })
+    },
 
-    ...mapActions(['buy', 'sell', 'makeCloverRFT', 'updateCloverName', 'signIn'])
+    ...mapActions([
+      'buy',
+      'sell',
+      'makeCloverRFT',
+      'updateCloverName',
+      'signIn',
+      'invest',
+      'divest',
+      'selfDestructMsg',
+      'addMessage'
+    ])
   },
   created () {
     if (this.clover) return
