@@ -378,19 +378,23 @@ export default {
   },
 
   // Contract Interactions
-  async getBuy (store, { market, amount }) {
+  async getBuy (store, { market, amount, clover }) {
     if (!Number(amount) || Number(amount) < 0) return 0
     amount = utils.toWei(amount)
-    return contracts[market].instance.methods.getBuy(amount).call()
+    let args = [amount]
+    if (market === 'CurationMarket') args.unshift(clover)
+    return contracts[market].instance.methods.getBuy(...args).call()
   },
-  async getSell ({ state }, { market, amount }) {
+  async getSell ({ state }, { market, amount, clover }) {
     if (!Number(amount) || Number(amount) < 0) return 0
     amount = utils.toWei(amount)
+    let args = [amount]
+    if (market === 'CurationMarket') args.unshift(clover)
     return contracts[market].instance.methods
-      .getSell(amount)
+      .getSell(...args)
       .call()
   },
-  async invest ({ state }, { market, amount }) {
+  async invest ({ state, getters }, { market, amount, clover }) {
     if (!Number(amount) || Number(amount) < 0) throw new Error('Invalid amount')
     amount = utils.toWei(amount)
     if (market === 'ClubTokenController') {
@@ -416,7 +420,7 @@ export default {
         value = await getLowestPrice(contracts.ClubTokenController, amount)
       }
       return contracts.CurationMarket.instance.methods
-        .buy(market, amount)
+        .buy(getters.curationMarketAddress, clover, amount)
         .send({
           from: state.account,
           value: amount
