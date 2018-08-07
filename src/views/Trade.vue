@@ -123,11 +123,12 @@ export default {
       this.working = true
       this.invest({ market, amount: this.buy }).then((res) => {
         this.working = false
-        this.handleSuccess(`Success! You bought ${this.buy} ♣ token(s)`)
+        this.handleSuccess(`Success! You bought ${this.clubReceive} ♣ token(s)`)
         console.log(res)
       }).catch((err) => {
         this.working = false
-        this.handleError(err)
+        console.log(err)
+        this.handleError()
       })
     },
     sellTokens () {
@@ -138,11 +139,12 @@ export default {
         console.log(res)
       }).catch((err) => {
         this.working = false
-        this.handleError(err)
+        console.log(err)
+        this.handleError()
       })
     },
-    handleError (err) {
-      this.selfDestructMsg({ msg: err.message, type: 'error' })
+    handleError () {
+      this.selfDestructMsg({ msg: 'Error :-(', type: 'error' })
     },
     handleSuccess (msg) {
       this.addMessage({
