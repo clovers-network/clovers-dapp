@@ -35,8 +35,10 @@ export default {
   },
   userClovers ({ allClovers }, { user }) {
     if (!user) return []
-    return user.clovers.map(id => {
+    return user.clovers.slice(0).map(id => {
       return allClovers.find(c => c.board.toLowerCase() === id.toLowerCase())
+    }).sort((a, b) => {
+      return Number(b.modified) - Number(a.modified)
     })
   },
   user ({ allUsers, account }) {
