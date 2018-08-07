@@ -14,10 +14,12 @@
           .col-12.m-auto
             small.block.lh1.h6 {{ isInCurMrkt ? 'Share Price' : showSalePrice ? 'For Sale' : 'Original Price'}}
             .font-exp.mt1 {{ isInCurMrkt ? 'n/a' : showSalePrice ? prettyPrice : originalPrice }} ♣
+    //- clover image
     figure.flex-auto.relative(@click="view = false")
       .absolute.p2.z1
         symmetry-icons.p1(:board="clover.symmetries")
-      .absolute.bg-contain.bg-center.bg-no-repeat(role="img", :style="'background-image:url(' + cloverImage(clover) + ')'")
+      //- .absolute.bg-contain.bg-center.bg-no-repeat(role="img", :style="'background-image:url(' + cloverImage(clover) + ')'")
+      clv(:movesString="cloverMovesString")
     footer
       //- Owner Options
       div(v-if="isMyClover")
@@ -94,6 +96,7 @@
 
 <script>
 import utils from 'web3-utils'
+import Clv from '@/components/Clv'
 import WaveyMenu from '@/components/Icons/WaveyMenu'
 import { mapState, mapActions, mapGetters } from 'vuex'
 import {
@@ -104,6 +107,8 @@ import {
   addrToUser
 } from '@/utils'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
+import Reversi from 'clovers-reversi'
+const reversi = new Reversi()
 
 export default {
   name: 'Clover',
@@ -172,6 +177,10 @@ export default {
       let cloverIndex = this.allClovers.findIndex(c => c.board === this.board)
       return cloverIndex >= 0 ? this.allClovers[cloverIndex] : this.localClover
     },
+    cloverMovesString () {
+      const mvs = this.clover && this.clover.moves && this.clovers.moves[0]
+      return mvs && reversi.byteMovesToStringMoves(mvs)
+    },
     canBuy () {
       if (!this.user) return false
       if (!makeBn(this.price).gt(0)) return false
@@ -222,7 +231,7 @@ export default {
       this.localClover = clvr
     })
   },
-  components: { SymmetryIcons, WaveyMenu }
+  components: { SymmetryIcons, WaveyMenu, Clv }
 }
 </script>
 
