@@ -1,6 +1,6 @@
 <template>
   <header
-    class="sticky top-0 z1"
+    class="sticky top-0 z4"
     :class="{'bg-white green': !showMenu, 'white': showMenu}">
     <!-- top bar -->
     <div
