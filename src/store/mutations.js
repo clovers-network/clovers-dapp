@@ -40,9 +40,6 @@ export default {
       console.error('Board not found in submitting list', byteBoard)
     }
   },
-  NOT_RINKEBY (state) {
-    state.notRinkeby = true
-  },
   // this mutatation is called when the route changes
   ROUTE_CHANGED (state, { to, from }) {
     console.log('route changed from', from.name, 'to', to.name)
@@ -147,16 +144,21 @@ export default {
 
   // clovers on chain
   GOT_CLOVERS (state, data) {
-    data.forEach(obj => {
-      if (!state.allClovers.find(v => v.board === obj.board)) {
-        // obj.price = new BigNumber(obj.price)
-        obj = formatClover(obj)
-        state.allClovers.push(obj)
-      }
-    })
+    state.allClovers = data.map(c => formatClover(c))
   },
   ADD_CLOVER (state, clover) {
-    state.allClovers.push(clover)
+    clover = formatClover(clover)
+    let cloverIndex = state.allClovers.findIndex(v => {
+      console.log(v.board, clover.board, v.board === clover.board)
+      return v.board === clover.board
+    })
+    console.log(cloverIndex)
+    if (cloverIndex < 0) {
+      // clover.price = new BigNumber(clover.price)
+      state.allClovers.push(clover)
+    } else {
+      state.allClovers.splice(cloverIndex, 1, clover)
+    }
   },
   UPDATE_CLOVER (state, clover) {
     let cloverKey = state.allClovers.findIndex(

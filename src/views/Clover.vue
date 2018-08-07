@@ -9,8 +9,8 @@
         .font-exp.mt2.truncate.overflow-hidden {{ isMyClover ? 'You' : owner }}
       //- price / value
       .col-6.p3
-        small.block.lh1.h6 Original Price
-        .font-exp.mt2 {{ originalPrice }} ♣
+        small.block.lh1.h6 {{showSalePrice ? 'For Sale' : 'Original Price'}}
+        .font-exp.mt2 {{ showSalePrice ? prettyPrice : originalPrice }} ♣
     //- section
       button.h-header.center.border-bottom.flex.pointer.col-12
         span.block.m-auto See Full History
@@ -34,28 +34,32 @@
               input.block.col-12.mt1.border-bottom.font-exp.py1.pr3(type="number", v-model="sellPrice", min="0")
               span.absolute.top-0.right-0.h-100.opacity-50.flex
                 span.block.m-auto ♣
-          button.h-bttm-bar.flex.col-12.border-top.pointer
-            span.block.m-auto.font-exp Confirm
+          button(@click="makeSell").h-bttm-bar.flex.col-12.border-top.pointer
+            span(v-if="!loading").block.m-auto.font-exp Confirm
+            wavey-menu.m-auto(v-else :isWhite="true")
       .bg-green(v-else-if="canBuy")
         button.h-bttm-bar.white.flex.col-12.pointer(@click="confirmVisible = !confirmVisible")
-          span.block.m-auto.font-exp Buy for {{price}} ♣
+          span.block.m-auto.font-exp Buy for {{prettyPrice}} ♣
         transition(name="confirm")
           section.white(v-show="confirmVisible")
             .border-top.flex.border-bottom
               .col-6.p3.border-right
                 small.block.lh1.h6 ♣ Current Balance
-                .font-exp.mt2 {{ balance }}
+                .font-exp.mt2 {{ prettyUserBalance }}
               .col-6.p3
                 small.block.lh1.h6 ♣ Balance After
                 .font-exp.mt2 {{ balanceAfter }}
-            button(@click="buy(clover)").h-bttm-bar.white.border-top.flex.col-12.pointer
-              span.block.m-auto.font-exp Confirm
+            button(@click="makeBuy").h-bttm-bar.white.border-top.flex.col-12.pointer
+              span(v-if="!loading").block.m-auto.font-exp Confirm
+              wavey-menu.m-auto(v-else :isWhite="true")
       .bg-green(v-else)
         .h-bttm-bar.white.border-top.flex.col-12
           span.block.m-auto.font-exp Unavailable
 </template>
 
 <script>
+import utils from 'web3-utils'
+import WaveyMenu from '@/components/Icons/WaveyMenu'
 import { mapState, mapActions, mapGetters } from 'vuex'
 import {
   cloverImage,
@@ -71,37 +75,43 @@ export default {
   props: {
     board: { type: String, required: true }
   },
-  data () {
+  data() {
     return {
-      clover: null,
+      localClover: null,
       confirmVisible: false,
       sellView: false,
-      sellPrice: 0
+      sellPrice: 0,
+      loading: false
     }
   },
   computed: {
-    owner () {
+    showSalePrice() {
+      return this.clover && this.clover.price && this.clover.price.gt(0)
+    },
+    sellPriceWei() {
+      return this.sellPrice ? utils.toWei(this.sellPrice) : '0'
+    },
+    owner() {
       return addrToUser(this.allUsers, this.clover.owner)
     },
-    price () {
-      return (
-        this.clover &&
-        this.clover.price &&
-        prettyBigNumber(this.clover.price, 0)
-      )
+    prettyPrice() {
+      return prettyBigNumber(this.clover.price, 0)
     },
-    originalPrice () {
+    price() {
+      return this.clover && this.clover.price
+    },
+    originalPrice() {
       return (
         this.clover &&
         this.clover.originalPrice &&
         prettyBigNumber(this.clover.price, 0)
       )
     },
-    balanceAfter () {
+    balanceAfter() {
       if (!this.userBalance) return false
-      return bnMinus(this.userBalance, this.clover.price, 0)
+      return bnMinus(this.userBalance, this.price, 0)
     },
-    isMyClover () {
+    isMyClover() {
       return (
         this.clover &&
         this.clover.owner &&
@@ -109,25 +119,51 @@ export default {
         this.clover.owner.toLowerCase() === this.account.toLowerCase()
       )
     },
-    canBuy () {
+    clover() {
+      let cloverIndex = this.allClovers.findIndex(c => c.board === this.board)
+      return cloverIndex >= 0 ? this.allClovers[cloverIndex] : this.localClover
+    },
+    canBuy() {
       if (!this.user) return false
       if (!makeBn(this.price).gt(0)) return false
-      return makeBn(this.balanceAfter).gte(0)
+      // return makeBn(this.balanceAfter).gte(0)
+      return true
     },
-    ...mapState(['account', 'user', 'allUsers']),
-    ...mapGetters(['userBalance'])
+    ...mapState(['account', 'user', 'allUsers', 'allClovers']),
+    ...mapGetters(['prettyUserBalance', 'userBalance'])
   },
   methods: {
+    async makeBuy() {
+      if (this.loading) return
+      try {
+        this.loading = true
+        await this.buy(this.clover)
+      } catch (error) {
+        console.log(error)
+      }
+      this.loading = false
+    },
+    async makeSell() {
+      if (this.loading) return
+      try {
+        this.loading = true
+        await this.sell({ clover: this.clover, price: this.sellPriceWei })
+      } catch (error) {
+        console.log(error)
+      }
+      this.loading = false
+    },
     cloverImage,
     prettyBigNumber,
-    ...mapActions(['buy'])
+    ...mapActions(['buy', 'sell'])
   },
-  created () {
+  created() {
+    if (this.clover) return
     this.$store.dispatch('getClover', this.board).then(clvr => {
-      this.clover = clvr
+      this.localClover = clvr
     })
   },
-  components: { SymmetryIcons }
+  components: { SymmetryIcons, WaveyMenu }
 }
 </script>
 

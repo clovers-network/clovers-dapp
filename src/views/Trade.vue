@@ -45,7 +45,6 @@
             button.h-bttm-bar.block.m-auto.font-exp(v-if="!working") Sell
             .h-bttm-bar.block.m-auto.flex.justify-center.items-center(v-else)
               wavey-menu(:is-white="true")
-
 </template>
 
 <script>
@@ -60,7 +59,7 @@ const market = 'ClubTokenController'
 
 export default {
   name: 'Trade',
-  data () {
+  data() {
     return {
       view: 'buy',
       orders: [],
@@ -72,81 +71,87 @@ export default {
     }
   },
   watch: {
-    buy (amount) {
+    buy(amount) {
       this.checkPrice(amount)
     },
-    sell (amount) {
+    sell(amount) {
       this.checkSell(amount)
     }
   },
   computed: {
-    ethPriceNum () {
-      if (!this.orders.length) return 0
-      let recent = this.orders[0]
-      return new BigNumber(recent.value)
-        .div(new BigNumber(recent.tokens)).toFormat(2)
-    },
-    lastEthPrice () {
+    ethPriceNum() {
       if (!this.orders.length) return 0
       let recent = this.orders[0]
       return new BigNumber(recent.value)
         .div(new BigNumber(recent.tokens))
+        .toFormat(2)
     },
-    lastTokenPrice () {
+    lastEthPrice() {
       if (!this.orders.length) return 0
       let recent = this.orders[0]
-      return new BigNumber(recent.tokens)
-        .div(new BigNumber(recent.value))
+      return new BigNumber(recent.value).div(new BigNumber(recent.tokens))
     },
-    marketCap () {
+    lastTokenPrice() {
       if (!this.orders.length) return 0
       let recent = this.orders[0]
-      return prettyBigNumber(this.lastTokenPrice.times(recent.tokenSupply).toFixed(0), 0)
+      return new BigNumber(recent.tokens).div(new BigNumber(recent.value))
+    },
+    marketCap() {
+      if (!this.orders.length) return 0
+      let recent = this.orders[0]
+      return prettyBigNumber(
+        this.lastTokenPrice.times(recent.tokenSupply).toFixed(0),
+        0
+      )
     },
 
-    ...mapGetters([
-      'userBalance'
-    ])
+    ...mapGetters(['userBalance', 'prettyUserBalance'])
   },
   methods: {
-    checkPrice (amount = '1') {
-      this.getBuy({ market, amount }).then((tokens) => {
+    checkPrice(amount = '1') {
+      this.getBuy({ market, amount }).then(tokens => {
         this.clubReceive = prettyBigNumber(tokens, 0)
       })
     },
-    checkSell (amount = '10') {
-      this.getSell({ market, amount }).then((eths) => {
+    checkSell(amount = '10') {
+      this.getSell({ market, amount }).then(eths => {
         this.ethReceive = prettyBigNumber(eths, 6)
       })
     },
-    buyTokens () {
+    buyTokens() {
       this.working = true
-      this.invest({ market, amount: this.buy }).then((res) => {
-        this.working = false
-        this.handleSuccess(`Success! You bought ${this.clubReceive} ♣ token(s)`)
-        console.log(res)
-      }).catch((err) => {
-        this.working = false
-        console.log(err)
-        this.handleError()
-      })
+      this.invest({ market, amount: this.buy })
+        .then(res => {
+          this.working = false
+          this.handleSuccess(
+            `Success! You bought ${this.clubReceive} ♣ token(s)`
+          )
+          console.log(res)
+        })
+        .catch(err => {
+          this.working = false
+          console.log(err)
+          this.handleError()
+        })
     },
-    sellTokens () {
+    sellTokens() {
       this.working = true
-      this.divest({ market, amount: this.sell }).then((res) => {
-        this.working = false
-        this.handleSuccess(`Success! You sold ${this.sell} ♣ token(s)`)
-        console.log(res)
-      }).catch((err) => {
-        this.working = false
-        console.log(err)
-        this.handleError()
-      })
+      this.divest({ market, amount: this.sell })
+        .then(res => {
+          this.working = false
+          this.handleSuccess(`Success! You sold ${this.sell} ♣ token(s)`)
+          console.log(res)
+        })
+        .catch(err => {
+          this.working = false
+          console.log(err)
+          this.handleError()
+        })
     },
-    handleError () {
+    handleError() {
       this.selfDestructMsg({ msg: 'Error :-(', type: 'error' })
     },
-    handleSuccess (msg) {
+    handleSuccess(msg) {
       this.addMessage({
         msg,
         type: 'success'
@@ -163,8 +168,8 @@ export default {
       'selfDestructMsg'
     ])
   },
-  mounted () {
-    this.getOrders(this.market).then((orders) => {
+  mounted() {
+    this.getOrders(this.market).then(orders => {
       this.orders.push(...orders)
     })
     this.checkPrice()

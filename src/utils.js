@@ -47,10 +47,11 @@ export function bnMinus (one = 0, two = 0, float = 0) {
 }
 
 export function formatClover (clover) {
-  clover.price = new BigNumber(clover.price)
+  clover.price = clover.price && new BigNumber(clover.price)
   return clover
 }
 
 export function makeBn (v = 0) {
+  if (typeof v === 'object') return v
   return new BigNumber(v)
 }

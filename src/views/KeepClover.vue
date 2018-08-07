@@ -7,7 +7,7 @@
             button.pointer(@click="close") Back
           //- h1.col-6.font-exp.center.nowrap Keep or Sell
           .col-9.pr2.right-align
-            router-link.font-mono(:to="{name: 'Account/Trade'}") {{userBalance}} ♣
+            router-link.font-mono(:to="{name: 'Account/Trade'}") {{prettyUserBalance}} ♣
       figure.flex-auto.relative
         .absolute.bg-contain.bg-no-repeat.bg-center(role="img", v-if="clover", :style="'background-image:url(' + cloverImage(clover) + ')'")
       footer
@@ -41,7 +41,7 @@ const reversi = new Reversi()
 export default {
   name: 'KeepClover',
   props: ['clover'],
-  data () {
+  data() {
     return {
       action: 'keep',
       value: null,
@@ -49,11 +49,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userBalance']),
-    tokenValue () {
+    ...mapGetters(['prettyUserBalance']),
+    tokenValue() {
       return this.value ? fromWei(this.value.toString()) : '...'
     },
-    sellValue () {
+    sellValue() {
       return this.value
         ? fromWei(this.value.minus(this.$store.state.basePrice).toString())
         : '...'
@@ -61,15 +61,15 @@ export default {
   },
   methods: {
     cloverImage,
-    close () {
+    close() {
       this.$emit('close')
       this.action = 'keep'
     },
-    btnClick () {
+    btnClick() {
       if (this.action === 'keep') return this.keep()
       if (this.action === 'sell') return this.sellToBank()
     },
-    async keep () {
+    async keep() {
       this.submitting = true
       try {
         const tx = await this.buy(this.clover)
@@ -87,7 +87,7 @@ export default {
         this.$store.dispatch('addMessage', msg)
       }
     },
-    async sellToBank () {
+    async sellToBank() {
       this.submitting = true
       try {
         const tx = await this.sell({ clover: this.clover })
@@ -105,7 +105,7 @@ export default {
         this.$store.dispatch('addMessage', msg)
       }
     },
-    getValue () {
+    getValue() {
       reversi.playGameMovesString(this.clover.movesString)
       const syms = reversi.returnSymmetriesAsBN()
       this.$store.dispatch('getReward', syms).then(wei => {
@@ -115,7 +115,7 @@ export default {
     },
     ...mapActions(['buy', 'sell'])
   },
-  mounted () {
+  mounted() {
     this.getValue()
   },
   components: { WaveyMenu }

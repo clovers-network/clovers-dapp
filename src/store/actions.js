@@ -231,6 +231,9 @@ export default {
     socket.on('connect', () => {
       console.log('connected')
     })
+    socket.on('welcome', () => {
+      console.log('someone joined!')
+    })
     socket.on('disconnect', () => {
       console.log('disconnected')
     })
@@ -243,10 +246,12 @@ export default {
       commit('UPDATE_USER', user)
     })
     socket.on('addClover', clover => {
+      console.log('new clover added!', clover)
       commit('NEW_CLOVER_FROM_CHAIN', clover)
     })
     socket.on('updateClover', clover => {
-      commit('UPDATE_CLOVER', clover)
+      console.log('new clover info!', clover)
+      commit('ADD_CLOVER', clover)
     })
   },
 
@@ -264,7 +269,8 @@ export default {
     return msg.id
   },
   async cloverExists ({ state }, byteBoard) {
-    return axios.get(apiUrl(`/clovers/${byteBoard}`)).then(({ data }) => data)
+    return contracts.Clovers.instance.methods.exists(byteBoard).call()
+    // return axios.get(apiUrl(`/clovers/${byteBoard}`)).then(({ data }) => data)
   },
   getAllUsers ({ state, commit }, page = 1) {
     console.log('getting users')
@@ -278,7 +284,7 @@ export default {
   },
   getClovers ({ state, commit }, page = 1) {
     console.log('getting clovers')
-    if (state.allClovers.length) return
+    // if (state.allClovers.length) return
     return axios
       .get(apiUrl('/clovers'))
       .then(({ data }) => {
@@ -442,7 +448,6 @@ export default {
   async buy ({ dispatch, state, commit }, clover) {
     // if clover exists it must be in SimpleCloversMarket
     // otherwise it is a claimClover
-    // TODO Figure out why cloverExists is returning a promise
     let cloverExists = await dispatch('cloverExists', clover.board)
 
     if (cloverExists) {
@@ -479,6 +484,7 @@ export default {
     }
   },
   async sell ({ state, dispatch, commit }, { clover, price }) {
+    console.log(clover, price)
     // if clover exists it must be in SimpleCloversMarket
     // otherwise it is a claimClover
     // TODO Figure out why cloverExists is returning a promise
@@ -491,6 +497,7 @@ export default {
       if (owner.toLowerCase() !== state.account.toLowerCase()) {
         throw new Error('cant-sell-dont-own')
       }
+      price = new BigNumber(price)
       // if the price = 0, really they are removing it from the market
       // otherwise they should sell it
       if (price.eq(0)) {

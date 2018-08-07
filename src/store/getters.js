@@ -4,6 +4,9 @@ import { prettyBigNumber } from '@/utils'
 
 export default {
   userBalance ({ user }) {
+    return user && user.balance
+  },
+  prettyUserBalance ({ user }) {
     if (!user) return
     return prettyBigNumber(user.balance, 0)
   },
@@ -46,44 +49,44 @@ export default {
     return `Basic ${btoa(`${account}:${tokens[account]}`)}`
   },
 
-  notRinkeby: state => state.networkId !== state.correctNetwork,
+  wrongNetwork: state => state.networkId !== state.correctNetwork,
 
   curationMarketAddress ({ correctNetwork }) {
     return CurationMarket.networks[correctNetwork].address
   },
   registeredEvents (state) {
-    return state.logs.filter(log => log.name === 'Registered')
+    // return state.logs.filter(log => log.name === 'Registered')
   },
   symmetries (state) {
-    console.log('symmetries calculated')
-    // return {Symmetricals: 0, RotSym: 0, X0Sym: 0, Y0Sym: 0, XYSym: 0, XnYSym: 0, PayMultiplier: 100}
-    let Symmetricals = 0
-    let RotSym = 0
-    let X0Sym = 0
-    let Y0Sym = 0
-    let XYSym = 0
-    let XnYSym = 0
-    let reversi = new Reversi()
-    for (let i = 0; i < state.allClovers.length; i++) {
-      let clover = state.allClovers[i]
-      reversi.byteBoard = clover.board
-      reversi.byteBoardPopulateBoard()
-      reversi.isSymmetrical()
-      Symmetricals += reversi.symmetrical
-      RotSym += reversi.RotSym
-      X0Sym += reversi.X0Sym
-      Y0Sym += reversi.Y0Sym
-      XYSym += reversi.XYSym
-      XnYSym += reversi.XnYSym
-    }
-    return {
-      Symmetricals,
-      RotSym,
-      X0Sym,
-      Y0Sym,
-      XYSym,
-      XnYSym,
-      PayMultiplier: 100
-    }
+    // console.log('symmetries calculated')
+    // // return {Symmetricals: 0, RotSym: 0, X0Sym: 0, Y0Sym: 0, XYSym: 0, XnYSym: 0, PayMultiplier: 100}
+    // let Symmetricals = 0
+    // let RotSym = 0
+    // let X0Sym = 0
+    // let Y0Sym = 0
+    // let XYSym = 0
+    // let XnYSym = 0
+    // let reversi = new Reversi()
+    // for (let i = 0; i < state.allClovers.length; i++) {
+    //   let clover = state.allClovers[i]
+    //   reversi.byteBoard = clover.board
+    //   reversi.byteBoardPopulateBoard()
+    //   reversi.isSymmetrical()
+    //   Symmetricals += reversi.symmetrical
+    //   RotSym += reversi.RotSym
+    //   X0Sym += reversi.X0Sym
+    //   Y0Sym += reversi.Y0Sym
+    //   XYSym += reversi.XYSym
+    //   XnYSym += reversi.XnYSym
+    // }
+    // return {
+    //   Symmetricals,
+    //   RotSym,
+    //   X0Sym,
+    //   Y0Sym,
+    //   XYSym,
+    //   XnYSym,
+    //   PayMultiplier: 100
+    // }
   }
 }
