@@ -363,16 +363,14 @@ export default {
   async getBuy (store, { market, amount }) {
     if (!Number(amount) || Number(amount) < 0) return 0
     amount = utils.toWei(amount)
-    let receive = await contracts[market].instance.methods.getBuy(amount).call()
-    return receive
+    return contracts[market].instance.methods.getBuy(amount).call()
   },
   async getSell ({ state }, { market, amount }) {
     if (!Number(amount) || Number(amount) < 0) return 0
     amount = utils.toWei(amount)
-    let receive = await contracts[market].instance.methods
+    return contracts[market].instance.methods
       .getSell(amount)
       .call()
-    return receive
   },
   async invest ({ state }, { market, amount }) {
     if (!Number(amount) || Number(amount) < 0) throw new Error('Invalid amount')
@@ -463,7 +461,7 @@ export default {
       if (balanceOf.lt(currentPrice)) {
         value = getLowestPrice(contracts.ClubToken, balanceOf.sub(currentPrice))
       }
-      await contracts.SimpleCloversMarket.instance.methods
+      return contracts.SimpleCloversMarket.instance.methods
         .buy(clover.board)
         .send({
           from: state.account,
@@ -474,7 +472,7 @@ export default {
       if (!state.account) {
         await dispatch('getAnAccount')
       }
-      await claimClover({ keep: true, clover, account: state.account })
+      return claimClover({ keep: true, clover, account: state.account })
     }
   },
   async sell ({ state, dispatch, commit }, { clover, price }) {
@@ -496,14 +494,14 @@ export default {
       // otherwise they should sell it
       if (price.eq(0)) {
         // remove from market
-        await contracts.SimpleCloversMarket.instance.methods
+        return contracts.SimpleCloversMarket.instance.methods
           .removeSell(clover.board)
           .send({
             from: state.account
           })
       } else {
         // sell clover (update price)
-        await contracts.SimpleCloversMarket.instance.methods
+        return contracts.SimpleCloversMarket.instance.methods
           .sell(clover.board, price)
           .send({
             from: state.account
@@ -511,7 +509,7 @@ export default {
       }
     } else {
       // claim clover w option _keep = false
-      await claimClover({ keep: false, clover, account: state.account })
+      return claimClover({ keep: false, clover, account: state.account })
     }
   }
 }
