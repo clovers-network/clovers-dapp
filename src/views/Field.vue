@@ -1,5 +1,5 @@
 <template>
-  <div class="mt2 mb-full-height">
+  <div class="mt2 pb-full-height">
     <keep-clover v-if="viewSingle" :clover="viewSingle" @close="viewSingle = null"></keep-clover>
     <ul class="list-reset flex flex-wrap mxn2 mt0 mb3 px2">
       <!-- item -->

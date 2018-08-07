@@ -1,8 +1,8 @@
 <template lang="pug">
-  article.min-h-100vh.mt-deduct-header.flex.flex-column.justify-between(v-if="clover")
+  article.min-h-100vh.mt-deduct-header.flex.flex-column.justify-between
     header
       .mt-header-h.px3.py2.border-bottom
-        p.m0.truncate.center.font-mono {{ clover.name }}
+        p.m0.truncate.center.font-mono(v-if="clover") {{ clover.name }}
       .flex.border-bottom.h-bttm-bar
         //- owner
         .col-6.px3.border-right.flex
@@ -12,14 +12,15 @@
         //- price / value
         .col-6.px3.flex
           .col-12.m-auto
-            small.block.lh1.h6 {{ isInCurMrkt ? 'Share Price' : showSalePrice ? 'For Sale' : 'Original Price'}}
-            .font-exp.mt1 {{ isInCurMrkt ? 'n/a' : showSalePrice ? prettyPrice : originalPrice }} ♣
+            small.block.lh1.h6 {{ isRFT ? 'Share Price' : showSalePrice ? 'For Sale' : 'Original Price'}}
+            .font-exp.mt1 {{ isRFT ? 'n/a' : showSalePrice ? prettyPrice : originalPrice }} ♣
     //- clover image
-    figure.flex-auto.relative(@click="view = false")
-      .absolute.p2.z1
-        symmetry-icons.p1(:board="clover.symmetries")
-      //- .absolute.bg-contain.bg-center.bg-no-repeat(role="img", :style="'background-image:url(' + cloverImage(clover) + ')'")
-      clv(:movesString="cloverMovesString")
+    figure.flex-auto.relative.p3.md-p4.flex.items-center.justify-center(@click="view = false")
+      .absolute.p2.z1.top-0.left-0
+        symmetry-icons(v-if="clover", :board="clover.symmetries")
+      clv.col-12(v-if="clover", :moveString="cloverMovesString", :isRFT="isRFT", :style="'max-width:' + maxImgW + 'px'")
+      //- sizer
+      .img-sizer.absolute(ref="sizer")
     footer
       //- Owner Options
       div(v-if="isMyClover")
@@ -56,7 +57,7 @@
             span(v-if="!loading").block.m-auto.font-exp Confirm
             wavey-menu.m-auto(v-else :isWhite="true")
       //- is RFT
-      div(v-else-if="isInCurMrkt")
+      div(v-else-if="isRFT")
         small.border-top.center.p2.block.h6(v-show="!view") This Clover is an RFT
         .border-top.flex.h-bttm-bar
           .col-6.px3.border-right.flex
@@ -96,7 +97,6 @@
 
 <script>
 import utils from 'web3-utils'
-import Clv from '@/components/Clv'
 import WaveyMenu from '@/components/Icons/WaveyMenu'
 import { mapState, mapActions, mapGetters } from 'vuex'
 import {
@@ -107,6 +107,7 @@ import {
   addrToUser
 } from '@/utils'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
+import Clv from '@/components/Clv'
 import Reversi from 'clovers-reversi'
 const reversi = new Reversi()
 
@@ -122,7 +123,8 @@ export default {
       view: null,
       sellPrice: 0,
       invesment: 0,
-      loading: false
+      loading: false,
+      maxImgW: 0
     }
   },
   computed: {
@@ -133,7 +135,7 @@ export default {
       return this.sellPrice ? utils.toWei(this.sellPrice) : '0'
     },
     owner () {
-      return addrToUser(this.allUsers, this.clover.owner)
+      return this.clover && addrToUser(this.allUsers, this.clover.owner)
     },
     prettyPrice () {
       return prettyBigNumber(this.clover.price, 0)
@@ -163,15 +165,15 @@ export default {
         this.clover.owner.toLowerCase() === this.account
       )
     },
-    isInCurMrkt () {
-      return this.clover.owner.toLowerCase() === this.curationMarketAddress
+    isRFT () {
+      return this.clover && this.clover.owner.toLowerCase() === this.curationMarketAddress
     },
     currentOwner () {
-      if (this.isMyClover) return 'You'
-      if (this.isInCurMrkt) return 'Curation Mrkt.'
-      const isOwnedByBank = this.clover.owner.toLowerCase() === this.cloversBankAddress
-      if (isOwnedByBank && this.price > 0) return 'Clovers'
-      else return 'Pending...'
+      const owner = this.clover && this.clover.owner
+      return !owner ? '-'
+        : this.isMyClover ? 'You'
+          : this.isRFT ? 'Curation Mrkt.'
+            : owner.toLowerCase() === this.cloversBankAddress ? this.price > 0 ? 'Clovers' : 'Pending...' : owner
     },
     clover () {
       let cloverIndex = this.allClovers.findIndex(c => c.board === this.board)
@@ -221,6 +223,9 @@ export default {
       }
       this.loading = false
     },
+    setImgSizer () {
+      this.maxImgW = this.$refs.sizer && this.$refs.sizer.offsetHeight
+    },
     cloverImage,
     prettyBigNumber,
     ...mapActions(['buy', 'sell', 'makeCloverRFT'])
@@ -231,12 +236,15 @@ export default {
       this.localClover = clvr
     })
   },
+  mounted () {
+    this.setImgSizer()
+  },
   components: { SymmetryIcons, WaveyMenu, Clv }
 }
 </script>
 
 <style scoped>
-figure > .bg-contain {
+figure > .img-sizer {
   width: calc(100% - 4.8rem);
   height: calc(100% - 4.8rem);
   top: 2.4rem;

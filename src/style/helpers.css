@@ -65,6 +65,8 @@
 
 .pre {white-space: pre;}
 
+.object-contain{object-fit: contain}
+
 /* #APP */
 .material-icons
 .material-icons {
