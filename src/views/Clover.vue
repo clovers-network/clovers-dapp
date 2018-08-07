@@ -1,19 +1,19 @@
 <template lang="pug">
   article.min-h-100vh.mt-deduct-header.flex.flex-column.justify-between(v-if="clover")
-    .mt-header-h.px3.py2.border-bottom
-      p.m0.truncate.center.font-mono {{ clover.name }}
-    header.flex.border-bottom
-      //- owner
-      .col-6.p3.border-right
-        small.block.lh1.h6 Current Owner
-        .font-exp.mt2.truncate.overflow-hidden {{currentOwner}}
-      //- price / value
-      .col-6.p3
-        small.block.lh1.h6 {{showSalePrice ? 'For Sale' : 'Original Price'}}
-        .font-exp.mt2 {{ showSalePrice ? prettyPrice : originalPrice }} ♣
-    //- section
-      button.h-header.center.border-bottom.flex.pointer.col-12
-        span.block.m-auto See Full History
+    header
+      .mt-header-h.px3.py2.border-bottom
+        p.m0.truncate.center.font-mono {{ clover.name }}
+      .flex.border-bottom.h-bttm-bar
+        //- owner
+        .col-6.px3.border-right.flex
+          .col-12.m-auto
+            small.block.lh1.h6 Current Owner
+            .font-exp.mt1.truncate.overflow-hidden {{currentOwner}}
+        //- price / value
+        .col-6.px3.flex
+          .col-12.m-auto
+            small.block.lh1.h6 {{ isInCurMrkt ? 'Share Price' : showSalePrice ? 'For Sale' : 'Original Price'}}
+            .font-exp.mt1 {{ isInCurMrkt ? 'n/a' : showSalePrice ? prettyPrice : originalPrice }} ♣
     figure.flex-auto.relative(@click="view = false")
       .absolute.p2.z1
         symmetry-icons.p1(:board="clover.symmetries")
@@ -53,6 +53,23 @@
           button.h-bttm-bar.flex.border-top.col-12(@click="makeRFT")
             span(v-if="!loading").block.m-auto.font-exp Confirm
             wavey-menu.m-auto(v-else :isWhite="true")
+      //- is RFT
+      div(v-else-if="isInCurMrkt")
+        small.border-top.center.p2.block.h6(v-show="!view") This Clover is an RFT
+        .border-top.flex.h-bttm-bar
+          .col-6.px3.border-right.flex
+            .col-12.m-auto
+              small.block.h6.lh1 Shares Owned
+              .font-exp.mt1 n/a
+          .col-6.px3.flex
+            .col-12.m-auto
+              small.block.h6.lh1 Total Share Value ♣
+              .font-exp.mt1 n/a
+        .bg-green.white.flex.h-bttm-bar.font-exp
+          button.col-6.flex.border-right
+            span.block.m-auto Sell
+          button.col-6.flex
+            span.block.m-auto Buy
       //- Buy
       .bg-green(v-else-if="canBuy")
         button.h-bttm-bar.white.flex.col-12.pointer(@click="confirmVisible = !confirmVisible")
@@ -141,12 +158,12 @@ export default {
         this.clover.owner.toLowerCase() === this.account
       )
     },
-    isInCurationMarket () {
+    isInCurMrkt () {
       return this.clover.owner.toLowerCase() === this.curationMarketAddress
     },
     currentOwner () {
       if (this.isMyClover) return 'You'
-      if (this.isInCurationMarket) return 'Curation Mrkt.'
+      if (this.isInCurMrkt) return 'Curation Mrkt.'
       const isOwnedByBank = this.clover.owner.toLowerCase() === this.cloversBankAddress
       if (isOwnedByBank && this.price > 0) return 'Clovers'
       else return 'Pending...'
