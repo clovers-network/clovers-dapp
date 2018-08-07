@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import BigNumber from 'bignumber.js'
 import { formatClover } from '@/utils'
 
@@ -97,6 +98,11 @@ export default {
 
   SIGN_IN (state, { account, signature }) {
     state.tokens = { ...state.tokens, [account]: signature }
+    updateLocal('clover_tokens', state.tokens)
+  },
+  SIGN_OUT (state) {
+    if (!state.account) return
+    Vue.delete(state.tokens, state.account)
     updateLocal('clover_tokens', state.tokens)
   },
 

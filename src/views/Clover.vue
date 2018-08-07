@@ -132,9 +132,13 @@ export default {
         prettyBigNumber(this.clover.price, 0)
       )
     },
-    balanceAfter () {
-      if (!this.userBalance) return false
+    balanceAfterBn () {
+      if (!this.userBalance) return '0'
       return bnMinus(this.userBalance, this.price, 0)
+    },
+    balanceAfter () {
+      if (!this.userBalance) return '0'
+      return prettyBigNumber(this.balanceAfterBn, 0)
     },
     isMyClover () {
       return (
@@ -154,7 +158,7 @@ export default {
       return true
     },
     canAfford () {
-      return this.canBuy && makeBn(this.balanceAfter).gte(0)
+      return this.canBuy && this.balanceAfterBn.gte(0)
     },
     ...mapState(['account', 'allUsers', 'allClovers']),
     ...mapGetters(['prettyUserBalance', 'user', 'userBalance'])
@@ -184,10 +188,14 @@ export default {
       this.loading = false
     },
     focusCloverName () {
-      this.formFocussed = true
+      setTimeout(() => {
+        this.formFocussed = true
+      }, 100)
     },
     blurCloverName () {
-      this.formFocussed = false
+      setTimeout(() => {
+        this.formFocussed = false
+      }, 50)
     },
     updateName () {
       if (!this.form.name.length) return
@@ -212,8 +220,10 @@ export default {
       this.localClover = clvr
     })
   },
-  mounted () {
-    this.form.name = this.clover.name || this.clover.board
+  watch: {
+    clover ({ name, board }) {
+      this.form.name = name || board
+    }
   },
   components: { SymmetryIcons, WaveyMenu }
 }

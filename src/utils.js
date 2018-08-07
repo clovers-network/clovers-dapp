@@ -35,15 +35,13 @@ export function cloverLink ({ board, byteBoard }) {
 }
 
 export function prettyBigNumber (bigNumber = 0, decimalPlaces = 2) {
-  bigNumber = utils.fromWei(bigNumber.toString())
+  bigNumber = utils.fromWei(bigNumber.toString(10))
   if (typeof bigNumber !== 'object') bigNumber = new BigNumber(bigNumber)
   return bigNumber.toFormat(decimalPlaces)
 }
 
-export function bnMinus (one = 0, two = 0, float = 0) {
-  one = new BigNumber(one)
-  two = new BigNumber(two)
-  return prettyBigNumber(one.minus(two), float)
+export function bnMinus (one = 0, two = 0) {
+  return new BigNumber(one).minus(new BigNumber(two))
 }
 
 export function formatClover (clover) {
