@@ -39,8 +39,7 @@
         .px3.py2 Trade or sell Clovers with Club Tokens! You can get Club Tokens by selling the Clovers you find or buying them in your account.
       hr
       h2.h2.green.font-exp Newsletter
-      span(@click="showNewsletterSignup = !showNewsletterSignup")
-        img.p3(src="/img/letter.svg")
+      img.p3(src="/img/letter.svg")
       .px3.py2 Sign up for our newsletter or also feel free to email us at #[a(href="mailto:info@clovers.network") info@clovers.network].
       newsletter-signup
       hr
