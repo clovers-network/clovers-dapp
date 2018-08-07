@@ -3,15 +3,15 @@
     h1.h1.center.green.font-exp.strong.pb3 Find Rare<br>Clovers
     .center.my3.relative
       .col-12.overflow-x-scroll.invisible-scrollbar.momentum(ref="wide")
-        .h1.inline-flex.pb4
-          clv.small-clover.inline.mx3.no-hover(
-            v-for="(c, i) in list"
-            :class="cloverClass(i)"
-            :foo="i == 2"
-            :key="i"
-            :noMoves="true"
-            :autoPlay="i == 2"
-            :moveString="c")
+        .pb4.nowrap
+          .inline-block.mx2.no-hover(v-for="(c, i) in list", style="width:13em")
+            clv(
+              :class="cloverClass(i)"
+              :foo="i == 2"
+              :key="i"
+              :noMoves="true"
+              :autoPlay="i == 2"
+              :moveString="c")
       router-link.block.mb3(
         :to="{ name: 'Field' }")
           dot-btn.mb3(

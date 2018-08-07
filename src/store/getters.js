@@ -1,5 +1,5 @@
 import Reversi from 'clovers-reversi'
-import { CurationMarket } from 'clovers-contracts'
+import { Clovers, CurationMarket } from 'clovers-contracts'
 import { prettyBigNumber } from '@/utils'
 
 export default {
@@ -72,7 +72,10 @@ export default {
   wrongNetwork: state => state.networkId !== state.correctNetwork,
 
   curationMarketAddress ({ correctNetwork }) {
-    return CurationMarket.networks[correctNetwork].address
+    return CurationMarket.networks[correctNetwork].address.toLowerCase()
+  },
+  cloversBankAddress ({ correctNetwork }) {
+    return Clovers.networks[correctNetwork].address.toLowerCase()
   },
   registeredEvents (state) {
     // return state.logs.filter(log => log.name === 'Registered')

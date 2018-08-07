@@ -4,7 +4,7 @@
     @mouseenter="activate()"
     @click="playAnimate()"
     class="clover nowrap pointer relative"
-    :class="winner">
+    >
     <div
       v-if="showFlags"
       :class="{h6: !compact, h7: compact}"
@@ -24,21 +24,28 @@
         class="px1 py1 bg-green rounded rareBadge"
         :class="[{px1: !compact, py1: !compact}, mostRare.name + 'Badge']">Rare</div>
     </div>
-
-    <div v-if="displayString && !noMoves">
+    <!-- address string -->
+    <div v-if="displayString && !noMoves && showAddress">
       <svg-text
         :fill="textColor"
         :animation="false"
         :move-string="displayString"/>
     </div>
-    <div
-      v-for="(row, i) in board"
-      :key="i"
-      class="row">
-      <span
-        v-for="(tile, j) in row"
-        :key="j"
-        :class="tileMap[tile]"/>
+    <!-- circle -->
+    <div class="clover__circle absolute overlay" :class="circleStyle">
+      <div class="row-body">
+        <!-- rows -->
+        <div
+          v-for="(row, i) in board"
+          :key="i"
+          class="row">
+          <!-- dots -->
+          <span
+            v-for="(tile, j) in row"
+            :key="j"
+            :class="tileMap[tile]"/>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -122,8 +129,9 @@ export default {
             .byteBoardToRowArray())
       )
     },
-    winner () {
+    circleStyle () {
       if (!this.board || !this.stop) return 'bg-green'
+      if (this.isRFT) return 'bg-red'
       let w = 0
       let b = 0
       this.board.forEach(r =>
@@ -234,6 +242,14 @@ export default {
     defaultBoard: {
       type: Array,
       default: null
+    },
+    isRFT: {
+      type: Boolean,
+      default: false
+    },
+    showAddress: {
+      type: Boolean,
+      default: false
     }
   },
   components: {
@@ -241,3 +257,100 @@ export default {
   }
 }
 </script>
+
+<style>
+.clover {
+  /*transition: background 500ms ease, border 500ms ease;*/
+  /*background-color: var(--green);*/
+  border-radius: 50%;
+  /*padding: 1.6em;*/
+  /*display: inline-block;*/
+  display: block;
+  z-index:0;
+  /*position: relative;*/
+
+  &.small-clover {
+    font-size: var(--small-font-size);
+  }
+  &.no-border {
+    border: 0px !important;
+  }
+  .clover__circle{
+    transition: background 500ms ease, border 500ms ease;
+    width:100%;
+    height:0;
+    position: relative;
+    padding-bottom:100%;
+    border-radius:100%;
+  }
+  .row-body{
+    position: absolute;
+    width:70%;
+    top:15%;
+    left:15%;
+    /*margin:0 auto;*/
+  }
+  .row {
+    /*line-height: 0;*/
+    display:flex;
+  }
+  .active-clover & {
+    box-shadow: 0 0 0 .4em;
+  }
+  &.no-bg:after {
+    background-color: transparent !important;
+  }
+  .w-b {
+    background-color: var(--black);
+    border: 1px solid var(--white);
+    &:active:not(.no-hover) .t-b {
+      border: 1px solid var(--white);
+    }
+  }
+  .w-w {
+    background-color: var(--white);
+    border: 1px solid var(--black);
+    &:active:not(.no-hover) .t-w {
+      border: 1px solid var(--black);
+    }
+  }
+  .w-t {
+    background-color: var(--silver);
+  }
+  .bg-green {
+    background-color: var(--green);
+    border: 1px solid var(--green);
+  }
+
+}
+
+.t-b, .t-w, .t-n {
+  display: inline-block;
+  width: calc(100% / 8); /* .6em; */
+  /*margin: .06em;*/
+  border:1px solid transparent;
+  border-radius: 1000em;
+  transition: border 500ms ease;
+  &:after{
+    content: '';
+    display: block;
+    /*margin:4%;*/
+    border-radius: 100%;
+    padding-bottom: 100%;
+    /*border: 1px solid transparent;*/
+  }
+}
+
+.t-b:after {
+  background-color: var(--black);
+}
+
+.t-w:after {
+  background-color: var(--white);
+}
+
+.t-n:after {
+  background:inherit;
+  /*background-color: var(--green);*/
+}
+</style>

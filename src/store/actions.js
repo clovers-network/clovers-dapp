@@ -538,6 +538,34 @@ export default {
       // claim clover w option _keep = false
       return claimClover({ keep: false, clover, account: state.account })
     }
+  },
+  async makeCloverRFT ({ state }, { board, investmentInWei = 0 }) {
+    console.log(board, investmentInWei)
+    // logged in ?
+    if (!state.account) return Promise.reject(new Error('You must log-in'))
+    // exists ?
+    const exists = await contracts.Clovers.instance.methods.exists(board).call()
+    if (!exists) return Promise.reject(new Error("Clover doesn't exist"))
+    // account is owner ?
+    const ownedBy = await contracts.Clovers.instance.methods.ownerOf(board).call()
+    if (state.account.toLowerCase() !== ownedBy.toLowerCase()) return Promise.reject(new Error('You are not the owner of the Clover'))
+    // isn't in the Simple Market ?
+    let price = await contracts.SimpleCloversMarket.instance.methods.sellPrice(board).call()
+    console.log(price)
+    price = new BigNumber(price)
+    if (!price.eq(0)) return Promise.reject(new Error('Clover is listed in the Market. Please remove before making an RFT'))
+    // min Amnt 0
+    investmentInWei = investmentInWei < 0 ? 0 : investmentInWei
+    // have enough tokens ?
+    let value = '0'
+    // check balance of user in club token
+    let userBalance = await contracts.ClubToken.instance.methods.balanceOf(state.account).call()
+    userBalance = new BigNumber(userBalance)
+    if (userBalance.gt(investmentInWei)) {
+      value = await getLowestPrice(contracts.ClubTokenController, investmentInWei)
+    }
+    // go !
+    await contracts.CurationMarket.instance.methods.addCloverToMarket(board, investmentInWei).send({from: state.account, value})
   }
 }
 
