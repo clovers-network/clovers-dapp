@@ -178,8 +178,8 @@ export default {
       return cloverIndex >= 0 ? this.allClovers[cloverIndex] : this.localClover
     },
     cloverMovesString () {
-      const mvs = this.clover && this.clover.moves && this.clovers.moves[0]
-      return mvs && reversi.byteMovesToStringMoves(mvs)
+      const mvs = this.clover && this.clover.moves && this.clover.moves[0]
+      return mvs && reversi.byteMovesToStringMoves(...mvs)
     },
     canBuy () {
       if (!this.user) return false
