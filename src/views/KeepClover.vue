@@ -36,6 +36,7 @@ import { mapGetters, mapActions } from 'vuex'
 import { cloverImage } from '@/utils'
 import { fromWei } from 'web3-utils'
 import Reversi from 'clovers-reversi'
+import BigNumber from 'bignumber.js'
 const reversi = new Reversi()
 export default {
   name: 'KeepClover',
@@ -50,7 +51,12 @@ export default {
   computed: {
     ...mapGetters(['userBalance']),
     tokenValue () {
-      return this.value ? fromWei(this.value) : '...'
+      return this.value ? fromWei(this.value.toString()) : '...'
+    },
+    sellValue () {
+      return this.value
+        ? fromWei(this.value.minus(this.$store.state.basePrice).toString())
+        : '...'
     }
   },
   methods: {
@@ -73,9 +79,10 @@ export default {
         console.log(error)
         this.submitting = false
         // notification
-        let msg = {type: 'error', msg: 'Error :-('}
+        let msg = { type: 'error', msg: 'Error :-(' }
         switch (error.message) {
-          case 'cant-buy-not-for-sale': msg.msg = 'Already Registered or Not for Sale :-('
+          case 'cant-buy-not-for-sale':
+            msg.msg = 'Already Registered or Not for Sale :-('
         }
         this.$store.dispatch('addMessage', msg)
       }
@@ -83,16 +90,17 @@ export default {
     async sellToBank () {
       this.submitting = true
       try {
-        const tx = await this.sell({clover: this.clover})
+        const tx = await this.sell({ clover: this.clover })
         this.submitting = false
         console.log('SUCCESS', tx)
       } catch (error) {
         console.log(error)
         this.submitting = false
         // notification
-        let msg = {type: 'error', msg: 'Error :-('}
+        let msg = { type: 'error', msg: 'Error :-(' }
         switch (error.message) {
-          case 'cant-sell-dont-own': msg.msg = "Can't Sell, this belongs to another owner"
+          case 'cant-sell-dont-own':
+            msg.msg = "Can't Sell, this belongs to another owner"
         }
         this.$store.dispatch('addMessage', msg)
       }
@@ -101,7 +109,8 @@ export default {
       reversi.playGameMovesString(this.clover.movesString)
       const syms = reversi.returnSymmetriesAsBN()
       this.$store.dispatch('getReward', syms).then(wei => {
-        this.value = wei + this.$store.state.basePrice
+        wei = new BigNumber(wei)
+        this.value = wei.plus(this.$store.state.basePrice)
       })
     },
     ...mapActions(['buy', 'sell'])

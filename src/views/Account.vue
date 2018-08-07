@@ -42,9 +42,12 @@ export default {
     },
     navItems () {
       return [
-        {lbl: 'Picks', value: 'Account'},
-        {lbl: 'My Clovers', value: 'Account/Clovers'},
-        {lbl: '<span class=font-mono>' + this.userBalance + ' ♣</span>', value: 'Account/Trade'}
+        { lbl: 'Picks', value: 'Account' },
+        { lbl: 'My Clovers', value: 'Account/Clovers' },
+        {
+          lbl: '<span class=font-mono>' + this.userBalance + ' ♣</span>',
+          value: 'Account/Trade'
+        }
       ]
     },
     ...mapGetters(['userBalance'])
@@ -64,10 +67,7 @@ export default {
       })
     },
 
-    ...mapActions([
-      'changeUsername',
-      'signIn'
-    ])
+    ...mapActions(['changeUsername', 'signIn'])
   },
   watch: {
     '$route.name' (val) {
@@ -85,6 +85,7 @@ export default {
   beforeRouteEnter (to, from, next) {
     return store.dispatch('getClovers').then(() => {
       next()
+      store.dispatch('getAllUsers')
     })
   },
   components: { ViewNav }
@@ -92,10 +93,14 @@ export default {
 </script>
 
 <style scoped>
-.router-link-active{
-  opacity:1;
+.router-link-active {
+  opacity: 1;
 }
 /* highlight bar */
-[data-view="Account/Clovers"]{transform:translateX(100%);}
-[data-view="Account/Trade"]{transform:translateX(200%);}
+[data-view='Account/Clovers'] {
+  transform: translateX(100%);
+}
+[data-view='Account/Trade'] {
+  transform: translateX(200%);
+}
 </style>

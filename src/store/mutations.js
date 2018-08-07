@@ -133,6 +133,17 @@ export default {
   // UPDATE_ALLCLOVERS (state, allClovers) {
   //   state.allClovers = allClovers
   // },
+  GOT_USERS (state, data) {
+    data.forEach(obj => {
+      if (
+        !state.allUsers.find(
+          u => u.address.toLowerCase() === obj.address.toLowerCase()
+        )
+      ) {
+        state.allUsers.push(obj)
+      }
+    })
+  },
 
   // clovers on chain
   GOT_CLOVERS (state, data) {

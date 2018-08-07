@@ -41,7 +41,7 @@ const state = {
   // use getter 'picks' in views
   allSavedClovers: getSavedClovers(),
 
-  users: [],
+  allUsers: [],
   logs: [],
   messages: [],
   submittingBoards: [],

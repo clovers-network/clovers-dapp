@@ -1,6 +1,6 @@
 <template>
-  <div class="mt2 pb-full-height">
-    <single-view v-if="viewSingle" :clover="viewSingle" @close="viewSingle = null"></single-view>
+  <div class="mt2 mb-full-height">
+    <keep-clover v-if="viewSingle" :clover="viewSingle" @close="viewSingle = null"></keep-clover>
     <ul class="list-reset flex flex-wrap mxn2 mt0 mb3 px2">
       <!-- item -->
       <li v-for="(clover, i) in generated" :key="i" class="p2 col-6 sm-col-4 relative appear-off" data-expand="-50" :data-appear="i % 3">
@@ -28,7 +28,7 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
-import SingleView from '@/views/KeepClover'
+import KeepClover from '@/views/KeepClover'
 import Bottleneck from 'bottleneck'
 import Reversi from 'clovers-reversi'
 import { pad0x, cloverImage, pluralize } from '@/utils'
@@ -39,7 +39,7 @@ const scrollEl = document.scrollingElement
 
 export default {
   name: 'Field',
-  components: { SingleView },
+  components: { KeepClover },
   data () {
     return {
       limiter: new Bottleneck({
@@ -64,7 +64,9 @@ export default {
         this.limiter.submit(this.mineOne, i === 1, this.miningDone)
       }
     },
-    miningDone () { /* no op, `limiter` callback */ },
+    miningDone () {
+      /* no op, `limiter` callback */
+    },
     async mineOne (last) {
       clover.mine()
       const clvr = await this.formatFoundClover(clover)
@@ -88,7 +90,8 @@ export default {
   },
   mounted () {
     window.onscroll = debounce(() => {
-      let nearBottom = (scrollEl.scrollTop + scrollEl.clientHeight) >
+      let nearBottom =
+        scrollEl.scrollTop + scrollEl.clientHeight >
         scrollEl.scrollHeight - (scrollEl.clientHeight - 140)
       if (nearBottom) this.getNext()
     }, 30)
@@ -101,25 +104,49 @@ export default {
 </script>
 
 <style>
-  .pb-full-height {
-    padding-bottom: calc(150vh - 275px);
-  }
+.pb-full-height {
+  padding-bottom: calc(150vh - 275px);
+}
+img {
+  animation-duration: 800ms;
+}
+[data-appear='0'] img {
+  animation-name: appear0;
+}
+[data-appear='1'] img {
+  animation-name: appear1;
+}
+[data-appear='2'] img {
+  animation-name: appear2;
+}
 
-  [data-appear] img{ animation-duration: 800ms; }
-  [data-appear="0"] img{ animation-name: appear0; }
-  [data-appear="1"] img{ animation-name: appear1; }
-  [data-appear="2"] img{ animation-name: appear2; }
-
-  @keyframes appear0 {
-    from { opacity: 0; transform: translate(8%, 3%);}
-    to { opacity: 1; transform: none;}
+@keyframes appear0 {
+  from {
+    opacity: 0;
+    transform: translate(8%, 3%);
   }
-  @keyframes appear1 {
-    from { opacity: 0; transform: translate(-3%, 8%); }
-    to { opacity: 1; }
+  to {
+    opacity: 1;
+    transform: none;
   }
-  @keyframes appear2 {
-    from { opacity: 0; transform: translate(-8%, 3%);}
-    to { opacity: 1; transform: none;}
+}
+@keyframes appear1 {
+  from {
+    opacity: 0;
+    transform: translate(-3%, 8%);
   }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes appear2 {
+  from {
+    opacity: 0;
+    transform: translate(-8%, 3%);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
 </style>
