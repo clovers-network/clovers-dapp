@@ -27,20 +27,20 @@ import ViewNav from '@/components/ViewNav'
 
 export default {
   name: 'Account',
-  data () {
+  data() {
     return {
       formFocussed: false,
       form: { name: null }
     }
   },
   computed: {
-    user () {
+    user() {
       return this.$store.state.user
     },
-    signedIn () {
+    signedIn() {
       return !!this.$store.getters.authHeader
     },
-    navItems () {
+    navItems() {
       return [
         { lbl: 'Picks', value: 'Account' },
         { lbl: 'My Clovers', value: 'Account/Clovers' },
@@ -53,13 +53,13 @@ export default {
     ...mapGetters(['prettyUserBalance'])
   },
   methods: {
-    focusUsername () {
+    focusUsername() {
       this.formFocussed = true
     },
-    blurUsername () {
+    blurUsername() {
       this.formFocussed = false
     },
-    updateName () {
+    updateName() {
       this.$refs.nameInput.blur()
       this.changeUsername({
         address: this.user.address,
@@ -70,23 +70,17 @@ export default {
     ...mapActions(['changeUsername', 'signIn'])
   },
   watch: {
-    '$route.name' (val) {
+    '$route.name'(val) {
       this.$refs.nav.setActive(val)
     },
-    user (newVal) {
+    user(newVal) {
       if (!newVal) return
       this.form.name = newVal.name
     }
   },
-  mounted () {
+  mounted() {
     if (!this.user) return
     this.form.name = this.user.name
-  },
-  beforeRouteEnter (to, from, next) {
-    // return store.dispatch('getClovers').then(() => {
-    //   next()
-    //   store.dispatch('getAllUsers')
-    // })
   },
   components: { ViewNav }
 }
