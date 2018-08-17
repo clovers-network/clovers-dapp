@@ -565,13 +565,16 @@ async function getLowestPrice (
   if (typeof targetAmount !== 'object') {
     targetAmount = new BigNumber(targetAmount)
   }
-  let littleIncrement = new BigNumber(utils.toWei('0.001'))
-  let bigIncrement = new BigNumber(utils.toWei('0.1'))
+  let littleIncrement = new BigNumber(utils.toWei('0.01'))
+  let bigIncrement = new BigNumber(utils.toWei('0.05'))
   currentPrice = currentPrice.add(useLittle ? littleIncrement : bigIncrement)
   let resultOfSpend = await contract.instance.methods
     .getBuy(currentPrice)
     .call()
   resultOfSpend = new BigNumber(resultOfSpend)
+  console.log('currentPrice', utils.fromWei(currentPrice.toString(10)))
+  console.log('resultOfSpend', utils.fromWei(resultOfSpend.toString(10)))
+  console.log('targetAmount', utils.fromWei(targetAmount.toString(10)))
   if (resultOfSpend.gt(targetAmount)) {
     return useLittle
       ? currentPrice
@@ -602,8 +605,10 @@ async function claimClover ({ keep, account, clover }) {
       .balanceOf(account)
       .call()
     balance = new BigNumber(balance)
+    console.log('balance', utils.fromWei(balance.toString()))
+    console.log('mintPrice', utils.fromWei(mintPrice.toString()))
     if (balance.lt(mintPrice)) {
-      let clubTokenToBuy = balance.sub(mintPrice)
+      let clubTokenToBuy = mintPrice.sub(balance)
       value = await getLowestPrice(
         contracts.ClubTokenController,
         clubTokenToBuy
@@ -615,7 +620,13 @@ async function claimClover ({ keep, account, clover }) {
     .call()
   value = new BigNumber(value)
   value = value.plus(stakeAmount)
-  console.log(moves, _tokenId, _symmetries, _keep)
+  console.log(
+    moves,
+    _tokenId,
+    _symmetries,
+    _keep,
+    utils.fromWei(value.toString())
+  )
   return contracts.CloversController.instance.methods
     .claimClover(moves, _tokenId, _symmetries, _keep)
     .send({ from, value })
