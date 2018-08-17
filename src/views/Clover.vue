@@ -250,6 +250,7 @@ export default {
       } catch (error) {
         console.log(error)
       }
+      this.view = false
       this.loading = false
     },
     async makeSell () {
@@ -260,6 +261,7 @@ export default {
       } catch (error) {
         console.log(error)
       }
+      this.view = false
       this.loading = false
     },
     async makeRFT () {
@@ -273,6 +275,7 @@ export default {
       } catch (error) {
         console.error(error)
       }
+      this.view = false
       this.loading = false
     },
     focusCloverName () {

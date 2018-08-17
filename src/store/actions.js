@@ -5,7 +5,7 @@ import io from 'socket.io-client'
 import utils from 'web3-utils'
 import axios from 'axios'
 import Web3 from 'web3'
-import { pad0x, formatClover, makeBn } from '@/utils'
+import { pad0x, formatClover, makeBn, padRight } from '@/utils'
 
 window.contracts = contracts
 
@@ -90,7 +90,6 @@ export default {
     if (accounts.length && state.account !== accounts[0].toLowerCase()) {
       commit('SET_UNLOCKED', true)
       commit('SET_ACCOUNT', accounts[0])
-      commit('MOVE_ANON_CLOVERS')
     } else if (!accounts.length && (state.account || state.unlocked)) {
       commit('SET_UNLOCKED', false)
       commit('SET_ACCOUNT', null)
@@ -167,7 +166,8 @@ export default {
         }
       })
   },
-  async getReward (_, _symmetries) {
+  async getReward ({ dispatch }, _symmetries) {
+    await dispatch('getNetwork')
     let val = await contracts.CloversController.instance.methods
       .calculateReward(_symmetries.toString(16))
       .call()
@@ -419,7 +419,7 @@ export default {
     }
   },
   syncClover (_, clover) {
-    axios.get(apiUrl(`/clover/sync/${clover.board}`)).catch(error => {
+    axios.get(apiUrl(`/clovers/sync/${clover.board}`)).catch(error => {
       console.log("sync broken clover didn't work")
       console.log(error)
     })
@@ -430,7 +430,7 @@ export default {
     // if clover exists it must be in SimpleCloversMarket
     // otherwise it is a claimClover
     let cloverExists = await dispatch('cloverExists', clover.board)
-
+    console.log('cloverExists', cloverExists)
     if (cloverExists) {
       // get current price
       let currentPrice = await contracts.SimpleCloversMarket.instance.methods
@@ -588,7 +588,7 @@ async function getLowestPrice (
 async function claimClover ({ keep, account, clover }) {
   let reversi = new Reversi()
   reversi.playGameMovesString(clover.movesString)
-  let moves = reversi.returnByteMoves().map(m => '0x' + m)
+  let moves = reversi.returnByteMoves().map(m => '0x' + padRight(m, 56))
   let _tokenId = clover.board
   let _symmetries = reversi.returnSymmetriesAsBN().toString(10)
   let _keep = keep
@@ -615,6 +615,7 @@ async function claimClover ({ keep, account, clover }) {
     .call()
   value = new BigNumber(value)
   value = value.plus(stakeAmount)
+  console.log(moves, _tokenId, _symmetries, _keep)
   return contracts.CloversController.instance.methods
     .claimClover(moves, _tokenId, _symmetries, _keep)
     .send({ from, value })

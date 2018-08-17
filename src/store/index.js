@@ -67,12 +67,18 @@ function getTokens (key = 'clover_tokens') {
 }
 
 function getSavedClovers (key = 'saved_clovers') {
-  if (!window.localStorage) return {}
-  let all = JSON.parse(window.localStorage.getItem(key)) || {}
-  if (Object.keys(all).length === 0) {
-    all['anon'] = []
+  if (!window.localStorage) return []
+  let stored = JSON.parse(window.localStorage.getItem(key))
+  if (!Array.isArray(stored)) {
+    let all = []
+    for (var foo in stored) {
+      if (stored.hasOwnProperty(foo)) {
+        all = all.concat(stored[foo])
+      }
+    }
+    stored = all
   }
-  return all
+  return stored || []
 }
 
 function getMiningStats (key = 'clover_pig_stats') {

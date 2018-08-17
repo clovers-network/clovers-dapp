@@ -49,6 +49,12 @@ export function formatClover (clover) {
   return clover
 }
 
+export function padRight (val, number) {
+  let diff = parseInt(number) - val.length
+  if (diff === 0) return val
+  return val.toString() + '0'.repeat(diff)
+}
+
 export function makeBn (v = 0) {
   if (typeof v === 'object') return v
   return new BigNumber(v)

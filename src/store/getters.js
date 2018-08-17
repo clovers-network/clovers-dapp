@@ -1,7 +1,7 @@
 import Reversi from 'clovers-reversi'
 import { Clovers, CurationMarket } from 'clovers-contracts'
 import { prettyBigNumber } from '@/utils'
-
+import BigNumber from 'bignumber.js'
 export default {
   userBalance (_, { user }) {
     return user && user.balance
@@ -14,6 +14,7 @@ export default {
     return allClovers
       .slice(0)
       .sort((a, b) => {
+        if (!a[sortBy]) return -1
         if (typeof a[sortBy] === 'object') {
           return a[sortBy].gt(b[sortBy]) ? -1 : a[sortBy].lt(b[sortBy]) ? 1 : 0
         }
@@ -21,10 +22,8 @@ export default {
       })
       .filter(clover => {
         if (feedFilter === 'market') {
-          if (clover.board === '0x955565555995665965956565565a5556') {
-            console.log(clover.price)
-            console.log(clover.price.toString(10))
-            console.log(clover.price.gt(0))
+          if (typeof clover.price !== 'object') {
+            clover.price = new BigNumber(clover.price)
           }
           return clover.price.gt(0)
         } else if (feedFilter === 'curationMarket') {
@@ -65,7 +64,7 @@ export default {
   },
 
   picks ({ account, allSavedClovers }) {
-    return allSavedClovers[account || 'anon'] || []
+    return allSavedClovers || []
   },
   pickCount (_, { picks }) {
     return picks.length
