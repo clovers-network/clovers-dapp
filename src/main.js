@@ -4,6 +4,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import Web3 from 'web3'
+import { PortisProvider } from 'portis'
 
 import BN from 'bignumber.js'
 
@@ -13,22 +14,27 @@ import CloverGridItem from '@/components/CloverGridItem'
 import ZeroClientProvider from 'web3-provider-engine/zero.js'
 
 import autofocus from 'vue-autofocus-directive'
-
+const networks = {
+  4: 'rinkeby',
+  5777: 'ganache',
+  1: 'mainnet'
+}
 if (typeof web3 !== 'undefined') {
   // Use Mist/MetaMask's provider
   global.web3 = new Web3(web3.currentProvider)
 } else {
-  var web3Provider = ZeroClientProvider({
-    getAccounts: function () {},
-    rpcUrl: 'https://rinkeby.infura.io/v3/' + process.env.VUE_APP_INFURA_API_KEY
-  })
-  global.web3 = new Web3(web3Provider)
-  global.web3.currentProvider.zero = true
+  global.web3 = new Web3(
+    new PortisProvider({
+      apiKey: process.env.VUE_APP_PORTIS_KEY,
+      network: networks[store.state.correctNetwork]
+    })
+  )
 }
 
 router.afterEach(() => {
   if (ga) ga('send', 'pageview')
 })
+
 Object.defineProperty(Vue.prototype, '$BN', { value: BN })
 
 Vue.component('clv', Clv)

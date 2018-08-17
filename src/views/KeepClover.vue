@@ -96,7 +96,10 @@ export default {
         const tx = await this.buy(this.clover)
         console.log(tx)
         this.submitting = false
-        this.handleSuccess(`Success! You kept ${this.clover.board}`, this.clover)
+        this.handleSuccess(
+          `Success! You kept ${this.clover.board}`,
+          this.clover
+        )
       } catch (error) {
         console.log(error)
         this.submitting = false
@@ -110,7 +113,10 @@ export default {
         const tx = await this.sell({ clover: this.clover })
         console.log(tx)
         this.submitting = false
-        this.handleSuccess(`Success! You sold ${this.clover.board} to the bank`, this.clover)
+        this.handleSuccess(
+          `Success! You sold ${this.clover.board} to the bank`,
+          this.clover
+        )
       } catch (error) {
         console.log(error)
         this.submitting = false
@@ -141,12 +147,7 @@ export default {
       this.$store.commit('REMOVE_SAVED_CLOVER', clover)
     },
 
-    ...mapActions([
-      'buy',
-      'sell',
-      'addMessage',
-      'selfDestructMsg'
-    ])
+    ...mapActions(['buy', 'sell', 'addMessage', 'selfDestructMsg'])
   },
   mounted () {
     this.getValue()

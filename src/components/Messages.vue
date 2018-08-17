@@ -6,7 +6,10 @@
       @click="clickMessage(msg)"
       :key="msg.id"
       v-for="msg in messages" >
-      <span v-html="escape(msg.msg)"/>
+      <span >
+        <div class="h2 pb2" v-if="msg.title" v-html="escape(msg.title)"/>
+        <div v-html="escape(msg.msg)"/>
+      </span>
       <span
         class='sending px1'
         v-if="msg.type === 'progress'">✨</span>
@@ -40,10 +43,15 @@ export default {
       this.removeMessage(msg.id)
     },
     msgClass (msg) {
-      return {
-        'bg-green white': msg.type === 'success',
-        'bg-white green border': msg.type === 'progress',
-        'bg-red white': msg.type === 'error'
+      switch (msg.type) {
+        case 'success':
+          return 'bg-green white'
+        case 'progress':
+          return 'bg-white green border'
+        case 'error':
+          return 'bg-red white'
+        default:
+          return 'bg-white green border'
       }
     },
     ...mapMutations({

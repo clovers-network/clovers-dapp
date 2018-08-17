@@ -4,7 +4,7 @@
       <div class="center col-6">
         <div @click="toggleFilters" class="relative p1 pointer">
           <div :style="filterBorderStyles" class="filters-btn"></div>
-          <span class="h3">Filter</span>
+          <span class="h3">{{feedFilterName}}</span>
           <div class="absolute top-0 right-0 mr2 mt2 line-height-1">
             <img :style="dropArrowRotate" src="~../assets/icons/chevron-down.svg" width="14" height="14"/>
           </div>
@@ -87,10 +87,10 @@
           </div>
         </div>
       </li>
-      <li v-if="!clovers.length">Sorry No Clovers Here!</li>
+      <li class="p2 center" v-if="!clovers.length">No Clovers To Show...</li>
     </ul>
 
-    <nav v-if="nextPage" class="list-reset">
+    <nav v-if="nextPage" class="list-reset bottom-0">
       <li class="py2 px3 center">
         <router-link :to="nextPage" class="h5 green">View next &rarr;</router-link>
       </li>
@@ -117,6 +117,18 @@ export default {
     }
   },
   computed: {
+    feedFilterName () {
+      switch (this.feedFilter) {
+        case 'all':
+          return 'Filter'
+        case 'market':
+          return 'For Sale'
+        case 'curationMarket':
+          return 'RFT'
+        default:
+          return ''
+      }
+    },
     page () {
       return Number(this.$route.params.page) || 1
     },

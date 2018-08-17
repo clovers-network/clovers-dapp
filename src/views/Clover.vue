@@ -179,7 +179,7 @@ export default {
       )
     },
     balanceAfterBn () {
-      if (!this.userBalance) return '0'
+      if (!this.userBalance) return new this.$BN('0')
       return bnMinus(this.userBalance, this.price, 0)
     },
     balanceAfter () {
@@ -195,14 +195,24 @@ export default {
       )
     },
     isRFT () {
-      return this.clover && this.clover.owner.toLowerCase() === this.curationMarketAddress
+      return (
+        this.clover &&
+        this.clover.owner.toLowerCase() === this.curationMarketAddress
+      )
     },
     currentOwner () {
       const owner = this.owner
-      return !owner ? '-'
-        : this.isMyClover ? 'You'
-          : this.isRFT ? 'Curation Mrkt.'
-            : owner.toLowerCase() === this.$store.getters.cloversBankAddress ? this.price > 0 ? 'Clovers' : 'Pending...' : owner
+      return !owner
+        ? '-'
+        : this.isMyClover
+          ? 'You'
+          : this.isRFT
+            ? 'Curation Mrkt.'
+            : owner.toLowerCase() === this.$store.getters.cloversBankAddress
+              ? this.price > 0
+                ? 'Clovers'
+                : 'Pending...'
+              : owner
     },
     clover () {
       let cloverIndex = this.allClovers.findIndex(c => c.board === this.board)
@@ -221,7 +231,12 @@ export default {
       return this.canBuy && this.balanceAfterBn.gte(0)
     },
     ...mapState(['account', 'allUsers', 'allClovers']),
-    ...mapGetters(['prettyUserBalance', 'user', 'userBalance', 'curationMarketAddress'])
+    ...mapGetters([
+      'prettyUserBalance',
+      'user',
+      'userBalance',
+      'curationMarketAddress'
+    ])
   },
   methods: {
     cloverImage,
@@ -251,7 +266,10 @@ export default {
       if (this.loading) return
       try {
         this.loading = true
-        await this.makeCloverRFT({ board: this.clover.board, investmentInWei: this.investmentInWei })
+        await this.makeCloverRFT({
+          board: this.clover.board,
+          investmentInWei: this.investmentInWei
+        })
       } catch (error) {
         console.error(error)
       }
@@ -283,11 +301,12 @@ export default {
         clover: this.clover.board,
         amount: '1'
       })
-        .then((res) => {
+        .then(res => {
           this.loading = false
           this.handleSuccess(`Success! You bought a stake!`)
           console.log(res)
-        }).catch((err) => {
+        })
+        .catch(err => {
           this.loading = false
           this.handleError(err)
         })
@@ -358,6 +377,10 @@ figure > .img-sizer {
   max-height: 24rem;
 }
 
-.imgsizer-enter-active{transition:opacity 100ms;}
-.imgsizer-enter{opacity:0;}
+.imgsizer-enter-active {
+  transition: opacity 100ms;
+}
+.imgsizer-enter {
+  opacity: 0;
+}
 </style>

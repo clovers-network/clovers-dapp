@@ -1,8 +1,8 @@
 <template>
   <div id="app" class="relative min-h-100vh max-width-3 mx-auto outline">
     <app-header/>
-    <main>
-      <router-view/>
+    <main class="">
+      <router-view class=""/>
     </main>
     <foot/>
     <messages/>
@@ -18,11 +18,10 @@ import { mapActions } from 'vuex'
 export default {
   name: 'App',
   methods: {
-    ...mapActions(['begin', 'setUpSocket', 'getAllUsers', 'getClovers'])
+    ...mapActions(['setUpSocket', 'getAllUsers', 'getClovers'])
   },
-  mounted () {
+  async mounted () {
     this.setUpSocket()
-    this.begin()
     this.getClovers()
     this.getAllUsers()
   },

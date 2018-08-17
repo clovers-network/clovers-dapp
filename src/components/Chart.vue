@@ -1,5 +1,5 @@
 <template>
-  <article class="relative" style="padding-top:calc(100vh - 524px);">
+  <article class="relative minh-200" style="padding-top:calc(100vh - 524px);">
     <price-chart
       class="price-chart absolute left-0 right-0 bottom-0 bg-dots-green"
       :chart-data="chartData"
@@ -32,13 +32,17 @@ export default {
         legend: { display: false },
         title: { display: false },
         scales: {
-          yAxes: [{
-            display: false
-          }],
-          xAxes: [{
-            type: 'time',
-            display: false
-          }]
+          yAxes: [
+            {
+              display: false
+            }
+          ],
+          xAxes: [
+            {
+              type: 'time',
+              display: false
+            }
+          ]
         }
       }
     }
@@ -55,9 +59,11 @@ export default {
             borderWidth: 1,
             pointRadius: 0,
             lineTension: 0,
-            data: this.orders.map((p) => {
+            data: this.orders.map(p => {
               return {
-                y: new BigNumber(p.value).div(new BigNumber(p.tokens)).toNumber(0),
+                y: new BigNumber(p.value)
+                  .div(new BigNumber(p.tokens))
+                  .toNumber(0),
                 x: parseInt(p.created)
               }
             })

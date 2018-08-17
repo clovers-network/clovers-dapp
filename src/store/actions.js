@@ -5,7 +5,6 @@ import io from 'socket.io-client'
 import utils from 'web3-utils'
 import axios from 'axios'
 import Web3 from 'web3'
-import { PortisProvider } from 'portis'
 import { pad0x, formatClover, makeBn } from '@/utils'
 
 window.contracts = contracts
@@ -32,109 +31,61 @@ const anonUser = {
 
 export default {
   // web3 stuff
-  async begin ({ commit, dispatch }) {
-    console.log('begin')
+  async checkWeb3 ({ commit, dispatch }) {
     try {
-      await dispatch('poll')
-    } catch (error) {
-      console.log('begin failed')
-      console.error(error)
-    }
-  },
-  reset ({ state, commit, dispatch }) {
-    if (state.querying) {
-      commit('SET_TRY_AGAIN', true)
-      return
-    }
-    console.log('reset')
-    commit('SET_QUERYING', true)
-    dispatch('getContracts')
-    commit('SET_QUERYING', false)
-    if (state.tryAgain) {
-      commit('SET_TRY_AGAIN', false)
-      dispatch('reset')
-    }
-  },
-  async poll ({ state, commit, dispatch }) {
-    try {
-      let networkId = parseInt(state.networkId) + 0
-      await dispatch('getNetwork')
-      if (networkId !== state.networkId) dispatch('reset')
       await dispatch('getAccount')
-      setTimeout(() => {
-        dispatch('poll')
-      }, 3000)
+      return true
     } catch (error) {
-      console.error(error)
-      let title, body
-      let poll = true
-      switch (error.message) {
-        case 'User denied transaction signature.':
-          title = 'Error Connecting To The Network'
-          body = `Looks like you aren't connected to the Ethereum Network.
-            The popup you just dismissed is a free wallet service called
-            <a target='_blank' href='https://portis.io/'>Portis</a> that you
-            can use by refreshing the page. If you'd like to hear about other
-            wallet options including <a target='_blank' href='https://metamask.io/'>
-            Metamask</a> and <a target='_blank' href='https://www.uport.me/'>
-            uPort</a> please check out our help section.`
-          break
-        case 'account-locked':
-          title = 'Wallet is Locked'
-          body = `Looks like your wallet is locked. Please unlock it if you'd like to
-               interact with the contracts. If you'd like more information about
-               this error, please see out help page.`
-          break
-        case 'wrong-network':
-          title = 'Wrong Network'
-          body = `Looks like you're connected to the wrong network. Please switch to
-          Network ${
+      await dispatch('handleWeb3Error', error)
+      return false
+    }
+  },
+  async handleWeb3Error ({ state, dispatch }, error) {
+    console.error(error)
+    let title, body
+    switch (error.message) {
+      case 'User denied transaction signature.':
+        title = 'Error Connecting To The Network'
+        body = `Looks like you aren't connected to the Ethereum Network.
+          The popup you just dismissed is a free wallet service called
+          <a target='_blank' href='https://portis.io/'>Portis</a> that
+          will pop up unless you have a wallet like <u><a target='_blank' href='https://metamask.io/'>
+          Metamask</a></u>, <u><a target="_blank" href="https://status.im/">Status</a></u>, <u><a href="https://wallet.coinbase.com/" target="_blank">Coinbase Wallet</a></u> or  <u><a target='_blank' href='https://www.uport.me/'>
+          uPort</a></u> already installed.`
+        break
+      case 'account-locked':
+        title = 'Wallet is Locked'
+        body = `Looks like your wallet is locked. Please unlock it if you'd like to
+             interact with the contracts. If you'd like more information about
+             this error, please see out help page.`
+        break
+      case 'wrong-network':
+        title = 'Wrong Network'
+        body = `Looks like you're connected to the wrong network. Please switch to
+        Network ${
   networks[state.correctNetwork]
 } to interact with the blockchain.`
-          break
-        default:
-          title = 'Error Connecting To The Network'
-          body = error.message
-      }
-      console.log({ title, body })
-      if (poll) {
-        setTimeout(() => {
-          dispatch('poll')
-        }, 3000)
-      } else {
-        // given a reason not to poll...
-      }
+        break
+      default:
+        title = 'Error Connecting To The Network'
+        body = error.message
     }
+    dispatch('addMessage', {
+      type: 'info',
+      title,
+      msg: body
+    })
   },
-  async getNetwork ({ commit, state }) {
+  async getNetwork ({ commit, state, dispatch }) {
+    console.log('getNetwork')
     const networkId = await global.web3.eth.net.getId()
     if (state.networkId !== networkId) {
       commit('SET_NETWORK', networkId)
-    }
-  },
-  async getAnAccount ({ dispatch, commit, state }) {
-    if (state.account) {
-      alert('you have an account!' + state.acount)
-    }
-    if (global.web3.currentProvider.zero) {
-      // user has no web3, ask them to do portis
-      // TODO Make this work
-      alert('should trigger portis wallet but it is not')
-      global.web3 = new Web3(
-        new PortisProvider({
-          apiKey: process.env.VUE_APP_PORTIS_KEY,
-          network: networks[state.correctNetwork]
-        })
-      )
-    } else if (global.web3.currentProvider.isPortis) {
-      // user has portis, but no account available, ask them to unlock it
-      alert('unlock your portis wallet')
-    } else {
-      // user has web3, but their wallet is not unlocked
-      alert('unlock your web3 wallet')
+      await dispatch('getContracts')
     }
   },
   async getAccount ({ commit, dispatch, state }) {
+    await dispatch('getNetwork')
     let accounts = await global.web3.eth.getAccounts()
     if (accounts.length && state.account !== accounts[0].toLowerCase()) {
       commit('SET_UNLOCKED', true)
@@ -145,8 +96,10 @@ export default {
       commit('SET_ACCOUNT', null)
       throw new Error('account-locked')
     }
+    commit('UPDATE_WAIT_TO_PING', true)
   },
-  getContracts ({ dispatch, state, commit }) {
+  async getContracts ({ dispatch, state, commit }) {
+    console.log('getContracts start')
     for (var name in contracts) {
       if (!contracts.hasOwnProperty(name)) continue
       let contract = contracts[name]
@@ -161,8 +114,9 @@ export default {
         throw new Error('wrong-network')
       }
     }
-    dispatch('updateBasePrice')
-    dispatch('updateStakeAmount')
+    await dispatch('updateBasePrice')
+    await dispatch('updateStakeAmount')
+    console.log('getContracts ended')
   },
   async updateBasePrice ({ commit }) {
     let basePrice = await contracts.CloversController.instance.methods
@@ -201,7 +155,7 @@ export default {
           msg: 'Username updated'
         })
       })
-      .catch((err) => {
+      .catch(err => {
         dispatch('selfDestructMsg', {
           type: 'error',
           msg: err.message
@@ -250,9 +204,9 @@ export default {
   // logs
   selfDestructMsg ({ commit }, msg) {
     let msgId = commit('ADD_MSG', msg)
-    setTimeout(() => {
-      commit('REMOVE_MSG', msgId)
-    }, 7000)
+    // setTimeout(() => {
+    //   commit('REMOVE_MSG', msgId)
+    // }, 7000)
   },
   addMessage ({ commit }, msg) {
     let msgId = Date.now()
@@ -322,7 +276,8 @@ export default {
     }
   },
 
-  signIn ({ state, commit, dispatch }) {
+  async signIn ({ state, commit, dispatch }) {
+    if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
     const { account } = state
     if (!account) {
       dispatch('selfDestructMsg', {
@@ -369,7 +324,7 @@ export default {
           msg: 'Clover name updated'
         })
       })
-      .catch((err) => {
+      .catch(err => {
         dispatch('selfDestructMsg', {
           type: 'error',
           msg: err.message
@@ -378,24 +333,27 @@ export default {
   },
 
   // Contract Interactions
-  async getBuy (store, { market, amount, clover }) {
+  async getBuy ({ dispatch }, { market, amount, clover }) {
+    console.log('getBuy')
     if (!Number(amount) || Number(amount) < 0) return 0
+    await dispatch('getNetwork')
     amount = utils.toWei(amount)
     let args = [amount]
     if (market === 'CurationMarket') args.unshift(clover)
     return contracts[market].instance.methods.getBuy(...args).call()
   },
-  async getSell ({ state }, { market, amount, clover }) {
+  async getSell ({ dispatch, state }, { market, amount, clover }) {
+    console.log('getSell')
     if (!Number(amount) || Number(amount) < 0) return 0
+    await dispatch('getNetwork')
     amount = utils.toWei(amount)
     let args = [amount]
     if (market === 'CurationMarket') args.unshift(clover)
-    return contracts[market].instance.methods
-      .getSell(...args)
-      .call()
+    return contracts[market].instance.methods.getSell(...args).call()
   },
-  async invest ({ state, getters }, { market, amount, clover }) {
+  async invest ({ state, getters, dispatch }, { market, amount, clover }) {
     if (!Number(amount) || Number(amount) < 0) throw new Error('Invalid amount')
+    if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
     amount = utils.toWei(amount)
     if (market === 'ClubTokenController') {
       let balance = await global.web3.eth.getBalance(state.account)
@@ -427,8 +385,9 @@ export default {
         })
     }
   },
-  async divest ({ state }, { market, amount }) {
+  async divest ({ state, dispatch }, { market, amount }) {
     if (!Number(amount) || Number(amount) < 0) throw new Error('Invalid amount')
+    if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
     amount = utils.toWei(amount)
     if (market === 'ClubTokenController') {
       let balance = await contracts.ClubToken.instance.methods
@@ -460,12 +419,14 @@ export default {
     }
   },
   syncClover (_, clover) {
-    axios.get(apiUrl(`/clover/sync/${clover.board}`)).catch((error) => {
-      console.log('sync broken clover didn\'t work')
+    axios.get(apiUrl(`/clover/sync/${clover.board}`)).catch(error => {
+      console.log("sync broken clover didn't work")
       console.log(error)
     })
   },
   async buy ({ dispatch, state, commit }, clover) {
+    if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
+
     // if clover exists it must be in SimpleCloversMarket
     // otherwise it is a claimClover
     let cloverExists = await dispatch('cloverExists', clover.board)
@@ -500,14 +461,12 @@ export default {
         })
     } else {
       // claim clover w option _keep = true
-      if (!state.account) {
-        await dispatch('getAnAccount')
-      }
       return claimClover({ keep: true, clover, account: state.account })
     }
   },
   async sell ({ state, dispatch, commit }, { clover, price }) {
-    console.log(clover, price)
+    if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
+
     // if clover exists it must be in SimpleCloversMarket
     // otherwise it is a claimClover
     // TODO Figure out why cloverExists is returning a promise
@@ -543,33 +502,53 @@ export default {
       return claimClover({ keep: false, clover, account: state.account })
     }
   },
-  async makeCloverRFT ({ state }, { board, investmentInWei = 0 }) {
-    console.log(board, investmentInWei)
+  async makeCloverRFT ({ state, dispatch }, { board, investmentInWei = 0 }) {
+    if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
+
     // logged in ?
     if (!state.account) return Promise.reject(new Error('You must log-in'))
     // exists ?
     const exists = await contracts.Clovers.instance.methods.exists(board).call()
     if (!exists) return Promise.reject(new Error("Clover doesn't exist"))
     // account is owner ?
-    const ownedBy = await contracts.Clovers.instance.methods.ownerOf(board).call()
-    if (state.account.toLowerCase() !== ownedBy.toLowerCase()) return Promise.reject(new Error('You are not the owner of the Clover'))
+    const ownedBy = await contracts.Clovers.instance.methods
+      .ownerOf(board)
+      .call()
+    if (state.account.toLowerCase() !== ownedBy.toLowerCase()) {
+      return Promise.reject(new Error('You are not the owner of the Clover'))
+    }
     // isn't in the Simple Market ?
-    let price = await contracts.SimpleCloversMarket.instance.methods.sellPrice(board).call()
+    let price = await contracts.SimpleCloversMarket.instance.methods
+      .sellPrice(board)
+      .call()
     console.log(price)
     price = new BigNumber(price)
-    if (!price.eq(0)) return Promise.reject(new Error('Clover is listed in the Market. Please remove before making an RFT'))
+    if (!price.eq(0)) {
+      return Promise.reject(
+        new Error(
+          'Clover is listed in the Market. Please remove before making an RFT'
+        )
+      )
+    }
     // min Amnt 0
     investmentInWei = investmentInWei < 0 ? 0 : investmentInWei
     // have enough tokens ?
     let value = '0'
     // check balance of user in club token
-    let userBalance = await contracts.ClubToken.instance.methods.balanceOf(state.account).call()
+    let userBalance = await contracts.ClubToken.instance.methods
+      .balanceOf(state.account)
+      .call()
     userBalance = new BigNumber(userBalance)
     if (userBalance.gt(investmentInWei)) {
-      value = await getLowestPrice(contracts.ClubTokenController, investmentInWei)
+      value = await getLowestPrice(
+        contracts.ClubTokenController,
+        investmentInWei
+      )
     }
     // go !
-    await contracts.CurationMarket.instance.methods.addCloverToMarket(board, investmentInWei).send({from: state.account, value})
+    await contracts.CurationMarket.instance.methods
+      .addCloverToMarket(board, investmentInWei)
+      .send({ from: state.account, value })
   }
 }
 

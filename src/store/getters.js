@@ -10,7 +10,7 @@ export default {
     if (!user) return '0'
     return prettyBigNumber(user.balance, 0)
   },
-  sortedClovers ({ sortBy, feedFilter, allClovers }, {curationMarketAddress}) {
+  sortedClovers ({ sortBy, feedFilter, allClovers }, { curationMarketAddress }) {
     return allClovers
       .slice(0)
       .sort((a, b) => {
@@ -28,22 +28,29 @@ export default {
           }
           return clover.price.gt(0)
         } else if (feedFilter === 'curationMarket') {
-          return clover.owner.toLowerCase() === curationMarketAddress.toLowerCase()
+          return (
+            clover.owner.toLowerCase() === curationMarketAddress.toLowerCase()
+          )
         }
         return true
       })
   },
   userClovers ({ allClovers }, { user }) {
     if (!user) return []
-    return user.clovers.slice(0).map(id => {
-      return allClovers.find(c => c.board.toLowerCase() === id.toLowerCase())
-    }).sort((a, b) => {
-      return Number(b.modified) - Number(a.modified)
-    })
+    return user.clovers
+      .slice(0)
+      .map(id => {
+        return allClovers.find(c => c.board.toLowerCase() === id.toLowerCase())
+      })
+      .sort((a, b) => {
+        return Number(b.modified) - Number(a.modified)
+      })
   },
   user ({ allUsers, account }) {
     if (!account) return { address: null, name: 'anon', clovers: [] }
-    let current = allUsers.find(u => u.address.toLowerCase() === account.toLowerCase())
+    let current = allUsers.find(
+      u => u.address.toLowerCase() === account.toLowerCase()
+    )
     if (!current) {
       return {
         address: account,

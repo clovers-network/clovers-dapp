@@ -1,6 +1,6 @@
 <template>
   <div class="md-pb3">
-    <ul class="list-reset md-flex flex-wrap justify-around items-center m0 md-px1">
+    <ul class="list-reset md-flex flex-wrap justify-around items-center m0 md-px1 pb4">
       <li v-for="clover in userClovers" :key="clover.board" class="md-col-6 md-px1">
         <div is="router-link" tag="div" :to="cloverLink(clover)" class="flex py2 border-bottom green">
           <div class="col-4 center">
@@ -35,7 +35,11 @@
           </div>
         </div>
       </li>
+      <li class="p2 center" v-if="!userClovers.length">No Clovers To Show...</li>
     </ul>
+    <div is="router-link" tag="div" to="/feed" class="fixed-center-max-width bottom-0 bg-green white center p2 pointer h-bttm-bar">
+      <span class="m-auto h3 font-exp">Go To Feed</span>
+    </div>
   </div>
 </template>
 

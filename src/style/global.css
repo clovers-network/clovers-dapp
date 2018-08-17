@@ -10,9 +10,11 @@
 
 html{
   font-size:var(--rem);
+  background-color: var(--green)
 }
 
 body {
+  background-color: white;
   color: var(--green);
   font-family: var(--body-font);
   font-size: var(--base-font-size);
@@ -106,9 +108,24 @@ p {
   margin-top: 0;
   margin-bottom: 1em;
 }
-
+.pt5{padding-top: 5em;}
+.pt6{padding-top: 6em;}
+.pt7{padding-top: 7em;}
+.pt8{padding-top: 8em;}
+.pt-header{padding-top:93px}
 strong { font-weight: 600; }
 
+.minh-200 {
+  min-height:180px;
+}
+
+.fixed-center-max-width {
+  width:100%;
+  position: fixed;
+  left:50%;
+  transform: translateX(-50%);
+       max-width: var(--width-3);
+}
 .medium { font-weight: 500; }
 
 dl, ol, ul, pre, blockquote {

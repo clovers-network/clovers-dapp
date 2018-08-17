@@ -266,7 +266,7 @@ export default {
   /*padding: 1.6em;*/
   /*display: inline-block;*/
   display: block;
-  z-index:0;
+  z-index: 0;
   /*position: relative;*/
 
   &.small-clover {
@@ -275,27 +275,27 @@ export default {
   &.no-border {
     border: 0px !important;
   }
-  .clover__circle{
+  .clover__circle {
     transition: background 500ms ease, border 500ms ease;
-    width:100%;
-    height:0;
+    width: 100%;
+    height: 0;
     position: relative;
-    padding-bottom:100%;
-    border-radius:100%;
+    padding-bottom: 100%;
+    border-radius: 100%;
   }
-  .row-body{
+  .row-body {
     position: absolute;
-    width:70%;
-    top:15%;
-    left:15%;
+    width: 70%;
+    top: 15%;
+    left: 15%;
     /*margin:0 auto;*/
   }
   .row {
     /*line-height: 0;*/
-    display:flex;
+    display: flex;
   }
   .active-clover & {
-    box-shadow: 0 0 0 .4em;
+    box-shadow: 0 0 0 0.4em;
   }
   &.no-bg:after {
     background-color: transparent !important;
@@ -321,17 +321,21 @@ export default {
     background-color: var(--green);
     border: 1px solid var(--green);
   }
-
+}
+.t-n {
+  background-color: var(--green);
 }
 
-.t-b, .t-w, .t-n {
+.t-b,
+.t-w,
+.t-n {
   display: inline-block;
   width: calc(100% / 8); /* .6em; */
   /*margin: .06em;*/
-  border:1px solid transparent;
+  border: 1px solid transparent;
   border-radius: 1000em;
   transition: border 500ms ease;
-  &:after{
+  &:after {
     content: '';
     display: block;
     /*margin:4%;*/
@@ -350,7 +354,7 @@ export default {
 }
 
 .t-n:after {
-  background:inherit;
+  background: inherit;
   /*background-color: var(--green);*/
 }
 </style>

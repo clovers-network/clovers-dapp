@@ -3,6 +3,9 @@ import BigNumber from 'bignumber.js'
 import { formatClover } from '@/utils'
 
 export default {
+  UPDATE_WAIT_TO_PING (state, value) {
+    state.waitToPing = value
+  },
   SET_BASE_PRICE (state, basePrice) {
     state.basePrice = basePrice
   },
