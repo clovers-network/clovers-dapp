@@ -444,6 +444,7 @@ export default {
         .sellPrice(clover.board)
         .call()
       currentPrice = makeBn(currentPrice)
+      console.log('currentPrice', utils.fromWei(currentPrice.toString()))
       // if 0 then it's not actually for sale
       if (currentPrice.eq(0)) {
         dispatch('syncClover', clover)
@@ -458,7 +459,10 @@ export default {
       let value = 0
       // if it's less than the price then find the Eth needed to buy enough
       if (balanceOf.lt(currentPrice)) {
-        value = getLowestPrice(contracts.ClubToken, balanceOf.sub(currentPrice))
+        value = await getLowestPrice(
+          contracts.ClubTokenController,
+          currentPrice.sub(balanceOf)
+        )
       }
       return contracts.SimpleCloversMarket.instance.methods
         .buy(clover.board)
@@ -528,7 +532,6 @@ export default {
     let price = await contracts.SimpleCloversMarket.instance.methods
       .sellPrice(board)
       .call()
-    console.log(price)
     price = new BigNumber(price)
     if (!price.eq(0)) {
       return Promise.reject(
@@ -579,9 +582,6 @@ async function getLowestPrice (
     .getBuy(currentPrice)
     .call()
   resultOfSpend = new BigNumber(resultOfSpend)
-  console.log('currentPrice', utils.fromWei(currentPrice.toString(10)))
-  console.log('resultOfSpend', utils.fromWei(resultOfSpend.toString(10)))
-  console.log('targetAmount', utils.fromWei(targetAmount.toString(10)))
   if (resultOfSpend.gt(targetAmount)) {
     return useLittle
       ? currentPrice
@@ -612,8 +612,6 @@ async function claimClover ({ keep, account, clover }) {
       .balanceOf(account)
       .call()
     balance = new BigNumber(balance)
-    console.log('balance', utils.fromWei(balance.toString()))
-    console.log('mintPrice', utils.fromWei(mintPrice.toString()))
     if (balance.lt(mintPrice)) {
       let clubTokenToBuy = mintPrice.sub(balance)
       value = await getLowestPrice(
