@@ -30,6 +30,14 @@ const anonUser = {
 }
 
 export default {
+  async poll ({ dispatch }) {
+    if (!global.web3.currentProvider.isPortis) {
+      await dispatch('checkWeb3')
+      setTimeout(() => {
+        dispatch('poll')
+      }, 5000)
+    }
+  },
   // web3 stuff
   async checkWeb3 ({ commit, dispatch }) {
     try {
@@ -77,7 +85,6 @@ export default {
     })
   },
   async getNetwork ({ commit, state, dispatch }) {
-    console.log('getNetwork')
     const networkId = await global.web3.eth.net.getId()
     if (state.networkId !== networkId) {
       commit('SET_NETWORK', networkId)
@@ -565,8 +572,8 @@ async function getLowestPrice (
   if (typeof targetAmount !== 'object') {
     targetAmount = new BigNumber(targetAmount)
   }
-  let littleIncrement = new BigNumber(utils.toWei('0.01'))
-  let bigIncrement = new BigNumber(utils.toWei('0.05'))
+  let littleIncrement = new BigNumber(utils.toWei('0.001'))
+  let bigIncrement = new BigNumber(utils.toWei('0.01'))
   currentPrice = currentPrice.add(useLittle ? littleIncrement : bigIncrement)
   let resultOfSpend = await contract.instance.methods
     .getBuy(currentPrice)
