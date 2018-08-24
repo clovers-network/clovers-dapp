@@ -2,6 +2,8 @@
 
 ## https://clovers.network/
 
+Ethereum contracts: [clovers-network/clovers-contracts](https://github.com/clovers-network/clovers-contracts)
+
 ![We pay Crypto for Clovers](https://clovers.network/static/01.png)
 ![This is a Clover](https://clovers.network/static/02.png)
 ![Clovers are solutions to a difficult search problem which results in Cryptographically Secured Artworks. Clovers are Crypto Collectibles](https://clovers.network/static/03.png)
