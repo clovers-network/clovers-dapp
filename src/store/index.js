@@ -8,6 +8,7 @@ import mutations from './mutations'
 
 import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
+
 global.Reversi = new Reversi()
 
 Vue.use(Vuex)

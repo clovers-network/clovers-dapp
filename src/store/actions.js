@@ -169,7 +169,14 @@ export default {
       return data
     })
   },
-
+  async updateUserENS ({ commit }, user) {
+    let ensName = await global.ens
+      .reverse(user.address)
+      .name()
+      .catch(e => {})
+    user.ens = ensName === undefined ? false : ensName
+    commit('UPDATE_USER', user)
+  },
   async changeUsername ({ commit, getters, dispatch }, { address, name }) {
     if (!address) return
     return axios

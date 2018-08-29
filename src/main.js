@@ -4,6 +4,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import Web3 from 'web3'
+import ENS from 'ethereum-ens'
 import { PortisProvider } from 'portis'
 
 import BN from 'bignumber.js'
@@ -30,6 +31,7 @@ if (typeof web3 !== 'undefined') {
     })
   )
 }
+global.ens = new ENS(global.web3.currentProvider)
 
 router.afterEach(() => {
   if (ga) ga('send', 'pageview')

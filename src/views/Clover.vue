@@ -135,7 +135,7 @@ export default {
   props: {
     board: { type: String, required: true }
   },
-  data() {
+  data () {
     return {
       formFocussed: false,
       form: { name: null },
@@ -149,37 +149,37 @@ export default {
     }
   },
   computed: {
-    user() {
+    user () {
       return this.$store.state.user
     },
-    signedIn() {
+    signedIn () {
       return !!this.$store.getters.authHeader
     },
-    showSalePrice() {
+    showSalePrice () {
       return this.clover && this.clover.price && this.clover.price.gt(0)
     },
-    sellPriceWei() {
+    sellPriceWei () {
       return this.sellPrice ? utils.toWei(this.sellPrice) : '0'
     },
-    sharesOwned() {
+    sharesOwned () {
       return (
         (this.sharesOwnedWei && prettyBigNumber(this.sharesOwnedWei, 0)) ||
         '---'
       )
     },
-    owner() {
+    owner () {
       return this.clover && addrToUser(this.allUsers, this.clover.owner)
     },
-    prettyPrice() {
+    prettyPrice () {
       return this.clover && prettyBigNumber(this.clover.price, 0)
     },
-    price() {
+    price () {
       return this.clover && this.clover.price
     },
-    investmentInWei() {
+    investmentInWei () {
       return this.invesment ? utils.toWei(this.invesment) : '0'
     },
-    originalPrice() {
+    originalPrice () {
       return (
         (this.clover &&
           this.clover.originalPrice &&
@@ -187,17 +187,17 @@ export default {
         '---'
       )
     },
-    balanceAfterBn() {
+    balanceAfterBn () {
       if (!this.userBalance) return new this.$BN('0')
       if (!this.price) return new this.$BN('0')
       return bnMinus(this.userBalance, this.price, 0)
     },
-    balanceAfter() {
+    balanceAfter () {
       if (!this.userBalance) return '0'
       if (!this.price) return new this.$BN('0')
       return prettyBigNumber(this.balanceAfterBn, 0)
     },
-    isMyClover() {
+    isMyClover () {
       return (
         this.clover &&
         this.clover.owner &&
@@ -205,13 +205,13 @@ export default {
         this.clover.owner.toLowerCase() === this.account
       )
     },
-    isRFT() {
+    isRFT () {
       return (
         this.clover &&
         this.clover.owner.toLowerCase() === this.curationMarketAddress
       )
     },
-    currentOwner() {
+    currentOwner () {
       const owner = this.owner
       return !owner
         ? '---'
@@ -225,20 +225,20 @@ export default {
                 : 'Pending...'
               : owner
     },
-    clover() {
+    clover () {
       let cloverIndex = this.allClovers.findIndex(c => c.board === this.board)
       return cloverIndex >= 0 ? this.allClovers[cloverIndex] : this.localClover
     },
-    cloverMovesString() {
+    cloverMovesString () {
       const mvs = this.clover && this.clover.moves && this.clover.moves[0]
       return mvs && reversi.byteMovesToStringMoves(...mvs)
     },
-    canBuy() {
+    canBuy () {
       if (!this.user || !this.price) return false
       if (!makeBn(this.price).gt(0)) return false
       return true
     },
-    canAfford() {
+    canAfford () {
       return this.canBuy && this.balanceAfterBn.gte(0)
     },
     ...mapState(['account', 'allUsers', 'allClovers', 'orders']),
@@ -253,7 +253,7 @@ export default {
     cloverImage,
     prettyBigNumber,
 
-    async makeBuy() {
+    async makeBuy () {
       if (this.loading) return
       try {
         this.loading = true
@@ -264,7 +264,7 @@ export default {
       this.view = false
       this.loading = false
     },
-    async makeSell() {
+    async makeSell () {
       if (this.loading) return
       try {
         this.loading = true
@@ -275,7 +275,7 @@ export default {
       this.view = false
       this.loading = false
     },
-    async makeRFT() {
+    async makeRFT () {
       if (this.loading) return
       try {
         this.loading = true
@@ -289,17 +289,17 @@ export default {
       this.view = false
       this.loading = false
     },
-    focusCloverName() {
+    focusCloverName () {
       setTimeout(() => {
         this.formFocussed = true
       }, 100)
     },
-    blurCloverName() {
+    blurCloverName () {
       setTimeout(() => {
         this.formFocussed = false
       }, 50)
     },
-    updateName() {
+    updateName () {
       if (!this.form.name.length) return
       this.$refs.nameInput.blur()
       let clv = {
@@ -308,7 +308,7 @@ export default {
       }
       this.updateCloverName(clv)
     },
-    buyStake() {
+    buyStake () {
       this.loading = true
       this.invest({
         market: 'CurationMarket',
@@ -325,19 +325,19 @@ export default {
           this.handleError(err)
         })
     },
-    handleError({ message }) {
+    handleError ({ message }) {
       this.selfDestructMsg({
         msg: message.replace('Error: ', ''),
         type: 'error'
       })
     },
-    handleSuccess(msg) {
+    handleSuccess (msg) {
       this.addMessage({
         msg,
         type: 'success'
       })
     },
-    setFormName(clover) {
+    setFormName (clover) {
       if (clover) this.form.name = clover.name || clover.board
     },
 
@@ -354,25 +354,25 @@ export default {
       'getShares'
     ])
   },
-  created() {
+  created () {
     if (this.clover) return
     this.$store.dispatch('getClover', this.board).then(clvr => {
       this.localClover = clvr
     })
   },
-  async mounted() {
+  async mounted () {
     this.setFormName(this.clover)
   },
   watch: {
-    async 'orders.length'() {
+    async 'orders.length' () {
       if (this.isRFT) {
         this.sharesOwnedWei = await this.getShares(this.board)
       }
     },
-    clover(clvr) {
+    clover (clvr) {
       this.setFormName(clvr)
     },
-    async isRFT() {
+    async isRFT () {
       if (this.isRFT) {
         this.sharesOwnedWei = await this.getShares(this.board)
       }
