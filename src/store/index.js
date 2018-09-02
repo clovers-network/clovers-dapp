@@ -27,6 +27,7 @@ const state = {
   account: null,
   networkId: null,
   correctNetwork: 4,
+  contractsDeployed: false,
 
   miningStats: getMiningStats(),
 
@@ -40,6 +41,12 @@ const state = {
   // saved clovers, organized by account ID
   // use getter 'picks' in views
   allSavedClovers: getSavedClovers(),
+
+  // orders
+  ethPrice: '0',
+  clubTokenPrice: '0',
+  market: null,
+  orders: [],
 
   allUsers: [],
   logs: [],

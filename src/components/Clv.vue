@@ -4,6 +4,7 @@
     @mouseenter="activate()"
     @click="playAnimate()"
     class="clover nowrap pointer relative"
+    :class="{isRFT:isRFT}"
     >
     <div
       v-if="showFlags"
@@ -131,7 +132,6 @@ export default {
     },
     circleStyle () {
       if (!this.board || !this.stop) return 'bg-green'
-      if (this.isRFT) return 'bg-red'
       let w = 0
       let b = 0
       this.board.forEach(r =>
@@ -317,6 +317,27 @@ export default {
   .w-t {
     background-color: var(--silver);
   }
+
+  &.isRFT {
+    .clover__circle {
+      background-color: var(--red);
+      border: 1px solid var(--red);
+      &.w-b {
+        .t-b:after {
+          background-color: var(--red);
+        }
+      }
+      &.w-w {
+        .t-w:after {
+          background-color: var(--red);
+        }
+      }
+      .t-n {
+        background-color: var(--red) !important;
+        /*background-color: var(--green);*/
+      }
+    }
+  }
   .bg-green {
     background-color: var(--green);
     border: 1px solid var(--green);
@@ -334,7 +355,7 @@ export default {
   /*margin: .06em;*/
   border: 1px solid transparent;
   border-radius: 1000em;
-  transition: border 500ms ease;
+  transition: background 500ms ease, border 500ms ease;
   &:after {
     content: '';
     display: block;

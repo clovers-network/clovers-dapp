@@ -18,13 +18,20 @@ import { mapActions } from 'vuex'
 export default {
   name: 'App',
   methods: {
-    ...mapActions(['poll', 'setUpSocket', 'getAllUsers', 'getClovers'])
+    ...mapActions([
+      'poll',
+      'setUpSocket',
+      'getAllUsers',
+      'getClovers',
+      'pollEthPrice'
+    ])
   },
   async mounted () {
     this.setUpSocket()
     this.getClovers()
     this.getAllUsers()
     this.poll()
+    this.pollEthPrice()
   },
   components: { AppHeader, Foot, Messages }
 }

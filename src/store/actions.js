@@ -30,13 +30,24 @@ const anonUser = {
 }
 
 export default {
-  async poll ({ dispatch }) {
+  async poll ({ dispatch, commit }) {
     if (!global.web3.currentProvider.isPortis) {
       await dispatch('checkWeb3')
       setTimeout(() => {
         dispatch('poll')
       }, 5000)
     }
+  },
+  async pollEthPrice ({ commit, dispatch }) {
+    let priceResp = await axios.get(
+      'https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD'
+    )
+    if (priceResp.status === 200) {
+      commit('SET_ETH_PRICE', priceResp.data.USD)
+    }
+    setTimeout(() => {
+      dispatch('pollEthPrice')
+    }, 60 * 1000 * 5)
   },
   // web3 stuff
   async checkWeb3 ({ commit, dispatch }) {
@@ -104,8 +115,19 @@ export default {
     }
     commit('UPDATE_WAIT_TO_PING', true)
   },
+  async contractsDeployed ({ state }) {
+    return new Promise((resolve, reject) => {
+      let interval = setInterval(() => {
+        if (state.contractsDeployed) {
+          clearInterval(interval)
+          resolve()
+        }
+      }, 500)
+    })
+  },
   async getContracts ({ dispatch, state, commit }) {
     console.log('getContracts start')
+    commit('CONTRACTS_DEPLOYED', false)
     for (var name in contracts) {
       if (!contracts.hasOwnProperty(name)) continue
       let contract = contracts[name]
@@ -122,6 +144,7 @@ export default {
     }
     await dispatch('updateBasePrice')
     await dispatch('updateStakeAmount')
+    commit('CONTRACTS_DEPLOYED', true)
     console.log('getContracts ended')
   },
   async updateBasePrice ({ commit }) {
@@ -136,8 +159,13 @@ export default {
       .call()
     commit('SET_STAKE_AMOUNT', stakeAmount)
   },
-  getOrders (_, market = 'ClubToken') {
-    return axios.get(apiUrl(`/orders/${market}`)).then(({ data }) => {
+  clearOrders ({ commit }) {
+    commit('SET_ORDERS', [])
+  },
+  getOrders ({ commit }, market = 'ClubToken') {
+    axios.get(apiUrl(`/orders/${market}`)).then(({ data }) => {
+      commit('SET_MARKET', market)
+      commit('SET_ORDERS', data)
       return data
     })
   },
@@ -205,6 +233,14 @@ export default {
     socket.on('updateClover', clover => {
       console.log('new clover info!', clover)
       commit('ADD_CLOVER', clover)
+    })
+    socket.on('updateClover', clover => {
+      console.log('new clover info!', clover)
+      commit('ADD_CLOVER', clover)
+    })
+    socket.on('addOrder', order => {
+      console.log('new order info!', order)
+      commit('ADD_ORDER', order)
     })
   },
 
@@ -338,31 +374,44 @@ export default {
         })
       })
   },
-
+  async getClubTokenPrice ({ commit, dispatch }) {
+    await dispatch('contractsDeployed')
+    const clubTokenPrice = await dispatch('getBuy', {
+      market: 'ClubToken',
+      amount: '1'
+    })
+    commit('SET_CLUB_TOKEN_PRICE', clubTokenPrice.toString())
+  },
   // Contract Interactions
-  async getBuy ({ dispatch }, { market, amount, clover }) {
-    console.log('getBuy')
+  async getBuy ({ dispatch }, { market, amount }) {
     if (!Number(amount) || Number(amount) < 0) return 0
-    await dispatch('getNetwork')
+    await dispatch('contractsDeployed')
     amount = utils.toWei(amount)
     let args = [amount]
-    if (market === 'CurationMarket') args.unshift(clover)
-    return contracts[market].instance.methods.getBuy(...args).call()
+    if (market !== 'ClubToken') args.unshift(market)
+    const marketContract =
+      market === 'ClubToken' ? 'ClubTokenController' : 'CurationMarket'
+    return contracts[marketContract].instance.methods.getBuy(...args).call()
   },
   async getSell ({ dispatch, state }, { market, amount, clover }) {
-    console.log('getSell')
+    await dispatch('contractsDeployed')
     if (!Number(amount) || Number(amount) < 0) return 0
-    await dispatch('getNetwork')
     amount = utils.toWei(amount)
     let args = [amount]
-    if (market === 'CurationMarket') args.unshift(clover)
-    return contracts[market].instance.methods.getSell(...args).call()
+    if (market !== 'ClubToken') args.unshift(market)
+    const marketContract =
+      market === 'ClubToken' ? 'ClubTokenController' : 'CurationMarket'
+
+    return contracts[marketContract].instance.methods.getSell(...args).call()
   },
-  async invest ({ state, getters, dispatch }, { market, amount, clover }) {
+  async invest ({ state, getters, dispatch }, { market, amount }) {
     if (!Number(amount) || Number(amount) < 0) throw new Error('Invalid amount')
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
     amount = utils.toWei(amount)
-    if (market === 'ClubTokenController') {
+    const marketContract =
+      market === 'ClubToken' ? 'ClubTokenController' : 'CurationMarket'
+
+    if (marketContract === 'ClubTokenController') {
       let balance = await global.web3.eth.getBalance(state.account)
       balance = new BigNumber(balance)
       if (balance.gte(amount)) {
@@ -384,11 +433,12 @@ export default {
       if (balance.lt(amount)) {
         value = await getLowestPrice(contracts.ClubTokenController, amount)
       }
+      console.log(getters.curationMarketAddress, market, amount)
       return contracts.CurationMarket.instance.methods
-        .buy(getters.curationMarketAddress, clover, amount)
+        .buy(state.account, market, amount)
         .send({
           from: state.account,
-          value: amount
+          value
         })
     }
   },
@@ -396,7 +446,10 @@ export default {
     if (!Number(amount) || Number(amount) < 0) throw new Error('Invalid amount')
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
     amount = utils.toWei(amount)
-    if (market === 'ClubTokenController') {
+    const marketContract =
+      market === 'ClubToken' ? 'ClubTokenController' : 'CurationMarket'
+
+    if (marketContract === 'ClubTokenController') {
       let balance = await contracts.ClubToken.instance.methods
         .balanceOf(state.account)
         .call()
@@ -420,9 +473,11 @@ export default {
       if (balance.lt(amount)) {
         throw new Error('balance too low: ' + balance.toString(10))
       }
-      return contracts.CurationMarket.instance.methods.sell(amount).send({
-        from: state.account
-      })
+      return contracts.CurationMarket.instance.methods
+        .sell(market, amount)
+        .send({
+          from: state.account
+        })
     }
   },
   syncClover (_, clover) {
@@ -430,6 +485,12 @@ export default {
       console.log("sync broken clover didn't work")
       console.log(error)
     })
+  },
+  async getShares ({ state, dispatch }, market) {
+    await dispatch('contractsDeployed')
+    return contracts.CurationMarket.instance.methods
+      .balanceOf(new BigNumber(market, 16).toString(10), state.account)
+      .call()
   },
   async buy ({ dispatch, state, commit }, clover) {
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
@@ -549,12 +610,13 @@ export default {
       .balanceOf(state.account)
       .call()
     userBalance = new BigNumber(userBalance)
-    if (userBalance.gt(investmentInWei)) {
+    if (userBalance.lt(investmentInWei)) {
       value = await getLowestPrice(
         contracts.ClubTokenController,
         investmentInWei
       )
     }
+    console.log(value)
     // go !
     await contracts.CurationMarket.instance.methods
       .addCloverToMarket(board, investmentInWei)
@@ -570,29 +632,37 @@ async function getLowestPrice (
   contract,
   targetAmount,
   currentPrice = new BigNumber('0'),
-  useLittle = false
+  incrementLevel = 0
 ) {
+  console.log('calc' + incrementLevel)
   if (typeof targetAmount !== 'object') {
     targetAmount = new BigNumber(targetAmount)
   }
-  let littleIncrement = new BigNumber(utils.toWei('0.001'))
-  let bigIncrement = new BigNumber(utils.toWei('0.01'))
-  currentPrice = currentPrice.add(useLittle ? littleIncrement : bigIncrement)
+  const increments = [
+    new BigNumber(utils.toWei('1')),
+    new BigNumber(utils.toWei('0.5')),
+    new BigNumber(utils.toWei('0.01')),
+    new BigNumber(utils.toWei('0.005'))
+  ]
+  currentPrice = currentPrice.add(increments[incrementLevel])
+  console.log(currentPrice.toString())
   let resultOfSpend = await contract.instance.methods
     .getBuy(currentPrice)
     .call()
   resultOfSpend = new BigNumber(resultOfSpend)
   if (resultOfSpend.gt(targetAmount)) {
-    return useLittle
-      ? currentPrice
-      : getLowestPrice(
+    if (incrementLevel === increments.length - 1) {
+      return currentPrice
+    } else {
+      return getLowestPrice(
         contract,
         targetAmount,
-        currentPrice.sub(bigIncrement),
-        true
+        currentPrice.sub(increments[incrementLevel]),
+        incrementLevel + 1
       )
+    }
   }
-  return getLowestPrice(contract, targetAmount, currentPrice, useLittle)
+  return getLowestPrice(contract, targetAmount, currentPrice, incrementLevel)
 }
 
 async function claimClover ({ keep, account, clover }) {
