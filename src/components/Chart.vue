@@ -1,5 +1,5 @@
 <template>
-  <article class="relative minh-200" style="padding-top:calc(100vh - 524px);">
+  <article class="relative minh-200" :style="{'padding-top': (market === 'ClubToken' ? 'calc(100vh - 524px)' : 'calc(100vh - 900px)')}">
     <price-chart
       class="price-chart absolute left-0 right-0 bottom-0 bg-dots-green"
       :chart-data="chartData"
@@ -23,7 +23,7 @@ export default {
       required: true
     }
   },
-  data () {
+  data() {
     return {
       options: {
         responsive: true,
@@ -48,7 +48,7 @@ export default {
     }
   },
   computed: {
-    chartData () {
+    chartData() {
       return {
         datasets: [
           {
@@ -59,12 +59,13 @@ export default {
             borderWidth: 1,
             pointRadius: 0,
             lineTension: 0,
-            data: this.orders.map(p => {
+            data: this.orders.map((p, i) => {
               return {
                 y: new BigNumber(p.value)
                   .div(new BigNumber(p.tokens))
                   .toNumber(0),
-                x: parseInt(p.created)
+                // x: parseInt(p.created)
+                x: this.orders.length - i
               }
             })
           }

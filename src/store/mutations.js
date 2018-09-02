@@ -3,6 +3,40 @@ import BigNumber from 'bignumber.js'
 import { formatClover } from '@/utils'
 
 export default {
+  SET_ETH_PRICE (state, price) {
+    state.ethPrice = price
+  },
+  SET_CLUB_TOKEN_PRICE (state, price) {
+    state.clubTokenPrice = price
+  },
+  SET_MARKET (state, market) {
+    state.market = market
+  },
+  SET_ORDERS (state, orders) {
+    state.orders = orders
+    if (orders.length && orders[0].market === 'ClubToken') {
+      state.clubTokenPrice = new BigNumber(orders[0].value)
+        .div(new BigNumber(orders[0].tokens))
+        .round()
+        .toString()
+    }
+  },
+  ADD_ORDER (state, order) {
+    console.log(order.market)
+    console.log(state.market)
+    if (order.market === state.market) {
+      state.orders.unshift(order)
+    }
+    if (order.market === 'ClubToken') {
+      state.clubTokenPrice = new BigNumber(order.value)
+        .div(new BigNumber(order.tokens))
+        .round()
+        .toString()
+    }
+  },
+  CONTRACTS_DEPLOYED (state, value) {
+    state.contractsDeployed = value
+  },
   UPDATE_WAIT_TO_PING (state, value) {
     state.waitToPing = value
   },

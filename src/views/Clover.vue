@@ -27,17 +27,17 @@
         //- price / value
         .col-6.px3.flex
           .col-12.m-auto
-            small.block.lh1.h6 {{ isRFT ? 'Share Price' : showSalePrice ? 'For Sale' : 'Original Price'}}
-            .font-exp.mt1 {{ isRFT ? 'n/a' : showSalePrice ? prettyPrice : originalPrice }} ♣
+            small.block.lh1.h6 {{ isRFT ? 'My Shares' : showSalePrice ? 'For Sale' : 'Original Price'}}
+            .font-exp.mt1 {{ isRFT ? sharesOwned + ' Shares': (showSalePrice ? prettyPrice : originalPrice) + ' ♣' }}
     //- clover image
-    figure.flex-auto.relative.p3.md-p4.flex.items-center.justify-center.overflow-hidden(@click="view = false")
+    figure.flex-auto.relative.p3.md-p4.flex.items-center.justify-center.overflow-hidden(@click="view = false", :class="{'border-bottom': isRFT}")
       .absolute.p2.z1.top-0.left-0
         symmetry-icons(:board="clover.symmetries")
       .absolute.overlay.flex.items-center.justify-center.p3
         clv.col-10.sm-col-6.mx-auto(:moveString="cloverMovesString", :isRFT="isRFT")
     footer
       //- Owner Options
-      div(v-if="isMyClover")
+      div(v-if="isMyClover", )
         //- Sell / RFT Options
         small.border-top.center.p2.block.h6(v-show="!view") You currently own this Clover
         .bg-green.flex.white.font-exp.h-bttm-bar.justify-center(v-show="!view")
@@ -71,46 +71,46 @@
             span(v-if="!loading").block.m-auto.font-exp Confirm
             wavey-menu.m-auto(v-else :isWhite="true")
       //- is RFT
-      div(v-else-if="isRFT")
-        small.border-top.center.p2.block.h6(v-show="!view") This Clover is an RFT
-        .border-top.flex.h-bttm-bar
-          .col-6.px3.border-right.flex
-            .col-12.m-auto
-              small.block.h6.lh1 Shares Owned
-              .font-exp.mt1 n/a
-          .col-6.px3.flex
-            .col-12.m-auto
-              small.block.h6.lh1 Total Share Value ♣
-              .font-exp.mt1 n/a
-        .bg-green.white.flex.h-bttm-bar.font-exp
-          button.col-6.flex.border-right
-            span.block.m-auto Sell
-          button.col-6.flex
-            span.block.m-auto(@click="buyStake") Buy
-      //- Buy
-      .bg-green(v-else-if="canBuy")
-        button.h-bttm-bar.white.flex.col-12.pointer(@click="confirmVisible = !confirmVisible")
-          span.block.m-auto.font-exp Buy for {{prettyPrice}} ♣
-        transition(name="confirm")
-          section.white(v-show="confirmVisible")
-            .border-top.flex.border-bottom
-              .col-6.p3.border-right
-                small.block.lh1.h6 ♣ Current Balance
-                .font-exp.mt2 {{ prettyUserBalance }}
-              .col-6.p3
-                small.block.lh1.h6 ♣ Balance After
-                .font-exp.mt2 {{ balanceAfter }}
-            //- confirm, if can buy
-            button(@click="makeBuy", v-if="canAfford").h-bttm-bar.white.border-top.flex.col-12.pointer
-              span(v-if="!loading").block.m-auto.font-exp Confirm
-              wavey-menu.m-auto(v-else :isWhite="true")
-            //- can't buy
-            div(v-else).h-bttm-bar.white.border-top.flex.col-12.pointer
-              span.block.m-auto.font-exp Insufficient Funds
-      //- Unavailable
-      .bg-green(v-else)
-        .h-bttm-bar.white.border-top.flex.col-12
-          span.block.m-auto.font-exp Unavailable
+      Trade(v-else-if="isRFT" :market="board")
+      //-   small.border-top.center.p2.block.h6(v-show="!view") This Clover is an RFT
+      //-   .border-top.flex.h-bttm-bar
+      //-     .col-6.px3.border-right.flex
+      //-       .col-12.m-auto
+      //-         small.block.h6.lh1 Shares Owned
+      //-         .font-exp.mt1 {{sharesOwned || '--'}}
+      //-     .col-6.px3.flex
+      //-       .col-12.m-auto
+      //-         small.block.h6.lh1 Total Share Value ♣
+      //-         .font-exp.mt1 n/a
+      //-   .bg-green.white.flex.h-bttm-bar.font-exp
+      //-     button.col-6.flex.border-right
+      //-       span.block.m-auto Sell
+      //-     button.col-6.flex
+      //-       span.block.m-auto(@click="buyStake") Buy
+      //- //- Buy
+      //- .bg-green(v-else-if="canBuy")
+      //-   button.h-bttm-bar.white.flex.col-12.pointer(@click="confirmVisible = !confirmVisible")
+      //-     span.block.m-auto.font-exp Buy for {{prettyPrice}} ♣
+      //-   transition(name="confirm")
+      //-     section.white(v-show="confirmVisible")
+      //-       .border-top.flex.border-bottom
+      //-         .col-6.p3.border-right
+      //-           small.block.lh1.h6 ♣ Current Balance
+      //-           .font-exp.mt2 {{ prettyUserBalance }}
+      //-         .col-6.p3
+      //-           small.block.lh1.h6 ♣ Balance After
+      //-           .font-exp.mt2 {{ balanceAfter }}
+      //-       //- confirm, if can buy
+      //-       button(@click="makeBuy", v-if="canAfford").h-bttm-bar.white.border-top.flex.col-12.pointer
+      //-         span(v-if="!loading").block.m-auto.font-exp Confirm
+      //-         wavey-menu.m-auto(v-else :isWhite="true")
+      //-       //- can't buy
+      //-       div(v-else).h-bttm-bar.white.border-top.flex.col-12.pointer
+      //-         span.block.m-auto.font-exp Insufficient Funds
+      //- //- Unavailable
+      //- .bg-green(v-else)
+      //-   .h-bttm-bar.white.border-top.flex.col-12
+      //-     span.block.m-auto.font-exp Unavailable
 </template>
 
 <script>
@@ -126,6 +126,7 @@ import {
 } from '@/utils'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 import Clv from '@/components/Clv'
+import Trade from '@/views/Trade'
 import Reversi from 'clovers-reversi'
 const reversi = new Reversi()
 
@@ -134,7 +135,7 @@ export default {
   props: {
     board: { type: String, required: true }
   },
-  data () {
+  data() {
     return {
       formFocussed: false,
       form: { name: null },
@@ -143,50 +144,57 @@ export default {
       view: null,
       sellPrice: 0,
       invesment: 0,
-      loading: false
+      loading: false,
+      sharesOwnedWei: null
     }
   },
   computed: {
-    user () {
+    user() {
       return this.$store.state.user
     },
-    signedIn () {
+    signedIn() {
       return !!this.$store.getters.authHeader
     },
-    showSalePrice () {
+    showSalePrice() {
       return this.clover && this.clover.price && this.clover.price.gt(0)
     },
-    sellPriceWei () {
+    sellPriceWei() {
       return this.sellPrice ? utils.toWei(this.sellPrice) : '0'
     },
-    owner () {
+    sharesOwned() {
+      return (
+        (this.sharesOwnedWei && prettyBigNumber(this.sharesOwnedWei, 0)) ||
+        '---'
+      )
+    },
+    owner() {
       return this.clover && addrToUser(this.allUsers, this.clover.owner)
     },
-    prettyPrice () {
+    prettyPrice() {
       return prettyBigNumber(this.clover.price, 0)
     },
-    price () {
+    price() {
       return this.clover && this.clover.price
     },
-    investmentInWei () {
+    investmentInWei() {
       return this.invesment ? utils.toWei(this.invesment) : '0'
     },
-    originalPrice () {
+    originalPrice() {
       return (
         this.clover &&
         this.clover.originalPrice &&
         prettyBigNumber(this.clover.price, 0)
       )
     },
-    balanceAfterBn () {
+    balanceAfterBn() {
       if (!this.userBalance) return new this.$BN('0')
       return bnMinus(this.userBalance, this.price, 0)
     },
-    balanceAfter () {
+    balanceAfter() {
       if (!this.userBalance) return '0'
       return prettyBigNumber(this.balanceAfterBn, 0)
     },
-    isMyClover () {
+    isMyClover() {
       return (
         this.clover &&
         this.clover.owner &&
@@ -194,13 +202,13 @@ export default {
         this.clover.owner.toLowerCase() === this.account
       )
     },
-    isRFT () {
+    isRFT() {
       return (
         this.clover &&
         this.clover.owner.toLowerCase() === this.curationMarketAddress
       )
     },
-    currentOwner () {
+    currentOwner() {
       const owner = this.owner
       return !owner
         ? '-'
@@ -214,23 +222,23 @@ export default {
                 : 'Pending...'
               : owner
     },
-    clover () {
+    clover() {
       let cloverIndex = this.allClovers.findIndex(c => c.board === this.board)
       return cloverIndex >= 0 ? this.allClovers[cloverIndex] : this.localClover
     },
-    cloverMovesString () {
+    cloverMovesString() {
       const mvs = this.clover && this.clover.moves && this.clover.moves[0]
       return mvs && reversi.byteMovesToStringMoves(...mvs)
     },
-    canBuy () {
+    canBuy() {
       if (!this.user || !this.price) return false
       if (!makeBn(this.price).gt(0)) return false
       return true
     },
-    canAfford () {
+    canAfford() {
       return this.canBuy && this.balanceAfterBn.gte(0)
     },
-    ...mapState(['account', 'allUsers', 'allClovers']),
+    ...mapState(['account', 'allUsers', 'allClovers', 'orders']),
     ...mapGetters([
       'prettyUserBalance',
       'user',
@@ -242,7 +250,7 @@ export default {
     cloverImage,
     prettyBigNumber,
 
-    async makeBuy () {
+    async makeBuy() {
       if (this.loading) return
       try {
         this.loading = true
@@ -253,7 +261,7 @@ export default {
       this.view = false
       this.loading = false
     },
-    async makeSell () {
+    async makeSell() {
       if (this.loading) return
       try {
         this.loading = true
@@ -264,7 +272,7 @@ export default {
       this.view = false
       this.loading = false
     },
-    async makeRFT () {
+    async makeRFT() {
       if (this.loading) return
       try {
         this.loading = true
@@ -278,17 +286,17 @@ export default {
       this.view = false
       this.loading = false
     },
-    focusCloverName () {
+    focusCloverName() {
       setTimeout(() => {
         this.formFocussed = true
       }, 100)
     },
-    blurCloverName () {
+    blurCloverName() {
       setTimeout(() => {
         this.formFocussed = false
       }, 50)
     },
-    updateName () {
+    updateName() {
       if (!this.form.name.length) return
       this.$refs.nameInput.blur()
       let clv = {
@@ -297,7 +305,7 @@ export default {
       }
       this.updateCloverName(clv)
     },
-    buyStake () {
+    buyStake() {
       this.loading = true
       this.invest({
         market: 'CurationMarket',
@@ -314,19 +322,19 @@ export default {
           this.handleError(err)
         })
     },
-    handleError ({ message }) {
+    handleError({ message }) {
       this.selfDestructMsg({
         msg: message.replace('Error: ', ''),
         type: 'error'
       })
     },
-    handleSuccess (msg) {
+    handleSuccess(msg) {
       this.addMessage({
         msg,
         type: 'success'
       })
     },
-    setFormName (clover) {
+    setFormName(clover) {
       if (clover) this.form.name = clover.name || clover.board
     },
 
@@ -339,28 +347,42 @@ export default {
       'invest',
       'divest',
       'selfDestructMsg',
-      'addMessage'
+      'addMessage',
+      'getShares'
     ])
   },
-  created () {
+  created() {
     if (this.clover) return
     this.$store.dispatch('getClover', this.board).then(clvr => {
       this.localClover = clvr
     })
   },
-  mounted () {
+  async mounted() {
     this.setFormName(this.clover)
   },
   watch: {
-    clover (clvr) {
+    async 'orders.length'() {
+      if (this.isRFT) {
+        this.sharesOwnedWei = await this.getShares(this.board)
+      }
+    },
+    clover(clvr) {
       this.setFormName(clvr)
+    },
+    async isRFT() {
+      if (this.isRFT) {
+        this.sharesOwnedWei = await this.getShares(this.board)
+      }
     }
   },
-  components: { SymmetryIcons, WaveyMenu, Clv }
+  components: { SymmetryIcons, WaveyMenu, Clv, Trade }
 }
 </script>
 
 <style scoped>
+figure {
+  min-height: var(--width-1);
+}
 figure > .img-sizer {
   width: calc(100% - 4.8rem);
   height: calc(100% - 4.8rem);
