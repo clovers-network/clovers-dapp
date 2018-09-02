@@ -26,7 +26,7 @@ export default {
       'pollEthPrice'
     ])
   },
-  async mounted() {
+  async mounted () {
     this.setUpSocket()
     this.getClovers()
     this.getAllUsers()

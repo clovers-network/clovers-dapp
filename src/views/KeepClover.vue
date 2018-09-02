@@ -55,7 +55,7 @@ export default {
       required: true
     }
   },
-  data() {
+  data () {
     return {
       action: 'keep',
       value: null,
@@ -65,18 +65,18 @@ export default {
     }
   },
   computed: {
-    rewardValue() {
+    rewardValue () {
       return this.reward ? fromWei(this.reward.toString()) : '...'
     },
-    tokenValue() {
+    tokenValue () {
       return this.value ? fromWei(this.value.toString()) : '...'
     },
-    sellValue() {
+    sellValue () {
       return this.value
         ? fromWei(this.value.minus(this.$store.state.basePrice).toString())
         : '...'
     },
-    infoText() {
+    infoText () {
       return this.action === 'keep'
         ? 'Your Clover is being submitted to the Contract. Once the Clover is verified by our Oracle, you will be confirmed as the owner.'
         : 'This reward is based on the rarity of the Clover. The Contract will buy this from you with Club Token (♣). Once the Oracle has verified the Clover you will receive the payout.'
@@ -87,15 +87,15 @@ export default {
   methods: {
     cloverImage,
 
-    close() {
+    close () {
       this.$emit('close')
       this.action = 'keep'
     },
-    btnClick() {
+    btnClick () {
       if (this.action === 'keep') this.keep()
       if (this.action === 'sell') this.sellToBank()
     },
-    async keep() {
+    async keep () {
       this.submitting = true
       try {
         const tx = await this.buy(this.clover)
@@ -112,7 +112,7 @@ export default {
         this.handleError(error)
       }
     },
-    async sellToBank() {
+    async sellToBank () {
       this.submitting = true
       try {
         const tx = await this.sell({ clover: this.clover })
@@ -129,7 +129,7 @@ export default {
         this.handleError(error)
       }
     },
-    getValue() {
+    getValue () {
       reversi.playGameMovesString(this.clover.movesString)
       const syms = reversi.returnSymmetriesAsBN()
       this.$store.dispatch('getReward', syms).then(wei => {
@@ -138,13 +138,13 @@ export default {
         this.value = wei.plus(this.$store.state.basePrice)
       })
     },
-    handleError({ message }) {
+    handleError ({ message }) {
       this.selfDestructMsg({
         msg: message.replace('Error: ', ''),
         type: 'error'
       })
     },
-    handleSuccess(msg, clover) {
+    handleSuccess (msg, clover) {
       this.selfDestructMsg({
         msg,
         type: 'success'
@@ -155,7 +155,7 @@ export default {
 
     ...mapActions(['buy', 'sell', 'addMessage', 'selfDestructMsg'])
   },
-  mounted() {
+  mounted () {
     this.getValue()
   },
   components: { WaveyMenu }

@@ -488,7 +488,7 @@ export default {
   },
   async getShares ({ state, dispatch }, market) {
     await dispatch('contractsDeployed')
-    return await contracts.CurationMarket.instance.methods
+    return contracts.CurationMarket.instance.methods
       .balanceOf(new BigNumber(market, 16).toString(10), state.account)
       .call()
   },

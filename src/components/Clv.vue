@@ -57,7 +57,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Clv',
-  data() {
+  data () {
     return {
       isActive: false,
       stop: true,
@@ -76,19 +76,19 @@ export default {
       symTypes: ['RotSym', 'Y0Sym', 'X0Sym', 'XYSym', 'XnYSym']
     }
   },
-  mounted() {
+  mounted () {
     this.displayString = this.moveString
     if (this.autoPlay) {
       this.playAnimate()
     }
   },
   watch: {
-    moveString() {
+    moveString () {
       this.displayString = this.moveString
     }
   },
   computed: {
-    mostRare() {
+    mostRare () {
       return this.symTypes
         .map(type => {
           return {
@@ -99,7 +99,7 @@ export default {
         .sort((a, b) => b.num - a.num)
         .pop()
     },
-    badgeClass() {
+    badgeClass () {
       this.reversi.byteBoardPopulateBoard(this.byteBoard)
       this.reversi.isSymmetrical()
       let symCount = 0
@@ -119,7 +119,7 @@ export default {
         XnYSym: this.reversi.XnYSym
       }
     },
-    board() {
+    board () {
       return (
         this.animatedBoard ||
         this.rowArray ||
@@ -130,7 +130,7 @@ export default {
             .byteBoardToRowArray())
       )
     },
-    circleStyle() {
+    circleStyle () {
       if (!this.board || !this.stop) return 'bg-green'
       let w = 0
       let b = 0
@@ -151,7 +151,7 @@ export default {
     ...mapGetters(['symmetries'])
   },
   methods: {
-    activate() {
+    activate () {
       if (this.isActive) return
       console.log('activate')
       this.isActive = true
@@ -159,7 +159,7 @@ export default {
         this.isActive = false
       }, 1000)
     },
-    playAnimate() {
+    playAnimate () {
       if (this.noClick) return
       this.stop = !this.stop
       if (this.stop) {
@@ -181,7 +181,7 @@ export default {
         this.playMoves(0)
       }, this.speed * 5)
     },
-    playMoves(moveKey = 0) {
+    playMoves (moveKey = 0) {
       if (!this.animator.playMove(moveKey) && !this.stop) {
         this.displayString = this.animator.movesString
         this.animatedBoard = this.animator.rowBoard

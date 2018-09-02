@@ -72,45 +72,45 @@
             wavey-menu.m-auto(v-else :isWhite="true")
       //- is RFT
       Trade(v-else-if="isRFT" :market="board")
-      //-   small.border-top.center.p2.block.h6(v-show="!view") This Clover is an RFT
-      //-   .border-top.flex.h-bttm-bar
-      //-     .col-6.px3.border-right.flex
-      //-       .col-12.m-auto
-      //-         small.block.h6.lh1 Shares Owned
-      //-         .font-exp.mt1 {{sharesOwned || '--'}}
-      //-     .col-6.px3.flex
-      //-       .col-12.m-auto
-      //-         small.block.h6.lh1 Total Share Value ♣
-      //-         .font-exp.mt1 n/a
-      //-   .bg-green.white.flex.h-bttm-bar.font-exp
-      //-     button.col-6.flex.border-right
-      //-       span.block.m-auto Sell
-      //-     button.col-6.flex
-      //-       span.block.m-auto(@click="buyStake") Buy
-      //- //- Buy
-      //- .bg-green(v-else-if="canBuy")
-      //-   button.h-bttm-bar.white.flex.col-12.pointer(@click="confirmVisible = !confirmVisible")
-      //-     span.block.m-auto.font-exp Buy for {{prettyPrice}} ♣
-      //-   transition(name="confirm")
-      //-     section.white(v-show="confirmVisible")
-      //-       .border-top.flex.border-bottom
-      //-         .col-6.p3.border-right
-      //-           small.block.lh1.h6 ♣ Current Balance
-      //-           .font-exp.mt2 {{ prettyUserBalance }}
-      //-         .col-6.p3
-      //-           small.block.lh1.h6 ♣ Balance After
-      //-           .font-exp.mt2 {{ balanceAfter }}
-      //-       //- confirm, if can buy
-      //-       button(@click="makeBuy", v-if="canAfford").h-bttm-bar.white.border-top.flex.col-12.pointer
-      //-         span(v-if="!loading").block.m-auto.font-exp Confirm
-      //-         wavey-menu.m-auto(v-else :isWhite="true")
-      //-       //- can't buy
-      //-       div(v-else).h-bttm-bar.white.border-top.flex.col-12.pointer
-      //-         span.block.m-auto.font-exp Insufficient Funds
-      //- //- Unavailable
-      //- .bg-green(v-else)
-      //-   .h-bttm-bar.white.border-top.flex.col-12
-      //-     span.block.m-auto.font-exp Unavailable
+        //- small.border-top.center.p2.block.h6(v-show="!view") This Clover is an RFT
+        //- .border-top.flex.h-bttm-bar
+        //-   .col-6.px3.border-right.flex
+        //-     .col-12.m-auto
+        //-       small.block.h6.lh1 Shares Owned
+        //-       .font-exp.mt1 {{sharesOwned || '--'}}
+        //-   .col-6.px3.flex
+        //-     .col-12.m-auto
+        //-       small.block.h6.lh1 Total Share Value ♣
+        //-       .font-exp.mt1 n/a
+        //- .bg-green.white.flex.h-bttm-bar.font-exp
+        //-   button.col-6.flex.border-right
+        //-     span.block.m-auto Sell
+        //-   button.col-6.flex
+        //-     span.block.m-auto(@click="buyStake") Buy
+      //- Buy
+      .bg-green(v-else-if="canBuy")
+        button.h-bttm-bar.white.flex.col-12.pointer(@click="confirmVisible = !confirmVisible")
+          span.block.m-auto.font-exp Buy for {{prettyPrice}} ♣
+        transition(name="confirm")
+          section.white(v-show="confirmVisible")
+            .border-top.flex.border-bottom
+              .col-6.p3.border-right
+                small.block.lh1.h6 ♣ Current Balance
+                .font-exp.mt2 {{ prettyUserBalance }}
+              .col-6.p3
+                small.block.lh1.h6 ♣ Balance After
+                .font-exp.mt2 {{ balanceAfter }}
+            //- confirm, if can buy
+            button(@click="makeBuy", v-if="canAfford").h-bttm-bar.white.border-top.flex.col-12.pointer
+              span(v-if="!loading").block.m-auto.font-exp Confirm
+              wavey-menu.m-auto(v-else :isWhite="true")
+            //- can't buy
+            div(v-else).h-bttm-bar.white.border-top.flex.col-12.pointer
+              span.block.m-auto.font-exp Insufficient Funds
+      //- Unavailable
+      .bg-green(v-else)
+        .h-bttm-bar.white.border-top.flex.col-12
+          span.block.m-auto.font-exp Unavailable
 </template>
 
 <script>

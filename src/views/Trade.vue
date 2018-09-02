@@ -63,7 +63,7 @@ import WaveyMenu from '@/components/Icons/WaveyMenu'
 
 export default {
   name: 'Trade',
-  data() {
+  data () {
     return {
       view: 'buy',
       buy: '1',
@@ -80,78 +80,78 @@ export default {
     }
   },
   watch: {
-    'orders.length'() {
+    'orders.length' () {
       this.checkOutMarket()
     },
-    buy(amount) {
+    buy (amount) {
       this.checkPrice(amount)
     },
-    sell(amount) {
+    sell (amount) {
       this.checkSell(amount)
     }
   },
   computed: {
-    isRFT() {
+    isRFT () {
       return this.market !== 'ClubToken'
     },
-    marketContract() {
+    marketContract () {
       return this.isRFT ? 'CurationMarket' : 'ClubTokenController'
     },
-    collateral() {
+    collateral () {
       return this.isRFT ? '♣︎' : 'Eth'
     },
-    currentToken() {
+    currentToken () {
       return this.isRFT ? 'Share' : '♣︎'
     },
-    currentTokenPlural() {
+    currentTokenPlural () {
       return this.currentToken === 'Share' ? 'Shares' : '♣︎'
     },
-    currencies() {
+    currencies () {
       return this.currentToken === 'Share' ? 'Shares' : 'Club Tokens (♣︎)'
     },
-    priceInCollateralString() {
+    priceInCollateralString () {
       return this.priceInCollateral.toString()
     },
-    priceInCollateral() {
+    priceInCollateral () {
       if (!this.orders.length) return new BigNumber(0)
       let recent = this.orders[0]
       return new BigNumber(recent.value).div(new BigNumber(recent.tokens))
     },
-    priceInEthString() {
+    priceInEthString () {
       return this.priceInEth.toString()
     },
-    priceInEth() {
+    priceInEth () {
       if (this.marketContract === 'CurationMarket') {
         return this.priceInCollateral.div(new BigNumber(this.clubTokenPrice))
       } else {
         return this.priceInCollateral
       }
     },
-    priceInUSDString() {
+    priceInUSDString () {
       return this.priceInUSD.toString()
     },
-    priceInUSD() {
+    priceInUSD () {
       return this.priceInEth.times(new BigNumber(this.ethPrice))
     },
-    totalSupplyWei() {
+    totalSupplyWei () {
       if (!this.orders.length) return new BigNumber(0)
       let recent = this.orders[0]
       return new BigNumber(recent.tokenSupply)
     },
-    totalSupply() {
+    totalSupply () {
       return new BigNumber(
         utils.fromWei(this.totalSupplyWei.round().toString(10))
       )
     },
-    marketCapInCollateralWei() {
+    marketCapInCollateralWei () {
       return this.priceInCollateral.times(this.totalSupplyWei)
     },
-    marketCapInCollateral() {
+    marketCapInCollateral () {
       return new BigNumber(
         utils.fromWei(this.marketCapInCollateralWei.round().toString(10))
       )
     },
-    marketCapInWei() {
+    marketCapInWei () {
       if (this.marketContract === 'CurationMarket') {
         return this.marketCapInCollateral.times(
           new BigNumber(utils.fromWei(this.clubTokenPrice))
@@ -160,29 +160,29 @@ export default {
         return this.marketCapInCollateralWei
       }
     },
-    marketCapInEth() {
+    marketCapInEth () {
       return new BigNumber(
         utils.fromWei(this.marketCapInWei.round().toString(10))
       )
     },
-    marketCapInUSD() {
+    marketCapInUSD () {
       return this.marketCapInEth.times(new BigNumber(this.ethPrice))
     },
     ...mapState(['ethPrice', 'clubTokenPrice', 'orders']),
     ...mapGetters(['userBalance', 'prettyUserBalance'])
   },
   methods: {
-    checkPrice(amount = '1') {
+    checkPrice (amount = '1') {
       this.getBuy({ market: this.market, amount }).then(tokens => {
         this.clubReceive = prettyBigNumber(tokens, 0)
       })
     },
-    checkSell(amount = '10') {
+    checkSell (amount = '10') {
       this.getSell({ market: this.market, amount }).then(eths => {
         this.ethReceive = prettyBigNumber(eths, 6)
       })
     },
-    buyTokens() {
+    buyTokens () {
       this.working = true
       this.invest({ market: this.market, amount: this.buy })
         .then(res => {
@@ -197,7 +197,7 @@ export default {
           this.handleError(err)
         })
     },
-    sellTokens() {
+    sellTokens () {
       this.working = true
       this.divest({
         market: this.market,
@@ -216,19 +216,19 @@ export default {
           this.handleError(err)
         })
     },
-    handleError({ message }) {
+    handleError ({ message }) {
       this.selfDestructMsg({
         msg: message.replace('Error: ', ''),
         type: 'error'
       })
     },
-    handleSuccess(msg) {
+    handleSuccess (msg) {
       this.addMessage({
         msg,
         type: 'success'
       })
     },
-    checkOutMarket() {
+    checkOutMarket () {
       console.log('check out market')
       this.getClubTokenPrice()
       this.getOrders(this.market || 'ClubToken')
@@ -247,10 +247,10 @@ export default {
       'selfDestructMsg'
     ])
   },
-  mounted() {
+  mounted () {
     this.checkOutMarket()
   },
-  destroyed() {
+  destroyed () {
     this.clearOrders()
   },
   components: { ViewNav, Chart, WaveyMenu }

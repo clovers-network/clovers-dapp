@@ -23,7 +23,7 @@ export default {
       required: true
     }
   },
-  data() {
+  data () {
     return {
       options: {
         responsive: true,
@@ -48,7 +48,7 @@ export default {
     }
   },
   computed: {
-    chartData() {
+    chartData () {
       return {
         datasets: [
           {
