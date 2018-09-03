@@ -1,5 +1,5 @@
 <template lang="pug">
-  article.min-h-100vh.mt-deduct-header.flex.flex-column.justify-between(v-if="clover")
+  article.min-h-100vh.mt-deduct-header.flex.flex-column.justify-between(v-if="board")
     header
       .mt-header-h.border-bottom
         //- username, editable
@@ -15,7 +15,7 @@
                 img(src="~../assets/icons/arrow-right.svg", width="18", height="18")
         //- else, Login
         .h-header.font-mono.flex.px2.relative(v-else)
-          .p2.m-auto.truncate {{ clover.name }}
+          .p2.m-auto.truncate {{ clover && clover.name || board }}
           button.absolute.top-0.right-0.h-100.px2.block.regular(v-if="isMyClover", @click="signIn")
             span Login
       .flex.border-bottom.h-bttm-bar
@@ -27,14 +27,14 @@
         //- price / value
         .col-6.px3.flex
           .col-12.m-auto
-            small.block.lh1.h6 {{ isRFT ? 'My Shares' : showSalePrice ? 'For Sale' : 'Original Price'}}
+            small.block.lh1.h6 {{ isRFT ? 'My Shares' : showSalePrice ? 'For Sale' : 'Original Reward'}}
             .font-exp.mt1 {{ isRFT ? sharesOwned + ' Shares': (showSalePrice ? prettyPrice : originalPrice) + ' ♣' }}
     //- clover image
     figure.flex-auto.relative.p3.md-p4.flex.items-center.justify-center.overflow-hidden(@click="view = false", :class="{'border-bottom': isRFT}")
       .absolute.p2.z1.top-0.left-0
-        symmetry-icons(:board="clover.symmetries")
+        symmetry-icons(v-if="clover" :board="clover.symmetries")
       .absolute.overlay.flex.items-center.justify-center.p3
-        clv.col-10.sm-col-6.mx-auto(:moveString="cloverMovesString", :isRFT="isRFT")
+        clv.col-10.sm-col-6.mx-auto(:moveString="cloverMovesString", :byteBoard="board", :isRFT="isRFT")
     footer
       //- Owner Options
       div(v-if="isMyClover", )
@@ -171,7 +171,7 @@ export default {
       return this.clover && addrToUser(this.allUsers, this.clover.owner)
     },
     prettyPrice() {
-      return prettyBigNumber(this.clover.price, 0)
+      return this.clover && prettyBigNumber(this.clover.price, 0)
     },
     price() {
       return this.clover && this.clover.price
@@ -181,17 +181,20 @@ export default {
     },
     originalPrice() {
       return (
-        this.clover &&
-        this.clover.originalPrice &&
-        prettyBigNumber(this.clover.price, 0)
+        (this.clover &&
+          this.clover.originalPrice &&
+          prettyBigNumber(this.clover.originalPrice, 0)) ||
+        '---'
       )
     },
     balanceAfterBn() {
       if (!this.userBalance) return new this.$BN('0')
+      if (!this.price) return new this.$BN('0')
       return bnMinus(this.userBalance, this.price, 0)
     },
     balanceAfter() {
       if (!this.userBalance) return '0'
+      if (!this.price) return new this.$BN('0')
       return prettyBigNumber(this.balanceAfterBn, 0)
     },
     isMyClover() {
@@ -211,7 +214,7 @@ export default {
     currentOwner() {
       const owner = this.owner
       return !owner
-        ? '-'
+        ? '---'
         : this.isMyClover
           ? 'You'
           : this.isRFT
