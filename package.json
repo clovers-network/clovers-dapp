@@ -31,6 +31,7 @@
     "clovers-contracts": "^1.0.17",
     "clovers-reversi": "^1.0.14",
     "copy-to-clipboard": "^3.0.8",
+    "ethereum-ens": "^0.7.4",
     "ethjs": "^0.2.9",
     "fs": "0.0.1-security",
     "lazysizes": "^4.0.4",
