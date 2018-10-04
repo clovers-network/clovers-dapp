@@ -67,3 +67,11 @@ export function makeBn (v = 0) {
   if (typeof v === 'object') return v
   return new BigNumber(v)
 }
+
+export function cloverIsMonochrome (clover) {
+  const isMono = (clvr, colorKey) => {
+    if (!clvr || !clvr.rowBoard || !clvr.rowBoard.length) return false
+    return clvr.rowBoard.filter(row => row.filter(tile => tile === clvr[colorKey]).length === 8).length === 8
+  }
+  return isMono(clover, 'WHITE') || isMono(clover, 'BLACK')
+}
