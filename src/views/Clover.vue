@@ -2,18 +2,9 @@
   article.min-h-100vh.mt-deduct-header.flex.flex-column.justify-between(v-if="board")
     header
       .mt-header-h.border-bottom
-        //- username, editable
-        .h-header.relative.flex.items-center.justify-center(v-if="signedIn && isMyClover")
-          div.absolute.overlay.bg-white.flex(v-show="!formFocussed")
-            label.input.truncate.flex-auto.center.px4.font-mono {{form.name}}
-            label.absolute.top-0.right-0.h-100.px2.block.regular.nowrap.flex.pointer(for="clvname")
-              span.block.flip-x.m-auto ✎
-          form.col-12(@submit.prevent="updateName")
-            input#clvname.input.font-mono.center.col-12.px4(@focus="focusCloverName", @blur="blurCloverName", ref="nameInput", placeholder="name", v-model="form.name", autocomplete="off")
-            transition(name="fade")
-              button.absolute.right-0.top-0.p2(v-if="formFocussed", type="submit")
-                img(src="~../assets/icons/arrow-right.svg", width="18", height="18")
-        //- else, Login
+        //- if owner: editable name
+        clover-name-editable(v-if="signedIn && isMyClover", :board="board", :clover="clover")
+        //- else: name + login
         .h-header.font-mono.flex.px2.relative(v-else)
           .p2.m-auto.truncate {{ clover && clover.name || board }}
           button.absolute.top-0.right-0.h-100.px2.block.regular(v-if="isMyClover", @click="signIn")
@@ -126,6 +117,7 @@ import {
 } from '@/utils'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 import Clv from '@/components/Clv'
+import CloverNameEditable from '@/components/CloverNameEditable'
 import Trade from '@/views/Trade'
 import Reversi from 'clovers-reversi'
 const reversi = new Reversi()
@@ -289,34 +281,6 @@ export default {
       this.view = false
       this.loading = false
     },
-    focusCloverName () {
-      setTimeout(() => {
-        this.formFocussed = true
-      }, 100)
-    },
-    blurCloverName () {
-      setTimeout(() => {
-        this.formFocussed = false
-        if (this.cloverNameIsUnchanged()) this.resetCloverName()
-      }, 50)
-    },
-    cloverNameIsUnchanged () {
-      return !this.form.name.length || this.form.name === this.clover.name
-    },
-    resetCloverName () {
-      this.form.name = this.clover.name
-    },
-    updateName () {
-      // if empty, reset
-      if (this.cloverNameIsUnchanged()) return this.resetCloverName()
-      // else
-      this.$refs.nameInput.blur()
-      let clv = {
-        board: this.clover.board,
-        name: this.form.name
-      }
-      this.updateCloverName(clv)
-    },
     buyStake () {
       this.loading = true
       this.invest({
@@ -354,7 +318,6 @@ export default {
       'buy',
       'sell',
       'makeCloverRFT',
-      'updateCloverName',
       'signIn',
       'invest',
       'divest',
@@ -369,17 +332,11 @@ export default {
       this.localClover = clvr
     })
   },
-  async mounted () {
-    this.setFormName(this.clover)
-  },
   watch: {
     async 'orders.length' () {
       if (this.isRFT) {
         this.sharesOwnedWei = await this.getShares(this.board)
       }
-    },
-    clover (clvr) {
-      this.setFormName(clvr)
     },
     async isRFT () {
       if (this.isRFT) {
@@ -387,7 +344,7 @@ export default {
       }
     }
   },
-  components: { SymmetryIcons, WaveyMenu, Clv, Trade }
+  components: { SymmetryIcons, WaveyMenu, Clv, Trade, CloverNameEditable }
 }
 </script>
 
