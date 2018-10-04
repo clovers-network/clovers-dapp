@@ -25,6 +25,7 @@
 import ToggleBtn from '@/components/ToggleBtn'
 
 import { mapMutations, mapState, mapGetters, mapActions } from 'vuex'
+import { cloverIsMonochrome } from '@/utils'
 import CloverWorker from 'worker-loader!../assets/clover-worker'
 import moment from 'moment'
 
@@ -116,7 +117,8 @@ export default {
       if ('symmetrical' in data) {
         try {
           const exists = await this.cloverExists(data.byteBoard)
-          if (!exists) {
+          const isMono = cloverIsMonochrome(data)
+          if (!exists && !isMono) {
             this.symms = 1
             const clvr = await this.formatFoundClover(data)
             this.saveClover(clvr)
