@@ -5,8 +5,8 @@
         //- username, editable
         .h-header.relative.flex.items-center.justify-center(v-if="signedIn && isMyClover")
           div.absolute.overlay.bg-white.flex(v-show="!formFocussed")
-            label.input.truncate.flex-auto.center.px4.font-mono(v-text="form.name")
-            label.absolute.top-0.right-0.h-100.px2.block.regular.nowrap.flex(for="clvname")
+            label.input.truncate.flex-auto.center.px4.font-mono {{form.name}}
+            label.absolute.top-0.right-0.h-100.px2.block.regular.nowrap.flex.pointer(for="clvname")
               span.block.flip-x.m-auto ✎
           form.col-12(@submit.prevent="updateName")
             input#clvname.input.font-mono.center.col-12.px4(@focus="focusCloverName", @blur="blurCloverName", ref="nameInput", placeholder="name", v-model="form.name", autocomplete="off")
@@ -297,10 +297,19 @@ export default {
     blurCloverName () {
       setTimeout(() => {
         this.formFocussed = false
+        if (this.cloverNameIsUnchanged()) this.resetCloverName()
       }, 50)
     },
+    cloverNameIsUnchanged () {
+      return !this.form.name.length || this.form.name === this.clover.name
+    },
+    resetCloverName () {
+      this.form.name = this.clover.name
+    },
     updateName () {
-      if (!this.form.name.length) return
+      // if empty, reset
+      if (this.cloverNameIsUnchanged()) return this.resetCloverName()
+      // else
       this.$refs.nameInput.blur()
       let clv = {
         board: this.clover.board,
