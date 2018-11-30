@@ -30,15 +30,9 @@
       </div>
       <!-- title -->
       <h1 class="font-exp h3 col-6 py1 center">
-          <router-link
-            v-if="showMenu"
-            @click.native="showMenu = !showMenu"
-            :to="{ name: 'Welcome' }">
-            Clovers
-          </router-link>
-          <span class="nowrap pointer" v-else
+          <span class="nowrap pointer"
             @click="showMenu = !showMenu">
-            {{$route.meta.title}}
+            {{showMenu ? 'Clovers' : $route.meta.title}}
           </span>
       </h1>
       <!-- right col -->
@@ -57,10 +51,10 @@
       <nav class="flex-auto flex items-center justify-center" @click="showMenu = !showMenu">
         <ul class="h1 list-reset">
 
-          <li class="mt2"><router-link :to="{ name: 'Feed' }">📈 Feed</router-link></li>
-          <li class="mt2"><router-link :to="{ name: 'Field' }">🖼 Field</router-link></li>
-          <li><router-link :to="{ name: 'Welcome' }">⛅️ About</router-link></li>
-          <li class="mt2"><router-link :to="{ name: 'Account/Clovers' }">👤 Account</router-link></li>
+          <li class="mt1"><router-link :to="{ name: 'Feed' }">Home</router-link></li>
+          <li class="mt1"><router-link :to="{ name: 'Field' }">Field</router-link></li>
+          <li class="mt1"><router-link :to="{ name: 'Welcome' }">About</router-link></li>
+          <li class="mt1"><router-link :to="{ name: 'Account/Clovers' }">Account</router-link></li>
 
         </ul>
       </nav>
