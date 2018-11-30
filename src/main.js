@@ -6,6 +6,7 @@ import store from './store'
 import Web3 from 'web3'
 import ENS from 'ethereum-ens'
 import { PortisProvider } from 'portis'
+import VueTouch from 'vue-touch'
 
 import BN from 'bignumber.js'
 
@@ -46,6 +47,8 @@ Vue.directive('autofocus', autofocus)
 
 Vue.config.productionTip = false
 Vue.config.devtools = true
+
+Vue.use(VueTouch, {name: 'v-touch'})
 
 new Vue({
   router,
