@@ -15,7 +15,7 @@
                 img(src="~../assets/icons/arrow-right.svg", width="18", height="18")
         //- else, Login
         .h-header.font-mono.flex.px2.flex(v-else)
-          button.block.p2.m-auto.h6.regular.opacity-50.pointer(@click="signIn") Login 
+          button.block.p2.m-auto.h6.regular.opacity-50.pointer(@click="signIn") Login
             span(v-if="account" class="truncate") as {{name.substr(0,7) + (name.length > 7 ? '...' : '')}}
       view-nav(ref="nav", :items="navItems", :initial="$route.name" @change="$router.push({name: $event})")
     section.pt-header
