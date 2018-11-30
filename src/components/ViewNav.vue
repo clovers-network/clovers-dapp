@@ -1,6 +1,6 @@
 <template lang="pug">
   nav.relative.h-header.flex.border-bottom
-    .flex.flex-auto.pointer(v-for="(item, index) in items", @click="onClick(item, index)", :class="{'opacity-25': index !== active}", :style="itemStyle")
+    .flex.flex-auto.pointer(v-for="(item, index) in items", @click="onClick(item, index)", :class="{'opacity-50': index !== active}", :style="itemStyle")
       span.block.m-auto.h6(v-html="item.lbl")
     //- highlight bar
     .absolute.bg-green.left-0.trans-transform.pointer-events-none(:style="barStyle")

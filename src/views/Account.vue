@@ -15,7 +15,7 @@
                 img(src="~../assets/icons/arrow-right.svg", width="18", height="18")
         //- else, Login
         .h-header.font-mono.flex.px2.flex(v-else)
-          button.block.p2.m-auto.h6.regular.opacity-50(@click="signIn") Login
+          button.block.p2.m-auto.h6.regular(@click="signIn") Login
       view-nav(ref="nav", :items="navItems", :initial="$route.name" @change="$router.push({name: $event})")
     section.pt-header
       router-view
