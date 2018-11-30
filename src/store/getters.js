@@ -14,7 +14,7 @@ export default {
     return allClovers
       .slice(0)
       .sort((a, b) => {
-        if (!a[sortBy]) return -1
+        if (!a[sortBy]) return 1
         if (typeof a[sortBy] === 'object') {
           return a[sortBy].gt(b[sortBy]) ? -1 : a[sortBy].lt(b[sortBy]) ? 1 : 0
         }

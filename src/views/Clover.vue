@@ -174,8 +174,8 @@ export default {
     originalPrice () {
       return (
         (this.clover &&
-          this.clover.originalPrice &&
-          prettyBigNumber(this.clover.originalPrice, 0)) ||
+          this.clover.reward &&
+          prettyBigNumber(this.clover.reward, 2)) ||
         '---'
       )
     },
@@ -281,6 +281,25 @@ export default {
       this.view = false
       this.loading = false
     },
+    focusCloverName () {
+      setTimeout(() => {
+        this.formFocussed = true
+      }, 100)
+    },
+    blurCloverName () {
+      setTimeout(() => {
+        this.formFocussed = false
+      }, 50)
+    },
+    updateName () {
+      if (!this.form.name.length) return
+      this.$refs.nameInput.blur()
+      let clv = {
+        board: this.clover.board,
+        name: this.form.name
+      }
+      this.updateCloverName(clv)
+    },
     buyStake () {
       this.loading = true
       this.invest({
@@ -332,11 +351,17 @@ export default {
       this.localClover = clvr
     })
   },
+  async mounted () {
+    this.setFormName(this.clover)
+  },
   watch: {
     async 'orders.length' () {
       if (this.isRFT) {
         this.sharesOwnedWei = await this.getShares(this.board)
       }
+    },
+    clover (clvr) {
+      this.setFormName(clvr)
     },
     async isRFT () {
       if (this.isRFT) {
