@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="sticky border-bottom green flex font-mono bg-white relative" style="top:46px">
+    <div class="sticky z1 border-bottom green flex font-mono bg-white" style="top:46px">
       <div class="center col-6">
-        <div @click="toggleFilters" class="relative p1 pointer">
+        <div @click="toggleFilters" class="p1 pointer">
           <div :style="filterBorderStyles" class="filters-btn"></div>
           <span class="h3">{{feedFilterName}}</span>
           <div class="absolute top-0 right-0 mr2 mt2 line-height-1">
@@ -55,41 +55,42 @@
     <!-- Clover List -->
     <ul class="list-reset md-flex flex-wrap justify-around items-center m0 md-px1">
       <li v-for="(clover, i) in clovers" :key="i" class="md-col-6 md-px1">
-        <div is="router-link" tag="div" :to="cloverLink(clover)" class="flex py2 border-bottom green">
+        <div is="router-link" :to="cloverLink(clover)" class="flex py2 border-bottom green relative">
+          <!-- RFT highlight -->
+          <div v-if="inCurationMarket(clover)" class="absolute top-0 left-0 h-100 bg-red" style="width:4px"></div>
           <!-- image -->
           <div class="col-3 center">
             <img :src="cloverImage(clover, 64)" width="64" height="64"/>
           </div>
 
-          <!-- RFT clover info -->
-          <template v-if="inCurationMarket(clover)">
-            <div class="col-5 flex flex-column justify-center pr3">
+          <div class="col-3 flex flex-column justify-center">
+            <h3 class="h4 truncate font-mono">
+              <span v-if="clover.name !== clover.board">{{ clover.name }}</span>
+            </h3>
+          </div>
+
+          <div class="col-3 flex flex-column justify-center px2">
+            <template v-if="inCurationMarket(clover)">
               <p class="h7 m0">Market Cap &clubs;</p>
               <p class="h4 m0 truncate font-mono">0</p>
-            </div>
-            <div class="col-3 flex flex-column justify-center pr2">
-              <p class="h7 m0">&clubs; / Share</p>
-              <p class="h4 m0 truncate font-mono">0</p>
-            </div>
-          </template>
-
-          <!-- default clover info -->
-          <template v-else>
-            <div class="col-3 flex flex-column justify-center pl1">
-              <h3 class="h4 truncate font-mono">
-                <span v-if="clover.name !== clover.board">{{ clover.name }}</span>
-              </h3>
-            </div>
-            <div class="col-3 flex flex-column justify-center px2">
+            </template>
+            <template v-else>
               <h6 class="h7 m0">Owner</h6>
               <h5 class="h4 m0 truncate font-mono" style="max-width:4.5em">{{clover.owner}}</h5>
-            </div>
-            <div class="col-2 flex flex-column justify-center pl1">
+            </template>
+          </div>
+
+          <div class="col-2 flex flex-column justify-center pl1">
+            <template v-if="inCurationMarket(clover)">
+              <p class="h7 m0">&clubs; / Share</p>
+              <p class="h4 m0 truncate font-mono">0</p>
+            </template>
+            <template v-else>
               <p class="h7 m0 nowrap">Price &clubs;</p>
               <p v-if="forSale(clover)" class="h4 m0 truncate">{{ cloverPrice(clover) }}</p>
               <p v-else class="h4 m0 font-mono">---</p>
-            </div>
-          </template>
+            </template>
+          </div>
 
           <div class="col-1 center flex justify-center pr2">
             <img src="~../assets/icons/arrow-right.svg" width="18" height="18"/>
