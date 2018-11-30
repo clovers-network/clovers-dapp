@@ -52,11 +52,21 @@ export default {
   // web3 stuff
   async checkWeb3 ({ commit, dispatch }) {
     try {
+      await dispatch('approve')
       await dispatch('getAccount')
       return true
     } catch (error) {
       await dispatch('handleWeb3Error', error)
       return false
+    }
+  },
+  async approve () {
+    if (global.ethereum) {
+      try {
+        await global.ethereum.enable()
+      } catch (error) {
+        console.error(error)
+      }
     }
   },
   async handleWeb3Error ({ state, dispatch }, error) {
@@ -113,7 +123,7 @@ export default {
       commit('SET_ACCOUNT', null)
       throw new Error('account-locked')
     }
-    commit('UPDATE_WAIT_TO_PING', true)
+    // commit('UPDATE_WAIT_TO_PING', true)
   },
   async contractsDeployed ({ state }) {
     return new Promise((resolve, reject) => {
