@@ -14,14 +14,14 @@ export function addrToUser (allUsers, address) {
   let userIndex = allUsers.findIndex(
     u => u.address.toLowerCase() === address.toLowerCase()
   )
-  return userIndex > -1 && allUsers[userIndex].name || (() => {
-    if (allUsers[userIndex].ens === undefined) {
+  return userIndex > -1 && (allUsers[userIndex].name || (() => {
+    if (typeof allUsers[userIndex].ens === 'undefined') {
       store.dispatch('updateUserENS', allUsers[userIndex])
     } else if (allUsers[userIndex].ens !== false) {
       return allUsers[userIndex].ens
     }
     return address
-  })()
+  })())
 }
 
 export function cloverImage ({ board, byteBoard }, size = 200) {
