@@ -17,35 +17,38 @@
         span.block.absolute.left-0.top-0.p2.h6 Price Graph in {{collateral}} per {{currentToken}}
         chart.border-bottom(:market="market", :orders="orders.slice(0,6)")
       view-nav(:items="[{lbl: 'Buy', value:'buy'}, {lbl: 'Sell', value:'sell'}]", @change="view = $event")
+      //- BUY
       section.pb4(v-if="view === 'buy'")
         form(@submit.prevent="buyTokens")
           .p2
-            p.h7.mb1 I want to spend
+            p.h7.mb1 Amount
             .relative
-              input.input.border.font-exp(v-model="buy", placeholder="ETH", type="number", min="0", step="any")
+              input.input.border.font-exp(v-model="buy", placeholder="0", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed {{collateral}}
           .p2
-            p.h7.mb1 I will receive
+            p.h7.mb1 Receive
             .relative
-              input.input.border.font-exp(v-model="clubReceive", placeholder="♣ Tokens", disabled="true")
-              span.absolute.top-0.right-0.p2.claimed {{currencies}}
+              .pt1.pl2.pb2.border-bottom.font-exp {{clubReceive}}
+              span.absolute.top-0.right-0.py1.claimed {{currencies}}
           .h-bttm-bar.bg-green.white.fixed-center-max-width.bottom-0.col-12
             button.h-bttm-bar.h3.block.m-auto.font-exp(v-if="!working") Buy
             .h-bttm-bar.block.m-auto.flex.justify-center.items-center(v-else)
               wavey-menu(:is-white="true")
 
+      //- SELL
       section.pb4(v-else)
         form(@submit.prevent="sellTokens")
           .p2
-            p.h7.mb1 I want to sell
+            p.h7.mb1 Amount
             .relative
-              input.input.border.font-exp(v-model="sell", placeholder="♣ Tokens", type="number", min="0", step="any")
+              input.input.border.font-exp(v-model="sell", placeholder="0", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed {{currencies}}
           .p2
-            p.h7.mb1 I will receive
+            p.h7.mb1 Receive
             .relative
-              input.input.border.font-exp(v-model="ethReceive", placeholder="ETH", disabled="true")
-              span.absolute.top-0.right-0.p2.claimed {{collateral}}
+              //- input.input.border.font-exp(v-model="ethReceive", placeholder="ETH", disabled="true")
+              .pt1.pl2.pb2.border-bottom.font-exp {{ethReceive}}
+              span.absolute.top-0.right-0.py1.pr2.pb2.claimed {{collateral}}
           .h-bttm-bar.bg-green.white.fixed-center-max-width.bottom-0.col-12
             button.h-bttm-bar.h3.block.m-auto.font-exp(v-if="!working") Sell
             .h-bttm-bar.block.m-auto.flex.justify-center.items-center(v-else)
@@ -98,7 +101,7 @@ export default {
       return this.isRFT ? 'CurationMarket' : 'ClubTokenController'
     },
     collateral () {
-      return this.isRFT ? '♣︎' : 'Eth'
+      return this.isRFT ? '♣︎' : 'ETH'
     },
     currentToken () {
       return this.isRFT ? 'Share' : '♣︎'

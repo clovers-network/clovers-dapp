@@ -3,7 +3,7 @@
     <div class="py3">
       <nav>
         <h6 class="center h3">Clover Pig</h6>
-        <toggle-btn class="mx-auto my3" :active="minerOn" @click="pigToggler"></toggle-btn>
+        <toggle-btn class="mx-auto my3" :active="minerOn" @click="togglePig" @swiperight="togglePig(true)" @swipeleft="togglePig(false)"></toggle-btn>
         <div class="flex justify-between items-center">
           <div class="col-6 px2 h3">
             <div>Speed</div>
@@ -73,8 +73,8 @@ export default {
     }
   },
   methods: {
-    pigToggler () {
-      this.minerOn = !this.minerOn
+    togglePig (value = null) {
+      this.minerOn = value === null ? !this.minerOn : value
       this.$emit('minerStatus', this.minerOn)
       if (this.minerOn) return this.mine()
       this.stopAll()
