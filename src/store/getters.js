@@ -7,7 +7,7 @@ export default {
     return user && user.balance
   },
   prettyUserBalance (_, { user }) {
-    if (!user) return '0'
+    if (!user) return prettyBigNumber('0', 0)
     return prettyBigNumber(user.balance, 0)
   },
   sortedClovers ({ sortBy, feedFilter, allClovers }, { curationMarketAddress }) {

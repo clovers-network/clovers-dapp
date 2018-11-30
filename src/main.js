@@ -20,9 +20,11 @@ const networks = {
   5777: 'ganache',
   1: 'mainnet'
 }
-if (typeof web3 !== 'undefined') {
-  // Use Mist/MetaMask's provider
-  global.web3 = new Web3(web3.currentProvider)
+
+if (global.ethereum) {
+  global.web3 = new Web3(global.ethereum)
+} else if (global.web3) {
+  global.web3 = new Web3(global.web3.currentProvider)
 } else {
   global.web3 = new Web3(
     new PortisProvider({
@@ -31,6 +33,7 @@ if (typeof web3 !== 'undefined') {
     })
   )
 }
+
 global.ens = new ENS(global.web3.currentProvider)
 
 router.afterEach(() => {

@@ -15,7 +15,8 @@
                 img(src="~../assets/icons/arrow-right.svg", width="18", height="18")
         //- else, Login
         .h-header.font-mono.flex.px2.flex(v-else)
-          button.block.p2.m-auto.h6.regular.opacity-50(@click="signIn") Login
+          button.block.p2.m-auto.h6.regular.opacity-50.pointer(@click="signIn") Login 
+            span(v-if="account" class="truncate") as {{name.substr(0,7) + (name.length > 7 ? '...' : '')}}
       view-nav(ref="nav", :items="navItems", :initial="$route.name" @change="$router.push({name: $event})")
     section.pt-header
       router-view
@@ -23,7 +24,7 @@
 
 <script>
 import store from '@/store'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import ViewNav from '@/components/ViewNav'
 
 export default {
@@ -35,6 +36,9 @@ export default {
     }
   },
   computed: {
+    name () {
+      return this.user && this.user.name || this.account
+    },
     signedIn () {
       return !!this.$store.getters.authHeader
     },
@@ -48,6 +52,7 @@ export default {
         }
       ]
     },
+    ...mapState(['account']),
     ...mapGetters(['prettyUserBalance', 'user'])
   },
   methods: {

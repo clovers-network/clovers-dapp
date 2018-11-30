@@ -58,7 +58,7 @@ export default {
   },
   watch: {
     async newCloverMoves () {
-      if(!this.newCloverMoves) {
+      if (!this.newCloverMoves) {
         this.newClover = null
         return false
       }
@@ -76,7 +76,7 @@ export default {
   },
   methods: {
     cloverImage,
-    addNewClover() {
+    addNewClover () {
       if (!this.newClover) return
       this.saveClover(this.newClover)
       this.newCloverMoves = null
