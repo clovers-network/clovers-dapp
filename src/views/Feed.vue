@@ -247,7 +247,7 @@ export default {
   mounted () {
     if (!this.clovers.length) {
       let lastPage = Math.ceil(this.allLoadedCloverCount / 12)
-      this.$router.replace(`/feed/page/${lastPage}`)
+      this.$router.replace(`/home/page/${lastPage}`)
     }
   }
 }

@@ -30,10 +30,10 @@
       </div>
       <!-- title -->
       <h1 class="font-exp h3 col-6 py1 center">
-          <span class="nowrap pointer"
-            @click="showMenu = !showMenu">
-            {{showMenu ? 'Clovers' : $route.meta.title}}
-          </span>
+        <span class="nowrap pointer"
+          @click="showMenu = $route.meta.backBtn ? showMenu : !showMenu">
+          {{showMenu ? 'Clovers' : $route.meta.title}}
+        </span>
       </h1>
       <!-- right col -->
       <div class="col-3 flex justify-end items-center">
