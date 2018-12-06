@@ -105,6 +105,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import utils from 'web3-utils'
 import WaveyMenu from '@/components/Icons/WaveyMenu'
 import { mapState, mapActions, mapGetters } from 'vuex'
@@ -113,7 +114,8 @@ import {
   prettyBigNumber,
   bnMinus,
   makeBn,
-  addrToUser
+  addrToUser,
+  abbrvAddr
 } from '@/utils'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 import Clv from '@/components/Clv'
@@ -130,6 +132,11 @@ export default {
   head: {
     title: function () {
       return { inner: this.metaTitle }
+    },
+    meta: function () {
+      const svgURL = `https://api2.clovers.network/clovers/svg/${this.board}/640`
+      const imgUrl = Vue.config.CloudinaryBaseURL + '/image/fetch/f_png/' + svgURL
+      return [{ p: 'og:image', c: imgUrl, id: 'og-img' }]
     }
   },
   data () {
@@ -143,7 +150,7 @@ export default {
       invesment: 0,
       loading: false,
       sharesOwnedWei: null,
-      metaTitle: this.board.substr(0, 6) + '...'
+      metaTitle: abbrvAddr(this.board)
     }
   },
   computed: {
@@ -339,7 +346,7 @@ export default {
       if (clover) this.form.name = clover.name || clover.board
     },
     updateMetaTitle (name) {
-      if (!name) return
+      if (!name || name === this.board) return
       this.metaTitle = name
       this.$emit('updateHead')
     },

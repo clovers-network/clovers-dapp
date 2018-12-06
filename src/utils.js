@@ -75,3 +75,8 @@ export function cloverIsMonochrome (clover) {
   }
   return isMono(clover, 'WHITE') || isMono(clover, 'BLACK')
 }
+
+export function abbrvAddr (addr) {
+  // Function to abbreviate 0x addresses
+  return addr.substr(0, 6) + addr.slice(-4)
+}

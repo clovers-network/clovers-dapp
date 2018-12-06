@@ -47,6 +47,7 @@ Object.defineProperty(Vue.prototype, '$BN', { value: BN })
 // Vue config
 Vue.config.productionTip = false
 Vue.config.devtools = true
+Vue.config.CloudinaryBaseURL = process.env.VUE_APP_CLOUDINARY_BASE_URL
 
 Vue.use(VueHead, {separator: '|', complement: 'Clovers'})
 Vue.use(VueTouch, {name: 'v-touch'})
