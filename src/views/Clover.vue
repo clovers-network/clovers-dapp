@@ -127,6 +127,11 @@ export default {
   props: {
     board: { type: String, required: true }
   },
+  head: {
+    title: function () {
+      return { inner: this.metaTitle }
+    }
+  },
   data () {
     return {
       formFocussed: false,
@@ -137,7 +142,8 @@ export default {
       sellPrice: 0,
       invesment: 0,
       loading: false,
-      sharesOwnedWei: null
+      sharesOwnedWei: null,
+      metaTitle: this.board.substr(0, 6) + '...'
     }
   },
   computed: {
@@ -332,6 +338,11 @@ export default {
     setFormName (clover) {
       if (clover) this.form.name = clover.name || clover.board
     },
+    updateMetaTitle (name) {
+      if (!name) return
+      this.metaTitle = name
+      this.$emit('updateHead')
+    },
 
     ...mapActions([
       'buy',
@@ -346,9 +357,10 @@ export default {
     ])
   },
   created () {
-    if (this.clover) return
+    if (this.clover) return this.updateMetaTitle(this.clover.name)
     this.$store.dispatch('getClover', this.board).then(clvr => {
       this.localClover = clvr
+      this.updateMetaTitle(clvr.name)
     })
   },
   async mounted () {

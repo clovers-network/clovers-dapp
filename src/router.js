@@ -72,8 +72,7 @@ export default new Router({
     },
     {
       path: '/about',
-      name: 'About',
-      component: About
+      redirect: '/'
     },
     {
       path: '/clovers/:board',
