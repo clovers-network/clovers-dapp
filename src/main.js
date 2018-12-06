@@ -4,7 +4,10 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import Web3 from 'web3'
+import ENS from 'ethereum-ens'
 import { PortisProvider } from 'portis'
+import VueHead from 'vue-head'
+import VueTouch from 'vue-touch'
 
 import BN from 'bignumber.js'
 
@@ -19,9 +22,11 @@ const networks = {
   5777: 'ganache',
   1: 'mainnet'
 }
-if (typeof web3 !== 'undefined') {
-  // Use Mist/MetaMask's provider
-  global.web3 = new Web3(web3.currentProvider)
+
+if (global.ethereum) {
+  global.web3 = new Web3(global.ethereum)
+} else if (global.web3) {
+  global.web3 = new Web3(global.web3.currentProvider)
 } else {
   global.web3 = new Web3(
     new PortisProvider({
@@ -31,19 +36,26 @@ if (typeof web3 !== 'undefined') {
   )
 }
 
+global.ens = new ENS(global.web3.currentProvider)
+
 router.afterEach(() => {
   if (ga) ga('send', 'pageview')
 })
 
 Object.defineProperty(Vue.prototype, '$BN', { value: BN })
 
+// Vue config
+Vue.config.productionTip = false
+Vue.config.devtools = true
+Vue.config.CloudinaryBaseURL = process.env.VUE_APP_CLOUDINARY_BASE_URL
+
+Vue.use(VueHead, {separator: '|', complement: 'Clovers'})
+Vue.use(VueTouch, {name: 'v-touch'})
+
 Vue.component('clv', Clv)
 Vue.component('clover-grid-item', CloverGridItem)
 
 Vue.directive('autofocus', autofocus)
-
-Vue.config.productionTip = false
-Vue.config.devtools = true
 
 new Vue({
   router,

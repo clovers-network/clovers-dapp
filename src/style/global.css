@@ -309,6 +309,7 @@ textarea {
   padding: var(--space-2);
   width: 100%;
   border-radius: 0;
+  line-height: normal;
 
   &.big {
     font-size: var(--h1);

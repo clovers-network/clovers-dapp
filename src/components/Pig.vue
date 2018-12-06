@@ -3,7 +3,7 @@
     <div class="py3">
       <nav>
         <h6 class="center h3">Clover Pig</h6>
-        <toggle-btn class="mx-auto my3" :active="minerOn" @click="pigToggler"></toggle-btn>
+        <toggle-btn class="mx-auto my3" :active="minerOn" @click="togglePig" @swiperight="togglePig(true)" @swipeleft="togglePig(false)"></toggle-btn>
         <div class="flex justify-between items-center">
           <div class="col-6 px2 h3">
             <div>Speed</div>
@@ -25,6 +25,7 @@
 import ToggleBtn from '@/components/ToggleBtn'
 
 import { mapMutations, mapState, mapGetters, mapActions } from 'vuex'
+import { cloverIsMonochrome } from '@/utils'
 import CloverWorker from 'worker-loader!../assets/clover-worker'
 import moment from 'moment'
 
@@ -72,8 +73,8 @@ export default {
     }
   },
   methods: {
-    pigToggler () {
-      this.minerOn = !this.minerOn
+    togglePig (value = null) {
+      this.minerOn = value === null ? !this.minerOn : value
       this.$emit('minerStatus', this.minerOn)
       if (this.minerOn) return this.mine()
       this.stopAll()
@@ -116,7 +117,8 @@ export default {
       if ('symmetrical' in data) {
         try {
           const exists = await this.cloverExists(data.byteBoard)
-          if (!exists) {
+          const isMono = cloverIsMonochrome(data)
+          if (!exists && !isMono) {
             this.symms = 1
             const clvr = await this.formatFoundClover(data)
             this.saveClover(clvr)

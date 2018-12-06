@@ -35,10 +35,10 @@ export default new Router({
       meta: { title: 'Find Clovers' }
     },
     {
-      path: '/feed(/page/)?:page?',
+      path: '/home(/page/)?:page?',
       name: 'Feed',
       component: Feed,
-      meta: { title: 'Feed' }
+      meta: { title: 'Home' }
     },
     {
       path: '/account',
@@ -72,8 +72,7 @@ export default new Router({
     },
     {
       path: '/about',
-      name: 'About',
-      component: About
+      redirect: '/'
     },
     {
       path: '/clovers/:board',

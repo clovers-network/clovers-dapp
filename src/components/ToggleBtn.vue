@@ -1,9 +1,9 @@
 <template>
-  <button class="block border col-12 pointer" :class="[theme, 'bg-dots-white']" @click="$emit('click')">
+  <v-touch tag="button" class="block border col-12 pointer" :class="[theme, 'bg-dots-white']" @click.native="$emit('click')" @swipeleft="$emit('swipeleft')" @swiperight="$emit('swiperight')" :swipe-options="{threshold: 150}">
     <div class="col-6 bg-current-color trans-transform flex" :class="{'transl-x-100': active}">
       <div class="block font-ext h2 m-auto line-height-1" :class="theme === 'white' ? 'green' : theme">{{!active ? labels[1] : labels[0]}}</div>
     </div>
-  </button>
+  </v-touch>
 </template>
 
 <script>

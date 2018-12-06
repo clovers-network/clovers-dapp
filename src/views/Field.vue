@@ -31,7 +31,7 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 import KeepClover from '@/views/KeepClover'
 import Bottleneck from 'bottleneck'
 import Reversi from 'clovers-reversi'
-import { pad0x, cloverImage, pluralize } from '@/utils'
+import { pad0x, cloverImage, pluralize, cloverIsMonochrome } from '@/utils'
 import { debounce } from 'underscore'
 
 const clover = new Reversi()
@@ -49,6 +49,12 @@ export default {
       generated: [],
       viewSingle: null
     }
+  },
+  head: {
+    title: { inner: 'The Field' },
+    meta: [
+      { id: 'meta-desc', name: 'description', content: 'Find new Clovers' }
+    ]
   },
   computed: {
     ...mapGetters(['picks', 'pickCount'])
@@ -76,7 +82,9 @@ export default {
         clover.mine()
       }
       const clvr = await this.formatFoundClover(clover)
-      this.generated.push(clvr)
+      const isMono = cloverIsMonochrome(clover)
+      // add
+      if (!isMono) this.generated.push(clvr)
       if (last) {
         this.growing = false
       }

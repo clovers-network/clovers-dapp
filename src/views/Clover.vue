@@ -2,18 +2,9 @@
   article.min-h-100vh.mt-deduct-header.flex.flex-column.justify-between(v-if="board")
     header
       .mt-header-h.border-bottom
-        //- username, editable
-        .h-header.relative.flex.items-center.justify-center(v-if="signedIn && isMyClover")
-          div.absolute.overlay.bg-white.flex(v-show="!formFocussed")
-            label.input.truncate.flex-auto.center.px4.font-mono(v-text="form.name")
-            label.absolute.top-0.right-0.h-100.px2.block.regular.nowrap.flex(for="clvname")
-              span.block.flip-x.m-auto ✎
-          form.col-12(@submit.prevent="updateName")
-            input#clvname.input.font-mono.center.col-12.px4(@focus="focusCloverName", @blur="blurCloverName", ref="nameInput", placeholder="name", v-model="form.name", autocomplete="off")
-            transition(name="fade")
-              button.absolute.right-0.top-0.p2(v-if="formFocussed", type="submit")
-                img(src="~../assets/icons/arrow-right.svg", width="18", height="18")
-        //- else, Login
+        //- if owner: editable name
+        clover-name-editable(v-if="signedIn && isMyClover", :board="board", :clover="clover")
+        //- else: name + login
         .h-header.font-mono.flex.px2.relative(v-else)
           .p2.m-auto.truncate {{ clover && clover.name || board }}
           button.absolute.top-0.right-0.h-100.px2.block.regular(v-if="isMyClover", @click="signIn")
@@ -114,6 +105,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import utils from 'web3-utils'
 import WaveyMenu from '@/components/Icons/WaveyMenu'
 import { mapState, mapActions, mapGetters } from 'vuex'
@@ -122,10 +114,12 @@ import {
   prettyBigNumber,
   bnMinus,
   makeBn,
-  addrToUser
+  addrToUser,
+  abbrvAddr
 } from '@/utils'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 import Clv from '@/components/Clv'
+import CloverNameEditable from '@/components/CloverNameEditable'
 import Trade from '@/views/Trade'
 import Reversi from 'clovers-reversi'
 const reversi = new Reversi()
@@ -134,6 +128,16 @@ export default {
   name: 'Clover',
   props: {
     board: { type: String, required: true }
+  },
+  head: {
+    title: function () {
+      return { inner: this.metaTitle }
+    },
+    meta: function () {
+      const svgURL = `https://api2.clovers.network/clovers/svg/${this.board}/640`
+      const imgUrl = Vue.config.CloudinaryBaseURL + '/image/fetch/f_png/' + svgURL
+      return [{ p: 'og:image', c: imgUrl, id: 'og-img' }]
+    }
   },
   data () {
     return {
@@ -145,7 +149,8 @@ export default {
       sellPrice: 0,
       invesment: 0,
       loading: false,
-      sharesOwnedWei: null
+      sharesOwnedWei: null,
+      metaTitle: abbrvAddr(this.board)
     }
   },
   computed: {
@@ -340,12 +345,16 @@ export default {
     setFormName (clover) {
       if (clover) this.form.name = clover.name || clover.board
     },
+    updateMetaTitle (name) {
+      if (!name || name === this.board) return
+      this.metaTitle = name
+      this.$emit('updateHead')
+    },
 
     ...mapActions([
       'buy',
       'sell',
       'makeCloverRFT',
-      'updateCloverName',
       'signIn',
       'invest',
       'divest',
@@ -355,9 +364,10 @@ export default {
     ])
   },
   created () {
-    if (this.clover) return
+    if (this.clover) return this.updateMetaTitle(this.clover.name)
     this.$store.dispatch('getClover', this.board).then(clvr => {
       this.localClover = clvr
+      this.updateMetaTitle(clvr.name)
     })
   },
   async mounted () {
@@ -378,7 +388,7 @@ export default {
       }
     }
   },
-  components: { SymmetryIcons, WaveyMenu, Clv, Trade }
+  components: { SymmetryIcons, WaveyMenu, Clv, Trade, CloverNameEditable }
 }
 </script>
 
