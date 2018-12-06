@@ -49,6 +49,10 @@ import { cloverLink, cloverImage, pluralize, prettyBigNumber } from '@/utils'
 
 export default {
   name: 'MyClovers',
+  head: {
+    title: { inner: 'My Clovers' },
+    meta: [{ name: 'description', content: 'A list of the Clovers you own', id: 'meta-desc' }]
+  },
   computed: {
     ...mapGetters(['userClovers', 'curationMarketAddress'])
   },

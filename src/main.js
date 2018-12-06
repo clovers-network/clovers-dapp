@@ -6,6 +6,7 @@ import store from './store'
 import Web3 from 'web3'
 import ENS from 'ethereum-ens'
 import { PortisProvider } from 'portis'
+import VueHead from 'vue-head'
 import VueTouch from 'vue-touch'
 
 import BN from 'bignumber.js'
@@ -43,15 +44,18 @@ router.afterEach(() => {
 
 Object.defineProperty(Vue.prototype, '$BN', { value: BN })
 
+// Vue config
+Vue.config.productionTip = false
+Vue.config.devtools = true
+Vue.config.CloudinaryBaseURL = process.env.VUE_APP_CLOUDINARY_BASE_URL
+
+Vue.use(VueHead, {separator: '|', complement: 'Clovers'})
+Vue.use(VueTouch, {name: 'v-touch'})
+
 Vue.component('clv', Clv)
 Vue.component('clover-grid-item', CloverGridItem)
 
 Vue.directive('autofocus', autofocus)
-
-Vue.config.productionTip = false
-Vue.config.devtools = true
-
-Vue.use(VueTouch, {name: 'v-touch'})
 
 new Vue({
   router,

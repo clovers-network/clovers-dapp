@@ -49,6 +49,10 @@ import Reversi from 'clovers-reversi'
 
 export default {
   name: 'Picks',
+  head: {
+    title: { inner: 'Picks' },
+    meta: [{ name: 'description', content: "A list of Clovers you've saved from the Field", id: 'meta-desc' }]
+  },
   data () {
     return {
       viewSingle: null,

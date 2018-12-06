@@ -126,6 +126,12 @@ export default {
       filtersVisible: false
     }
   },
+  head: {
+    title: { inner: 'Home' },
+    meta: [
+      { name: 'description', content: 'The main feed of Clovers activity.', id: 'meta-desc' }
+    ]
+  },
   computed: {
     feedFilterName () {
       switch (this.feedFilter) {
