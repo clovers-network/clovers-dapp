@@ -69,6 +69,12 @@ export default {
       ]
     }
   },
+  head: {
+    title: { inner: 'Welcome' },
+    meta: [
+      { name: 'description', content: 'Discover, collect and trade mathematically generated artworks.', id: 'meta-desc' }
+    ]
+  },
   mounted () {
     this.$nextTick(() => this.scrollTo())
   },

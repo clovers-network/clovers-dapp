@@ -29,6 +29,10 @@ import ViewNav from '@/components/ViewNav'
 
 export default {
   name: 'Account',
+  head: {
+    title: { inner: 'Account' },
+    meta: [ { name: 'description', content: 'Your active profile', id: 'meta-desc' } ]
+  },
   data () {
     return {
       formFocussed: false,

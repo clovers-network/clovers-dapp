@@ -76,6 +76,10 @@ export default {
       working: false
     }
   },
+  head: {
+    title: { inner: 'Trade' },
+    meta: [{ name: 'description', content: 'Exchange Ether for Clovers Club Tokens', id: 'meta-desc' }]
+  },
   props: {
     market: {
       type: String,

@@ -50,6 +50,12 @@ export default {
       viewSingle: null
     }
   },
+  head: {
+    title: { inner: 'The Field' },
+    meta: [
+      { id: 'meta-desc', name: 'description', content: 'Find new Clovers' }
+    ]
+  },
   computed: {
     ...mapGetters(['picks', 'pickCount'])
   },
