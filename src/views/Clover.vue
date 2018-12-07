@@ -26,6 +26,8 @@
         symmetry-icons(v-if="clover" :board="clover.symmetries")
       .absolute.overlay.flex.items-center.justify-center.p3
         clv.col-10.sm-col-6.mx-auto(:moveString="cloverMovesString", :byteBoard="board", :isRFT="isRFT")
+      .absolute.p2.top-0.right-0.m1
+        comments(:board="board")
     footer
       //- Owner Options
       div(v-if="isMyClover", )
@@ -122,6 +124,8 @@ import Clv from '@/components/Clv'
 import CloverNameEditable from '@/components/CloverNameEditable'
 import Trade from '@/views/Trade'
 import Reversi from 'clovers-reversi'
+import Comments from '@/components/Comments'
+
 const reversi = new Reversi()
 
 export default {
@@ -130,10 +134,10 @@ export default {
     board: { type: String, required: true }
   },
   head: {
-    title: function () {
+    title () {
       return { inner: this.metaTitle }
     },
-    meta: function () {
+    meta () {
       const svgURL = `https://api2.clovers.network/clovers/svg/${this.board}/640`
       const imgUrl = Vue.config.CloudinaryBaseURL + '/image/fetch/f_png/' + svgURL
       return [{ p: 'og:image', c: imgUrl, id: 'og-img' }]
@@ -370,7 +374,7 @@ export default {
       this.updateMetaTitle(clvr.name)
     })
   },
-  async mounted () {
+  mounted () {
     this.setFormName(this.clover)
   },
   watch: {
@@ -388,7 +392,7 @@ export default {
       }
     }
   },
-  components: { SymmetryIcons, WaveyMenu, Clv, Trade, CloverNameEditable }
+  components: { SymmetryIcons, WaveyMenu, Clv, Trade, CloverNameEditable, Comments }
 }
 </script>
 
