@@ -31,7 +31,7 @@
 <script>
 import io from 'socket.io-client'
 import moment from 'moment'
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'Comments',
