@@ -22,11 +22,14 @@
             .font-exp.mt1 {{ isRFT ? sharesOwned + ' Shares': (showSalePrice ? prettyPrice : originalPrice) + ' ♣' }}
     //- clover image
     figure.flex-auto.relative.p3.md-p4.flex.items-center.justify-center.overflow-hidden(@click="view = false", :class="{'border-bottom': isRFT}")
-      .absolute.p2.z1.top-0.left-0
-        symmetry-icons(v-if="clover" :board="clover.symmetries")
+      //- image
       .absolute.overlay.flex.items-center.justify-center.p3
         clv.col-10.sm-col-6.mx-auto(:moveString="cloverMovesString", :byteBoard="board", :isRFT="isRFT")
-      .absolute.p2.top-0.right-0.m1
+      //- symm icons
+      .absolute.px2.z1.top-0.left-0.flex.items-center(style="height:58px")
+        symmetry-icons(v-if="clover", :board="clover.symmetries", style="font-size:16px")
+      //- comments / icon
+      .absolute.top-0.right-0.flex.items-center.px2(style="height:58px")
         comments(:board="board", :name="cloverName", :owner="isMyClover")
     footer
       //- Owner Options
