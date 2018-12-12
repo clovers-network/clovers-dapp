@@ -288,7 +288,7 @@ textarea {
   width: 100%;
   vertical-align: middle;
 
-  > div {
+  & > div {
     transition: width var(--anim-timing-medium);
   }
 }
@@ -326,7 +326,7 @@ textarea {
   display: block;
   position: relative;
 
-  select {
+  & select {
     background: transparent;
     border: none;
     color: inherit;
@@ -377,7 +377,7 @@ button {
 .currency {
   position: relative;
 
-  .input {
+  & .input {
     padding-left: 3rem;
   }
 
