@@ -52,9 +52,9 @@ export default {
     clover: {type: Object, default: () => {}, required: true}
   },
   computed: {
-    isRFT ({ owner }) {
+    isRFT () {
       // inCurationMarket
-      return owner === this.curationMarketAddress
+      return this.clover.owner === this.curationMarketAddress
     },
     ...mapGetters(['curationMarketAddress'])
   },
