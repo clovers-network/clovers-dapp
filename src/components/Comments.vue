@@ -28,7 +28,7 @@
                     span(v-if="owner", @click="flagOrDeleteComment(comment.id)").hvr.pr2.font-exp.h5.red.pointer Flag
                     span(v-if="commentOwner(comment)", @click="flagOrDeleteComment(comment.id)").hvr.pr2.font-exp.h5.red.pointer Delete
                   span(v-text="commentDate(comment.created)").hvr.h6.lighten-4
-        .sticky.bottom-0
+        .sticky.bottom-0.bg-green
           div(v-if="signedIn").border-top
             form(@submit.prevent="postComment")
               input(v-model="newComment", type="text", placeholder="Comment...").p3.col-12.h4.border-none.bg-green.font-exp
