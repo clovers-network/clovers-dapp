@@ -6,7 +6,7 @@
         clover-name-editable(v-if="signedIn && isMyClover", :board="board", :clover="clover")
         //- else: name + login
         .h-header.font-mono.flex.px2.relative(v-else)
-          .p2.m-auto.truncate {{ clover && clover.name || board }}
+          .p2.m-auto.truncate {{ cloverName }}
           button.absolute.top-0.right-0.h-100.px2.block.regular(v-if="isMyClover", @click="signIn")
             span Login
       .flex.border-bottom.h-bttm-bar
@@ -27,7 +27,7 @@
       .absolute.overlay.flex.items-center.justify-center.p3
         clv.col-10.sm-col-6.mx-auto(:moveString="cloverMovesString", :byteBoard="board", :isRFT="isRFT")
       .absolute.p2.top-0.right-0.m1
-        comments(:board="board")
+        comments(:board="board", :name="cloverName")
     footer
       //- Owner Options
       div(v-if="isMyClover", )
@@ -250,6 +250,10 @@ export default {
     canAfford () {
       return this.canBuy && this.balanceAfterBn.gte(0)
     },
+    cloverName () {
+      return this.clover && this.clover.name || this.board
+    },
+
     ...mapState(['account', 'allUsers', 'allClovers', 'orders']),
     ...mapGetters([
       'prettyUserBalance',

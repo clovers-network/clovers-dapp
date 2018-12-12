@@ -1,42 +1,50 @@
 <template lang="pug">
   div
-    .material-icons.pointer(@click="showChat = true") chat_bubble_outline
+    .pointer(@click="showChat = true")
+      chat-icon(:count="commentCount")
 
     transition(name="fade")
-      section(v-if="showChat", name="comments").fixed-center-max-width.top-0.bottom-0.bg-white.green.z4.overflow-hidden
-        .relative.bg-green.white.p1.sticky.top-0
-          p.center.font-exp.h2.m0 Comments
-          span(@click="showChat = false").absolute.top-0.right-0.mr2.mt1.pointer.h2 &times;
+      section(v-if="showChat", name="comments").fixed-center-max-width.top-0.bottom-0.bg-green.white.z4.overflow-hidden
+        .relative.white.p1.sticky.top-0.border-bottom
+          .flex.items-center.justify-start.p2
+            img(:src="img")
+            p.font-exp.h2.m0.pl3.flex-auto.truncate {{ name }}
+            span(@click="showChat = false").pointer.h1 &times;
         div(v-chat-scroll="{ smooth: true }").chat-scroll.overflow-auto
-          ul.list-reset.m0.border-top
-            li(v-if="comments.length").px2.py3.center.light-green Start of chat
-            li(v-else).px2.py3.center.light-green Nothing here yet
+          ul.list-reset.m0
+            li(v-if="comments.length").p3.white.h6 start of chat
+            li(v-else).p3.white.h6 nothing here yet
             li(v-for="comment in comments" :key="comment.id").px2.pb2
-              .p2.border.rounded.msg
-                .flex.mb1
-                  p(v-text="comment.userName").col-6.font-exp.m0
-                  p(v-text="commentDate(comment.created)").col-6.h6.right-align.m0
-                p(v-text="comment.comment").m0.pre-line
-        .p2.green.sticky.bottom-0.bg-white.border-top
-          div(v-if="signedIn")
-            p.font-exp Add a comment 💬
-            form(@submit.prevent="postComment", @keydown.meta.enter.prevent="postComment")
-              textarea(v-model="newComment", rows="4", placeholder="Your comment").p2.col-12.h4.green
-              .right-align.mt2
+              .px2.msg
+                .mb1
+                  span(v-text="comment.userName").m0.pr2
+                  span(v-text="comment.comment").m0.font-exp.pr2
+                  span(v-text="commentDate(comment.created)").hvr.h6.lighten-4
+        .sticky.bottom-0
+          div(v-if="signedIn").border-top
+            form(@submit.prevent="postComment")
+              input(v-model="newComment", type="text", placeholder="Comment...").p3.col-12.h4.border-none.bg-green.font-exp
+
+              .right-align.mt2.hide
                 button(type="submit", :disabled="posting", v-text="buttonTxt").px3.py2.bg-green.white.font-exp
-          div(v-else).gray
-            p.font-exp.m0 Sign in to comment
+          div(v-else).border-top
+            p.font-exp.p3
+              span(@click="signIn").pointer.underline Sign in
+              span  to comment
 </template>
 
 <script>
 import io from 'socket.io-client'
 import moment from 'moment'
+import ChatIcon from '@/components/Icons/ChatIcon'
 import { mapActions } from 'vuex'
+import { cloverImage } from '@/utils'
 
 export default {
   name: 'Comments',
   props: {
-    board: { type: String, required: true }
+    board: { type: String, required: true },
+    name: { type: String }
   },
   data () {
     return {
@@ -53,6 +61,12 @@ export default {
     },
     buttonTxt () {
       return this.posting ? 'Posting...' : 'Submit'
+    },
+    img () {
+      return cloverImage({ board: this.board }, 64)
+    },
+    commentCount () {
+      return this.comments.length
     }
   },
   methods: {
@@ -74,7 +88,8 @@ export default {
 
     ...mapActions([
       'getComments',
-      'addComment'
+      'addComment',
+      'signIn'
     ])
   },
   mounted () {
@@ -100,19 +115,21 @@ export default {
   destroyed () {
     console.log('destroying socket..')
     this.socket.destroy()
-  }
+  },
+  components: { ChatIcon }
 }
 </script>
 
 <style>
 .chat-scroll {
   height: 50%;
-  min-height: calc(100vh - 257px);
+  min-height: calc(100vh - 168px);
 }
 
 .msg {
-  border-radius: 3px;
-  border-color: rgba(0, 180, 100, .4);
+  .hvr { opacity: 0; }
+
+  &:hover .hvr { opacity: 1; }
 }
 
 .pre-line { white-space: pre-line; }
