@@ -14,10 +14,10 @@
 </template>
 
 <script>
-  export default {
-    name: 'ChatIcon',
-    props: {
-      count: Number
-    }
+export default {
+  name: 'ChatIcon',
+  props: {
+    count: Number
   }
+}
 </script>
