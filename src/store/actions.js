@@ -328,6 +328,36 @@ export default {
       .catch(console.error)
   },
 
+  getComments (_, board) {
+    if (!board) {
+      return Promise.reject(new Error('Missing parameter: `board` (address)'))
+    }
+    return axios
+      .get(apiUrl(`/chats/${board}`))
+      .catch(console.error)
+  },
+  addComment ({ getters }, { board, comment }) {
+    if (!board) {
+      return Promise.reject(new Error('Missing parameter: `board` (address)'))
+    }
+    return axios
+      .post(apiUrl(`/chats/${board}`), { comment }, {
+        headers: {
+          Authorization: getters.authHeader
+        }
+      })
+      .catch(console.error)
+  },
+  flagOrDeleteComment ({ getters }, id) {
+    return axios
+      .delete(apiUrl(`/chats/${id}`), {
+        headers: {
+          Authorization: getters.authHeader
+        }
+      })
+      .catch()
+  },
+
   formatFoundClover (_, clover) {
     return {
       board: pad0x(clover.byteBoard),
