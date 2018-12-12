@@ -54,7 +54,7 @@
           <li class="mt1"><router-link :to="{ name: 'Feed' }">Home</router-link></li>
           <li class="mt1"><router-link :to="{ name: 'Field' }">Field</router-link></li>
           <li class="mt1"><router-link :to="{ name: 'Welcome' }">About</router-link></li>
-          <li class="mt1"><router-link :to="{ name: 'Account/Clovers' }">Account</router-link></li>
+          <li class="mt1"><router-link :to="{ name: 'Account/Clovers' }" :class="{'nav__account-link--active': $route.meta.group === 'account'}">Account</router-link></li>
 
         </ul>
       </nav>
@@ -133,5 +133,11 @@ export default {
     background: var(--green);
     color: white;
     font-size: var(--small-font-size);
+  }
+  nav{
+    & .router-link-exact-active,
+    & .nav__account-link--active{
+      opacity:0.5;
+    }
   }
 </style>

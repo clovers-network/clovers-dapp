@@ -49,19 +49,19 @@ export default new Router({
           path: '/',
           name: 'Account',
           component: Picks,
-          meta: { title: 'Account' }
+          meta: { title: 'Account', group: 'account' }
         },
         {
           path: 'clovers',
           name: 'Account/Clovers',
           component: MyClovers,
-          meta: { title: 'Account' }
+          meta: { title: 'Account', group: 'account' }
         },
         {
           path: 'trade',
           name: 'Account/Trade',
           component: Trade,
-          meta: {title: 'Trade'}
+          meta: {title: 'Trade', group: 'account'}
         },
         {
           path: 'picks',
