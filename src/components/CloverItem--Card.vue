@@ -1,20 +1,21 @@
 <template lang="pug">
-  article.pb2
-      figure.pb-100.relative
-        .absolute.top-0.left-0.col-12.h-100.flex.items-center.justify-center
-          img.block(:src="cloverImage(clover, 108)", width="108", height="108")
-      header.px1.pb1
-        .px1.md-px2
-          h3.h4.font-mono.truncate
-            span(v-if="clover.name !== clover.board") {{clover.name}}
-            span &nbsp;
-        .mt2.flex
-          .px1.col-6.md-px2
-            h6.h7 Owner
-            h4.h4.font-mono.truncate {{clover.owner}}
-          .px1.col-6.md-px2
-            h6.h7 Cost &clubs;
-            h4.h4.font-mono.truncate {{prettyBigNumber(clover.price)}}
+  article.relative
+    figure.pb-100.relative
+      .absolute.top-0.left-0.col-12.h-100.flex.items-center.justify-center
+        img.block.col-6(:src="cloverImage(clover, 128)")
+    header.px1.pb2
+      .px1
+        h3.h2.font-mono.truncate.center
+          span(v-if="clover.name !== clover.board") {{clover.name}}
+          span &nbsp;
+      .mt1.flex
+        .px1.col-6
+          h6.h8 Owner
+          h4.h5.font-mono.truncate {{clover.owner}}
+        .px1.col-6
+          .pl1
+            h6.h8 Price &clubs;
+            h4.h5.font-mono.truncate {{prettyBigNumber(clover.price, 0)}}
 </template>
 
 <script>
@@ -32,5 +33,25 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+/* white dots to cover the intersections */
+article{
+  &:before,
+  &:after{
+    content:'';
+    display: block;
+    width:4px;
+    height:4px;
+    background:white;
+    position: absolute;
+  }
+  &:before{
+    top:-2px;
+    left:-2px;
+  }
+  &:after{
+    bottom:-2px;
+    right:-2px;
+  }
+}
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <article v-if="clover.board" class="flex py2 border-bottom green relative">
+  <article v-if="clover.board" class="flex py2 relative">
     <!-- RFT highlight -->
     <div v-if="isRFT" class="absolute top-0 left-0 h-100 bg-red" style="width:4px"></div>
     <!-- image -->

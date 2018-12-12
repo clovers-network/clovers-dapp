@@ -53,11 +53,11 @@
     </nav>
 
     <!-- Clover List -->
-    <ul class="list-reset flex flex-wrap justify-around items-center m0">
-      <li v-for="(clover, i) in clovers" :key="i" class="col-6 md-col-4">
-        <router-link :to="cloverLink(clover)" class="block border-bottom border-bottom-dotted">
+    <ul class="list-reset flex flex-wrap justify-around items-center m0 overflow-hidden">
+      <li v-for="(clover, i) in clovers" :key="i" class="col-6 sm-col-4 md-col-3">
+        <router-link :to="cloverLink(clover)" class="block green border-bottom border-bottom-dotted border-left border-left-dotted" :class="{'xs-border-left-transp': i % 2 === 0, 'sm-border-left-transp': i % 3 === 0, 'md-border-left-transp': i % 4 === 0}">
           <!--<clover-row-item :clover="clover" />-->
-          <clover-card-item :clover="clover" :borderLeft="i % 2 === 1" />
+          <clover-card-item :clover="clover" />
         </router-link>
       </li>
       <li class="p2 center" v-if="!clovers.length">No Clovers To Show...</li>

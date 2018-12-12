@@ -47,6 +47,10 @@
 
 .border-green { border-color: var(--green); }
 .border-dark-gray { border-color: var(--dark-gray);}
+.border-bottom-dotted{ border-bottom-style: dotted; }
+.border-right-dotted{ border-right-style: dotted; }
+.border-left-transp{border-left-color:transparent;}
+.border-left-dotted{border-left-style:dotted;}
 .outline-none { outline: 0;}
 .outline{ outline:1px solid var(--green); }
 
