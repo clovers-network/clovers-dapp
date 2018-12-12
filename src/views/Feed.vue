@@ -53,10 +53,11 @@
     </nav>
 
     <!-- Clover List -->
-    <ul class="list-reset md-flex flex-wrap justify-around items-center m0 md-px1">
-      <li v-for="(clover, i) in clovers" :key="i" class="md-col-6 md-px1">
-        <router-link :to="cloverLink(clover)">
-          <clover-row-item :clover="clover" />
+    <ul class="list-reset flex flex-wrap justify-around items-center m0">
+      <li v-for="(clover, i) in clovers" :key="i" class="col-6 md-col-4">
+        <router-link :to="cloverLink(clover)" class="block border-bottom border-bottom-dotted">
+          <!--<clover-row-item :clover="clover" />-->
+          <clover-card-item :clover="clover" :borderLeft="i % 2 === 1" />
         </router-link>
       </li>
       <li class="p2 center" v-if="!clovers.length">No Clovers To Show...</li>
@@ -78,7 +79,8 @@
 import store from '@/store'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 import { cloverLink, pluralize } from '@/utils'
-import CloverRowItem from '@/components/CloverItem--Row'
+// import CloverRowItem from '@/components/CloverItem--Row'
+import CloverCardItem from '@/components/CloverItem--Card'
 const pageSize = 12
 
 export default {
@@ -207,7 +209,7 @@ export default {
       this.$router.replace(`/home/page/${lastPage}`)
     }
   },
-  components: { CloverRowItem }
+  components: { CloverCardItem }
 }
 </script>
 
