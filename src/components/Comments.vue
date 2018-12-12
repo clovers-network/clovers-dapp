@@ -18,15 +18,15 @@
               .px2.msg
                 .mb1
                   template(v-if="comment.deleted")
-                    span.pr2.light-gray.h5 [Deleted comment]
+                    span(v-text="comment.userName").font-mono.pr2.nowrap
+                    span.pr2.light-gray.h5 [Deleted]
                   template(v-else-if="comment.flagged")
-                    span(v-text="comment.userName").pr2.nowrap
-                    span.pr2.light-gray.h5 [Flagged comment]
+                    span.pr2.light-gray.h5 [Flagged]
                   template(v-else)
-                    span(v-text="comment.userName").pr2.nowrap
-                    span(v-text="comment.comment").font-exp.pr2
-                    span(v-if="owner", @click="flagOrDeleteComment(comment.id)").hvr.pr2.font-exp.h5.red.pointer Flag
-                    span(v-if="commentOwner(comment)", @click="flagOrDeleteComment(comment.id)").hvr.pr2.font-exp.h5.red.pointer Delete
+                    span(v-text="comment.userName").font-mono.pr2.nowrap
+                    span(v-text="comment.comment").bold.pr2
+                    span(v-if="owner", @click="flagOrDeleteComment(comment.id)").hvr.pr2.h5.red.pointer Flag
+                    span(v-if="commentOwner(comment)", @click="flagOrDeleteComment(comment.id)").hvr.pr2.h5.red.pointer Delete
                   span(v-text="commentDate(comment.created)").hvr.h6.lighten-4
         .sticky.bottom-0.bg-green
           div(v-if="signedIn").border-top
