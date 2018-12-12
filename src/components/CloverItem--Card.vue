@@ -5,17 +5,17 @@
         img.block.col-6(:src="cloverImage(clover, 128)")
     header.px1.pb2
       .px1
-        h3.h2.font-mono.truncate.center
+        h3.h4.font-mono.truncate
           span(v-if="clover.name !== clover.board") {{clover.name}}
           span &nbsp;
-      .mt1.flex
+      .mt2.flex
         .px1.col-6
-          h6.h8 Owner
-          h4.h5.font-mono.truncate {{clover.owner}}
+          h6.h7 Owner
+          h4.h6.font-mono.truncate {{clover.owner}}
         .px1.col-6
           .pl1
-            h6.h8 Price &clubs;
-            h4.h5.font-mono.truncate {{prettyBigNumber(clover.price, 0)}}
+            h6.h7 Price &clubs;
+            h4.h6.font-mono.truncate {{prettyBigNumber(clover.price, 0)}}
 </template>
 
 <script>

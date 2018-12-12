@@ -53,7 +53,7 @@
     </nav>
 
     <!-- Clover List -->
-    <ul class="list-reset flex flex-wrap justify-around items-center m0 overflow-hidden">
+    <ul class="list-reset flex flex-wrap items-center m0 overflow-hidden">
       <li v-for="(clover, i) in clovers" :key="i" class="col-6 sm-col-4 md-col-3">
         <router-link :to="cloverLink(clover)" class="block green border-bottom border-bottom-dotted border-left border-left-dotted" :class="{'xs-border-left-transp': i % 2 === 0, 'sm-border-left-transp': i % 3 === 0, 'md-border-left-transp': i % 4 === 0}">
           <!--<clover-row-item :clover="clover" />-->
