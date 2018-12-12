@@ -42,10 +42,10 @@ export default {
   @import './style/global';
   @import './style/imports';
   .intro-screen {
-    .clover {
+    & .clover {
       display: inline-block;
     }
-    .text-path {
+    & .text-path {
       bottom: -2.6em;
       left: -2.6em;
       right: -2.6em;

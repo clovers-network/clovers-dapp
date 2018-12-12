@@ -1,0 +1,9 @@
+@media (--breakpoint-xs) {
+  .xs-border-left-transp{border-left-color:transparent}
+}
+@media (--breakpoint-sm) and (--breakpoint-sm-only) {
+  .sm-border-left-transp{border-left-color:transparent}
+}
+@media (--breakpoint-md) {
+  .md-border-left-transp{border-left-color:transparent;}
+}
