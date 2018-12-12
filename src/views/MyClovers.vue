@@ -37,9 +37,6 @@
       </li>
       <li class="p2 center" v-if="!userClovers.length">No Clovers To Show...</li>
     </ul>
-    <div is="router-link" tag="div" to="/feed" class="fixed-center-max-width bottom-0 bg-green white center p2 pointer h-bttm-bar">
-      <span class="m-auto h3 font-exp">Go To Feed</span>
-    </div>
   </div>
 </template>
 
