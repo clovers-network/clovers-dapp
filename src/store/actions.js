@@ -348,6 +348,15 @@ export default {
       })
       .catch(console.error)
   },
+  flagOrDeleteComment ({ getters }, id) {
+    return axios
+      .delete(apiUrl(`/chats/${id}`), {
+        headers: {
+          Authorization: getters.authHeader
+        }
+      })
+      .catch()
+  },
 
   formatFoundClover (_, clover) {
     return {

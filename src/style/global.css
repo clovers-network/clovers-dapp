@@ -415,6 +415,7 @@ input:disabled,
 }
 
 .light-green { color: var(--light-green); }
+.light-gray { color: var(--light-gray); }
 
 /* HELPERS */
 

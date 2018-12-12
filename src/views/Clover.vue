@@ -27,7 +27,7 @@
       .absolute.overlay.flex.items-center.justify-center.p3
         clv.col-10.sm-col-6.mx-auto(:moveString="cloverMovesString", :byteBoard="board", :isRFT="isRFT")
       .absolute.p2.top-0.right-0.m1
-        comments(:board="board", :name="cloverName")
+        comments(:board="board", :name="cloverName", :owner="isMyClover")
     footer
       //- Owner Options
       div(v-if="isMyClover", )

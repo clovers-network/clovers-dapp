@@ -17,8 +17,16 @@
             li(v-for="comment in comments" :key="comment.id").px2.pb2
               .px2.msg
                 .mb1
-                  span(v-text="comment.userName").m0.pr2
-                  span(v-text="comment.comment").m0.font-exp.pr2
+                  template(v-if="comment.deleted")
+                    span.pr2.light-gray.h5 [Deleted comment]
+                  template(v-else-if="comment.flagged")
+                    span(v-text="comment.userName").pr2.nowrap
+                    span.pr2.light-gray.h5 [Flagged comment]
+                  template(v-else)
+                    span(v-text="comment.userName").pr2.nowrap
+                    span(v-text="comment.comment").font-exp.pr2
+                    span(v-if="owner", @click="flagOrDeleteComment(comment.id)").hvr.pr2.font-exp.h5.red.pointer Flag
+                    span(v-if="commentOwner(comment)", @click="flagOrDeleteComment(comment.id)").hvr.pr2.font-exp.h5.red.pointer Delete
                   span(v-text="commentDate(comment.created)").hvr.h6.lighten-4
         .sticky.bottom-0
           div(v-if="signedIn").border-top
@@ -44,7 +52,8 @@ export default {
   name: 'Comments',
   props: {
     board: { type: String, required: true },
-    name: { type: String }
+    name: { type: String, required: true },
+    owner: Boolean
   },
   data () {
     return {
@@ -67,6 +76,9 @@ export default {
     },
     commentCount () {
       return this.comments.length
+    },
+    user () {
+      return this.$store.state.account
     }
   },
   methods: {
@@ -85,10 +97,14 @@ export default {
         this.posting = false
       })
     },
+    commentOwner ({ userAddress }) {
+      return this.user === userAddress
+    },
 
     ...mapActions([
       'getComments',
       'addComment',
+      'flagOrDeleteComment',
       'signIn'
     ])
   },
@@ -108,8 +124,12 @@ export default {
       }
     })
     this.socket.on('edit comment', (doc) => {
-      console.log('comment edited')
-      // handleEditComment(doc)
+      if (doc.board === this.board) {
+        let idx = this.comments.findIndex(c => c.id === doc.id)
+        if (idx > -1) {
+          this.comments.splice(idx, 1, doc)
+        }
+      }
     })
   },
   destroyed () {
@@ -127,7 +147,10 @@ export default {
 }
 
 .msg {
-  .hvr { opacity: 0; }
+  .hvr {
+    opacity: 0;
+    transition: opacity .1s;
+  }
 
   &:hover .hvr { opacity: 1; }
 }
