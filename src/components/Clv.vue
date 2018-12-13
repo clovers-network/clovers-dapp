@@ -294,7 +294,7 @@ export default {
     /*line-height: 0;*/
     display: flex;
   }
-  & .active-clover & {
+  @nest .active-clover & {
     box-shadow: 0 0 0 0.4em;
   }
   &.no-bg:after {

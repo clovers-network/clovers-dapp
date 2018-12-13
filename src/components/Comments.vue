@@ -31,7 +31,7 @@
         .sticky.bottom-0.bg-green
           div(v-if="signedIn").border-top
             form(@submit.prevent="postComment")
-              input(v-model="newComment", type="text", placeholder="Comment...").p3.col-12.h4.border-none.bg-green.font-exp
+              input(v-model="newComment", type="text", placeholder="Comment...").p3.col-12.h4.border-none.bg-green.font-exp.white
 
               .right-align.mt2.hide
                 button(type="submit", :disabled="posting", v-text="buttonTxt").px3.py2.bg-green.white.font-exp
@@ -147,7 +147,7 @@ export default {
 }
 
 .msg {
-  .hvr {
+  & .hvr {
     opacity: 0;
     transition: opacity .1s;
   }
