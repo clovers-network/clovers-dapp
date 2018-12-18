@@ -30,7 +30,7 @@
         symmetry-icons(v-if="clover", :board="clover.symmetries", style="font-size:16px")
       //- comments / icon
       .absolute.top-0.right-0.flex.items-center.px2(style="height:58px")
-        comments(:board="board", :name="cloverName", :owner="isMyClover")
+        comments(v-if="canGetComments", :board="board", :name="cloverName", :owner="isMyClover")
     footer
       //- Owner Options
       div(v-if="isMyClover", )
@@ -157,7 +157,8 @@ export default {
       invesment: 0,
       loading: false,
       sharesOwnedWei: null,
-      metaTitle: abbrvAddr(this.board)
+      metaTitle: abbrvAddr(this.board),
+      canGetComments: false
     }
   },
   computed: {
@@ -383,6 +384,9 @@ export default {
   },
   mounted () {
     this.setFormName(this.clover)
+    setTimeout(() => {
+      this.canGetComments = true
+    }, 500)
   },
   watch: {
     async 'orders.length' () {
