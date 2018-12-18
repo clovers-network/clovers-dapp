@@ -4,7 +4,7 @@
       chat-icon.block(:count="commentCount")
 
     transition(name="fade")
-      section(v-if="showChat", name="comments").fixed-center-max-width.top-0.bottom-0.bg-green.white.z4.overflow-hidden
+      section(v-if="showChat", @click.stop.prevent, name="comments").fixed-center-max-width.top-0.bottom-0.bg-green.white.z4.overflow-hidden
         .flex.flex-column.chat-scroll
           .relative.white.p1.border-bottom
             .flex.items-center.justify-start.p2
@@ -25,8 +25,8 @@
                       span.pr2.light-gray.h5 [Flagged]
                     template(v-else)
                       span(v-text="comment.userName").font-mono.pr2.nowrap
-                      span(v-text="comment.comment").bold.pr2
-                      span(v-if="owner", @click="flagOrDeleteComment(comment.id)").hvr.pr2.h5.red.pointer Flag
+                      span(v-text="comment.comment").bold.pr2.break-word
+                      span(v-if="owner && !commentOwner(comment)", @click="flagOrDeleteComment(comment.id)").hvr.pr2.h5.red.pointer Flag
                       span(v-if="commentOwner(comment)", @click="flagOrDeleteComment(comment.id)").hvr.pr2.h5.red.pointer Delete
                     span(v-text="commentDate(comment.created)").hvr.h6.lighten-4
           .fixed.left-0.right-0.bottom-0.bg-green
@@ -47,8 +47,6 @@ import moment from 'moment'
 import ChatIcon from '@/components/Icons/ChatIcon'
 import { mapActions } from 'vuex'
 import { cloverImage } from '@/utils'
-
-const scrollEl = document.scrollingElement
 
 export default {
   name: 'Comments',
@@ -86,13 +84,11 @@ export default {
   methods: {
     toggleChat () {
       if (!this.showChat) {
-        scrollEl.classList.add('body-overflow-hidden')
         this.showChat = true
         this.$nextTick(() => {
-          this.$refs.chat.scrollBy(0, this.$refs.chat.scrollHeight)
+          this.$refs.chat.scrollBy(0, this.$refs.chat.scrollHeight + 20)
         })
       } else {
-        scrollEl.classList.remove('body-overflow-hidden')
         this.showChat = false
       }
     },
@@ -177,5 +173,10 @@ export default {
 .body-overflow-hidden {
   height: 100%;
   overflow: hidden;
+}
+
+.break-word {
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 </style>
