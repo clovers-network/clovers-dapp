@@ -30,7 +30,8 @@
         symmetry-icons(v-if="clover", :board="clover.symmetries", style="font-size:16px")
       //- comments / icon
       .absolute.top-0.right-0.flex.items-center.px2(style="height:58px")
-        comments(v-if="canGetComments", :board="board", :name="cloverName", :owner="isMyClover")
+        transition(name="fade")
+          comments(v-if="canGetComments", :board="board", :name="cloverName", :owner="isMyClover")
     footer
       //- Owner Options
       div(v-if="isMyClover", )

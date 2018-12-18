@@ -7,7 +7,7 @@
       section(v-if="showChat", @click.stop.prevent, name="comments").fixed-center-max-width.top-0.bottom-0.bg-green.white.z4.overflow-hidden
         .flex.flex-column.chat-scroll
           .relative.white.p1.border-bottom
-            .flex.items-center.justify-start.p2
+            .flex.items-center.justify-start.p2(style="height:88px;")
               img(:src="img")
               p.font-exp.h2.m0.px3.flex-auto.truncate {{ name }}
               span(@click="toggleChat").pointer.h1 &times;
@@ -85,9 +85,6 @@ export default {
     toggleChat () {
       if (!this.showChat) {
         this.showChat = true
-        this.$nextTick(() => {
-          this.$refs.chat.scrollBy(0, this.$refs.chat.scrollHeight + 20)
-        })
       } else {
         this.showChat = false
       }
