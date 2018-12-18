@@ -1,19 +1,17 @@
 <template>
-  <div class="fixed top-0 left-0 col-12 z3 mt2">
-    <div
-      :class="msgClass(msg)"
-      class="p2 flex items-center mx2 mb1 h6"
-      @click="clickMessage(msg)"
-      :key="msg.id"
-      v-for="msg in messages" >
-      <span >
-        <div class="h2 pb2" v-if="msg.title" v-html="escape(msg.title)"/>
-        <div v-html="escape(msg.msg)"/>
-      </span>
-      <span
-        class='sending px1'
-        v-if="msg.type === 'progress'">✨</span>
-    </div>
+  <div class="fixed top-0 left-0 col-12 z3">
+    <ul class="max-width-3 m-auto list-reset" style="background-color:rgba(255,255,255,.85);max-height:100vh;overflow-y:scroll">
+      <li
+        v-for="msg in messages"
+        :class="msgClass(msg)"
+        class="pt1 px2 pb2 h6 m1 rounded"
+        @click="clickMessage(msg)"
+        :key="msg.id"
+        >
+          <h6 class="h2 mb1 block" v-if="msg.title" :class="{'msg--strobe': msg.type === 'progress'}" v-html="escape(msg.title)"></h6>
+          <small v-html="escape(msg.msg)"/>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -44,14 +42,10 @@ export default {
     },
     msgClass (msg) {
       switch (msg.type) {
-        case 'success':
-          return 'bg-green white'
-        case 'progress':
-          return 'bg-white green border'
-        case 'error':
-          return 'bg-red white'
-        default:
-          return 'bg-white green border'
+        case 'success': return 'bg-green white'
+        case 'progress': return 'bg-white green border'
+        case 'error': return 'bg-red white'
+        default: return 'bg-white green border'
       }
     },
     ...mapMutations({
@@ -61,3 +55,15 @@ export default {
   }
 }
 </script>
+
+<style>
+  .msg--strobe{
+    animation:msg-strobe 1.25s infinite;
+  }
+
+@keyframes msg-strobe {
+  0%{ opacity:1; }
+  50%{opacity:0.25;}
+  100%{opacity:1;}
+}
+</style>

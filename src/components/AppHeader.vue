@@ -140,4 +140,13 @@ export default {
       opacity:0.5;
     }
   }
+  .strobe-msg{
+    animation:strobe 2s infinite;
+  }
+
+@keyframes strobe {
+  0%{ opacity:1; }
+  50%{opacity:0.5;}
+  100%{opacity:1;}
+}
 </style>
