@@ -1,44 +1,44 @@
 <template lang="pug">
   div
-    .pointer(@click="showChat = true")
+    .pointer(@click="toggleChat")
       chat-icon.block(:count="commentCount")
 
     transition(name="fade")
       section(v-if="showChat", name="comments").fixed-center-max-width.top-0.bottom-0.bg-green.white.z4.overflow-hidden
-        .relative.white.p1.sticky.top-0.border-bottom
-          .flex.items-center.justify-start.p2
-            img(:src="img")
-            p.font-exp.h2.m0.px3.flex-auto.truncate {{ name }}
-            span(@click="showChat = false").pointer.h1 &times;
-        div(v-chat-scroll="{ smooth: true }").chat-scroll.overflow-auto.touch
-          ul.list-reset.m0
-            li(v-if="comments.length").p3.white.h6 start of chat
-            li(v-else).p3.white.h6 nothing here yet
-            li(v-for="comment in comments" :key="comment.id").px2.pb2
-              .px2.msg
-                .mb1
-                  template(v-if="comment.deleted")
-                    span(v-text="comment.userName").font-mono.pr2.nowrap
-                    span.pr2.light-gray.h5 [Deleted]
-                  template(v-else-if="comment.flagged")
-                    span.pr2.light-gray.h5 [Flagged]
-                  template(v-else)
-                    span(v-text="comment.userName").font-mono.pr2.nowrap
-                    span(v-text="comment.comment").bold.pr2
-                    span(v-if="owner", @click="flagOrDeleteComment(comment.id)").hvr.pr2.h5.red.pointer Flag
-                    span(v-if="commentOwner(comment)", @click="flagOrDeleteComment(comment.id)").hvr.pr2.h5.red.pointer Delete
-                  span(v-text="commentDate(comment.created)").hvr.h6.lighten-4
-        .sticky.bottom-0.bg-green
-          div(v-if="signedIn").border-top
-            form(@submit.prevent="postComment")
-              input(v-model="newComment", type="text", placeholder="Comment...").p3.col-12.h4.border-none.bg-green.font-exp.white
-
-              .right-align.mt2.hide
-                button(type="submit", :disabled="posting", v-text="buttonTxt").px3.py2.bg-green.white.font-exp
-          div(v-else).border-top
-            p.font-exp.p3
-              span(@click="signIn").pointer.underline Sign in
-              span  to comment
+        .flex.flex-column.chat-scroll
+          .relative.white.p1.border-bottom
+            .flex.items-center.justify-start.p2
+              img(:src="img")
+              p.font-exp.h2.m0.px3.flex-auto.truncate {{ name }}
+              span(@click="toggleChat").pointer.h1 &times;
+          div(v-chat-scroll="{ smooth: true }", ref="chat").overflow-auto.touch.flex-auto
+            ul.list-reset.m0
+              li(v-if="comments.length").p3.white.h6 start of chat
+              li(v-else).p3.white.h6 nothing here yet
+              li(v-for="comment in comments" :key="comment.id").px2.pb2
+                .px2.msg
+                  .mb1
+                    template(v-if="comment.deleted")
+                      span(v-text="comment.userName").font-mono.pr2.nowrap
+                      span.pr2.light-gray.h5 [Deleted]
+                    template(v-else-if="comment.flagged")
+                      span.pr2.light-gray.h5 [Flagged]
+                    template(v-else)
+                      span(v-text="comment.userName").font-mono.pr2.nowrap
+                      span(v-text="comment.comment").bold.pr2
+                      span(v-if="owner", @click="flagOrDeleteComment(comment.id)").hvr.pr2.h5.red.pointer Flag
+                      span(v-if="commentOwner(comment)", @click="flagOrDeleteComment(comment.id)").hvr.pr2.h5.red.pointer Delete
+                    span(v-text="commentDate(comment.created)").hvr.h6.lighten-4
+          .fixed.left-0.right-0.bottom-0.bg-green
+            div(v-if="signedIn").border-top
+              form(@submit.prevent="postComment")
+                input(v-model="newComment", type="text", placeholder="Comment...").p3.col-12.h4.border-none.bg-green.font-exp.white
+                //- .right-align.mt2.hide
+                //-   button(type="submit", :disabled="posting", v-text="buttonTxt").px3.py2.bg-green.white.font-exp
+            div(v-else).border-top
+              p.font-exp.p3.mb0
+                span(@click="signIn").pointer.underline Sign in
+                span  to comment
 </template>
 
 <script>
@@ -47,6 +47,8 @@ import moment from 'moment'
 import ChatIcon from '@/components/Icons/ChatIcon'
 import { mapActions } from 'vuex'
 import { cloverImage } from '@/utils'
+
+const scrollEl = document.scrollingElement
 
 export default {
   name: 'Comments',
@@ -82,6 +84,18 @@ export default {
     }
   },
   methods: {
+    toggleChat () {
+      if (!this.showChat) {
+        scrollEl.classList.add('body-overflow-hidden')
+        this.showChat = true
+        this.$nextTick(() => {
+          this.$refs.chat.scrollBy(0, this.$refs.chat.scrollHeight)
+        })
+      } else {
+        scrollEl.classList.remove('body-overflow-hidden')
+        this.showChat = false
+      }
+    },
     commentDate (d) {
       return moment(d).fromNow()
     },
@@ -115,7 +129,6 @@ export default {
     })
 
     // listen for new comments and changes
-    console.log('create socket')
     this.socket = io(process.env.VUE_APP_API_URL, { path: '/comments' })
 
     this.socket.on('new comment', (doc) => {
@@ -133,7 +146,6 @@ export default {
     })
   },
   destroyed () {
-    console.log('destroying socket..')
     this.socket.destroy()
   },
   components: { ChatIcon }
@@ -142,8 +154,8 @@ export default {
 
 <style>
 .chat-scroll {
-  height: 50%;
-  min-height: calc(100vh - 168px);
+  max-height: 100%;
+  padding-bottom: 67px;
 }
 
 .msg {
@@ -160,5 +172,10 @@ export default {
 .touch {
   -webkit-overflow-scrolling: touch;
   -webkit-tap-highlight-color: transparent;
+}
+
+.body-overflow-hidden {
+  height: 100%;
+  overflow: hidden;
 }
 </style>
