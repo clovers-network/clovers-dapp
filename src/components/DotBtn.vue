@@ -26,7 +26,7 @@ button {
   max-width: 36rem;
   min-width: 66%;
   transform: translateX(-3px);
-  > div {
+  & > div {
     transform: translate(6px, -6px);
     transition: transform 0.15s ease-out;
     &:hover {
