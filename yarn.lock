@@ -8054,7 +8054,7 @@ postcss-preset-env@^3.2.2:
     postcss-selector-matches "^3.0.1"
     postcss-selector-not "^3.0.1"
 
-postcss-preset-env@^6.5.0:
+postcss-preset-env@6.5.0:
   version "6.5.0"
   resolved "https://registry.yarnpkg.com/postcss-preset-env/-/postcss-preset-env-6.5.0.tgz#a14b8f6e748b2a3a4a02a56f36c390f30073b9e1"
   dependencies:
