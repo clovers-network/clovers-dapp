@@ -8,9 +8,9 @@
         .relative.white.p1.sticky.top-0.border-bottom
           .flex.items-center.justify-start.p2
             img(:src="img")
-            p.font-exp.h2.m0.pl3.flex-auto.truncate {{ name }}
+            p.font-exp.h2.m0.px3.flex-auto.truncate {{ name }}
             span(@click="showChat = false").pointer.h1 &times;
-        div(v-chat-scroll="{ smooth: true }").chat-scroll.overflow-auto
+        div(v-chat-scroll="{ smooth: true }").chat-scroll.overflow-auto.touch
           ul.list-reset.m0
             li(v-if="comments.length").p3.white.h6 start of chat
             li(v-else).p3.white.h6 nothing here yet
@@ -156,4 +156,9 @@ export default {
 }
 
 .pre-line { white-space: pre-line; }
+
+.touch {
+  -webkit-overflow-scrolling: touch;
+  -webkit-tap-highlight-color: transparent;
+}
 </style>
