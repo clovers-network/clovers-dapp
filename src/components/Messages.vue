@@ -1,20 +1,22 @@
 <template>
-  <div class="fixed top-0 left-0 col-12 z3">
-    <ul class="max-width-3 m-auto list-reset" style="background:linear-gradient(to bottom, rgba(255,255,255,.85) 90%, transparent);max-height:100vh;overflow-y:scroll">
-      <li
-        v-for="msg in messages"
-        :class="msgClass(msg)"
-        class="relative pt1 px2 pb2 h6 m1 rounded"
-        @click="clickMessage(msg)"
-        :key="msg.id"
-        >
-          <h6 class="h2 mb1" v-if="msg.title" :class="{'anim--msg-strobe': msg.type === 'progress'}" v-html="escape(msg.title)"></h6>
-          <small class="block" v-html="escape(msg.msg)"/>
-          <button class="absolute top-0 right-0 p1" @click="removeMessage(msg.id)">
-            <svg-x style="width:7px;height:7px" />
-          </button>
-      </li>
-    </ul>
+  <div class="fixed top-0 left-0 col-12 z1" style="max-height:100vh;overflow-y:scroll">
+    <div class="max-width-3 mt-header-h m-auto" style="background:linear-gradient(to bottom, rgba(255,255,255,.9) 90%, transparent);">
+      <ul class="list-reset pt1" v-if="messages.length > 0">
+        <li
+          v-for="msg in messages"
+          :class="msgClass(msg)"
+          class="relative pt1 px2 pb2 h6 mx1 mb1 rounded"
+          @click="clickMessage(msg)"
+          :key="msg.id"
+          >
+            <h6 class="h2 mb1" v-if="msg.title" :class="{'anim--msg-strobe': msg.type === 'progress'}" v-html="escape(msg.title)"></h6>
+            <small class="block" v-html="escape(msg.msg)"/>
+            <button class="absolute top-0 right-0 pt1 pr1 pb2 pl2 pointer" @click="removeMessage(msg.id)">
+              <svg-x style="width:7px;height:7px" />
+            </button>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
