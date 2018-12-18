@@ -34,8 +34,10 @@
             .p2.center.font-mono(v-if="submitting")
               p {{ infoText }}
       footer(v-else)
-        .bg-green.white.col-12.h-bttm-bar.font-mono.flex.items-center
-          p.center.m-auto.h3 {{ submitted }}
+        .bg-green.white.col-12.h--bar.font-mono.items-center
+          .p3.center
+            img(:src="cloverImage(clover, 36)")
+            p.m-auto.pt2 {{ submitted }}
 </template>
 
 <script>
