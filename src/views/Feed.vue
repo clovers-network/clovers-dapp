@@ -203,13 +203,6 @@ export default {
     //   }
     // }
   },
-  created () {
-    // just testing messages, should be deleted
-    this.$store.dispatch('addMessage', {type: 'success', title: 'New Notification', msg: 'This is the actual msg'})
-    this.$store.dispatch('addMessage', {type: 'error', title: 'Error', msg: 'This is the actual msg. This is the actual msg. This is the actual msg.'})
-    this.$store.dispatch('addMessage', {type: 'progress', title: 'Progress', msg: 'This is the actual msg. This is the actual msg. This is the actual msg.'})
-    this.$store.dispatch('addMessage', {type: null, title: 'Normal', msg: 'This is the actual msg. This is the actual msg. This is the actual msg.'})
-  },
   mounted () {
     if (!this.clovers.length) {
       let lastPage = Math.ceil(this.allLoadedCloverCount / 12)
