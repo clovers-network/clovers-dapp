@@ -50,7 +50,7 @@ export default {
     }, 60 * 1000 * 5)
   },
   // web3 stuff
-  async checkWeb3 ({ commit, dispatch }) {
+  async checkWeb3 ({ dispatch }) {
     try {
       await dispatch('approve')
       await dispatch('getAccount')
@@ -60,10 +60,11 @@ export default {
       return false
     }
   },
-  async approve () {
-    if (global.ethereum) {
+  async approve ({state, commit}) {
+    if (!state.enabled && global.ethereum) {
       try {
         await global.ethereum.enable()
+        commit('SET_ENABLED', true)
       } catch (error) {
         console.error(error)
       }
