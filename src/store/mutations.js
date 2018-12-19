@@ -3,6 +3,9 @@ import BigNumber from 'bignumber.js'
 import { formatClover } from '@/utils'
 
 export default {
+  SET_ENABLED (state, enabled) {
+    state.enabled = enabled
+  },
   SET_ETH_PRICE (state, price) {
     state.ethPrice = price
   },

@@ -21,6 +21,7 @@ const state = {
   tokens: getTokens(),
 
   // web3 stuff
+  enabled: false,
   waitToPing: true,
   unlocked: false,
   querying: false,
