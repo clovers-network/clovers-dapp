@@ -26,9 +26,10 @@
                     template(v-else)
                       span(v-text="comment.userName").font-mono.pr2.nowrap
                       span(v-text="comment.comment").bold.pr2.break-word
-                      span(v-if="owner && !commentOwner(comment)", @click="flagOrDeleteComment(comment.id)").hvr.pr2.h5.red.pointer Flag
-                      span(v-if="commentOwner(comment)", @click="flagOrDeleteComment(comment.id)").hvr.pr2.h5.red.pointer Delete
-                    span(v-text="commentDate(comment.created)").hvr.h6.lighten-4
+                      span(v-if="owner && !commentOwner(comment)", @click="flagOrDeleteComment(comment.id)").hvr.pr2.h6.red.pointer Flag
+                      span(v-if="commentOwner(comment)", @click="flagOrDeleteComment(comment.id)").hvr.pr2.h6.red.pointer Delete
+                    span.block.sm-inline
+                    span(v-text="commentDate(comment.created)").hvr.h6.lighten-4.pr2
           .fixed.left-0.right-0.bottom-0.bg-green
             div(v-if="signedIn").border-top
               form(@submit.prevent="postComment")
@@ -146,34 +147,33 @@ export default {
 </script>
 
 <style>
+@import '../style/settings.css';
+
 .chat-scroll {
   max-height: 100%;
   padding-bottom: 67px;
 }
 
-.msg {
-  & .hvr {
-    opacity: 0;
-    transition: opacity .1s;
+@media (--breakpoint-sm) {
+  .msg {
+    & .hvr {
+      opacity: 0;
+      transition: opacity .1s;
+    }
+
+    &:hover .hvr { opacity: 1; }
   }
-
-  &:hover .hvr { opacity: 1; }
 }
-
-.pre-line { white-space: pre-line; }
 
 .touch {
   -webkit-overflow-scrolling: touch;
   -webkit-tap-highlight-color: transparent;
 }
 
-.body-overflow-hidden {
-  height: 100%;
-  overflow: hidden;
-}
-
 .break-word {
   overflow-wrap: break-word;
   hyphens: auto;
 }
+
+.lighten-4 { color: var(--lighten-4); }
 </style>

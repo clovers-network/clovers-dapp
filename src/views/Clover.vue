@@ -21,7 +21,7 @@
             small.block.lh1.h6 {{ isRFT ? 'My Shares' : showSalePrice ? 'For Sale' : 'Original Reward'}}
             .font-exp.mt1 {{ isRFT ? sharesOwned + ' Shares': (showSalePrice ? prettyPrice : originalPrice) + ' ♣' }}
     //- clover image
-    figure.flex-auto.relative.p3.md-p4.flex.items-center.justify-center.overflow-hidden(@click="view = false", :class="{'border-bottom': isRFT}")
+    figure.flex-auto.relative.p3.md-p4.flex.items-center.justify-center.overflow-hidden.touch(@click="view = false", :class="{'border-bottom': isRFT}")
       //- image
       .absolute.overlay.flex.items-center.justify-center.p3
         clv.col-10.sm-col-6.mx-auto(:moveString="cloverMovesString", :byteBoard="board", :isRFT="isRFT")
