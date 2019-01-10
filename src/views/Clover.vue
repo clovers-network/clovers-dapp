@@ -13,13 +13,13 @@
         //- owner
         .col-6.px3.py2.border-right.flex
           .col-12.m-auto
-            small.block.lh1.h6 Current Owner
+            small.block.lh1.h6 Owner
             .font-exp.mt1.truncate.overflow-hidden {{currentOwner}}
         //- price / value
         .col-6.px3.py2.flex
           .col-12.m-auto
             small.block.lh1.h6 {{ isRFT ? 'My Shares' : showSalePrice ? 'For Sale' : 'Original Reward'}}
-            .font-exp.mt1 {{ isRFT ? sharesOwned + ' Shares': (showSalePrice ? prettyPrice : originalPrice) + ' ♣&#xFE0E;' }}
+            .font-exp.mt1 {{ isRFT ? sharesOwned: (showSalePrice ? prettyPrice : originalPrice) + ' ♣&#xFE0E;' }}
     //- clover image
     figure.relative.p3.md-p4.h-100vw.flex.items-center.justify-center.overflow-hidden.touch(@click="view = false", :class="{'border-bottom': isRFT}", style="max-height:48vh")
       //- image
@@ -222,7 +222,7 @@ export default {
       const owner = this.owner
       return !owner ? '---'
         : this.isMyClover ? 'You'
-          : this.isRFT ? 'Curation Mrkt.'
+          : this.isRFT ? 'Public'
           // owned by Bank
             : owner.toLowerCase() === this.$store.getters.cloversBankAddress
               ? this.price > 0

@@ -38,6 +38,7 @@
 .invisible-scrollbar::-webkit-scrollbar {display: none;}
 
 .flex-grow{flex-grow: 1;}
+.flex-order_-1{order:-1;}
 
 /* #COLORS */
 .dark-gray { color: var(--dark-gray);}
