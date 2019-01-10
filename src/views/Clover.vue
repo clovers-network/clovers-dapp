@@ -19,7 +19,7 @@
         .col-6.px3.flex
           .col-12.m-auto
             small.block.lh1.h6 {{ isRFT ? 'My Shares' : showSalePrice ? 'For Sale' : 'Original Reward'}}
-            .font-exp.mt1 {{ isRFT ? sharesOwned + ' Shares': (showSalePrice ? prettyPrice : originalPrice) + ' ♣' }}
+            .font-exp.mt1 {{ isRFT ? sharesOwned + ' Shares': (showSalePrice ? prettyPrice : originalPrice) + ' ♣&#xFE0E;' }}
     //- clover image
     figure.flex-auto.relative.p3.md-p4.flex.items-center.justify-center.overflow-hidden.touch(@click="view = false", :class="{'border-bottom': isRFT}")
       //- image
@@ -49,7 +49,7 @@
             .relative
               input.block.col-12.mt1.border-bottom.font-exp.py1.pr3(type="number", v-model="sellPrice", min="0")
               span.absolute.top-0.right-0.h-100.opacity-50.flex
-                span.block.m-auto ♣
+                span.block.m-auto ♣&#xFE0E;
           button(@click="makeSell").h-bttm-bar.flex.col-12.border-top.pointer
             span(v-if="!loading").block.m-auto.font-exp Confirm
             wavey-menu.m-auto(v-else :isWhite="true")
@@ -63,7 +63,7 @@
             .relative
               input.block.col-12.mt1.border-bottom.font-exp.py1.pr3(type="number", v-model="invesment", min="0")
               span.absolute.top-0.right-0.h-100.opacity-50.flex
-                span.block.m-auto ♣
+                span.block.m-auto ♣&#xFE0E;
           button.h-bttm-bar.flex.border-top.col-12(@click="makeRFT")
             span(v-if="!loading").block.m-auto.font-exp Confirm
             wavey-menu.m-auto(v-else :isWhite="true")
@@ -87,15 +87,15 @@
       //- Buy
       .bg-green(v-else-if="canBuy")
         button.h-bttm-bar.white.flex.col-12.pointer(@click="confirmVisible = !confirmVisible")
-          span.block.m-auto.font-exp Buy for {{prettyPrice}} ♣
+          span.block.m-auto.font-exp Buy for {{prettyPrice}} ♣&#xFE0E;
         transition(name="confirm")
           section.white(v-show="confirmVisible")
             .border-top.flex.border-bottom
               .col-6.p3.border-right
-                small.block.lh1.h6 ♣ Current Balance
+                small.block.lh1.h6 ♣&#xFE0E; Current Balance
                 .font-exp.mt2 {{ prettyUserBalance }}
               .col-6.p3
-                small.block.lh1.h6 ♣ Balance After
+                small.block.lh1.h6 ♣&#xFE0E; Balance After
                 .font-exp.mt2 {{ balanceAfter }}
             //- confirm, if can buy
             button(@click="makeBuy", v-if="canAfford").h-bttm-bar.white.border-top.flex.col-12.pointer
