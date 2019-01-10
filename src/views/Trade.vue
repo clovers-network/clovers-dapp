@@ -30,10 +30,9 @@
             .relative
               .pt1.pl2.pb2.border-bottom.font-exp {{clubReceive}}
               span.absolute.top-0.right-0.py1.claimed {{currencies}}
-          .h-bttm-bar.bg-green.white.fixed-center-max-width.bottom-0.col-12
-            button.h-bttm-bar.h3.block.m-auto.font-exp(v-if="!working") Buy
-            .h-bttm-bar.block.m-auto.flex.justify-center.items-center(v-else)
-              wavey-menu(:is-white="true")
+          button(:disabled="working").h-bttm-bar.bg-green.white.fixed-center-max-width.bottom-0.col-12.pointer
+            span.font-exp.h3(v-if="!working") Buy
+            wavey-menu.m-auto(v-else, :is-white="true")
 
       //- SELL
       section.pb4(v-else)
@@ -49,10 +48,9 @@
               //- input.input.border.font-exp(v-model="ethReceive", placeholder="ETH", disabled="true")
               .pt1.pl2.pb2.border-bottom.font-exp {{ethReceive}}
               span.absolute.top-0.right-0.py1.pr2.pb2.claimed {{collateral}}
-          .h-bttm-bar.bg-green.white.fixed-center-max-width.bottom-0.col-12
-            button.h-bttm-bar.h3.block.m-auto.font-exp(v-if="!working") Sell
-            .h-bttm-bar.block.m-auto.flex.justify-center.items-center(v-else)
-              wavey-menu(:is-white="true")
+          button(:disabled="working").h-bttm-bar.bg-green.white.fixed-center-max-width.bottom-0.col-12.pointer
+            span.font-exp.h3(v-if="!working") Sell
+            wavey-menu(v-else, :is-white="true")
 </template>
 
 <script>
@@ -196,7 +194,7 @@ export default {
         .then((res) => {
           this.working = false
           this.handleSuccess(
-            `Success! You bought ${receiving} ${this.currentToken}`
+            `Success! You bought ${receiving} ${this.currentTokenPlural}`
           )
           this.$emit('trade')
         })
@@ -216,7 +214,7 @@ export default {
         .then((res) => {
           this.working = false
           this.handleSuccess(
-            `Success! You sold ${selling} ${this.currentToken}`
+            `Success! You sold ${selling} ${this.currentTokenPlural}`
           )
           this.$emit('trade')
         })
