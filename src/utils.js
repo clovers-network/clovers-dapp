@@ -10,7 +10,12 @@ export function pad0x (string) {
   return `0x${string}`
 }
 
-export function addrToUser (allUsers, address) {
+export function addrToUser (address) {
+  /*
+  * @return {string} Username or ENS name or 0x addr
+  * --- PROBABLY DONT USE ON LIST VIEWS !!!! ---- (use getUsername)
+  */
+  const allUsers = store.state.allUsers
   let userIndex = allUsers.findIndex(
     u => u.address.toLowerCase() === address.toLowerCase()
   )
@@ -22,6 +27,20 @@ export function addrToUser (allUsers, address) {
     }
     return address
   })())
+}
+
+export function getUsername (addr = '') {
+  /**
+  * Lighter function than addrToUser (doesn't call ENS system)
+  * @return {(string|undefined)} Username, ENS name, undefined
+  **/
+  addr = addr.toLowerCase()
+  const user = store.state.allUsers.filter(user => user.address.toLowerCase() === addr)[0]
+  return addr === store.getters.cloversBankAddress ? 'Clovers'
+    : addr === store.getters.curationMarketAddress ? 'Curation Mrkt.'
+      : user.name && user.name.trim() !== '' ? user.name
+        : user.ens ? user.ens
+          : undefined
 }
 
 export function cloverImage ({ board, byteBoard }, size = 200) {
