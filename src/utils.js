@@ -80,3 +80,11 @@ export function abbrvAddr (addr) {
   // Function to abbreviate 0x addresses
   return addr.substr(0, 6) + addr.slice(-4)
 }
+
+export function getUsername (user) {
+  if (!user || !user.address) return null
+  const addr = user.address.toLowerCase()
+  if (addr === store.getters.cloversBankAddress) return 'Clovers'
+  if (addr === store.getters.curationMarketAddress) return 'Curation Mrkt.'
+  return user && user.name && user.name !== '' ? user.name : null
+}

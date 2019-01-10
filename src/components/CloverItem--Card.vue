@@ -15,7 +15,7 @@
           h6.h7 {{isRFT ? 'Market Cap' : 'Owner'}}
           h4.h6.font-mono.truncate
             span(v-if="isRFT") 0
-            span(v-else) {{clover.owner}}
+            span(v-else) {{ownerUsername}}
         .px1.col-6
           .pl1
             h6.h7 {{isRFT ? '&clubs; / Share' : 'Price &clubs;'}}
@@ -25,8 +25,8 @@
 </template>
 
 <script>
-import { cloverImage, prettyBigNumber, abbrvAddr } from '@/utils'
-import { mapGetters } from 'vuex'
+import { cloverImage, prettyBigNumber, abbrvAddr, getUsername } from '@/utils'
+import { mapState, mapGetters } from 'vuex'
 import BigNumber from 'bignumber.js'
 export default {
   name: 'CloverItem--Card',
@@ -35,6 +35,12 @@ export default {
     borderLeft: false
   },
   computed: {
+    ...mapState(['allUsers']),
+    ...mapGetters(['cloversBankAddress']),
+    ownerUsername () {
+      const user = this.allUsers.filter(user => user.address === this.clover.owner)[0]
+      return getUsername(user) ? getUsername(user) : abbrvAddr(this.clover.owner)
+    },
     isRFT () {
       // inCurationMarket
       return this.clover.owner === this.curationMarketAddress
