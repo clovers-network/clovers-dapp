@@ -108,6 +108,7 @@ p {
   margin-top: 0;
   margin-bottom: 1em;
 }
+small{font-size:inherit;}
 .pt5{padding-top: 5em;}
 .pt6{padding-top: 6em;}
 .pt7{padding-top: 7em;}
