@@ -182,7 +182,7 @@ export default {
       )
     },
     owner () {
-      return this.clover && addrToUser(this.allUsers, this.clover.owner)
+      return this.clover && addrToUser(this.clover.owner)
     },
     prettyPrice () {
       return this.clover && prettyBigNumber(this.clover.price, 0)
@@ -227,12 +227,10 @@ export default {
     },
     currentOwner () {
       const owner = this.owner
-      return !owner
-        ? '---'
-        : this.isMyClover
-          ? 'You'
-          : this.isRFT
-            ? 'Curation Mrkt.'
+      return !owner ? '---'
+        : this.isMyClover ? 'You'
+          : this.isRFT ? 'Curation Mrkt.'
+          // owned by Bank
             : owner.toLowerCase() === this.$store.getters.cloversBankAddress
               ? this.price > 0
                 ? 'Clovers'

@@ -15,7 +15,7 @@
           h6.h7 {{isRFT ? 'Market Cap' : 'Owner'}}
           h4.h6.font-mono.truncate
             span(v-if="isRFT") 0
-            span(v-else) {{ownerUsername}}
+            span(v-else) {{owner}}
         .px1.col-6
           .pl1
             h6.h7 {{isRFT ? '&clubs; / Share' : 'Price &clubs;'}}
@@ -35,17 +35,15 @@ export default {
     borderLeft: false
   },
   computed: {
-    ...mapState(['allUsers']),
-    ...mapGetters(['cloversBankAddress']),
-    ownerUsername () {
-      const user = this.allUsers.filter(user => user.address === this.clover.owner)[0]
-      return getUsername(user) ? getUsername(user) : abbrvAddr(this.clover.owner)
+    ...mapGetters(['curationMarketAddress']),
+    owner () {
+      const name = getUsername(this.clover.owner)
+      return name || abbrvAddr(this.clover.owner)
     },
     isRFT () {
       // inCurationMarket
       return this.clover.owner === this.curationMarketAddress
-    },
-    ...mapGetters(['curationMarketAddress'])
+    }
   },
   methods: {
     cloverImage,
