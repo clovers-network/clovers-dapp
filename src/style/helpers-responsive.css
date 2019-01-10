@@ -6,4 +6,5 @@
 }
 @media (--breakpoint-md) {
   .md-border-left-transp{border-left-color:transparent;}
+  .md-border-right{border-right-style:solid;}
 }

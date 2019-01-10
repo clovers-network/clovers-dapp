@@ -1,15 +1,15 @@
 <template lang="pug">
-  nav.relative.h-header.flex.border-bottom
-    .flex.flex-auto.pointer(v-for="(item, index) in items", @click="onClick(item, index)", :class="{'opacity-50': index !== active}", :style="itemStyle")
-      span.block.m-auto.h6(v-html="item.lbl")
+  nav.relative.flex.border-bottom
+    .flex.flex-auto.pointer(v-for="(item, index) in items", @click="onClick(item, index)", :class="{'opacity-50': index !== active, 'h-header': !thick, 'p3': thick}", :style="itemStyle")
+      span.block.m-auto(v-html="item.lbl", :class="{'h6': !thick, 'font-exp': thick}")
     //- highlight bar
-    .absolute.bg-green.left-0.trans-transform.pointer-events-none(:style="barStyle")
+    .absolute.left-0.trans-transform.pointer-events-none(:style="barStyle")
 </template>
 
 <script>
 export default {
   name: 'ViewNav',
-  props: ['items', 'initial'],
+  props: ['items', 'initial', 'thick'],
   inheritAttrs: false,
   data () {
     return {
@@ -27,7 +27,8 @@ export default {
         bottom: '-2px',
         height: '3px',
         transform: 'translateX(' + 100 * this.active + '%)',
-        width: 'calc(100% / ' + this.items.length + ')'
+        width: 'calc(100% / ' + this.items.length + ')',
+        background: 'currentColor'
       }
     }
   },

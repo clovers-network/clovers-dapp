@@ -34,7 +34,7 @@
         </div>
       </li>
     </ul>
-    <div is="router-link" tag="div" to="/field" class="fixed-center-max-width bottom-0 bg-green white center p2 pointer h-bttm-bar">
+    <div is="router-link" tag="div" to="/field" class="fixed-center-max-width bottom-0 bg-green white center p2 pointer h-bttm-bar flex">
       <span class="m-auto h3 font-exp">Find more</span>
     </div>
   </div>
