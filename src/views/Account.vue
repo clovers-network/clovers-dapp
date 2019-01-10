@@ -51,7 +51,7 @@ export default {
         { lbl: 'Picks', value: 'Account' },
         { lbl: 'My Clovers', value: 'Account/Clovers' },
         {
-          lbl: '<span class=font-mono>' + this.prettyUserBalance + ' ♣</span>',
+          lbl: '<span class=font-mono>' + this.prettyUserBalance + ' ♣&#xFE0E;</span>',
           value: 'Account/Trade'
         }
       ]
