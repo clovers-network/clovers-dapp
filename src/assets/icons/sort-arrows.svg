@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 28 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+    <title>icon-sort</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="icon-sort" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group" transform="translate(7.000000, 12.000000) scale(1, -1) translate(-7.000000, -12.000000) " stroke="#01B463">
+            <polyline id="Rectangle-3" transform="translate(7.013961, 16.863961) rotate(-315.000000) translate(-7.013961, -16.863961) " points="11.513961 12.363961 11.513961 21.363961 2.51396103 21.363961"></polyline>
+            <path d="M7,0 L7,22.5" id="Line-2" stroke-linecap="square"></path>
+        </g>
+        <g id="Group-Copy" transform="translate(21.000000, 12.000000) scale(1, -1) rotate(-180.000000) translate(-21.000000, -12.000000) translate(14.000000, 0.000000)" stroke="#01B463">
+            <polyline id="Rectangle-3" transform="translate(7.013961, 16.863961) rotate(-315.000000) translate(-7.013961, -16.863961) " points="11.513961 12.363961 11.513961 21.363961 2.51396103 21.363961"></polyline>
+            <path d="M7,0 L7,22.5" id="Line-2" stroke-linecap="square"></path>
+        </g>
+    </g>
+</svg>

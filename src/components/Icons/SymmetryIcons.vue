@@ -1,5 +1,5 @@
 <template>
-  <ul :class="['m0', {'center': horizontal}]">
+  <ul :class="['m0 lh0', {'center': horizontal}]">
     <li
       role="img"
       v-for="(sym, i) in symmetries"
@@ -44,9 +44,11 @@ export default {
   border-radius: 100%;
   border: 1px solid;
   line-height: 0;
-  margin: 0.4em;
   padding: 0.8em;
   width: 1em;
+  & + .symmetry-type {
+    margin-left: .25em;
+  }
 }
 
 .XnYSym {

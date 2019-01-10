@@ -13,19 +13,19 @@
         .absolute.bg-contain.bg-no-repeat.bg-center(role="img", v-if="clover", :style="'background-image:url(' + cloverImage(clover) + ')'")
       footer(v-if="!submitted")
         .flex.border-top
-          .col-6.p3.border-right.relative(@click="action = 'keep'")
+          .col-6.flex-grow.p3.relative.pointer(@click="action = 'keep'")
             div(:class="{'opacity-25': action !== 'keep'}")
               small.block.lh1 Keep for ♣
               .font-exp.mt1.truncate {{tokenValue}}
               //- button.absolute.top-0.right-0.p2.pointer(@click="action = 'keep'")
                 .icon-radio(:class="{'icon-radio--selected': action === 'keep'}")
-          .col-6.p3.relative(@click="action = 'sell'")
+          .col-6.flex-grow.p3.relative.pointer.border-left(v-if="rewardValue > 0", @click="action = 'sell'")
             div(:class="{'opacity-25': action !== 'sell'}")
               small.block.lh1 Sell instantly for ♣
               .font-exp.mt1.truncate {{rewardValue}}
               //- button.absolute.top-0.right-0.p2.pointer(@click="action = 'sell'")
                 .icon-radio(:class="{'icon-radio--selected': action === 'sell'}")
-        //- keep btn
+        //- confirm btn
         .bg-green.white
           button.col-12.h-bttm-bar.font-exp.pointer(@click="btnClick", :class="{'pointer-events-none': submitting}")
             span.block.m-auto.capitalize(v-show="!submitting") {{action}}
@@ -34,8 +34,10 @@
             .p2.center.font-mono(v-if="submitting")
               p {{ infoText }}
       footer(v-else)
-        .bg-green.white.col-12.h-bttm-bar.font-mono.flex.items-center
-          p.center.m-auto.h3 {{ submitted }}
+        .bg-green.white.col-12.h--bar.font-mono.items-center
+          .p3.center
+            img(:src="cloverImage(clover, 36)")
+            p.m-auto.pt2 {{ submitted }}
 </template>
 
 <script>
@@ -66,15 +68,12 @@ export default {
   },
   computed: {
     rewardValue () {
+      // in club tokens
       return this.reward ? fromWei(this.reward.toString()) : '...'
     },
     tokenValue () {
+      // in club tokens
       return this.value ? fromWei(this.value.toString()) : '...'
-    },
-    sellValue () {
-      return this.value
-        ? fromWei(this.value.minus(this.$store.state.basePrice).toString())
-        : '...'
     },
     infoText () {
       return this.action === 'keep'

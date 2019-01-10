@@ -1,58 +1,70 @@
 <template lang="pug">
   section
-    header.flex.border-bottom
-      .col-4.p2.border-right
-        small.lh2.block Price
-        .font-exp.mt1.truncate(v-if="isRFT") {{ priceInCollateral.toFormat(4) }} {{collateral}} per {{currentToken}}
-        .font-exp.mt1.truncate(v-else) ${{ priceInUSD.toFormat(2) }} per {{currentToken}}
-      .col-4.p2.border-right
-        small.lh2.block Total Supply
-        .font-exp.mt1.truncate {{ totalSupply.toFormat(0) }} {{currentTokenPlural}}
-      .col-4.p2
-        small.lh2.block Market Cap
-        .font-exp.mt1.truncate(v-if="isRFT") {{ marketCapInCollateral.toFormat(0) }} {{collateral}}
-        .font-exp.mt1.truncate(v-else) ${{ marketCapInUSD.toFormat(2) }}
+    header.flex.border-bottom(v-if="!isRFT")
+      .col-6.p2
+        small.lh2.block.h6 My Balance
+        .font-exp.mt1.truncate {{prettyUserBalance}} &clubs;&#xfe0e;
+      .col-6.p2.border-left(v-if="!isRFT")
+        small.lh2.block.h6 Total Value
+        .font-exp.mt1.truncate ${{userBalanceInUSD.toFixed(2)}}
     section
-      .relative
-        span.block.absolute.left-0.top-0.p2.h6 Price Graph in {{collateral}} per {{currentToken}}
-        chart.border-bottom(:market="market", :orders="orders.slice(0,6)")
-      view-nav(:items="[{lbl: 'Buy', value:'buy'}, {lbl: 'Sell', value:'sell'}]", @change="view = $event")
+      .flex.flex-column
+        //- chart
+        .col-12.relative
+          span.block.absolute.left-0.top-0.p2.h6 Price Graph in {{collateral}} per <span v-html="currentToken" />
+          chart.border-bottom(:market="market", :orders="orders.slice(0,6)")
+        //- details
+        .col-12.flex.flex-wrap(:class="{'flex-order_-1': isRFT}")
+          //- price
+          .col-12.md-col-4.p2.border-bottom.md-border-right
+            small.lh2.block.h6 {{isRFT ? 'Share Price' : '&clubs;&#xfe0e; Value in USD'}}
+            .font-exp.mt1.truncate(v-if="isRFT") {{ priceInCollateral.toFormat(4) }} {{collateral}}
+            .font-exp.mt1.truncate(v-else) ${{ priceInUSD.toFormat(2) }} <span class="opacity-50 font-reg"> / <span v-html="currentToken" /></span>
+          //- supply
+          .col-6.md-col-4.p2.border-bottom
+            small.lh2.block.h6 Total {{currentTokenPlural}}
+            .font-exp.mt1.truncate {{ totalSupply.toFormat(0) }} 
+          //- market cap
+          .col-6.md-col-4.p2.border-left.border-bottom
+            small.lh2.block.h6 Market Cap
+            .font-exp.mt1.truncate(v-if="isRFT") {{ marketCapInCollateral.toFormat(0) }} {{collateral}}
+            .font-exp.mt1.truncate(v-else) ${{ marketCapInUSD.toFormat(2) }}
+      //- TRADE
+      view-nav.bg-green.white(:items="[{lbl: 'Buy', value:'buy'}, {lbl: 'Sell', value:'sell'}]", @change="view = $event", :thick="true")
       //- BUY
-      section.pb4(v-if="view === 'buy'")
+      section.bg-green.white(v-if="view === 'buy'")
         form(@submit.prevent="buyTokens")
           .p2
             p.h7.mb1 Amount
             .relative
-              input.input.border.font-exp(v-model="buy", placeholder="0", type="number", min="0", step="any")
+              input.input.border.font-exp.white(v-model="buy", placeholder="0", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed {{collateral}}
-          .p2
+          .p2.pb3
             p.h7.mb1 Receive
             .relative
               .pt1.pl2.pb2.border-bottom.font-exp {{clubReceive}}
               span.absolute.top-0.right-0.py1.claimed {{currencies}}
-          .h-bttm-bar.bg-green.white.fixed-center-max-width.bottom-0.col-12
-            button.h-bttm-bar.h3.block.m-auto.font-exp(v-if="!working") Buy
-            .h-bttm-bar.block.m-auto.flex.justify-center.items-center(v-else)
-              wavey-menu(:is-white="true")
+          button(:disabled="working").h-bttm-bar.bg-green.white.bottom-0.col-12.pointer.border-top
+            span.font-exp(v-if="!working") Confirm
+            wavey-menu.m-auto(v-else, :is-white="true")
 
       //- SELL
-      section.pb4(v-else)
+      section.bg-green.white(v-else)
         form(@submit.prevent="sellTokens")
           .p2
             p.h7.mb1 Amount
             .relative
-              input.input.border.font-exp(v-model="sell", placeholder="0", type="number", min="0", step="any")
+              input.input.border.font-exp.white(v-model="sell", placeholder="0", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed {{currencies}}
-          .p2
+          .p2.pb3
             p.h7.mb1 Receive
             .relative
               //- input.input.border.font-exp(v-model="ethReceive", placeholder="ETH", disabled="true")
               .pt1.pl2.pb2.border-bottom.font-exp {{ethReceive}}
               span.absolute.top-0.right-0.py1.pr2.pb2.claimed {{collateral}}
-          .h-bttm-bar.bg-green.white.fixed-center-max-width.bottom-0.col-12
-            button.h-bttm-bar.h3.block.m-auto.font-exp(v-if="!working") Sell
-            .h-bttm-bar.block.m-auto.flex.justify-center.items-center(v-else)
-              wavey-menu(:is-white="true")
+          button(:disabled="working").h-bttm-bar.bg-green.white.bottom-0.col-12.pointer.border-top
+            span.font-exp(v-if="!working") Confirm
+            wavey-menu(v-else, :is-white="true")
 </template>
 
 <script>
@@ -108,7 +120,7 @@ export default {
       return this.isRFT ? '♣︎' : 'ETH'
     },
     currentToken () {
-      return this.isRFT ? 'Share' : '♣︎'
+      return this.isRFT ? 'Share' : '♣︎&#xfe0e;'
     },
     currentTokenPlural () {
       return this.currentToken === 'Share' ? 'Shares' : '♣︎'
@@ -139,6 +151,9 @@ export default {
     },
     priceInUSD () {
       return this.priceInEth.times(new BigNumber(this.ethPrice))
+    },
+    userBalanceInUSD () {
+      return parseFloat(this.prettyUserBalance) * this.priceInUSD
     },
     totalSupplyWei () {
       if (!this.orders.length) return new BigNumber(0)
@@ -190,14 +205,15 @@ export default {
       })
     },
     buyTokens () {
+      const receiving = this.clubReceive
       this.working = true
       this.invest({ market: this.market, amount: this.buy })
-        .then(res => {
+        .then((res) => {
           this.working = false
           this.handleSuccess(
-            `Success! You bought ${this.clubReceive} ${this.currentToken}`
+            `Success! You bought ${receiving} ${this.currentTokenPlural}`
           )
-          console.log(res)
+          this.$emit('trade')
         })
         .catch(err => {
           this.working = false
@@ -205,18 +221,19 @@ export default {
         })
     },
     sellTokens () {
+      const selling = this.sell
       this.working = true
       this.divest({
         market: this.market,
         amount: this.sell,
         clover: this.board
       })
-        .then(res => {
+        .then((res) => {
           this.working = false
           this.handleSuccess(
-            `Success! You sold ${this.sell} ${this.currentToken}`
+            `Success! You sold ${selling} ${this.currentTokenPlural}`
           )
-          console.log(res)
+          this.$emit('trade')
         })
         .catch(err => {
           this.working = false
@@ -236,10 +253,9 @@ export default {
       })
     },
     checkOutMarket () {
-      console.log('check out market')
       this.getClubTokenPrice()
       this.getOrders(this.market || 'ClubToken')
-      this.checkPrice()
+      this.checkPrice(this.buy)
       this.checkSell()
     },
     ...mapActions([

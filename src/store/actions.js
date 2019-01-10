@@ -50,7 +50,7 @@ export default {
     }, 60 * 1000 * 5)
   },
   // web3 stuff
-  async checkWeb3 ({ commit, dispatch }) {
+  async checkWeb3 ({ dispatch }) {
     try {
       await dispatch('approve')
       await dispatch('getAccount')
@@ -60,10 +60,11 @@ export default {
       return false
     }
   },
-  async approve () {
-    if (global.ethereum) {
+  async approve ({state, commit}) {
+    if (!state.enabled && global.ethereum) {
       try {
         await global.ethereum.enable()
+        commit('SET_ENABLED', true)
       } catch (error) {
         console.error(error)
       }
@@ -326,6 +327,36 @@ export default {
       .get(apiUrl('/clovers/' + board))
       .then(clvr => clvr && clvr.data && formatClover(clvr.data))
       .catch(console.error)
+  },
+
+  getComments (_, board) {
+    if (!board) {
+      return Promise.reject(new Error('Missing parameter: `board` (address)'))
+    }
+    return axios
+      .get(apiUrl(`/chats/${board}`))
+      .catch(console.error)
+  },
+  addComment ({ getters }, { board, comment }) {
+    if (!board) {
+      return Promise.reject(new Error('Missing parameter: `board` (address)'))
+    }
+    return axios
+      .post(apiUrl(`/chats/${board}`), { comment }, {
+        headers: {
+          Authorization: getters.authHeader
+        }
+      })
+      .catch(console.error)
+  },
+  flagOrDeleteComment ({ getters }, id) {
+    return axios
+      .delete(apiUrl(`/chats/${id}`), {
+        headers: {
+          Authorization: getters.authHeader
+        }
+      })
+      .catch()
   },
 
   formatFoundClover (_, clover) {

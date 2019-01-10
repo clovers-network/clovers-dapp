@@ -20,9 +20,9 @@ export default {
 <style scoped>
 button {
   max-width: 36rem;
-  > div {
+  & > div {
     height: 5rem;
-    > div {
+    & > div {
       padding-bottom: 0.1em;
     }
   }

@@ -1,6 +1,6 @@
 <template lang="pug">
   section.green
-    .fixed-center-max-width.bg-white.z1
+    .sticky.left-0.bg-white.z1(style="top:-1px")
       header.border-bottom
         //- username, editable
         .h-header.relative.flex.items-center.justify-center(v-if="signedIn")
@@ -18,7 +18,7 @@
           button.block.p2.m-auto.h6.regular.pointer(@click="signIn") Login
             span(v-if="account" class="truncate") as {{name.substr(0,7) + (name.length > 7 ? '...' : '')}}
       view-nav(ref="nav", :items="navItems", :initial="$route.name" @change="$router.push({name: $event})")
-    section.pt-header
+    section
       router-view
 </template>
 
@@ -51,7 +51,7 @@ export default {
         { lbl: 'Picks', value: 'Account' },
         { lbl: 'My Clovers', value: 'Account/Clovers' },
         {
-          lbl: '<span class=font-mono>' + this.prettyUserBalance + ' ♣</span>',
+          lbl: '<span class=font-mono>' + this.prettyUserBalance + ' ♣&#xFE0E;</span>',
           value: 'Account/Trade'
         }
       ]

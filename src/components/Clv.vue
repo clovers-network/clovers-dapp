@@ -275,7 +275,7 @@ export default {
   &.no-border {
     border: 0px !important;
   }
-  .clover__circle {
+  & .clover__circle {
     transition: background 500ms ease, border 500ms ease;
     width: 100%;
     height: 0;
@@ -283,62 +283,62 @@ export default {
     padding-bottom: 100%;
     border-radius: 100%;
   }
-  .row-body {
+  & .row-body {
     position: absolute;
     width: 70%;
     top: 15%;
     left: 15%;
     /*margin:0 auto;*/
   }
-  .row {
+  & .row {
     /*line-height: 0;*/
     display: flex;
   }
-  .active-clover & {
+  @nest .active-clover & {
     box-shadow: 0 0 0 0.4em;
   }
   &.no-bg:after {
     background-color: transparent !important;
   }
-  .w-b {
+  & .w-b {
     background-color: var(--black);
     border: 1px solid var(--white);
     &:active:not(.no-hover) .t-b {
       border: 1px solid var(--white);
     }
   }
-  .w-w {
+  & .w-w {
     background-color: var(--white);
     border: 1px solid var(--black);
     &:active:not(.no-hover) .t-w {
       border: 1px solid var(--black);
     }
   }
-  .w-t {
+  & .w-t {
     background-color: var(--silver);
   }
 
   &.isRFT {
-    .clover__circle {
+    & .clover__circle {
       background-color: var(--red);
       border: 1px solid var(--red);
       &.w-b {
-        .t-b:after {
+        & .t-b:after {
           background-color: var(--red);
         }
       }
       &.w-w {
-        .t-w:after {
+        & .t-w:after {
           background-color: var(--red);
         }
       }
-      .t-n {
+      & .t-n {
         background-color: var(--red) !important;
         /*background-color: var(--green);*/
       }
     }
   }
-  .bg-green {
+  & .bg-green {
     background-color: var(--green);
     border: 1px solid var(--green);
   }

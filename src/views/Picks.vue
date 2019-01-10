@@ -6,15 +6,15 @@
         <div class="flex py2 border-bottom justify-between items-center green">
           <div class="col-3 center relative">
             <div class="sym-badge absolute h7 p1" v-if="isSym(clover)">SYM</div>
-            <img class="pointer" :src="cloverImage(clover, 58)" width="58" height="58" @click="viewSingle = clover"/>
+            <img class="pointer" :src="cloverImage(clover, 64)" width="64" height="64" @click="viewSingle = clover"/>
           </div>
           <div class="col-3 pr2 h7 font-mono">
             {{ fromNow(clover) }}
           </div>
-          <div class="pr2 h6 font-mono">
+          <div class="pr1 h6 font-mono">
             <button @click="removeClover(clover)" class="btn btn-big border border-green regular">Remove</button>
           </div>
-          <div class="pr3 h6 font-mono">
+          <div class="pr2 h6 font-mono">
             <button @click="viewSingle = clover" class="btn btn-big bg-green white nowrap regular">Keep/Sell</button>
           </div>
         </div>
@@ -23,7 +23,7 @@
       <li v-else class="md-col-6 md-px1">
         <div class="flex py2 border-bottom justify-between items-center green">
           <div class="col-3 center relative">
-            <img  class="pointer" :src="newClover ? cloverImage(newClover, 58) : 'https://api2.clovers.network/clovers/svg/0x0/58'" width="58" height="58" @click="viewSingle = newClover"/>
+            <img  class="pointer" :src="newClover ? cloverImage(newClover, 64) : 'https://api2.clovers.network/clovers/svg/0x0/64'" width="64" height="64" @click="viewSingle = newClover"/>
           </div>
           <div class="col-6 pr2 font-mono">
             <input placeholder="Clover Source" class="col-12 font-mono border-bottom" v-model="newCloverMoves" />
@@ -34,7 +34,7 @@
         </div>
       </li>
     </ul>
-    <div is="router-link" tag="div" to="/field" class="fixed-center-max-width bottom-0 bg-green white center p2 pointer h-bttm-bar">
+    <div is="router-link" tag="div" to="/field" class="fixed-center-max-width bottom-0 bg-green white center p2 pointer h-bttm-bar flex">
       <span class="m-auto h3 font-exp">Find more</span>
     </div>
   </div>

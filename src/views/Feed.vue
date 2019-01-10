@@ -1,22 +1,26 @@
 <template>
   <div>
-    <div class="sticky z1 border-bottom green flex font-mono bg-white" style="top:46px">
-      <div class="center col-6">
-        <div @click="toggleFilters" class="p1 pointer">
-          <div :style="filterBorderStyles" class="filters-btn"></div>
-          <span class="h3">{{feedFilterName}}</span>
-          <div class="absolute top-0 right-0 mr2 mt2 line-height-1">
-            <img :style="dropArrowRotate" src="~../assets/icons/chevron-down.svg" width="14" height="14"/>
+    <div class="sticky bottom-0 z1 border-bottom green font-mono bg-white" style="top:46px">
+      <div class="center col-12">
+        <div class="relative" :class="{'bg-green white': feedFilter !== 'all'}">
+          <div @click.stop="toggleFilters" class="h-header col-12 flex items-center justify-center pointer">
+            <span class="h5 block">{{filtersVisible ? 'Close' : feedFilterName}}</span>
+            <div v-show="!filtersVisible" class="absolute top-0 right-0 h-100 flex items-center justify-center" style="width:40px">
+              <img class="block" src="~../assets/icons/sort-arrows.svg" width="20"/>
+            </div>
+          </div>
+          <div v-show="feedFilter !== 'all' && !filtersVisible" class="absolute top-0 right-0 h-100 flex items-center justify-center" style="width:40px" @click.stop="feedFilter = 'all'">
+            <svg-x width="14" height="14" />
           </div>
         </div>
         <transition name="fade">
           <div
             v-if="filtersVisible"
-            class="absolute top-100 left-0 right-0 border-bottom bg-white">
+            class="absolute top-100 left-0 right-0 border-bottom" :class="feedFilter !== 'all' ? 'bg-green white' : 'bg-white green'">
             <div class="flex left-align">
-              <div class="col-6 py2 pl2 pr1 border-top border-white">
+              <div class="col-6 pt1 pb2 pl2 pr1">
                 <div class="flex flex-column">
-                  <p class="h6 mb1 font-reg">Type</p>
+                  <p class="h5 mb1 font-reg">Type</p>
                   <div class="border center h3 select">
                     <select v-model="feedFilter">
                       <option value="all">All</option>
@@ -26,9 +30,9 @@
                   </div>
                 </div>
               </div>
-              <div class="col-6 py2 pr2 pl1 border-top">
+              <div class="col-6 pt1 pb2 pr2 pl1">
                 <div class="flex flex-column">
-                  <p class="h6 mb1 font-reg">Sort</p>
+                  <p class="h5 mb1 font-reg">Sort</p>
                   <div class="border center h3 select">
                     <select v-model="sortBy">
                       <option value="modified">Date</option>
@@ -41,9 +45,6 @@
           </div>
         </transition>
       </div>
-      <div class="border-left p1 center col-6 not-allowed">
-        <span class="h3">Search</span>
-      </div>
     </div>
 
     <nav v-if="prevPage" class="list-reset border-bottom border-green">
@@ -53,49 +54,11 @@
     </nav>
 
     <!-- Clover List -->
-    <ul class="list-reset md-flex flex-wrap justify-around items-center m0 md-px1">
-      <li v-for="(clover, i) in clovers" :key="i" class="md-col-6 md-px1">
-        <div is="router-link" :to="cloverLink(clover)" class="flex py2 border-bottom green relative">
-          <!-- RFT highlight -->
-          <div v-if="inCurationMarket(clover)" class="absolute top-0 left-0 h-100 bg-red" style="width:4px"></div>
-          <!-- image -->
-          <div class="col-3 center">
-            <img :src="cloverImage(clover, 64)" width="64" height="64"/>
-          </div>
-
-          <div class="col-3 flex flex-column justify-center">
-            <h3 class="h4 truncate font-mono">
-              <span v-if="clover.name !== clover.board">{{ clover.name }}</span>
-            </h3>
-          </div>
-
-          <div class="col-3 flex flex-column justify-center px2">
-            <template v-if="inCurationMarket(clover)">
-              <p class="h7 m0">Market Cap &clubs;</p>
-              <p class="h4 m0 truncate font-mono">0</p>
-            </template>
-            <template v-else>
-              <h6 class="h7 m0">Owner</h6>
-              <h5 class="h4 m0 truncate font-mono" style="max-width:4.5em">{{clover.owner}}</h5>
-            </template>
-          </div>
-
-          <div class="col-2 flex flex-column justify-center pl1">
-            <template v-if="inCurationMarket(clover)">
-              <p class="h7 m0">&clubs; / Share</p>
-              <p class="h4 m0 truncate font-mono">0</p>
-            </template>
-            <template v-else>
-              <p class="h7 m0 nowrap">Price &clubs;</p>
-              <p v-if="forSale(clover)" class="h4 m0 truncate">{{ cloverPrice(clover) }}</p>
-              <p v-else class="h4 m0 font-mono">---</p>
-            </template>
-          </div>
-
-          <div class="col-1 center flex justify-center pr2">
-            <img src="~../assets/icons/arrow-right.svg" width="18" height="18"/>
-          </div>
-        </div>
+    <ul class="list-reset flex flex-wrap items-center m0 overflow-hidden">
+      <li v-for="(clover, i) in clovers" :key="i" class="col-6 sm-col-4 md-col-3">
+        <router-link :to="cloverLink(clover)" class="block green border-bottom border-bottom-dotted border-left border-left-dotted" :class="{'xs-border-left-transp': i % 2 === 0, 'sm-border-left-transp': i % 3 === 0, 'md-border-left-transp': i % 4 === 0}">
+          <clover-card-item :clover="clover" />
+        </router-link>
       </li>
       <li class="p2 center" v-if="!clovers.length">No Clovers To Show...</li>
     </ul>
@@ -115,8 +78,9 @@
 <script>
 import store from '@/store'
 import { mapState, mapGetters, mapMutations } from 'vuex'
-import { cloverLink, cloverImage, pluralize, prettyBigNumber } from '@/utils'
-import BigNumber from 'bignumber.js'
+import { cloverLink, pluralize } from '@/utils'
+import CloverCardItem from '@/components/CloverItem--Card'
+import svgX from '@/components/Icons/SVG-X'
 const pageSize = 12
 
 export default {
@@ -135,14 +99,10 @@ export default {
   computed: {
     feedFilterName () {
       switch (this.feedFilter) {
-        case 'all':
-          return 'Filter'
-        case 'market':
-          return 'For Sale'
-        case 'curationMarket':
-          return 'RFT'
-        default:
-          return ''
+        case 'all': return 'All'
+        case 'market': return 'For Sale'
+        case 'curationMarket': return 'RFT'
+        default: return ''
       }
     },
     page () {
@@ -194,7 +154,7 @@ export default {
       set (newVal) {
         this.$router.push({name: 'Feed'})
         this.updateFilter(newVal)
-        this.toggleFilters()
+        this.hideFilters()
       }
     },
     dropArrowRotate () {
@@ -209,22 +169,11 @@ export default {
   },
   methods: {
     cloverLink,
-    cloverImage,
     pluralize,
 
     showNewClovers () {
       this.$router.push({name: 'Feed'})
       this.showNew()
-    },
-    cloverPrice ({ price }) {
-      return prettyBigNumber(price, 0)
-    },
-    forSale ({ price }) {
-      if (typeof price !== 'object') price = new BigNumber(price)
-      return price.gt(0)
-    },
-    inCurationMarket ({ owner }) {
-      return owner === this.curationMarketAddress
     },
     toggleFilters () {
       this.filtersVisible = !this.filtersVisible
@@ -255,15 +204,13 @@ export default {
       let lastPage = Math.ceil(this.allLoadedCloverCount / 12)
       this.$router.replace(`/home/page/${lastPage}`)
     }
-  }
+  },
+  components: { CloverCardItem, svgX }
 }
 </script>
 
 <style>
 .filters-btn {
-  border-top-color: white;
-  border-top-style: solid;
-  border-top-width: 3;
   bottom: 0;
   left: 0;
   pointer-events: none;

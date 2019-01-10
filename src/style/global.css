@@ -108,6 +108,7 @@ p {
   margin-top: 0;
   margin-bottom: 1em;
 }
+small{font-size:inherit;}
 .pt5{padding-top: 5em;}
 .pt6{padding-top: 6em;}
 .pt7{padding-top: 7em;}
@@ -184,19 +185,19 @@ hr {
 
 /* #APP STUFF */
 .white {
-  ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
     color: var(--white);
     opacity: 0.8;
   }
-  ::-moz-placeholder { /* Firefox 19+ */
+  &::-moz-placeholder { /* Firefox 19+ */
     color: var(--white);
     opacity: 0.8;
   }
-  :-ms-input-placeholder { /* IE 10+ */
+  &:-ms-input-placeholder { /* IE 10+ */
     color: var(--white);
     opacity: 0.8;
   }
-  :-moz-placeholder { /* Firefox 18- */
+  &:-moz-placeholder { /* Firefox 18- */
     color: var(--white);
     opacity: 0.8;
   }
@@ -279,6 +280,7 @@ hr {
 /* FORMS */
 
 textarea {
+  resize: vertical;
   vertical-align: middle;
 }
 
@@ -287,7 +289,7 @@ textarea {
   width: 100%;
   vertical-align: middle;
 
-  > div {
+  & > div {
     transition: width var(--anim-timing-medium);
   }
 }
@@ -325,7 +327,7 @@ textarea {
   display: block;
   position: relative;
 
-  select {
+  & select {
     background: transparent;
     border: none;
     color: inherit;
@@ -376,7 +378,7 @@ button {
 .currency {
   position: relative;
 
-  .input {
+  & .input {
     padding-left: 3rem;
   }
 
@@ -400,18 +402,21 @@ input:disabled,
   appearance: none;
 }
 
-::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+.green::-webkit-input-placeholder { /* Chrome/Opera/Safari */
   color: var(--light-green);
 }
-::-moz-placeholder { /* Firefox 19+ */
+.green::-moz-placeholder { /* Firefox 19+ */
   color: var(--light-green);
 }
-:-ms-input-placeholder { /* IE 10+ */
+.green:-ms-input-placeholder { /* IE 10+ */
   color: var(--light-green);
 }
-:-moz-placeholder { /* Firefox 18- */
+.green:-moz-placeholder { /* Firefox 18- */
   color: var(--light-green);
 }
+
+.light-green { color: var(--light-green); }
+.light-gray { color: var(--light-gray); }
 
 /* HELPERS */
 

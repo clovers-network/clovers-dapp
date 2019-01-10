@@ -76,9 +76,12 @@ export default {
     togglePig (value = null) {
       this.minerOn = value === null ? !this.minerOn : value
       this.$emit('minerStatus', this.minerOn)
-      if (this.minerOn) return this.mine()
+      if (this.minerOn) {
+        this.resetStats()
+        this.mine()
+        return
+      }
       this.stopAll()
-      this.resetStats()
     },
     mine () {
       this.mining = true

@@ -38,7 +38,7 @@
   --darken-3: rgba(0, 0, 0, .25);
   --darken-4: rgba(0, 0, 0, .5);
 
-  --border-radius: 0;
+  --border-radius: 6px;
   --border-radius-2: 6px;
 
   /* animations */
@@ -61,7 +61,7 @@
   --width-4: 102.4rem;
 
   --height-header: 4.6rem;
-  --height-bttm-bar:5rem;
+  --height-bttm-bar:8.6rem;
 
   --h00: 4em;
   --h0: 3em;
