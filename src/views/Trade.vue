@@ -18,14 +18,14 @@
         chart.border-bottom(:market="market", :orders="orders.slice(0,6)")
       view-nav(:items="[{lbl: 'Buy', value:'buy'}, {lbl: 'Sell', value:'sell'}]", @change="view = $event")
       //- BUY
-      section.pb4(v-if="view === 'buy'")
+      section.pb-bttm-bar(v-if="view === 'buy'")
         form(@submit.prevent="buyTokens")
           .p2
             p.h7.mb1 Amount
             .relative
               input.input.border.font-exp(v-model="buy", placeholder="0", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed {{collateral}}
-          .p2
+          .p2.pb3
             p.h7.mb1 Receive
             .relative
               .pt1.pl2.pb2.border-bottom.font-exp {{clubReceive}}
@@ -36,14 +36,14 @@
               wavey-menu(:is-white="true")
 
       //- SELL
-      section.pb4(v-else)
+      section.pb-bttm-bar(v-else)
         form(@submit.prevent="sellTokens")
           .p2
             p.h7.mb1 Amount
             .relative
               input.input.border.font-exp(v-model="sell", placeholder="0", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed {{currencies}}
-          .p2
+          .p2.pb3
             p.h7.mb1 Receive
             .relative
               //- input.input.border.font-exp(v-model="ethReceive", placeholder="ETH", disabled="true")
