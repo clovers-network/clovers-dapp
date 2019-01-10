@@ -35,6 +35,8 @@
 .overflow-x-scroll{overflow-x:scroll;}
 .invisible-scrollbar::-webkit-scrollbar {display: none;}
 
+.flex-grow{flex-grow: 1;}
+
 /* #COLORS */
 .dark-gray { color: var(--dark-gray);}
 
