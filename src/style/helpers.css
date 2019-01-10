@@ -11,6 +11,7 @@
 .h-header{height:var(--height-header);}
 .h-bttm-bar{height:var(--height-bttm-bar);}
 .h-100vh{height:100vh}
+.h-100vw{height:100vw;}
 .min-h-100vh{min-height: 100vh}
 
 .opacity-50 { opacity:.5; }
@@ -29,6 +30,7 @@
 .mt-deduct-header{margin-top: calc(-1 * var(--height-header));}
 
 .pb-100{padding-bottom: 100%;}
+.pb-bttm-bar{padding-bottom: var(--height-bttm-bar);}
 
 .overlay{top:0;left:0;bottom:0;right:0;}
 
