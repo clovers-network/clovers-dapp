@@ -34,7 +34,7 @@
           comments(v-if="canGetComments", :board="board", :name="cloverName", :owner="isMyClover")
     //- Trade
     template(v-if="isRFT")
-      Trade(:market="board")
+      Trade(:market="board", @trade="checkShares")
     //- Actions
     template(v-else)
       .h-bttm-bar
@@ -175,7 +175,7 @@ export default {
       )
     },
     owner () {
-      return this.clover && addrToUser(this.allUsers, this.clover.owner)
+      return this.clover && addrToUser(this.clover.owner)
     },
     prettyPrice () {
       return this.clover && prettyBigNumber(this.clover.price, 0)
@@ -220,12 +220,10 @@ export default {
     },
     currentOwner () {
       const owner = this.owner
-      return !owner
-        ? '---'
-        : this.isMyClover
-          ? 'You'
-          : this.isRFT
-            ? 'Curation Mrkt.'
+      return !owner ? '---'
+        : this.isMyClover ? 'You'
+          : this.isRFT ? 'Curation Mrkt.'
+          // owned by Bank
             : owner.toLowerCase() === this.$store.getters.cloversBankAddress
               ? this.price > 0
                 ? 'Clovers'
@@ -319,23 +317,23 @@ export default {
       }
       this.updateCloverName(clv)
     },
-    buyStake () {
-      this.loading = true
-      this.invest({
-        market: 'CurationMarket',
-        clover: this.clover.board,
-        amount: '1'
-      })
-        .then(res => {
-          this.loading = false
-          this.handleSuccess(`Success! You bought a stake!`)
-          console.log(res)
-        })
-        .catch(err => {
-          this.loading = false
-          this.handleError(err)
-        })
-    },
+    // buyStake () {
+    //   this.loading = true
+    //   this.invest({
+    //     market: 'CurationMarket',
+    //     clover: this.clover.board,
+    //     amount: '1'
+    //   })
+    //     .then(res => {
+    //       this.loading = false
+    //       this.handleSuccess(`Success! You bought a stake!`)
+    //       console.log(res)
+    //     })
+    //     .catch(err => {
+    //       this.loading = false
+    //       this.handleError(err)
+    //     })
+    // },
     handleError ({ message }) {
       this.selfDestructMsg({
         msg: message.replace('Error: ', ''),
@@ -355,6 +353,11 @@ export default {
       if (!name || name === this.board) return
       this.metaTitle = name
       this.$emit('updateHead')
+    },
+    async checkShares () {
+      if (this.isRFT) {
+        this.sharesOwnedWei = await this.getShares(this.board)
+      }
     },
 
     ...mapActions([
@@ -383,18 +386,14 @@ export default {
     }, 500)
   },
   watch: {
-    async 'orders.length' () {
-      if (this.isRFT) {
-        this.sharesOwnedWei = await this.getShares(this.board)
-      }
+    'orders.length' () {
+      this.checkShares()
     },
     clover (clvr) {
       this.setFormName(clvr)
     },
-    async isRFT () {
-      if (this.isRFT) {
-        this.sharesOwnedWei = await this.getShares(this.board)
-      }
+    isRFT () {
+      this.checkShares()
     }
   },
   components: { SymmetryIcons, WaveyMenu, Clv, Trade, CloverNameEditable, Comments }

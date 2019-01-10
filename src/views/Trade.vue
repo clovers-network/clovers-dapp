@@ -23,17 +23,16 @@
           .p2
             p.h7.mb1 Amount
             .relative
-              input.input.border.font-exp(v-model="buy", placeholder="0", type="number", min="0", step="any")
+              input.input.border.font-exp.green(v-model="buy", placeholder="0", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed {{collateral}}
           .p2.pb3
             p.h7.mb1 Receive
             .relative
               .pt1.pl2.pb2.border-bottom.font-exp {{clubReceive}}
               span.absolute.top-0.right-0.py1.claimed {{currencies}}
-          .h-bttm-bar.bg-green.white.fixed-center-max-width.bottom-0.col-12
-            button.h-bttm-bar.h3.block.m-auto.font-exp(v-if="!working") Buy
-            .h-bttm-bar.block.m-auto.flex.justify-center.items-center(v-else)
-              wavey-menu(:is-white="true")
+          button(:disabled="working").h-bttm-bar.bg-green.white.fixed-center-max-width.bottom-0.col-12.pointer
+            span.font-exp.h3(v-if="!working") Buy
+            wavey-menu.m-auto(v-else, :is-white="true")
 
       //- SELL
       section.pb-bttm-bar(v-else)
@@ -41,7 +40,7 @@
           .p2
             p.h7.mb1 Amount
             .relative
-              input.input.border.font-exp(v-model="sell", placeholder="0", type="number", min="0", step="any")
+              input.input.border.font-exp.green(v-model="sell", placeholder="0", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed {{currencies}}
           .p2.pb3
             p.h7.mb1 Receive
@@ -49,10 +48,9 @@
               //- input.input.border.font-exp(v-model="ethReceive", placeholder="ETH", disabled="true")
               .pt1.pl2.pb2.border-bottom.font-exp {{ethReceive}}
               span.absolute.top-0.right-0.py1.pr2.pb2.claimed {{collateral}}
-          .h-bttm-bar.bg-green.white.fixed-center-max-width.bottom-0.col-12
-            button.h-bttm-bar.h3.block.m-auto.font-exp(v-if="!working") Sell
-            .h-bttm-bar.block.m-auto.flex.justify-center.items-center(v-else)
-              wavey-menu(:is-white="true")
+          button(:disabled="working").h-bttm-bar.bg-green.white.fixed-center-max-width.bottom-0.col-12.pointer
+            span.font-exp.h3(v-if="!working") Sell
+            wavey-menu(v-else, :is-white="true")
 </template>
 
 <script>
@@ -190,14 +188,15 @@ export default {
       })
     },
     buyTokens () {
+      const receiving = this.clubReceive
       this.working = true
       this.invest({ market: this.market, amount: this.buy })
-        .then(res => {
+        .then((res) => {
           this.working = false
           this.handleSuccess(
-            `Success! You bought ${this.clubReceive} ${this.currentToken}`
+            `Success! You bought ${receiving} ${this.currentTokenPlural}`
           )
-          console.log(res)
+          this.$emit('trade')
         })
         .catch(err => {
           this.working = false
@@ -205,18 +204,19 @@ export default {
         })
     },
     sellTokens () {
+      const selling = this.sell
       this.working = true
       this.divest({
         market: this.market,
         amount: this.sell,
         clover: this.board
       })
-        .then(res => {
+        .then((res) => {
           this.working = false
           this.handleSuccess(
-            `Success! You sold ${this.sell} ${this.currentToken}`
+            `Success! You sold ${selling} ${this.currentTokenPlural}`
           )
-          console.log(res)
+          this.$emit('trade')
         })
         .catch(err => {
           this.working = false
@@ -236,10 +236,9 @@ export default {
       })
     },
     checkOutMarket () {
-      console.log('check out market')
       this.getClubTokenPrice()
       this.getOrders(this.market || 'ClubToken')
-      this.checkPrice()
+      this.checkPrice(this.buy)
       this.checkSell()
     },
     ...mapActions([
