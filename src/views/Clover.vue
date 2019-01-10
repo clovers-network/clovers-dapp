@@ -68,7 +68,7 @@
             span(v-if="!loading").block.m-auto.font-exp Confirm
             wavey-menu.m-auto(v-else :isWhite="true")
       //- is RFT
-      Trade(v-else-if="isRFT" :market="board")
+      Trade(v-else-if="isRFT" :market="board", @trade="checkShares")
         //- small.border-top.center.p2.block.h6(v-show="!view") This Clover is an RFT
         //- .border-top.flex.h-bttm-bar
         //-   .col-6.px3.border-right.flex
@@ -324,23 +324,23 @@ export default {
       }
       this.updateCloverName(clv)
     },
-    buyStake () {
-      this.loading = true
-      this.invest({
-        market: 'CurationMarket',
-        clover: this.clover.board,
-        amount: '1'
-      })
-        .then(res => {
-          this.loading = false
-          this.handleSuccess(`Success! You bought a stake!`)
-          console.log(res)
-        })
-        .catch(err => {
-          this.loading = false
-          this.handleError(err)
-        })
-    },
+    // buyStake () {
+    //   this.loading = true
+    //   this.invest({
+    //     market: 'CurationMarket',
+    //     clover: this.clover.board,
+    //     amount: '1'
+    //   })
+    //     .then(res => {
+    //       this.loading = false
+    //       this.handleSuccess(`Success! You bought a stake!`)
+    //       console.log(res)
+    //     })
+    //     .catch(err => {
+    //       this.loading = false
+    //       this.handleError(err)
+    //     })
+    // },
     handleError ({ message }) {
       this.selfDestructMsg({
         msg: message.replace('Error: ', ''),
@@ -360,6 +360,11 @@ export default {
       if (!name || name === this.board) return
       this.metaTitle = name
       this.$emit('updateHead')
+    },
+    async checkShares () {
+      if (this.isRFT) {
+        this.sharesOwnedWei = await this.getShares(this.board)
+      }
     },
 
     ...mapActions([
@@ -388,18 +393,14 @@ export default {
     }, 500)
   },
   watch: {
-    async 'orders.length' () {
-      if (this.isRFT) {
-        this.sharesOwnedWei = await this.getShares(this.board)
-      }
+    'orders.length' () {
+      this.checkShares()
     },
     clover (clvr) {
       this.setFormName(clvr)
     },
-    async isRFT () {
-      if (this.isRFT) {
-        this.sharesOwnedWei = await this.getShares(this.board)
-      }
+    isRFT () {
+      this.checkShares()
     }
   },
   components: { SymmetryIcons, WaveyMenu, Clv, Trade, CloverNameEditable, Comments }
