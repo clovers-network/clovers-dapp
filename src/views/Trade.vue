@@ -23,7 +23,7 @@
           .p2
             p.h7.mb1 Amount
             .relative
-              input.input.border.font-exp(v-model="buy", placeholder="0", type="number", min="0", step="any")
+              input.input.border.font-exp.green(v-model="buy", placeholder="0", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed {{collateral}}
           .p2
             p.h7.mb1 Receive
@@ -41,7 +41,7 @@
           .p2
             p.h7.mb1 Amount
             .relative
-              input.input.border.font-exp(v-model="sell", placeholder="0", type="number", min="0", step="any")
+              input.input.border.font-exp.green(v-model="sell", placeholder="0", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed {{currencies}}
           .p2
             p.h7.mb1 Receive
@@ -190,14 +190,15 @@ export default {
       })
     },
     buyTokens () {
+      const receiving = this.clubReceive
       this.working = true
       this.invest({ market: this.market, amount: this.buy })
-        .then(res => {
+        .then((res) => {
           this.working = false
           this.handleSuccess(
-            `Success! You bought ${this.clubReceive} ${this.currentToken}`
+            `Success! You bought ${receiving} ${this.currentToken}`
           )
-          console.log(res)
+          this.$emit('trade')
         })
         .catch(err => {
           this.working = false
@@ -205,18 +206,19 @@ export default {
         })
     },
     sellTokens () {
+      const selling = this.sell
       this.working = true
       this.divest({
         market: this.market,
         amount: this.sell,
         clover: this.board
       })
-        .then(res => {
+        .then((res) => {
           this.working = false
           this.handleSuccess(
-            `Success! You sold ${this.sell} ${this.currentToken}`
+            `Success! You sold ${selling} ${this.currentToken}`
           )
-          console.log(res)
+          this.$emit('trade')
         })
         .catch(err => {
           this.working = false
@@ -236,10 +238,9 @@ export default {
       })
     },
     checkOutMarket () {
-      console.log('check out market')
       this.getClubTokenPrice()
       this.getOrders(this.market || 'ClubToken')
-      this.checkPrice()
+      this.checkPrice(this.buy)
       this.checkSell()
     },
     ...mapActions([
