@@ -170,7 +170,7 @@ export default {
     },
     sharesOwned () {
       return (
-        (this.sharesOwnedWei && prettyBigNumber(this.sharesOwnedWei, 2)) ||
+        (this.sharesOwnedWei && prettyBigNumber(this.sharesOwnedWei, 0)) ||
         '---'
       )
     },

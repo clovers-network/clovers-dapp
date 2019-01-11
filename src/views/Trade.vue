@@ -23,7 +23,7 @@
           //- supply
           .col-6.md-col-4.p2.border-bottom
             small.lh2.block.h6 Total {{currentTokenPlural}}
-            .font-exp.mt1.truncate {{ totalSupply.toFormat(0) }} 
+            .font-exp.mt1.truncate {{ totalSupply.toFormat(0) }}
           //- market cap
           .col-6.md-col-4.p2.border-left.border-bottom
             small.lh2.block.h6 Market Cap
@@ -37,7 +37,7 @@
           .p2
             p.h7.mb1
               span Spend
-              span.light-green.pointer(v-if="isRFT", @click="spendAll") &emsp;(all)
+              span.opacity-50.pointer(v-if="isRFT", @click="spendAll") &emsp;(all)
             .relative
               input.input.border.font-exp.white(v-model="buy", placeholder="0", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed {{collateral}}
@@ -56,7 +56,7 @@
           .p2
             p.h7.mb1
               span Amount
-              span.light-green.pointer(@click="sellAll") &emsp;(all)
+              span.opacity-50.pointer(@click="sellAll") &emsp;(all)
             .relative
               input.input.border.font-exp.white(v-model="sell", placeholder="0", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed {{currencies}}
@@ -174,7 +174,7 @@ export default {
     },
 
     ...mapState(['ethPrice', 'clubTokenPrice', 'orders']),
-    ...mapGetters(['userBalance'])
+    ...mapGetters(['userBalance', 'prettyUserBalance'])
   },
   methods: {
     checkPrice (amount = '1') {
