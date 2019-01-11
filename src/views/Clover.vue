@@ -68,7 +68,7 @@
             span(v-if="!loading").block.m-auto.font-exp Confirm
             wavey-menu.m-auto(v-else :isWhite="true")
       //- is RFT
-      Trade(v-else-if="isRFT" :market="board", @trade="checkShares")
+      Trade(v-else-if="isRFT" :market="board", :sharesOwnedWei="sharesOwnedWei", @trade="checkShares")
         //- small.border-top.center.p2.block.h6(v-show="!view") This Clover is an RFT
         //- .border-top.flex.h-bttm-bar
         //-   .col-6.px3.border-right.flex
@@ -177,7 +177,7 @@ export default {
     },
     sharesOwned () {
       return (
-        (this.sharesOwnedWei && prettyBigNumber(this.sharesOwnedWei, 0)) ||
+        (this.sharesOwnedWei && prettyBigNumber(this.sharesOwnedWei, 2)) ||
         '---'
       )
     },

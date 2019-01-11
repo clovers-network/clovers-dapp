@@ -252,10 +252,10 @@ export default {
       console.log('new clover info!', clover)
       commit('ADD_CLOVER', clover)
     })
-    socket.on('updateClover', clover => {
-      console.log('new clover info!', clover)
-      commit('ADD_CLOVER', clover)
-    })
+    // socket.on('updateClover', clover => {
+    //   console.log('new clover info!', clover)
+    //   commit('ADD_CLOVER', clover)
+    // })
     socket.on('addOrder', order => {
       console.log('new order info!', order)
       commit('ADD_ORDER', order)

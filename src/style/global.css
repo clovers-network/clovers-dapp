@@ -392,7 +392,7 @@ button {
   }
 }
 
-button:disabled,
+button:disabled:not(.h-bttm-bar),
 input:disabled,
 .unselected {
   opacity: .4;
