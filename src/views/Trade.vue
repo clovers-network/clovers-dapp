@@ -21,7 +21,7 @@
           .p2
             p.h7.mb1
               span Spend
-              span.light-green.pointer(@click="spendAll") &emsp;(all)
+              span.light-green.pointer(v-if="isRFT", @click="spendAll") &emsp;(all)
             .relative
               input.input.border.font-exp.green(v-model="buy", placeholder="0", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed {{collateral}}
@@ -226,7 +226,7 @@ export default {
       this.buy = prettyBigNumber(this.userBalance, 18)
     },
     sellAll () {
-      this.sell = prettyBigNumber(this.sharesOwnedWei, 18)
+      this.sell = prettyBigNumber(this.isRFT ? this.sharesOwnedWei : this.userBalance, 18)
     },
 
     ...mapActions([
