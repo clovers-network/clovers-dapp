@@ -18,16 +18,16 @@
           //- price
           .col-12.md-col-4.p2.border-bottom.md-border-right
             small.lh2.block.h6 {{isRFT ? 'Share Price' : '&clubs;&#xfe0e; Value in USD'}}
-            .font-exp.mt1.truncate(v-if="isRFT") {{ priceInCollateral.toFormat(4) }} {{collateral}}
+            .font-exp.mt1.truncate(v-if="isRFT") ${{ priceInUSD.toFormat(4) }}
             .font-exp.mt1.truncate(v-else) ${{ priceInUSD.toFormat(2) }} <span class="opacity-50 font-reg"> / <span v-html="currentToken" /></span>
           //- supply
           .col-6.md-col-4.p2.border-bottom
             small.lh2.block.h6 Total {{currentTokenPlural}}
-            .font-exp.mt1.truncate {{ totalSupply.toFormat(0) }} 
+            .font-exp.mt1.truncate {{ totalSupply.toFormat(0) }}
           //- market cap
           .col-6.md-col-4.p2.border-left.border-bottom
             small.lh2.block.h6 Market Cap
-            .font-exp.mt1.truncate(v-if="isRFT") {{ marketCapInCollateral.toFormat(0) }} {{collateral}}
+            .font-exp.mt1.truncate(v-if="isRFT") ${{ marketCapInUSD.toFormat(2) }}
             .font-exp.mt1.truncate(v-else) ${{ marketCapInUSD.toFormat(2) }}
       //- TRADE
       view-nav.bg-green.white(:items="[{lbl: 'Buy', value:'buy'}, {lbl: 'Sell', value:'sell'}]", @change="view = $event", :thick="true")
@@ -35,7 +35,9 @@
       section.bg-green.white(v-if="view === 'buy'")
         form(@submit.prevent="buyTokens")
           .p2
-            p.h7.mb1 Amount
+            p.h7.mb1
+              span Spend
+              span.opacity-50.pointer(v-if="isRFT", @click="spendAll") &emsp;(all)
             .relative
               input.input.border.font-exp.white(v-model="buy", placeholder="0", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed {{collateral}}
@@ -52,7 +54,9 @@
       section.bg-green.white(v-else)
         form(@submit.prevent="sellTokens")
           .p2
-            p.h7.mb1 Amount
+            p.h7.mb1
+              span Amount
+              span.opacity-50.pointer(@click="sellAll") &emsp;(all)
             .relative
               input.input.border.font-exp.white(v-model="sell", placeholder="0", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed {{currencies}}
@@ -62,7 +66,7 @@
               //- input.input.border.font-exp(v-model="ethReceive", placeholder="ETH", disabled="true")
               .pt1.pl2.pb2.border-bottom.font-exp {{ethReceive}}
               span.absolute.top-0.right-0.py1.pr2.pb2.claimed {{collateral}}
-          button(:disabled="working").h-bttm-bar.bg-green.white.bottom-0.col-12.pointer.border-top
+          button(:disabled="working").h-bttm-bar.bg-green.white.bottom-0.col-12.pointer.border-top.pointer
             span.font-exp(v-if="!working") Confirm
             wavey-menu(v-else, :is-white="true")
 </template>
@@ -96,7 +100,8 @@ export default {
     market: {
       type: String,
       default: 'ClubToken'
-    }
+    },
+    sharesOwnedWei: String
   },
   watch: {
     'orders.length' () {
@@ -128,26 +133,17 @@ export default {
     currencies () {
       return this.currentToken === 'Share' ? 'Shares' : 'Club Tokens (♣︎)'
     },
-    priceInCollateralString () {
-      return this.priceInCollateral.toString()
-    },
     priceInCollateral () {
       if (!this.orders.length) return new BigNumber(0)
       let recent = this.orders[0]
       return new BigNumber(recent.value).div(new BigNumber(recent.tokens))
     },
-    priceInEthString () {
-      return this.priceInEth.toString()
-    },
     priceInEth () {
       if (this.marketContract === 'CurationMarket') {
-        return this.priceInCollateral.div(new BigNumber(this.clubTokenPrice))
+        return this.priceInCollateral.div(new BigNumber(utils.fromWei(this.clubTokenPrice)))
       } else {
         return this.priceInCollateral
       }
-    },
-    priceInUSDString () {
-      return this.priceInUSD.toString()
     },
     priceInUSD () {
       return this.priceInEth.times(new BigNumber(this.ethPrice))
@@ -173,23 +169,10 @@ export default {
         utils.fromWei(this.marketCapInCollateralWei.round().toString(10))
       )
     },
-    marketCapInWei () {
-      if (this.marketContract === 'CurationMarket') {
-        return this.marketCapInCollateral.times(
-          new BigNumber(utils.fromWei(this.clubTokenPrice))
-        )
-      } else {
-        return this.marketCapInCollateralWei
-      }
-    },
-    marketCapInEth () {
-      return new BigNumber(
-        utils.fromWei(this.marketCapInWei.round().toString(10))
-      )
-    },
     marketCapInUSD () {
-      return this.marketCapInEth.times(new BigNumber(this.ethPrice))
+      return this.totalSupply.times(this.priceInUSD)
     },
+
     ...mapState(['ethPrice', 'clubTokenPrice', 'orders']),
     ...mapGetters(['userBalance', 'prettyUserBalance'])
   },
@@ -258,6 +241,13 @@ export default {
       this.checkPrice(this.buy)
       this.checkSell()
     },
+    spendAll () {
+      this.buy = prettyBigNumber(this.userBalance, 18)
+    },
+    sellAll () {
+      this.sell = prettyBigNumber(this.isRFT ? this.sharesOwnedWei : this.userBalance, 18)
+    },
+
     ...mapActions([
       'getClubTokenPrice',
       'clearOrders',

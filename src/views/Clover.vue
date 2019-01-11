@@ -34,7 +34,7 @@
           comments(v-if="canGetComments", :board="board", :name="cloverName", :owner="isMyClover")
     //- Trade
     template(v-if="isRFT")
-      Trade(:market="board", @trade="checkShares")
+      Trade(:market="board", :sharesOwnedWei="sharesOwnedWei", @trade="checkShares")
     //- Actions
     template(v-else)
       .h-bttm-bar
