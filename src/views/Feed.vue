@@ -204,6 +204,7 @@ export default {
       let lastPage = Math.ceil(this.allLoadedCloverCount / 12)
       this.$router.replace(`/home/page/${lastPage}`)
     }
+    this.$store.dispatch('getClubTokenPrice')
   },
   components: { CloverCardItem, svgX }
 }

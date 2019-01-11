@@ -56,6 +56,7 @@ export default {
         }
       ]
     },
+
     ...mapState(['account']),
     ...mapGetters(['prettyUserBalance', 'user'])
   },

@@ -1,5 +1,5 @@
 <template>
-  <article v-if="clover.board" class="flex py2 relative">
+  <article v-if="clover.board" :class="{'red': isRFT}" class="flex py2 relative">
     <!-- RFT highlight -->
     <div v-if="isRFT" class="absolute top-0 left-0 h-100 bg-red" style="width:4px"></div>
     <!-- image -->
@@ -15,8 +15,8 @@
     <!-- owner / RFT market cap -->
     <div class="col-3 flex flex-column justify-center px2" v-if="showOwnerCol">
       <template v-if="isRFT">
-        <p class="h7 m0">Market Cap &clubs;</p>
-        <p class="h4 m0 truncate font-mono">0</p>
+        <p class="h7 m0">Market Cap</p>
+        <p class="h4 m0 truncate font-mono">${{ marketCapInUSD.toFormat(2) }}</p>
       </template>
       <template v-else>
         <h6 class="h7 m0">Owner</h6>
@@ -27,7 +27,7 @@
     <div class="col-2 flex flex-column justify-center pl1">
       <template v-if="isRFT">
         <p class="h7 m0">&clubs; / Share</p>
-        <p class="h4 m0 truncate font-mono">0</p>
+        <p class="h4 m0 truncate font-mono">{{ priceInCollateral.toFormat(4) }}</p>
       </template>
       <template v-else>
         <p class="h7 m0 nowrap">Price &clubs;</p>
@@ -43,9 +43,11 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import utils from 'web3-utils'
+import { mapState, mapGetters } from 'vuex'
 import { cloverImage, prettyBigNumber } from '@/utils'
 import BigNumber from 'bignumber.js'
+
 export default {
   name: 'CloverItem--Row',
   props: {
@@ -60,6 +62,49 @@ export default {
     showOwnerCol () {
       return this.isRFT || !this.hideOwner
     },
+    marketContract () {
+      return this.isRFT ? 'CurationMarket' : 'ClubTokenController'
+    },
+    collateral () {
+      return this.isRFT ? '♣︎' : 'ETH'
+    },
+    priceInCollateral () {
+      if (!this.clover.lastOrder) return new BigNumber(0)
+      let recent = this.clover.lastOrder
+      return new BigNumber(recent.value).div(new BigNumber(recent.tokens))
+    },
+    priceInEth () {
+      if (this.marketContract === 'CurationMarket') {
+        return this.priceInCollateral.div(new BigNumber(utils.fromWei(this.clubTokenPrice)))
+      } else {
+        return this.priceInCollateral
+      }
+    },
+    priceInUSD () {
+      return this.priceInEth.times(new BigNumber(this.ethPrice))
+    },
+    totalSupplyWei () {
+      if (!this.clover.lastOrder) return new BigNumber(0)
+      return new BigNumber(this.clover.lastOrder.tokenSupply)
+    },
+    totalSupply () {
+      return new BigNumber(
+        utils.fromWei(this.totalSupplyWei.round().toString(10))
+      )
+    },
+    marketCapInCollateralWei () {
+      return this.priceInCollateral.times(this.totalSupplyWei)
+    },
+    marketCapInCollateral () {
+      return new BigNumber(
+        utils.fromWei(this.marketCapInCollateralWei.round().toString(10))
+      )
+    },
+    marketCapInUSD () {
+      return this.totalSupply.times(this.priceInUSD)
+    },
+
+    ...mapState(['ethPrice', 'clubTokenPrice']),
     ...mapGetters(['curationMarketAddress'])
   },
   methods: {

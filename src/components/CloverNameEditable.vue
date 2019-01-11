@@ -5,7 +5,7 @@
       label.absolute.top-0.right-0.h-100.px2.block.regular.nowrap.flex.pointer(for="clvname")
         span.block.flip-x.m-auto ✎
     form.col-12(@submit.prevent="updateName")
-      input#clvname.input.font-mono.center.col-12.px4(@focus="onFocus", @blur="onBlur", ref="nameInput", placeholder="name", v-model="name", autocomplete="off")
+      input#clvname.input.font-mono.green.center.col-12.px4(@focus="onFocus", @blur="onBlur", ref="nameInput", placeholder="name", v-model="name", autocomplete="off")
       transition(name="fade")
         button.absolute.right-0.top-0.p2.pointer(v-show="formFocussed", type="submit", aria-label="Submit")
           img(src="~../assets/icons/arrow-right.svg", width="18", height="18")
