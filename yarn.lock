@@ -2665,9 +2665,10 @@ clone@^2.0.0, clone@^2.1.1:
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/clone/-/clone-2.1.2.tgz#1b7f4b9f591f1e8f83670401600345a02887435f"
 
-clovers-contracts@^1.0.17:
-  version "1.0.17"
-  resolved "https://registry.yarnpkg.com/clovers-contracts/-/clovers-contracts-1.0.17.tgz#b869a316a04e7be4eb8ae041e114ec204a0f703b"
+clovers-contracts@^1.0.19:
+  version "1.0.19"
+  resolved "https://registry.yarnpkg.com/clovers-contracts/-/clovers-contracts-1.0.19.tgz#78d08346439d3dcb294084cade22cd2cd6173292"
+  integrity sha512-roonNF4k6Lu77Q6qPAws5bcojGW8FLNKO7Gk5YESDcUOdoy583Io4OPL304yzd9SLf9R/vd/N/s7EUfe+qFUCg==
 
 clovers-reversi@^1.0.14:
   version "1.0.18"
