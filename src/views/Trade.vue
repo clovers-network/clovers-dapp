@@ -68,7 +68,7 @@
               span.absolute.top-0.right-0.py1.pr2.pb2.claimed {{collateral}}
           button(:disabled="working").h-bttm-bar.bg-green.white.bottom-0.col-12.pointer.border-top.pointer
             span.font-exp(v-if="!working") Confirm
-            wavey-menu(v-else, :is-white="true")
+            wavey-menu.m-auto(v-else, :is-white="true")
 </template>
 
 <script>
