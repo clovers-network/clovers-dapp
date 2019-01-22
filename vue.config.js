@@ -5,11 +5,11 @@ const webpack = require('webpack')
 module.exports = {
   lintOnSave: false,
   configureWebpack: {
-    // optimization: {
-    //   splitChunks: {
-    //     maxSize: 500000
-    //   }
-    // },
+    optimization: {
+      splitChunks: {
+        maxSize: 500000
+      }
+    },
     plugins: [
       // new BundleAnalyzerPlugin(),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
