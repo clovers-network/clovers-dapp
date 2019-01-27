@@ -7,7 +7,7 @@
       class="relative z2 h-header flex items-center"
       :class="{'border-bottom': !showMenu}">
       <!-- left col -->
-      <div class="col-3 flex pl2 items-center">
+      <div class="col-4 flex pl2 items-center">
         <!-- menu btn -->
         <button
           v-show="!$route.meta.backBtn"
@@ -29,14 +29,14 @@
         <button v-show="$route.meta.backBtn" class="pointer left-align" @click="$router.go(-1)">Back</button>
       </div>
       <!-- title -->
-      <h1 class="font-exp h3 col-6 py1 center">
+      <h1 class="font-exp h3 col-4 py1 center">
         <span class="nowrap pointer"
           @click="showMenu = $route.meta.backBtn ? showMenu : !showMenu">
           {{showMenu ? 'Clovers' : $route.meta.title}}
         </span>
       </h1>
       <!-- right col -->
-      <div class="col-3 flex justify-end items-center">
+      <div class="col-4 flex justify-end items-center">
         <!-- account btn -->
         <router-link class="p2" :to="{name: 'Account'}" @click.native="showMenu = false">
           <span class="green font-mono" v-if="prettyUserBalance">{{prettyUserBalance}}♣&#xFE0E;</span>
