@@ -1,0 +1,3 @@
+/:static/*
+  Cache-Control: public, max-age=2600000
+  Access-Control-Allow-Origin: *

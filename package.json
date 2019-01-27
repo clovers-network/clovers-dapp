@@ -28,7 +28,7 @@
     "bignumber.js": "^4.1.0",
     "bottleneck": "^2.6.0",
     "chart.js": "^2.7.2",
-    "clovers-contracts": "^1.0.17",
+    "clovers-contracts": "^1.0.19",
     "clovers-reversi": "^1.0.14",
     "copy-to-clipboard": "^3.0.8",
     "ethereum-ens": "^0.7.4",

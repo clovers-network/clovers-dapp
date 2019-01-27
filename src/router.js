@@ -15,7 +15,7 @@ import MyClovers from '@/views/MyClovers'
 // import Clover from '@/components/Clover'
 // import User from '@/components/User'
 // import Users from '@/components/Users'
-import CloverList from '@/components/archive/0.1.0/CloverList'
+// import CloverList from '@/components/archive/0.1.0/CloverList'
 
 Vue.use(Router)
 
@@ -80,7 +80,7 @@ export default new Router({
       component: Clover,
       props: true,
       meta: {title: 'Buy', backBtn: true}
-    },
+    }
 
     //
     // =======================================
@@ -126,11 +126,11 @@ export default new Router({
     //   }
     // },
     // add on for reference
-    {
-      path: '/cloverlist',
-      name: 'CloverList',
-      component: CloverList
-    }
+    // {
+    //   path: '/cloverlist',
+    //   name: 'CloverList',
+    //   component: CloverList
+    // }
   ],
   scrollBehavior (to, from, savedPosition) {
     if (savedPosition) {
