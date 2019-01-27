@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="sticky bottom-0 z1 border-bottom green font-mono bg-white" style="top:46px">
+    <div class="sticky z1 border-bottom green font-mono bg-white" style="top:46px">
       <div class="center col-12">
         <div class="relative" :class="{'bg-green white': feedFilter !== 'all'}">
           <div @click.stop="toggleFilters" class="h-header col-12 flex items-center justify-center pointer">
