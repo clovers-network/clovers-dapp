@@ -157,7 +157,7 @@ export default {
         return this.$store.state.feedFilter
       },
       set (newVal) {
-        this.$router.push({name: 'Feed'})
+        this.$router.push({name: 'Market'})
         this.updateFilter(newVal)
         this.hideFilters()
       }
