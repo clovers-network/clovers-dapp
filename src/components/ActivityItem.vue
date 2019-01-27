@@ -69,7 +69,7 @@
         <div class="font-mono truncate red">{{ userName(item.data.buyer) }}</div>
         <div class="red pl1">
           <span class="opacity-50">bought </span>
-          <span>{{ price(item.data.tokens) }} tokens</span>
+          <span>{{ price(item.data.tokens) }} shares</span>
         </div>
       </div>
     </div>
@@ -86,7 +86,7 @@
         <div class="font-mono truncate red">{{ userName(item.data.seller) }}</div>
         <div class="red pl1">
           <span class="opacity-50">bought </span>
-          <span>{{ price(item.data.tokens) }} tokens</span>
+          <span>{{ price(item.data.tokens) }} shares</span>
         </div>
       </div>
     </div>
