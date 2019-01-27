@@ -142,7 +142,7 @@ export default {
     },
     getBlockNumber () {
       this.checkBlock().then((b) => {
-        this.currentBlock = b
+        this.currentBlock = b.toLocaleString()
       })
     },
 

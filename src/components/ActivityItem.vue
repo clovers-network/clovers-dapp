@@ -1,17 +1,23 @@
 <template>
   <div>
     <div v-if="item.name === 'Clovers_Transfer'" class="h4 p2">
-      <div class="flex justify-start items-center">
+      <div :class="{'opacity-50': isBurned(item)}" class="flex justify-start items-center">
         <div class="font-mono light-green h6">#{{ item.blockNumber }}</div>
         <div class="px3 flex-none">
-          <router-link :to="cloverLink({ board: item.data._tokenId })">
-            <img class="block" :src="cloverImage({ board: item.data._tokenId }, 50)">
+          <router-link :to="isBurned(item) ? '' : cloverLink({ board: item.data._tokenId })">
+            <img :src="cloverImage({ board: item.data._tokenId }, 50)" class="block"/>
           </router-link>
         </div>
         <!-- <div class="pr3 h6">bought by</div> -->
-        <div class="pr3 h2">&rrarr;</div>
-        <div class="pr1 light-green">minted by</div>
-        <div class="font-mono truncate">{{ userName(item.data._to) }}</div>
+        <template v-if="isBurned(item)">
+          <div class="pr3 h2">&times;</div>
+          <div class="pr1">Clover burned (invalid)</div>
+        </template>
+        <template v-else>
+          <div class="pr3 h2">&rrarr;</div>
+          <div class="pr1 light-green">minted by</div>
+          <div class="font-mono truncate">{{ userName(item.data._to) }}</div>
+        </template>
       </div>
     </div>
 
@@ -130,6 +136,9 @@ export default {
     cloverImage,
     cloverLink,
 
+    isBurned ({ data }) {
+      return data._to.startsWith('0x000000000')
+    },
     price (string, decimals) {
       let n = makeBn(string)
       // get rid of trailing zeros
