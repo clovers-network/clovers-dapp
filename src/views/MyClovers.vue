@@ -23,11 +23,6 @@ export default {
     title: { inner: 'My Clovers' },
     meta: [{ name: 'description', content: 'A list of the Clovers you own', id: 'meta-desc' }]
   },
-  watch: {
-    userClovers () {
-      console.log(this.userClovers)
-    }
-  },
   computed: {
     ...mapGetters(['userClovers', 'curationMarketAddress'])
   },
