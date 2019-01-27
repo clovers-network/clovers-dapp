@@ -52,7 +52,7 @@
         <ul class="h1 list-reset">
           <!-- <li class="mt1"><router-link :to="{ name: 'Account/Clovers' }" :class="{'nav__account-link--active': $route.meta.group === 'account'}">Account</router-link></li> -->
           <li class="mt1"><router-link :to="{ name: 'Welcome' }">Welcome</router-link></li>
-          <li class="mt1"><router-link :to="{ name: 'Feed' }">Market</router-link></li>
+          <li class="mt1"><router-link :to="{ name: 'Market' }">Market</router-link></li>
           <li class="mt1"><router-link :to="{ name: 'Field' }">Field</router-link></li>
           <li class="mt1"><router-link :to="{ name: 'Activity' }">Log</router-link></li>
         </ul>
