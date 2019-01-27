@@ -3,7 +3,6 @@
     .absolute.top-0.right-0.p2(v-if="isRFT", style="line-height:0")
       span.red.font-mono.h6.line-height-1 RFT
     .absolute.top-0.left-0.p2(style="line-height:0")
-      //- span.font-mono.h6.line-height-1 {{clover.commentCount}}
       chat-icon.block(v-if="clover.commentCount != 0" :count="clover.commentCount" :size="16" :blank="true" :invert="true")
     figure.pb-100.relative
       .absolute.top-0.left-0.col-12.h-100.flex.items-center.justify-center
