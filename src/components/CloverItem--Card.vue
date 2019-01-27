@@ -27,7 +27,7 @@
           h4.h6.font-mono.truncate
             span(v-if="isRFT") ${{ marketCapInUSD.toFormat(2) }}
             span(v-else) {{owner}}
-        .px1.col-6
+        .px1.col-6(v-if="isRFT || clover.price.toString(10) !== '0'")
           .pl1
             h6.h7 {{isRFT ? '&clubs; / Share' : 'Price &clubs;'}}
             h4.h6.font-mono.truncate
