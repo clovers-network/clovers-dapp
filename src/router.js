@@ -32,7 +32,7 @@ export default new Router({
       path: '/field',
       name: 'Field',
       component: Field,
-      meta: { title: 'Find Clovers' }
+      meta: { title: 'Pick Fresh Clovers' }
     },
     {
       path: '/home(/page/)?:page?',

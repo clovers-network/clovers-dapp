@@ -43,12 +43,12 @@
             bg="green")
       hr
       router-link.block.mb3(
-        :to="{ name: 'Feed' }")
+        :to="{ name: 'Activity' }")
         h2.h2.green.font-exp The Latest
         img.p3(src="/img/feed.svg")
         .px3.py2.black See all of the most recent Clovers activities.
       router-link.block.mb3(
-        :to="{ name: 'Feed' }")
+        :to="{ name: 'Activity' }")
           dot-btn.mb3(
             label="See The Latest"
             text="white"
@@ -68,16 +68,15 @@
       hr
       h2.h2.green.font-exp Newsletter
       img.p3(src="/img/letter.svg")
-      .px3.py2.black Sign up for our newsletter and feel free to email us at #[u #[a(href="mailto:info@clovers.network") info@clovers.network]].
+      .px3.py2.black Sign up for our newsletter and feel free to email us at #[u #[a(target="_blank" href="mailto:info@clovers.network") info@clovers.network]].
       newsletter-signup
       hr
       h2.h2.green.font-exp Community
       img.p3(src="/img/github.svg")
       .px3.py2.black
-        | Clovers is an open source project by #[u #[a(href="//bin.am") Bin Studio]].<br>
-        | You can #[u #[a(href="//github.com/clovers-network") find us on Github]].<br>
-        //- | You can also see our Contracts at #[u #[a(href="//rinkeby.etherscan.io/token/0x8a0011ccb1850e18a9d2d4b15bd7f9e9e423c11b") Etherscan]].<br>
-    h1.bg-green.white.h1.center.py4 ♣&#xFE0E;
+        | Clovers is an open source project by #[u #[a(target="_blank" href="//bin.am") Bin Studio]].<br>
+        | You can #[u #[a(target="_blank" href="//github.com/clovers-network") find us on Github]].<br>
+    h1.bg-green.white.h1.center.py4 #[a(target="_blank" href="//rinkeby.etherscan.io/token/0x8a0011ccb1850e18a9d2d4b15bd7f9e9e423c11b") ♣&#xFE0E;]
 </template>
 
 <script>
@@ -92,7 +91,7 @@ export default {
       // cloversVerbs: shuffle([
       cloversVerbs: ([
         // 'Welcome to',
-        '_',
+        '♣',
         'Play',
         'Find',
         'Mine',

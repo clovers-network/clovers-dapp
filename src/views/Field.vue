@@ -20,7 +20,7 @@
     <!-- <button @click="getNext" class="btn btn-big btn-primary bg-green">Get some</button> -->
     <div class="fixed-center-max-width bottom-0 bg-green white center p2">
       <router-link to="/account">
-        <span class="h3 font-exp">{{ pickCount }} {{ pluralize('Pick', pickCount) }}</span>
+        <span class="h3 font-exp">Picked {{ pickCount}} {{ pluralize('Clover', pickCount) }}</span>
       </router-link>
     </div>
   </div>
