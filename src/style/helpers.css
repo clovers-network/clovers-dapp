@@ -24,6 +24,7 @@
 .strikethrough { text-decoration: line-through; }
 .capitalize{text-transform: capitalize;}
 
+.mtn2 { margin-top: -20%; }
 .mt3-5 { margin-top: 3.5rem; }
 .mln2-5 { margin-left: -1.5em; }
 .mt-header-h{margin-top: var(--height-header);}

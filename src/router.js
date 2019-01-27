@@ -10,6 +10,8 @@ import About from '@/views/About'
 import Clover from '@/views/Clover'
 import MyClovers from '@/views/MyClovers'
 
+import Activity from '@/views/Activity.vue'
+
 // Old routes
 // import Home from '@/components/Home'
 // import Clover from '@/components/Clover'
@@ -80,6 +82,13 @@ export default new Router({
       component: Clover,
       props: true,
       meta: {title: 'Buy', backBtn: true}
+    },
+
+    {
+      path: '/activity',
+      name: 'Activity',
+      component: Activity,
+      meta: { title: 'Activity' }
     }
 
     //
