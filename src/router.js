@@ -38,7 +38,7 @@ export default new Router({
     },
     {
       path: '/market(/page/)?:page?',
-      name: 'Feed',
+      name: 'Market',
       component: Feed,
       meta: { title: 'Market' }
     },

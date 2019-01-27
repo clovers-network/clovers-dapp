@@ -49,7 +49,7 @@
     <template v-if="prevPage">
       <router-link :to="prevPage" class="h5 green">
         <nav  class="list-reset border-bottom border-green">
-          <li class="py2 px3 center">
+          <li class="py4 px3 center">
             &larr; View previous
           </li>
         </nav>
@@ -68,7 +68,7 @@
     <template v-if="nextPage">
       <router-link :to="nextPage" class="h5 green">
         <nav  class="list-reset bottom-0">
-          <li class="py2 px3 center">
+          <li class="py4 px3 center">
             View next &rarr;
           </li>
         </nav>

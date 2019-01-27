@@ -18,7 +18,7 @@
     <div>
       <div class="mx-auto bg-white">
         <nav v-if="prevPossible" class="list-reset border-bottom border-green bg-white z1" style="top:93px">
-          <li @click="paged--" class="pointer py2 px3 center">
+          <li @click="paged--" class="pointer py4 px3 center">
             <span class="h5 green">&larr; Previous page</span>
           </li>
         </nav>
@@ -30,7 +30,7 @@
         </ul>
 
         <nav v-if="nextPossible" class="list-reset bottom-0 bg-white z1">
-          <li @click="paged++" class="pointer py2 px3 center">
+          <li @click="paged++" class="pointer py4 px3 center">
             <span class="h5 green">Next page &rarr;</span>
           </li>
         </nav>
