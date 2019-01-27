@@ -2,6 +2,11 @@ import Reversi from 'clovers-reversi'
 import { Clovers, CurationMarket } from 'clovers-contracts'
 import { prettyBigNumber } from '@/utils'
 import BigNumber from 'bignumber.js'
+
+const contractAddresses = {
+  '0x8a0011ccb1850e18a9d2d4b15bd7f9e9e423c11b': 'Clovers Contract'
+}
+
 export default {
   userBalance (_, { user }) {
     return user && user.balance
@@ -9,6 +14,14 @@ export default {
   prettyUserBalance (_, { user }) {
     if (!user) return prettyBigNumber('0', 0)
     return prettyBigNumber(user.balance, 0)
+  },
+  userName: ({ allUsers }) => (address) => {
+    let user = allUsers.find((u) => u.address.toLowerCase() === address.toLowerCase())
+    user = user && user.name || contractAddresses[address.toLowerCase()] || address
+    if (user && user.startsWith('0x')) {
+      user = user.substr(0, 5) + '..' + user.substr(37)
+    }
+    return user
   },
   sortedClovers ({ sortBy, feedFilter, allClovers }, { curationMarketAddress }) {
     return allClovers

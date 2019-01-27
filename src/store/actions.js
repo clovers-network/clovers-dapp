@@ -669,6 +669,16 @@ export default {
     await contracts.CurationMarket.instance.methods
       .addCloverToMarket(board, investmentInWei)
       .send({ from: state.account, value })
+  },
+
+  // activity
+  getLogs ({ commit }) {
+    axios.get(apiUrl('/logs')).then(({ data }) => {
+      commit('UPDATE_LOGS', data)
+    })
+  },
+  checkBlock () {
+    return global.web3.eth.getBlockNumber()
   }
 }
 
