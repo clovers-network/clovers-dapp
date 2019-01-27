@@ -1,5 +1,5 @@
 <template lang="pug">
-  <svg class="block" viewBox="0 0 15 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <svg class="inline-block" viewBox="0 0 15 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
       <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
           <g id="Profile-Status-Green" transform="translate(-14.000000, -5.000000)" fill="currentColor">
               <g id="Group-3">

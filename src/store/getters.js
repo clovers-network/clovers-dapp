@@ -36,6 +36,7 @@ export default {
   },
   userClovers ({ allClovers }, { user }) {
     if (!user) return []
+    if (!allClovers.length) return []
     return user.clovers
       .slice(0)
       .map(id => {

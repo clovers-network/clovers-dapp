@@ -39,7 +39,8 @@
       <div class="col-3 flex justify-end items-center">
         <!-- account btn -->
         <router-link class="p2" :to="{name: 'Account'}" @click.native="showMenu = false">
-          <person-icon></person-icon>
+          <span class="green font-mono" v-if="prettyUserBalance">{{prettyUserBalance}}♣&#xFE0E;</span>
+          &nbsp;<person-icon></person-icon>
         </router-link>
       </div>
     </div>
@@ -80,6 +81,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['prettyUserBalance']),
     title () {
       return this.$route.meta.title || 'Clovers'
     },
