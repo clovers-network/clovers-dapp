@@ -7,7 +7,7 @@
       class="relative z2 h-header flex items-center"
       :class="{'border-bottom': !showMenu}">
       <!-- left col -->
-      <div class="col-3 flex pl2 items-center">
+      <div class="col-2 flex pl2 items-center">
         <!-- menu btn -->
         <button
           v-show="!$route.meta.backBtn"
@@ -29,16 +29,16 @@
         <button v-show="$route.meta.backBtn" class="pointer left-align" @click="$router.go(-1)">Back</button>
       </div>
       <!-- title -->
-      <h1 class="font-exp h3 col-6 py1 center">
+      <h1 class="font-exp h3 col-8 py1 center">
         <span class="nowrap pointer"
           @click="showMenu = $route.meta.backBtn ? showMenu : !showMenu">
           {{showMenu ? 'Clovers' : $route.meta.title}}
         </span>
       </h1>
       <!-- right col -->
-      <div class="col-3 flex justify-end items-center">
+      <div class="col-2 flex justify-end items-center">
         <!-- account btn -->
-        <router-link class="p2" :to="{name: 'Account'}" @click.native="showMenu = false">
+        <router-link class="p2" :to="{name: 'Account/Clovers'}" @click.native="showMenu = false">
           <person-icon></person-icon>
         </router-link>
       </div>
@@ -50,13 +50,11 @@
       <div class="h-header"/>
       <nav class="flex-auto flex items-center justify-center" @click="showMenu = !showMenu">
         <ul class="h1 list-reset">
-
-          <li class="mt1"><router-link :to="{ name: 'Feed' }">Home</router-link></li>
+          <!-- <li class="mt1"><router-link :to="{ name: 'Account/Clovers' }" :class="{'nav__account-link--active': $route.meta.group === 'account'}">Account</router-link></li> -->
+          <li class="mt1"><router-link :to="{ name: 'Welcome' }">Welcome</router-link></li>
+          <li class="mt1"><router-link :to="{ name: 'Feed' }">Market</router-link></li>
           <li class="mt1"><router-link :to="{ name: 'Field' }">Field</router-link></li>
-          <li class="mt1"><router-link :to="{ name: 'Welcome' }">About</router-link></li>
-          <li class="mt1"><router-link :to="{ name: 'Account/Clovers' }" :class="{'nav__account-link--active': $route.meta.group === 'account'}">Account</router-link></li>
-          <li class="mt1"><router-link :to="{ name: 'Activity' }">Activity</router-link></li>
-
+          <li class="mt1"><router-link :to="{ name: 'Activity' }">Log</router-link></li>
         </ul>
       </nav>
       <div class="px2">
@@ -138,7 +136,7 @@ export default {
   nav{
     & .router-link-exact-active,
     & .nav__account-link--active{
-      opacity:0.5;
+      text-decoration: underline;
     }
   }
 </style>

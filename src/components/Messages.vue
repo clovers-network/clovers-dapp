@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed top-0 left-0 col-12 z3" style="max-height:100vh;overflow-y:scroll">
+  <div class="fixed top-0 left-0 col-12 z1" style="max-height:100vh;overflow-y:scroll">
     <div class="max-width-3 mt-header-h m-auto" style="background:linear-gradient(to bottom, rgba(255,255,255,.9) 90%, transparent);">
       <ul class="list-reset pt1" v-if="messages.length > 0">
         <li

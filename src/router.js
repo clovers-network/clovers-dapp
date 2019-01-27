@@ -28,19 +28,19 @@ export default new Router({
       path: '/',
       name: 'Welcome',
       component: Welcome,
-      meta: { title: 'Clovers' }
+      meta: { title: '' }
     },
     {
       path: '/field',
       name: 'Field',
       component: Field,
-      meta: { title: 'Find Clovers' }
+      meta: { title: 'Pick Fresh Clovers' }
     },
     {
-      path: '/home(/page/)?:page?',
+      path: '/market(/page/)?:page?',
       name: 'Feed',
       component: Feed,
-      meta: { title: 'Home' }
+      meta: { title: 'Market' }
     },
     {
       path: '/account',
@@ -88,7 +88,7 @@ export default new Router({
       path: '/activity',
       name: 'Activity',
       component: Activity,
-      meta: { title: 'Activity' }
+      meta: { title: 'Activity Log' }
     }
 
     //

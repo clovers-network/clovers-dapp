@@ -11,16 +11,16 @@
           </div>
         </div>
         <!-- fav btn -->
-        <div class="h2 line-height-1 absolute top-0 right-0 mr2">
-          <span v-if="isSaved(clover)" class="green">&hearts;</span>
-          <a v-else @click="saveClover(clover)" class="green pointer" style="opacity:.3">&hearts;</a>
+        <div class="h1 line-height-1 absolute top-0 right-0 mr2">
+          <a href="#" @click.prevent="saveClover(clover)" :style="{opacity: isSaved(clover) ? 1 : .3}" class="green">&hearts;</a>
+          <!-- <a v-else @click="saveClover(clover)" class="green pointer" style="opacity:.3">&hearts;</a> -->
         </div>
       </li>
     </ul>
     <!-- <button @click="getNext" class="btn btn-big btn-primary bg-green">Get some</button> -->
     <div class="fixed-center-max-width bottom-0 bg-green white center p2">
       <router-link to="/account">
-        <span class="h3 font-exp">{{ pickCount }} {{ pluralize('Pick', pickCount) }}</span>
+        <span class="h3 font-exp">Picked {{ pickCount}} {{ pluralize('Clover', pickCount) }}</span>
       </router-link>
     </div>
   </div>
