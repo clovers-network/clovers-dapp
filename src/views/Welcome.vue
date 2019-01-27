@@ -1,8 +1,7 @@
 <template lang="pug">
   .div.pt4.overflow-hidden
     h1.h1.center.green.font-exp.strong.pb3.flex
-
-      span.col-6.align-right.cloverVerb.relative
+      //- span.col-6.align-right.cloverVerb.relative
         transition(
           mode="out-in"
           name="custom-classes-transition"
@@ -10,7 +9,7 @@
           leave-active-class="animated faster fadeOutDown"
         )
           span.inline-block(:key="cloversVerbIndex") {{cloversVerb}}&nbsp;
-      span.col-6.align-left Clovers <!--♣&#xFE0E;-->
+      span.col-12.align-center Clovers <!--♣&#xFE0E;-->
     .center.my3.relative
       .col-12.overflow-x-scroll.invisible-scrollbar.momentum(ref="wide")
         .pb4.nowrap
@@ -44,13 +43,13 @@
       hr
       router-link.block.mb3(
         :to="{ name: 'Activity' }")
-        h2.h2.green.font-exp The Latest
+        h2.h2.green.font-exp The Market
         img.p3(src="/img/feed.svg")
-        .px3.py2.black See all of the most recent Clovers activities.
+        .px3.py2.black This is where Clovers are bought & sold for Club Token.
       router-link.block.mb3(
-        :to="{ name: 'Activity' }")
+        :to="{ name: 'Market' }")
           dot-btn.mb3(
-            label="See The Latest"
+            label="Buy, Sell & Browse "
             text="white"
             bg="green")
       hr
@@ -58,17 +57,17 @@
         :to="{ name: 'Field' }")
         h2.h2.green.font-exp The Field
         img.p3(src="/img/cloud-face-animated.svg")
-        .px3.py2.black This is where Clovers grow. <br>Take a walk and take a look; like finding shapes in clouds <br>you can pick and claim anything you find—it may come with a reward.
+        .px3.py2.black This is where Clovers grow.<br>(Super-charge your search with the Clover Pig)
       router-link.block.mb3(
         :to="{ name: 'Field' }")
           dot-btn.mb3(
-            label="Grow New Clovers"
+            label="Pick Some Clovers"
             text="white"
             bg="green")
       hr
       h2.h2.green.font-exp Newsletter
       img.p3(src="/img/letter.svg")
-      .px3.py2.black Sign up for our newsletter and feel free to email us at #[u #[a(target="_blank" href="mailto:info@clovers.network") info@clovers.network]].
+      .px3.py2.black Sign up for our newsletter or email us at #[u #[a(target="_blank" href="mailto:info@clovers.network") info@clovers.network]].
       newsletter-signup
       hr
       h2.h2.green.font-exp Community
@@ -91,7 +90,7 @@ export default {
       // cloversVerbs: shuffle([
       cloversVerbs: ([
         // 'Welcome to',
-        '♣',
+        '_',
         'Play',
         'Find',
         'Mine',
@@ -145,14 +144,13 @@ export default {
   },
   mounted () {
     this.$nextTick(() => this.scrollTo())
-    setTimeout(() => {
-      this.interval = setInterval(() => {
-        this.swapVerb()
-      }, 1800)
-    }, 2700)
+    // setTimeout(() => {
+    //   this.interval = setInterval(() => {
+    //     this.swapVerb()
+    //   }, 1800)
+    // }, 2700)
   },
   destroyed () {
-    console.log('destroyed')
     clearInterval(this.interval)
   },
   methods: {

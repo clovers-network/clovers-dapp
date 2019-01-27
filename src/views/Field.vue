@@ -11,9 +11,9 @@
           </div>
         </div>
         <!-- fav btn -->
-        <div class="h2 line-height-1 absolute top-0 right-0 mr2">
-          <span v-if="isSaved(clover)" class="green">&hearts;</span>
-          <a v-else @click="saveClover(clover)" class="green pointer" style="opacity:.3">&hearts;</a>
+        <div class="h1 line-height-1 absolute top-0 right-0 mr2">
+          <a href="#" @click.prevent="saveClover(clover)" :style="{opacity: isSaved(clover) ? 1 : .3}" class="green">&hearts;</a>
+          <!-- <a v-else @click="saveClover(clover)" class="green pointer" style="opacity:.3">&hearts;</a> -->
         </div>
       </li>
     </ul>

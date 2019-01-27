@@ -96,7 +96,7 @@ export default {
     }
   },
   head: {
-    title: { inner: 'Home' },
+    title: { inner: 'Market' },
     meta: [
       { name: 'description', content: 'The main feed of Clovers activity.', id: 'meta-desc' }
     ]
@@ -123,15 +123,15 @@ export default {
     },
     nextPage () {
       if (this.clovers.length < 12) return false
-      return `/home/page/${this.page + 1}`
+      return `/market/page/${this.page + 1}`
     },
     prevPage () {
       if (this.page === 1) {
         return false
       } else if (this.page === 2) {
-        return '/home'
+        return '/market'
       } else {
-        return `/home/page/${this.page - 1}`
+        return `/market/page/${this.page - 1}`
       }
     },
     newCloversCount () {
@@ -207,7 +207,7 @@ export default {
   mounted () {
     if (!this.clovers.length) {
       let lastPage = Math.ceil(this.allLoadedCloverCount / 12)
-      this.$router.replace(`/home/page/${lastPage}`)
+      this.$router.replace(`/market/page/${lastPage}`)
     }
     this.$store.dispatch('getClubTokenPrice')
   },

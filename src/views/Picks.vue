@@ -26,7 +26,7 @@
             <img  class="pointer" :src="newClover ? cloverImage(newClover, 64) : 'https://api2.clovers.network/clovers/svg/0x0/64'" width="64" height="64" @click="viewSingle = newClover"/>
           </div>
           <div class="col-6 pr2 font-mono">
-            <input placeholder="Add Clover Manually" class="col-12 font-mono border-bottom" v-model="newCloverMoves" />
+            <input id="manual-clover" type="text" pattern="[a-fA-F\d]+" placeholder="Add Clover Manually" class="col-12 font-mono border-bottom" v-model="newCloverMoves" />
           </div>
           <div class="pr3 h6 font-mono">
             <button @click="addNewClover()" class="btn btn-big bg-green white nowrap regular">Add Clover</button>
@@ -109,5 +109,8 @@ export default {
     left: 0.8em;
     top: -0.6em;
     border-radius: 32px;
+  }
+  #manual-clover:invalid {
+    border-color: var(--red);
   }
 </style>
