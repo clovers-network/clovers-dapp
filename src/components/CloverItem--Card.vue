@@ -2,9 +2,15 @@
   article.relative(v-if="clover.board", :class="{'red': isRFT}")
     .absolute.top-0.right-0.p2(v-if="isRFT", style="line-height:0")
       span.red.font-mono.h6.line-height-1 RFT
+    .absolute.top-0.left-0.p2(style="line-height:0")
+      //- span.font-mono.h6.line-height-1 {{clover.commentCount}}
+      chat-icon.block(v-if="clover.commentCount != 0" :count="clover.commentCount" :size="16" :blank="true" :invert="true")
     figure.pb-100.relative
       .absolute.top-0.left-0.col-12.h-100.flex.items-center.justify-center
         img.block.col-6(:src="cloverImage(clover, 128)")
+    div.relative
+      .absolute.top-0.left-0.col-12.h-10.flex.items-center.justify-center.mtn2
+        symmetry-icons(v-if="clover", :board="clover.symmetries", style="font-size:8px")
     header.px1.pb2
       .px1
         h3.h4.font-mono.truncate
@@ -29,12 +35,17 @@ import utils from 'web3-utils'
 import { cloverImage, prettyBigNumber, abbrvAddr, getUsername } from '@/utils'
 import { mapState, mapGetters } from 'vuex'
 import BigNumber from 'bignumber.js'
+import ChatIcon from '@/components/Icons/ChatIcon'
+import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 
 export default {
   name: 'CloverItem--Card',
   props: {
     clover: {type: Object, default: () => {}, required: true},
     borderLeft: false
+  },
+  components: {
+    ChatIcon, SymmetryIcons
   },
   computed: {
     marketContract () {
