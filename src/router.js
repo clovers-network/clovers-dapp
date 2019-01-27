@@ -26,7 +26,7 @@ export default new Router({
       path: '/',
       name: 'Welcome',
       component: Welcome,
-      meta: { title: 'Clovers' }
+      meta: { title: '' }
     },
     {
       path: '/field',
