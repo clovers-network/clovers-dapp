@@ -177,7 +177,7 @@ export default {
     pluralize,
 
     showNewClovers () {
-      this.$router.push({name: 'Feed'})
+      this.$router.push({name: 'Market'})
       this.showNew()
     },
     toggleFilters () {
