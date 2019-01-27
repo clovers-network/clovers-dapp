@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="sticky bottom-0 z1 border-bottom green font-mono bg-white" style="top:46px">
+    <div class="sticky z1 border-bottom green font-mono bg-white" style="top:46px">
       <div class="center col-12">
         <div class="relative" :class="{'bg-green white': feedFilter !== 'all'}">
           <div @click.stop="toggleFilters" class="h-header col-12 flex items-center justify-center pointer">
@@ -46,12 +46,15 @@
         </transition>
       </div>
     </div>
-
-    <nav v-if="prevPage" class="list-reset border-bottom border-green">
-      <li class="py2 px3 center">
-        <router-link :to="prevPage" class="h5 green">&larr; View previous</router-link>
-      </li>
-    </nav>
+    <template v-if="prevPage">
+      <router-link :to="prevPage" class="h5 green">
+        <nav  class="list-reset border-bottom border-green">
+          <li class="py2 px3 center">
+            &larr; View previous
+          </li>
+        </nav>
+      </router-link>
+    </template>
 
     <!-- Clover List -->
     <ul class="list-reset flex flex-wrap items-center m0 overflow-hidden">
@@ -62,13 +65,15 @@
       </li>
       <li class="p2 center" v-if="!clovers.length">No Clovers To Show...</li>
     </ul>
-
-    <nav v-if="nextPage" class="list-reset bottom-0">
-      <li class="py2 px3 center">
-        <router-link :to="nextPage" class="h5 green">View next &rarr;</router-link>
-      </li>
-    </nav>
-
+    <template v-if="nextPage">
+      <router-link :to="nextPage" class="h5 green">
+        <nav  class="list-reset bottom-0">
+          <li class="py2 px3 center">
+            View next &rarr;
+          </li>
+        </nav>
+      </router-link>
+    </template>
     <div v-if="newCloversCount" @click="showNewClovers" class="sticky bottom-0 bg-green white p2 center h-bttm-bar flex pointer">
       <span class="block m-auto font-exp">Show {{ newCloversCount }} new {{ pluralize('Clover', newCloversCount) }}</span>
     </div>
@@ -91,7 +96,7 @@ export default {
     }
   },
   head: {
-    title: { inner: 'Home' },
+    title: { inner: 'Market' },
     meta: [
       { name: 'description', content: 'The main feed of Clovers activity.', id: 'meta-desc' }
     ]
@@ -118,15 +123,15 @@ export default {
     },
     nextPage () {
       if (this.clovers.length < 12) return false
-      return `/home/page/${this.page + 1}`
+      return `/market/page/${this.page + 1}`
     },
     prevPage () {
       if (this.page === 1) {
         return false
       } else if (this.page === 2) {
-        return '/home'
+        return '/market'
       } else {
-        return `/home/page/${this.page - 1}`
+        return `/market/page/${this.page - 1}`
       }
     },
     newCloversCount () {
@@ -202,7 +207,7 @@ export default {
   mounted () {
     if (!this.clovers.length) {
       let lastPage = Math.ceil(this.allLoadedCloverCount / 12)
-      this.$router.replace(`/home/page/${lastPage}`)
+      this.$router.replace(`/market/page/${lastPage}`)
     }
     this.$store.dispatch('getClubTokenPrice')
   },

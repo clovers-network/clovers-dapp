@@ -1,7 +1,7 @@
 <template lang="pug">
   div
     .pointer(@click="toggleChat")
-      chat-icon.block(:count="commentCount")
+      chat-icon.block(:invert="commentCount > 0" :count="commentCount")
 
     transition(name="fade")
       section(v-if="showChat", @click.stop.prevent, name="comments").fixed-center-max-width.top-0.bottom-0.bg-green.white.z4.overflow-hidden

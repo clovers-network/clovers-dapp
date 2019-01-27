@@ -10,6 +10,8 @@ import About from '@/views/About'
 import Clover from '@/views/Clover'
 import MyClovers from '@/views/MyClovers'
 
+import Activity from '@/views/Activity.vue'
+
 // Old routes
 // import Home from '@/components/Home'
 // import Clover from '@/components/Clover'
@@ -26,19 +28,19 @@ export default new Router({
       path: '/',
       name: 'Welcome',
       component: Welcome,
-      meta: { title: 'Clovers' }
+      meta: { title: '' }
     },
     {
       path: '/field',
       name: 'Field',
       component: Field,
-      meta: { title: 'Find Clovers' }
+      meta: { title: 'Pick Fresh Clovers' }
     },
     {
-      path: '/home(/page/)?:page?',
+      path: '/market(/page/)?:page?',
       name: 'Feed',
       component: Feed,
-      meta: { title: 'Home' }
+      meta: { title: 'Market' }
     },
     {
       path: '/account',
@@ -80,6 +82,13 @@ export default new Router({
       component: Clover,
       props: true,
       meta: {title: 'Buy', backBtn: true}
+    },
+
+    {
+      path: '/activity',
+      name: 'Activity',
+      component: Activity,
+      meta: { title: 'Activity Log' }
     }
 
     //
