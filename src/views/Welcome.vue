@@ -106,7 +106,7 @@ export default {
         'Sell',
         'Grow',
         // 'Hoard',
-        'Hold',
+        'Hold'
         // 'Behold',
         // 'Discover',
         // 'Covet',
