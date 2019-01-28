@@ -240,25 +240,27 @@ export default {
     socket.on('disconnect', () => {
       console.log('disconnected')
     })
-    socket.on('updateUser', user => {
-      console.log('new user info!', user)
+    socket.on('updateUser', (user) => {
+      console.log('new user info')
       commit('UPDATE_USER', user)
     })
-    socket.on('addClover', clover => {
-      console.log('new clover added!', clover)
+    socket.on('addClover', (clover) => {
+      console.log('new clover added')
       commit('NEW_CLOVER_FROM_CHAIN', clover)
     })
-    socket.on('updateClover', clover => {
-      console.log('new clover info!', clover)
+    socket.on('updateClover', (clover) => {
+      console.log('new clover info')
       commit('ADD_CLOVER', clover)
     })
-    // socket.on('updateClover', clover => {
-    //   console.log('new clover info!', clover)
-    //   commit('ADD_CLOVER', clover)
-    // })
-    socket.on('addOrder', order => {
-      console.log('new order info!', order)
+    socket.on('addOrder', (order) => {
+      console.log('new order info')
       commit('ADD_ORDER', order)
+    })
+    // from table('logs')
+    // comments and renaming
+    socket.on('newLog', (log) => {
+      console.log('new log entry')
+      commit('ADD_LOG', log)
     })
   },
 
@@ -671,12 +673,7 @@ export default {
       .send({ from: state.account, value })
   },
 
-  // activity
-  getLogs ({ commit }) {
-    axios.get(apiUrl('/logs')).then(({ data }) => {
-      commit('UPDATE_LOGS', data)
-    })
-  },
+  // activity page
   checkBlock () {
     return global.web3.eth.getBlockNumber()
   }

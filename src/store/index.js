@@ -51,7 +51,10 @@ const state = {
   orders: [],
 
   allUsers: [],
+
+  // new log items from socket
   logs: [],
+
   messages: [],
   submittingBoards: [],
   basePrice: utils.toWei('0.001'),

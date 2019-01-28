@@ -1,104 +1,117 @@
 <template>
-  <div>
-    <div v-if="item.name === 'Clovers_Transfer'" class="h4 p2">
-      <div :class="{'opacity-50': isBurned(item)}" class="flex justify-start items-center">
-        <div class="font-mono light-green h6">#{{ item.blockNumber }}</div>
-        <div class="px3 flex-none">
-          <router-link :to="isBurned(item) ? '' : cloverLink({ board: item.data._tokenId })">
-            <img :src="cloverImage({ board: item.data._tokenId }, 50)" class="block"/>
+  <div class="h4 p2">
+    <div :class="{'opacity-50': isBurned(item)}" class="flex justify-start items-center">
+      <div class="font-mono light-green h6 xs-hide">#{{ item.blockNumber }}</div>
+
+      <template v-if="item.name === 'Clovers_Transfer'">
+        <div class="pr3 sm-px3 flex-none">
+          <router-link :to="isBurned(item) ? '' : cloverLink(item.data._tokenId)">
+            <img :src="cloverImage(item.data._tokenId, 50)" style="width:50px;height:50px" class="block"/>
           </router-link>
         </div>
         <!-- <div class="pr3 h6">bought by</div> -->
         <template v-if="isBurned(item)">
-          <div class="pr3 h2">&times;</div>
+          <div class="pr3 h2 line-height-1">&times;</div>
           <div class="pr1">Clover burned (invalid)</div>
         </template>
         <template v-else>
-          <div class="pr3 h2">&rrarr;</div>
+          <div class="pr3 h2">&xodot;</div>
           <div class="pr1 light-green">minted by</div>
           <div class="font-mono truncate">{{ userName(item.data._to) }}</div>
         </template>
-      </div>
-    </div>
+      </template>
 
-    <div v-else-if="item.name === 'SimpleCloversMarket_updatePrice'" class="h4 p2">
-      <div class="flex justify-start items-center">
-        <div class="font-mono light-green h6">#{{ item.blockNumber }}</div>
-        <div class="px3 flex-none">
-          <router-link :to="cloverLink({ board: item.data._tokenId })">
-            <img class="block" :src="cloverImage({ board: item.data._tokenId }, 50)">
+      <template v-else-if="item.name === 'SimpleCloversMarket_updatePrice'">
+        <div class="pr3 sm-px3 flex-none">
+          <router-link :to="cloverLink(item.data._tokenId)">
+            <img :src="cloverImage(item.data._tokenId, 50)" style="width:50px;height:50px" class="block"/>
           </router-link>
         </div>
-        <div class="pr3 h2">&udarr;</div>
+        <div class="pr3 h2 line-height-1">♣︎</div>
         <div>
           <span class="light-green">Price is now </span>
           <span class="">{{ price(item.data.price) }} ♣︎</span>
         </div>
-      </div>
-    </div>
+      </template>
 
-    <div v-else-if="item.name === 'ClubTokenController_Buy'" class="h4 p2">
-      <div class="flex justify-start items-center">
-        <div class="font-mono light-green h6">#{{ item.blockNumber }}</div>
-        <div class="h1 mx3 center black border circle" style="width:50px">&clubs;</div>
-        <div class="pr3 h3">&nearr;</div>
+      <template v-else-if="item.name === 'ClubTokenController_Buy'">
+        <div class="h1 mr3 sm-mx3 center black border circle" style="width:50px;height:50px">&clubs;</div>
+        <div class="pr3 h3 line-height-1">&nearr;</div>
         <div class="font-mono truncate">{{ userName(item.data.buyer) }}</div>
         <div class="nowrap pl1">
           <span class="light-green">bought </span>
-          <span class="font-mono">{{ price(item.data.tokens) }} &clubs;</span>
+          <span>{{ price(item.data.tokens) }} &clubs;</span>
         </div>
-      </div>
-    </div>
+      </template>
 
-    <div v-else-if="item.name === 'ClubTokenController_Sell'" class="h4 p2">
-      <div class="flex justify-start items-center">
-        <div class="font-mono light-green h6">#{{ item.blockNumber }}</div>
-        <div class="h1 mx3 center black border circle" style="width:50px">&clubs;</div>
-        <div class="pr3 h3">&searr;</div>
+      <template v-else-if="item.name === 'ClubTokenController_Sell'">
+        <div class="h1 mr3 sm-mx3 center black border circle" style="width:50px;height:50px">&clubs;</div>
+        <div class="pr3 h3 line-height-1">&searr;</div>
         <div class="font-mono truncate">{{ userName(item.data.seller) }}</div>
         <div class="nowrap pl1">
           <span class="light-green">sold </span>
           <span class="font-mono">{{ price(item.data.tokens) }} &clubs;</span>
         </div>
-      </div>
-    </div>
+      </template>
 
-    <div v-else-if="item.name === 'CurationMarket_Buy'" class="h4 p2">
-      <div class="flex justify-start items-center">
-        <div class="font-mono light-green h6">#{{ item.blockNumber }}</div>
-        <div class="px3 flex-none">
-          <router-link :to="cloverLink({ board: item.data._tokenId })">
-            <img class="block" :src="cloverImage({ board: item.data._tokenId }, 50)">
+      <template v-else-if="item.name === 'CurationMarket_Buy'">
+        <div class="pr3 sm-px3 flex-none">
+          <router-link :to="cloverLink(item.data._tokenId)">
+            <img :src="cloverImage(item.data._tokenId, 50)" style="width:50px;height:50px" class="block"/>
           </router-link>
         </div>
-        <div class="pr3 h6 red">NFT</div>
+        <div class="pr3 h6 red">RFT</div>
         <div class="font-mono truncate red">{{ userName(item.data.buyer) }}</div>
         <div class="red pl1">
           <span class="opacity-50">bought </span>
           <span>{{ price(item.data.tokens) }} shares</span>
         </div>
-      </div>
-    </div>
+      </template>
 
-    <div v-else-if="item.name === 'CurationMarket_Sell'" class="h4 p2">
-      <div class="flex justify-start items-center">
-        <div class="font-mono light-green h6">#{{ item.blockNumber }}</div>
-        <div class="px3 flex-none">
-          <router-link :to="cloverLink({ board: item.data._tokenId })">
-            <img class="block" :src="cloverImage({ board: item.data._tokenId }, 50)">
+      <template v-else-if="item.name === 'CurationMarket_Sell'">
+        <div class="pr3 sm-px3 flex-none">
+          <router-link :to="cloverLink(item.data._tokenId)">
+            <img :src="cloverImage(item.data._tokenId, 50)" style="width:50px;height:50px" class="block"/>
           </router-link>
         </div>
-        <div class="pr3 h6 red">NFT</div>
+        <div class="pr3 h6 red">RFT</div>
         <div class="font-mono truncate red">{{ userName(item.data.seller) }}</div>
         <div class="red pl1">
-          <span class="opacity-50">bought </span>
+          <span class="opacity-50">sold </span>
           <span>{{ price(item.data.tokens) }} shares</span>
         </div>
-      </div>
-    </div>
+      </template>
 
-    <div v-else>
-      <pre>{{ item }}</pre>
+      <template v-else-if="item.name === 'Comment_Added'">
+        <div class="pr3 sm-px3 flex-none">
+          <router-link :to="cloverLink(item.data.board)">
+            <img :src="cloverImage(item.data.board, 50)" style="width:50px;height:50px" class="block"/>
+          </router-link>
+        </div>
+        <div class="pr3 h3">
+          <chat-icon :size="15" :blank="true" :invert="false"/>
+        </div>
+        <div class="light-green">New comment by&nbsp;</div>
+        <div class="font-mono truncate">{{ item.data.userName }}</div>
+      </template>
+
+      <template v-else-if="item.name === 'CloverName_Changed'">
+        <div class="pr3 sm-px3 flex-none">
+          <router-link :to="cloverLink(item.data.board)">
+            <img :src="cloverImage(item.data.board, 50)" style="width:50px;height:50px" class="block"/>
+          </router-link>
+        </div>
+        <div class="pr3 h3">✎</div>
+        <div>
+          <span class="">{{ item.data.prevName }}</span>
+          <span class="light-green">&emsp;is now called&emsp;</span>
+          <span>{{ item.data.newName }}</span>
+        </div>
+      </template>
+
+      <div v-else>
+        <pre>{{ item }}</pre>
+      </div>
     </div>
   </div>
 </template>
@@ -106,20 +119,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { cloverImage, cloverLink, makeBn, prettyBigNumber } from '@/utils'
-
-const logNames = {
-  Clovers_Transfer: 'Clover Transferred',
-
-  ClubTokenController_Buy: 'Bought Club Tokens',
-  ClubTokenController_Sell: 'Sold Club Tokens',
-  // ClubToken_Transfer: '',
-
-  SimpleCloversMarket_updatePrice: 'Clover Price Changed',
-
-  CurationMarket_Buy: 'NFT',
-  CurationMarket_Sell: ''
-  // CurationMarket_Transfer: ''
-}
+import ChatIcon from '@/components/Icons/ChatIcon'
 
 export default {
   name: 'ActivityItem',
@@ -136,14 +136,15 @@ export default {
     cloverImage,
     cloverLink,
 
-    isBurned ({ data }) {
-      return data._to.startsWith('0x000000000')
+    isBurned ({ name, data }) {
+      return name === 'Clovers_Transfer' && data._to.startsWith('0x000000000')
     },
     price (string, decimals) {
       let n = makeBn(string)
       // get rid of trailing zeros
       return parseFloat(prettyBigNumber(n, decimals))
     }
-  }
+  },
+  components: { ChatIcon }
 }
 </script>

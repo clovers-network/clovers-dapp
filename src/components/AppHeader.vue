@@ -51,10 +51,15 @@
       <nav class="flex-auto flex items-center justify-center" @click="showMenu = !showMenu">
         <ul class="h1 list-reset">
           <!-- <li class="mt1"><router-link :to="{ name: 'Account/Clovers' }" :class="{'nav__account-link--active': $route.meta.group === 'account'}">Account</router-link></li> -->
-          <li class="mt1"><router-link :to="{ name: 'Welcome' }">Welcome</router-link></li>
+          <li class="mt1"><router-link :to="{ name: 'Welcome' }" exact>Welcome</router-link></li>
           <li class="mt1"><router-link :to="{ name: 'Market' }">Market</router-link></li>
           <li class="mt1"><router-link :to="{ name: 'Field' }">Field</router-link></li>
-          <li class="mt1"><router-link :to="{ name: 'Activity' }">Log</router-link></li>
+          <li class="mt1">
+            <router-link :to="{ name: 'Activity' }" class="relative">
+              <span>Log</span>
+              <span v-if="newLogs" class="circle bg-orange absolute" style="width:14px;height:14px"></span>
+            </router-link>
+          </li>
         </ul>
       </nav>
       <div class="px2">
@@ -69,6 +74,7 @@ import { mapGetters, mapState } from 'vuex'
 import WaveyBtn from '@/components/Icons/WaveyMenu'
 import Pig from '@/components/Pig'
 import PersonIcon from '@/components/Icons/PersonIcon'
+
 export default {
   name: 'AppHeader',
   data () {
@@ -82,17 +88,18 @@ export default {
     title () {
       return this.$route.meta.title || 'Clovers'
     },
-    symms: {
-      get () {
-        return this.$store.state.miningStats.symms
-      }
+    symms () {
+      return this.$store.state.miningStats.symms
+    },
+    newLogs () {
+      return this.$store.state.logs.length
     }
   },
   watch: {
-    symms: function () {
+    symms () {
       this.showBadge = true
     },
-    showMenu: function () {
+    showMenu () {
       this.showBadge = false
     }
   },
@@ -133,8 +140,8 @@ export default {
     color: white;
     font-size: var(--small-font-size);
   }
-  nav{
-    & .router-link-exact-active,
+  nav {
+    & .router-link-active,
     & .nav__account-link--active{
       text-decoration: underline;
     }

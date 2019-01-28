@@ -97,9 +97,6 @@ export default {
   cloversBankAddress ({ correctNetwork }) {
     return Clovers.networks[correctNetwork].address.toLowerCase()
   },
-  registeredEvents (state) {
-    // return state.logs.filter(log => log.name === 'Registered')
-  },
   symmetries (state) {
     // console.log('symmetries calculated')
     // // return {Symmetricals: 0, RotSym: 0, X0Sym: 0, Y0Sym: 0, XYSym: 0, XnYSym: 0, PayMultiplier: 100}

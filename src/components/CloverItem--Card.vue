@@ -2,14 +2,14 @@
   article.relative(v-if="clover.board", :class="{'red': isRFT}")
     .absolute.top-0.right-0.p2(v-if="isRFT", style="line-height:0")
       span.red.font-mono.h6.line-height-1 RFT
-    .absolute.top-0.left-0.p2(style="line-height:0")
+    .absolute.bottom-0.right-0.p2
       chat-icon.block(
         :color="isRFT ? '#FF4136' : '#01B463'"
         v-if="clover.commentCount != 0"
         :count="clover.commentCount"
-        :size="16"
+        :size="15"
         :blank="true"
-        :invert="true")
+        :invert="false")
     figure.pb-100.relative
       .absolute.top-0.left-0.col-12.h-100.flex.items-center.justify-center
         img.block.col-6(:src="cloverImage(clover, 128)")
