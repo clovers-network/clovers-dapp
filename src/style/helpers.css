@@ -48,6 +48,7 @@
 /* #COLORS */
 .dark-gray { color: var(--dark-gray);}
 
+.bg-inherit { background-color: inherit; }
 .bg-transparent { background-color: transparent;}
 .bg-dark-gray { background-color: var(--dark-gray);}
 .bg-current-color{background-color: currentColor;}

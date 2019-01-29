@@ -459,6 +459,7 @@ image-rendering: optimize-contrast;         /* CSS3 Proposed       */
 /* ANIMATION */
 
 .transition-all { transition: all var(--anim-timing-medium); }
+.transition-delay { transition-delay: var(--anim-timing-medium); }
 
 .sending {
   animation-name: pulse;

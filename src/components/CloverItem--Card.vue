@@ -26,18 +26,18 @@
           h6.h7 {{isRFT ? 'Market Cap' : 'Owner'}}
           h4.h6.font-mono.truncate
             span(v-if="isRFT") ${{ marketCapInUSD.toFormat(2) }}
-            span(v-else) {{owner}}
+            span(v-else) {{ owner }}
         .px1.col-6(v-if="isRFT || clover.price.toString(10) !== '0'")
           .pl1
-            h6.h7 {{isRFT ? '&clubs; / Share' : 'Price &clubs;'}}
+            h6.h7 {{ isRFT ? '&clubs; / Share' : 'Price &clubs;' }}
             h4.h6.font-mono.truncate
               span(v-if="isRFT") {{ priceInCollateral.toFormat(4) }}
-              span(v-else) {{prettyBigNumber(clover.price, 0)}}
+              span(v-else) {{ prettyBigNumber(clover.price, 0) }}
 </template>
 
 <script>
 import utils from 'web3-utils'
-import { cloverImage, prettyBigNumber, abbrvAddr, getUsername } from '@/utils'
+import { cloverImage, prettyBigNumber, abbrvAddr } from '@/utils'
 import { mapState, mapGetters } from 'vuex'
 import BigNumber from 'bignumber.js'
 import ChatIcon from '@/components/Icons/ChatIcon'
@@ -60,8 +60,7 @@ export default {
       return this.isRFT ? '♣︎' : 'ETH'
     },
     owner () {
-      const name = getUsername(this.clover.owner)
-      return name || abbrvAddr(this.clover.owner)
+      return this.userName(this.clover.owner)
     },
     isRFT () {
       // inCurationMarket
@@ -104,7 +103,7 @@ export default {
     },
 
     ...mapState(['ethPrice', 'clubTokenPrice']),
-    ...mapGetters(['curationMarketAddress'])
+    ...mapGetters(['curationMarketAddress', 'userName'])
   },
   methods: {
     cloverImage,

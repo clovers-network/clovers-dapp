@@ -30,6 +30,7 @@ const state = {
   networkId: null,
   correctNetwork: 4,
   contractsDeployed: false,
+  nullAddress: '0x0000000000000000000000000000000000000000',
 
   miningStats: getMiningStats(),
 
