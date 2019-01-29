@@ -134,7 +134,7 @@ export default {
   head: {
     title: { inner: 'Welcome' },
     meta: [
-      { name: 'description', content: 'Discover, collect and trade mathematically generated artworks.', id: 'meta-desc' }
+      { name: 'description', content: 'Discover, collect & trade cryptographic icons.', id: 'meta-desc' }
     ]
   },
   computed: {
