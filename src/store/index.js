@@ -30,6 +30,7 @@ const state = {
   networkId: null,
   correctNetwork: 4,
   contractsDeployed: false,
+  nullAddress: '0x0000000000000000000000000000000000000000',
 
   miningStats: getMiningStats(),
 
@@ -51,7 +52,10 @@ const state = {
   orders: [],
 
   allUsers: [],
+
+  // new log items from socket
   logs: [],
+
   messages: [],
   submittingBoards: [],
   basePrice: utils.toWei('0.001'),

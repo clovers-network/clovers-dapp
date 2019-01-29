@@ -217,11 +217,11 @@ export default {
     }
   },
 
-  UPDATE_LOGS (state, logs) {
-    state.logs = logs
-  },
   ADD_LOG (state, log) {
-    state.logs.push(log)
+    state.logs.unshift(log)
+  },
+  CLEAR_LOG (state, log) {
+    state.logs = []
   },
   // UPDATE_USERS (state, users) {
   //   state.users = users

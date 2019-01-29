@@ -2,14 +2,14 @@
   article.relative(v-if="clover.board", :class="{'red': isRFT}")
     .absolute.top-0.right-0.p2(v-if="isRFT", style="line-height:0")
       span.red.font-mono.h6.line-height-1 RFT
-    .absolute.top-0.left-0.p2(style="line-height:0")
+    .absolute.bottom-0.right-0.p2
       chat-icon.block(
         :color="isRFT ? '#FF4136' : '#01B463'"
         v-if="clover.commentCount != 0"
         :count="clover.commentCount"
-        :size="16"
+        :size="15"
         :blank="true"
-        :invert="true")
+        :invert="false")
     figure.pb-100.relative
       .absolute.top-0.left-0.col-12.h-100.flex.items-center.justify-center
         img.block.col-6(:src="cloverImage(clover, 128)")
@@ -26,18 +26,18 @@
           h6.h7 {{isRFT ? 'Market Cap' : 'Owner'}}
           h4.h6.font-mono.truncate
             span(v-if="isRFT") ${{ marketCapInUSD.toFormat(2) }}
-            span(v-else) {{owner}}
+            span(v-else) {{ owner }}
         .px1.col-6(v-if="isRFT || clover.price.toString(10) !== '0'")
           .pl1
-            h6.h7 {{isRFT ? '&clubs; / Share' : 'Price &clubs;'}}
+            h6.h7 {{ isRFT ? '&clubs; / Share' : 'Price &clubs;' }}
             h4.h6.font-mono.truncate
               span(v-if="isRFT") {{ priceInCollateral.toFormat(4) }}
-              span(v-else) {{prettyBigNumber(clover.price, 0)}}
+              span(v-else) {{ prettyBigNumber(clover.price, 0) }}
 </template>
 
 <script>
 import utils from 'web3-utils'
-import { cloverImage, prettyBigNumber, abbrvAddr, getUsername } from '@/utils'
+import { cloverImage, prettyBigNumber, abbrvAddr } from '@/utils'
 import { mapState, mapGetters } from 'vuex'
 import BigNumber from 'bignumber.js'
 import ChatIcon from '@/components/Icons/ChatIcon'
@@ -60,8 +60,7 @@ export default {
       return this.isRFT ? '♣︎' : 'ETH'
     },
     owner () {
-      const name = getUsername(this.clover.owner)
-      return name || abbrvAddr(this.clover.owner)
+      return this.userName(this.clover.owner)
     },
     isRFT () {
       // inCurationMarket
@@ -104,7 +103,7 @@ export default {
     },
 
     ...mapState(['ethPrice', 'clubTokenPrice']),
-    ...mapGetters(['curationMarketAddress'])
+    ...mapGetters(['curationMarketAddress', 'userName'])
   },
   methods: {
     cloverImage,

@@ -41,9 +41,14 @@
 .flex-grow{flex-grow: 1;}
 .flex-order_-1{order:-1;}
 
+@media (--breakpoint-sm) {
+  .sm-justify-end { justify-content: flex-end; }
+}
+
 /* #COLORS */
 .dark-gray { color: var(--dark-gray);}
 
+.bg-inherit { background-color: inherit; }
 .bg-transparent { background-color: transparent;}
 .bg-dark-gray { background-color: var(--dark-gray);}
 .bg-current-color{background-color: currentColor;}
@@ -64,6 +69,7 @@
 
 .border-green { border-color: var(--green); }
 .border-dark-gray { border-color: var(--dark-gray);}
+.border-top-dotted { border-top-style: dotted; }
 .border-bottom-dotted{ border-bottom-style: dotted; }
 .border-left-transp{border-left-color:transparent;}
 .border-left-dotted{border-left-style:dotted;}
