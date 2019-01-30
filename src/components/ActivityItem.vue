@@ -14,9 +14,19 @@
           <div class="pr3 h2 line-height-1">&times;</div>
           <div class="pr1">Clover burned (invalid)</div>
         </template>
+        <template v-else-if="isFromClover(item)">
+          <div class="pr3 h2">&xodot;</div>
+          <div class="pr1 light-green">Sent to</div>
+          <div class="font-mono truncate">{{ userName(item.data._to) }}</div>
+        </template>
+        <template v-else-if="isBorn(item)">
+          <div class="pr3 h2">&xodot;</div>
+          <div class="pr1 light-green">Was born ☘️</div>
+        </template>
         <template v-else>
           <div class="pr3 h2">&xodot;</div>
-          <div class="pr1 light-green">minted by</div>
+          <div class="font-mono truncate">{{ userName(item.data._from) }}</div>
+          <div class="pr1 light-green">&nbsp;sent to&nbsp;</div>
           <div class="font-mono truncate">{{ userName(item.data._to) }}</div>
         </template>
       </template>
@@ -28,7 +38,10 @@
           </router-link>
         </div>
         <div class="pr3 h2 line-height-1">♣︎</div>
-        <div>
+        <div v-if="item.data.price === '0'">
+          <span class="light-green">Removed from Market</span>
+        </div>
+        <div v-else>
           <span class="light-green">Price is now </span>
           <span class="">{{ price(item.data.price) }} ♣︎</span>
         </div>
@@ -103,8 +116,8 @@
         </div>
         <div class="pr3 h3">✎</div>
         <div>
-          <span class="">{{ item.data.prevName }}</span>
-          <span class="light-green">&emsp;is now called&emsp;</span>
+          <span class="font-mono truncate">{{ formatName(item.data.prevName) || '' }}</span>
+          <span class="light-green ">&emsp;is now called&emsp;</span>
           <span>{{ item.data.newName }}</span>
         </div>
       </template>
@@ -135,9 +148,18 @@ export default {
   methods: {
     cloverImage,
     cloverLink,
-
+    formatName (name) {
+      var re = /[0-9A-Fa-f]{6}/g;
+      return !re.test(name) && name
+    },
     isBurned ({ name, data }) {
       return name === 'Clovers_Transfer' && data._to.startsWith('0x000000000')
+    },
+    isBorn ({ name, data }) {
+      return name === 'Clovers_Transfer' && data._from.startsWith('0x000000000')
+    },
+    isFromClover ({ name, data }) {
+      return name === 'Clovers_Transfer' && data._from.toLowerCase() === window.contracts.Clovers.instance._address.toLowerCase()
     },
     price (string, decimals) {
       let n = makeBn(string)
