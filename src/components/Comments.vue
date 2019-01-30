@@ -24,7 +24,8 @@
                     template(v-else-if="comment.flagged")
                       span.pr2.light-gray.h5 [Flagged]
                     template(v-else)
-                      span(v-text="comment.userName").font-mono.pr2.nowrap
+                      router-link(:to="'/users/' + comment.userAddress")
+                        span(v-text="comment.userName").font-mono.pr2.nowrap
                       span(v-text="comment.comment").bold.pr2.break-word
                       span(v-if="owner && !commentOwner(comment)", @click="flagOrDeleteComment(comment.id)").hvr.pr2.h6.red.pointer Flag
                       span(v-if="commentOwner(comment)", @click="flagOrDeleteComment(comment.id)").hvr.pr2.h6.red.pointer Delete
