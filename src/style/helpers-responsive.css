@@ -1,10 +1,10 @@
 @media (--breakpoint-xs) {
-  .xs-border-left-transp{border-left-color:transparent}
+  .xs-border-right-transp{border-right-color:transparent}
 }
 @media (--breakpoint-sm) and (--breakpoint-sm-only) {
-  .sm-border-left-transp{border-left-color:transparent}
+  .sm-border-right-transp{border-right-color:transparent}
 }
 @media (--breakpoint-md) {
-  .md-border-left-transp{border-left-color:transparent;}
+  .md-border-right-transp{border-right-color:transparent;}
   .md-border-right{border-right-style:solid;}
 }
