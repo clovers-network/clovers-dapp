@@ -12,19 +12,16 @@
         //- clv.col-10.sm-col-6.mx-auto(:moveString="clover.movesString")
         .absolute.bg-contain.bg-no-repeat.bg-center(role="img", v-if="clover", :style="'background-image:url(' + cloverImage(clover) + ')'")
       footer(v-if="!submitted")
+        small.border-top.center.p2.block.h6.bg-white(v-if="sellValue > 0") You found a symmetrical clover! Keep it or claim a reward.
         .flex.border-top
           .col-6.flex-grow.p3.relative.pointer(@click="action = 'keep'")
             div(:class="{'opacity-25': action !== 'keep'}")
               small.block.lh1 Keep for ♣
-              .font-exp.mt1.truncate {{tokenValue}}
-              //- button.absolute.top-0.right-0.p2.pointer(@click="action = 'keep'")
-                .icon-radio(:class="{'icon-radio--selected': action === 'keep'}")
-          .col-6.flex-grow.p3.relative.pointer.border-left(v-if="rewardValue > 0", @click="action = 'sell'")
+              .font-exp.mt1.truncate {{keepValue}}
+          .col-6.flex-grow.p3.relative.pointer.border-left(v-if="sellValue > 0", @click="action = 'sell'")
             div(:class="{'opacity-25': action !== 'sell'}")
-              small.block.lh1 Sell instantly for ♣
-              .font-exp.mt1.truncate {{rewardValue}}
-              //- button.absolute.top-0.right-0.p2.pointer(@click="action = 'sell'")
-                .icon-radio(:class="{'icon-radio--selected': action === 'sell'}")
+              small.block.lh1 Claim reward ♣
+              .font-exp.mt1.truncate {{sellValue}}
         //- confirm btn
         .bg-green.white
           button.col-12.h-bttm-bar.font-exp.pointer(@click="btnClick", :class="{'pointer-events-none': submitting}")
@@ -43,7 +40,7 @@
 <script>
 import WaveyMenu from '@/components/Icons/WaveyMenu'
 import { mapGetters, mapActions } from 'vuex'
-import { cloverImage } from '@/utils'
+import { cloverImage, prettyBigNumber } from '@/utils'
 import { fromWei } from 'web3-utils'
 import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
@@ -52,10 +49,7 @@ const reversi = new Reversi()
 export default {
   name: 'KeepClover',
   props: {
-    clover: {
-      type: Object,
-      required: true
-    }
+    movesString: {type: String, required: true}
   },
   data () {
     return {
@@ -67,13 +61,20 @@ export default {
     }
   },
   computed: {
-    rewardValue () {
-      // in club tokens
-      return this.reward ? fromWei(this.reward.toString()) : '...'
+    _reversi () {
+      return reversi.playGameMovesString(this.movesString)
     },
-    tokenValue () {
+    clover () {
+      const id = `0x${this._reversi.byteBoard}`
+      return {board: id, movesString: this.movesString}
+    },
+    keepValue () {
       // in club tokens
       return this.value ? fromWei(this.value.toString()) : '...'
+    },
+    sellValue () {
+      // in club tokens
+      return this.reward ? fromWei(this.reward.toString()) : '...'
     },
     infoText () {
       return this.action === 'keep'
@@ -129,8 +130,8 @@ export default {
       }
     },
     getValue () {
-      reversi.playGameMovesString(this.clover.movesString)
-      const syms = reversi.returnSymmetriesAsBN()
+      if (!this.clover) return null
+      const syms = this._reversi.returnSymmetriesAsBN()
       this.$store.dispatch('getReward', syms).then(wei => {
         wei = new BigNumber(wei)
         this.reward = wei
@@ -144,12 +145,9 @@ export default {
       })
     },
     handleSuccess (msg, clover) {
-      this.selfDestructMsg({
-        msg,
-        type: 'success'
-      })
+      this.selfDestructMsg({msg, type: 'success'})
       this.submitted = msg
-      this.$store.commit('REMOVE_SAVED_CLOVER', clover)
+      this.$store.commit('REMOVE_SAVED_CLOVER', this.clover)
     },
 
     ...mapActions(['buy', 'sell', 'addMessage', 'selfDestructMsg'])

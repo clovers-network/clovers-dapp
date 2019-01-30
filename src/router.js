@@ -9,6 +9,7 @@ import Trade from '@/views/Trade'
 import About from '@/views/About'
 import Clover from '@/views/Clover'
 import MyClovers from '@/views/MyClovers'
+import KeepClover from '@/views/KeepClover'
 
 // Old routes
 // import Home from '@/components/Home'
@@ -32,7 +33,16 @@ export default new Router({
       path: '/field',
       name: 'Field',
       component: Field,
-      meta: { title: 'Find Clovers' }
+      meta: { title: 'Find Clovers' },
+      children: [
+        {
+          path: '/keep/:movesString',
+          name: 'Keep',
+          component: KeepClover,
+          meta: { title: 'Keep' },
+          props: true
+        }
+      ]
     },
     {
       path: '/home(/page/)?:page?',

@@ -93,6 +93,9 @@ export default {
   methods: {
     cloverImage,
     prettyBigNumber
+  },
+  created () {
+    console.log(this.clover.name)
   }
 }
 </script>

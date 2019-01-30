@@ -1,6 +1,6 @@
 <template>
   <div>
-    <keep-clover v-if="viewSingle" :clover="viewSingle" @close="viewSingle = null"></keep-clover>
+    <keep-clover v-if="viewSingle" :movesString="viewSingle.movesString" @close="viewSingle = null"></keep-clover>
     <ul class="list-reset md-flex flex-wrap items-center m0 md-px1 pb4">
       <li v-for="(clover, i) in picks" :key="i" class="md-col-6 md-px1">
         <div class="flex py2 border-bottom justify-between items-center green">

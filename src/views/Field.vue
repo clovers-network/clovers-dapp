@@ -1,14 +1,17 @@
 <template>
   <div class="mt2 pb-full-height">
-    <keep-clover v-if="viewSingle" :clover="viewSingle" @close="viewSingle = null"></keep-clover>
+    <router-view></router-view>
+    <!-- <keep-clover v-if="viewSingle" :clover="viewSingle" @close="viewSingle = null"></keep-clover> -->
     <ul class="list-reset flex flex-wrap mxn2 mt0 mb3 px2 pb-full-height">
       <!-- item -->
       <li v-for="(clover, i) in generated" :key="i" class="p2 col-6 sm-col-4 relative appear-off" data-expand="-50" :data-appear="i % 3">
         <div class="pb-100 relative">
-          <div class="absolute overlay flex">
-            <!-- image -->
-            <img :src="cloverImage(clover)" @click="viewSingle = clover" class="block m-auto pointer"/>
-          </div>
+          <router-link :to="{name: 'Keep', params: {movesString: clover.movesString}}">
+            <div class="absolute overlay flex">
+              <!-- image -->
+              <img :src="cloverImage(clover)" @click="viewSingle = clover" class="block m-auto pointer"/>
+            </div>
+          </router-link>
         </div>
         <!-- fav btn -->
         <div class="h2 line-height-1 absolute top-0 right-0 mr2">

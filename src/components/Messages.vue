@@ -1,6 +1,6 @@
 <template>
-  <div class="fixed top-0 left-0 col-12 z1" style="max-height:100vh;overflow-y:scroll">
-    <div class="max-width-3 mt-header-h m-auto" style="background:linear-gradient(to bottom, rgba(255,255,255,.9) 90%, transparent);">
+  <div class="fixed top-0 left-0 col-12 z3 pointer-events-none" style="max-height:100vh;overflow-y:scroll">
+    <div class="max-width-3 mt-header-h m-auto pointer-events-auto" style="background:linear-gradient(to bottom, rgba(255,255,255,.9) 90%, transparent);">
       <ul class="list-reset pt1" v-if="messages.length > 0">
         <li
           v-for="msg in messages"
