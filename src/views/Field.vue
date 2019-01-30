@@ -1,26 +1,25 @@
 <template>
   <div class="mt2 pb-full-height">
-    <keep-clover v-if="viewSingle" :clover="viewSingle" @close="viewSingle = null"></keep-clover>
+    <router-view @close="closeKeep"></router-view>
     <ul class="list-reset flex flex-wrap mxn2 mt0 mb3 px2 pb-full-height">
       <!-- item -->
       <li v-for="(clover, i) in generated" :key="i" class="p2 col-6 sm-col-4 relative appear-off" data-expand="-50" :data-appear="i % 3">
         <div class="pb-100 relative">
-          <div class="absolute overlay flex">
-            <!-- image -->
-            <img :src="cloverImage(clover)" @click="viewSingle = clover" class="block m-auto pointer"/>
-          </div>
+          <router-link :to="{name: 'Keep', params: {movesString: clover.movesString}}">
+            <div class="absolute overlay flex">
+              <!-- image -->
+              <img :src="cloverImage(clover)" @click="viewSingle = clover" class="block m-auto pointer"/>
+            </div>
+          </router-link>
         </div>
         <!-- fav btn -->
-        <div class="h1 line-height-1 absolute top-0 right-0 mr2">
-          <a href="#" @click.prevent="saveClover(clover)" :style="{opacity: isSaved(clover) ? 1 : .3}" class="green">&hearts;</a>
-          <!-- <a v-else @click="saveClover(clover)" class="green pointer" style="opacity:.3">&hearts;</a> -->
-        </div>
+        <heart-icon class="green h2 absolute top-0 right-0 mr2" :active="isSaved(clover)" @click="saveClover(clover)" />
       </li>
     </ul>
     <!-- <button @click="getNext" class="btn btn-big btn-primary bg-green">Get some</button> -->
-    <div class="fixed-center-max-width bottom-0 bg-green white center p2">
-      <router-link to="/account">
-        <span class="h3 font-exp">Picked {{ pickCount}} {{ pluralize('Clover', pickCount) }}</span>
+    <div class="fixed-center-max-width bottom-0 bg-green white">
+      <router-link to="/account" class="block h-bttm-bar flex">
+        <span class="block m-auto h3 font-exp">Picked {{ pickCount}} {{ pluralize('Clover', pickCount) }}</span>
       </router-link>
     </div>
   </div>
@@ -28,7 +27,7 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
-import KeepClover from '@/views/KeepClover'
+import HeartIcon from '@/components/Icons/HeartIcon'
 import Bottleneck from 'bottleneck'
 import Reversi from 'clovers-reversi'
 import { pad0x, cloverImage, pluralize, cloverIsMonochrome } from '@/utils'
@@ -39,7 +38,7 @@ const scrollEl = document.scrollingElement
 
 export default {
   name: 'Field',
-  components: { KeepClover },
+  components: { HeartIcon },
   data () {
     return {
       limiter: new Bottleneck({
@@ -47,7 +46,8 @@ export default {
       }),
       growing: false,
       generated: [],
-      viewSingle: null
+      viewSingle: null,
+      entryRt: this.$route.name
     }
   },
   head: {
@@ -93,14 +93,27 @@ export default {
       if (!this.picks.length) return false
       return this.picks.findIndex(c => c.board === board) >= 0
     },
+    closeKeep () {
+      /* go BACK if didn't enter component on `/keep` */
+      if (this.entryRt === 'Keep') {
+        this.entryRt = null
+        this.$router.push({name: 'Field'})
+        return this.getNext()
+      }
+      return this.$router.go(-1)
+    },
 
     ...mapMutations({
       saveClover: 'SAVE_CLOVER'
     }),
     ...mapActions(['formatFoundClover'])
   },
+  beforeRouteUpdate (to, from, next) {
+    next()
+    if (!this.generated.length) this.getNext()
+  },
   beforeMount () {
-    this.getNext()
+    if (this.entryRt !== 'Keep') this.getNext()
   },
   mounted () {
     window.onscroll = debounce(() => {

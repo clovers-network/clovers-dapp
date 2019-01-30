@@ -9,6 +9,7 @@ import Trade from '@/views/Trade'
 import About from '@/views/About'
 import Clover from '@/views/Clover'
 import MyClovers from '@/views/MyClovers'
+import KeepClover from '@/views/KeepClover'
 
 import Activity from '@/views/Activity.vue'
 
@@ -34,7 +35,16 @@ export default new Router({
       path: '/field',
       name: 'Field',
       component: Field,
-      meta: { title: 'Pick Fresh Clovers' }
+      meta: { title: 'Pick Clovers' },
+      children: [
+        {
+          path: '/keep/:movesString',
+          name: 'Keep',
+          component: KeepClover,
+          meta: { title: 'Keep' },
+          props: true
+        }
+      ]
     },
     {
       path: '/market(/page/)?:page?',
@@ -51,7 +61,16 @@ export default new Router({
           path: '/',
           name: 'Account',
           component: Picks,
-          meta: { title: 'Account', group: 'account' }
+          meta: { title: 'Account', group: 'account' },
+          children: [
+            {
+              path: 'picks/:movesString',
+              name: 'Account/Keep',
+              component: KeepClover,
+              meta: { title: 'Keep' },
+              props: true
+            }
+          ]
         },
         {
           path: 'clovers',
