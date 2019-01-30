@@ -149,7 +149,7 @@ export default {
     cloverImage,
     cloverLink,
     formatName (name) {
-      var re = /[0-9A-Fa-f]{6}/g;
+      var re = /[0-9A-Fa-f]{6}/g
       return !re.test(name) && name
     },
     isBurned ({ name, data }) {

@@ -1,6 +1,6 @@
 <template lang="pug">
   article.green.relative(v-if="user")
-    header.sticky.top-header-h.left-0.bg-white.z1.border-bottom.md-py2
+    header.sticky.top-header-h.left-0.bg-white.z1.border-bottom.md-py1
       h1.block.m-auto.px2.font-mono.h-header.flex
         span.block.m-auto {{user.name}}
     section
@@ -23,7 +23,8 @@ export default {
     },
     clovers () {
       if (!this.allClovers.length || !this.user) return []
-      return this.user.clovers.map(clvr => this.allClovers.filter(itm => itm && itm.board === clvr)[0])
+      const items = this.user.clovers.map(clvr => this.allClovers.filter(itm => itm && itm.board === clvr)[0])
+      return items.sort((a, b) => a.modified > b.modified ? -1 : a.modified < b.modified ? 1 : 0)
     }
   }
 }
