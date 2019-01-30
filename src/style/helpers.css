@@ -1,4 +1,5 @@
 .top-100 { top: 100%; }
+.top-header-h{ top: var(--height-header); }
 .sticky { position: sticky; }
 
 .momentum { -webkit-overflow-scrolling: touch; }
@@ -15,6 +16,7 @@
 .min-h-100vh{min-height: 100vh}
 
 .opacity-50 { opacity:.5; }
+.opacity-30 { opacity: .3; }
 .opacity-25 { opacity:.25; }
 
 .lh0 { line-height: 0 }
@@ -71,8 +73,8 @@
 .border-dark-gray { border-color: var(--dark-gray);}
 .border-top-dotted { border-top-style: dotted; }
 .border-bottom-dotted{ border-bottom-style: dotted; }
-.border-left-transp{border-left-color:transparent;}
-.border-left-dotted{border-left-style:dotted;}
+.border-right-transp{border-right-color:transparent;}
+.border-right-dotted{border-right-style:dotted;}
 .outline-none { outline: 0;}
 .outline{ outline:1px solid var(--green); }
 
@@ -80,6 +82,7 @@
 .no-pointer { cursor: default;}
 .no-select { user-select: none;}
 .pointer-events-none{ pointer-events: none }
+.pointer-events-auto{pointer-events: auto}
 .not-allowed { cursor: not-allowed; }
 
 .rotate-180 { transform: Rotate(180DEG); }
