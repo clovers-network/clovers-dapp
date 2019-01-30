@@ -17,7 +17,10 @@
         <template v-else-if="isFromClover(item)">
           <div class="pr3 h2">&xodot;</div>
           <div class="pr1 light-green">Sent to</div>
-          <div class="font-mono truncate">{{ userName(item.data._to) }}</div>
+          
+          <div class="font-mono truncate">
+            <router-link :to="'users/' + item.data._to">{{ userName(item.data._to) }}</router-link>
+          </div>
         </template>
         <template v-else-if="isBorn(item)">
           <div class="pr3 h2">&xodot;</div>
