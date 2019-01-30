@@ -13,10 +13,7 @@
           </router-link>
         </div>
         <!-- fav btn -->
-        <div class="h2 line-height-1 absolute top-0 right-0 mr2">
-          <span v-if="isSaved(clover)" class="green">&hearts;</span>
-          <a v-else @click="saveClover(clover)" class="green pointer" style="opacity:.3">&hearts;</a>
-        </div>
+        <heart-icon class="green h2 absolute top-0 right-0 mr2" :active="isSaved(clover)" @click="saveClover(clover)" />
       </li>
     </ul>
     <!-- <button @click="getNext" class="btn btn-big btn-primary bg-green">Get some</button> -->
@@ -30,7 +27,7 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
-import KeepClover from '@/views/KeepClover'
+import HeartIcon from '@/components/Icons/HeartIcon'
 import Bottleneck from 'bottleneck'
 import Reversi from 'clovers-reversi'
 import { pad0x, cloverImage, pluralize, cloverIsMonochrome } from '@/utils'
@@ -41,7 +38,7 @@ const scrollEl = document.scrollingElement
 
 export default {
   name: 'Field',
-  components: { KeepClover },
+  components: { HeartIcon },
   data () {
     return {
       limiter: new Bottleneck({

@@ -9,10 +9,12 @@
           .col-4.pr2.right-align
             router-link.font-mono(:to="{name: 'Account/Trade'}") {{ prettyUserBalance }} ♣
       figure.flex-auto.relative
-        .absolute.bg-contain.bg-no-repeat.bg-center(role="img", v-if="clover && !invalidClover", :style="'background-image:url(' + cloverImage(clover) + ')'")
-        .absolute.flex.items-center.justify-center.h1(v-else) <div class="h1">:-(</div>
-
-      //- FOOTER
+        //- image
+        .keep__figure__img.absolute.bg-contain.bg-no-repeat.bg-center(role="img", v-if="clover && !invalidClover", :style="'background-image:url(' + cloverImage(clover) + ')'")
+        .keep__figure__img.absolute.flex.items-center.justify-center.h1(v-else) <div class="h1">:-(</div>
+        //- fav btn
+        .absolute.bottom-0.right-0.p2(@click="saveClover(clover)")
+          <heart-icon class="green h1" :active="isSaved" />
       //- invalid clover
       footer(v-if="invalidClover").bg-green.white
         router-link(:to="{name: 'Field'}")
@@ -48,7 +50,8 @@
 <script>
 import Vue from 'vue'
 import WaveyMenu from '@/components/Icons/WaveyMenu'
-import { mapGetters, mapActions } from 'vuex'
+import HeartIcon from '@/components/Icons/HeartIcon'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import { cloverImage, fetchCloudImage, prettyBigNumber } from '@/utils'
 import { fromWei } from 'web3-utils'
 import Reversi from 'clovers-reversi'
@@ -101,8 +104,12 @@ export default {
         ? 'Your Clover is being submitted to the Contract. Once the Clover is verified by our Oracle, you will be confirmed as the owner.'
         : 'This reward is based on the rarity of the Clover. The Contract will buy this from you with Club Token (♣). Once the Oracle has verified the Clover you will receive the payout.'
     },
+    isSaved () {
+      if (!this.picks.length) return false
+      return this.picks.findIndex(c => c.board === this.clover.board) >= 0
+    },
 
-    ...mapGetters(['prettyUserBalance'])
+    ...mapGetters(['picks', 'prettyUserBalance'])
   },
   methods: {
     cloverImage,
@@ -166,6 +173,7 @@ export default {
       this.$store.commit('REMOVE_SAVED_CLOVER', this.clover)
     },
 
+    ...mapMutations({saveClover: 'SAVE_CLOVER'}),
     ...mapActions(['buy', 'sell', 'addMessage', 'selfDestructMsg'])
   },
   beforeRouteEnter (to, from, next) {
@@ -175,12 +183,12 @@ export default {
   mounted () {
     this.getValue()
   },
-  components: { WaveyMenu }
+  components: { WaveyMenu, HeartIcon }
 }
 </script>
 
-<style lang="css" scoped>
-figure > div {
+<style lang="css">
+.keep__figure__img {
   width: calc(100% - 2rem);
   height: calc(100% - 4rem);
   top: 2rem;
