@@ -18,9 +18,7 @@
           <div class="pr3 h2">&xodot;</div>
           <div class="pr1 light-green">Sent to</div>
 
-          <div class="font-mono truncate">
-            <router-link :to="'users/' + item.data._to">{{ userName(item.data._to) }}</router-link>
-          </div>
+          <div class="font-mono truncate">{{ userName(item.data._to) }}</div>
         </template>
         <template v-else-if="isBorn(item)">
           <div class="pr3 h2">&xodot;</div>
@@ -53,7 +51,11 @@
       <template v-else-if="item.name === 'ClubTokenController_Buy'">
         <div class="h1 mr3 sm-mx3 center black border circle" style="width:50px;height:50px">&clubs;</div>
         <div class="pr3 h3 line-height-1">&nearr;</div>
-        <div class="font-mono truncate">{{ userName(item.data.buyer) }}</div>
+        <div class="font-mono truncate">
+          <router-link :to="'/users/' + item.data.buyer">
+            {{ userName(item.data.buyer) }}
+          </router-link>
+          </div>
         <div class="nowrap pl1">
           <span class="light-green">bought </span>
           <span>{{ price(item.data.tokens) }} &clubs;</span>

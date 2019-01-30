@@ -19,7 +19,7 @@ export default {
     ...mapState(['allUsers', 'allClovers']),
     user () {
       if (!this.allUsers.length || !this.addr) return false
-      return this.allUsers.filter(usr => usr.address === this.addr)[0]
+      return this.allUsers.filter(usr => usr.address.toLowerCase() === this.addr.toLowerCase())[0]
     },
     clovers () {
       if (!this.allClovers.length || !this.user) return []
