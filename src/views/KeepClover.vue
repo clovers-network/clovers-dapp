@@ -13,7 +13,7 @@
         .keep__figure__img.absolute.bg-contain.bg-no-repeat.bg-center(role="img", v-if="clover && !invalidClover", :style="'background-image:url(' + cloverImage(clover) + ')'")
         .keep__figure__img.absolute.flex.items-center.justify-center.h1(v-else) <div class="h1">:-(</div>
         //- fav btn
-        .absolute.bottom-0.right-0.p2(@click="saveClover(clover)")
+        .absolute.bottom-0.right-0.p2(@click="saveClover(clover)", v-if="!invalidClover")
           <heart-icon class="green h1" :active="isSaved" />
       //- invalid clover
       footer(v-if="invalidClover").bg-green.white

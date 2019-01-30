@@ -108,6 +108,10 @@ export default {
     }),
     ...mapActions(['formatFoundClover'])
   },
+  beforeRouteUpdate (to, from, next) {
+    next()
+    if (!this.generated.length) this.getNext()
+  },
   beforeMount () {
     if (this.entryRt !== 'Keep') this.getNext()
   },
