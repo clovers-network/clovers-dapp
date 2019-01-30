@@ -10,6 +10,7 @@ import About from '@/views/About'
 import Clover from '@/views/Clover'
 import MyClovers from '@/views/MyClovers'
 import KeepClover from '@/views/KeepClover'
+import User from '@/views/User'
 
 import Activity from '@/views/Activity.vue'
 
@@ -108,6 +109,13 @@ export default new Router({
       name: 'Activity',
       component: Activity,
       meta: { title: 'Activity Log' }
+    },
+    {
+      path: '/users/:addr',
+      name: 'User',
+      component: User,
+      meta: {title: 'Collector'},
+      props: true
     }
 
     //
