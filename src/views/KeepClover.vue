@@ -46,18 +46,27 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import WaveyMenu from '@/components/Icons/WaveyMenu'
 import { mapGetters, mapActions } from 'vuex'
-import { cloverImage, prettyBigNumber } from '@/utils'
+import { cloverImage, fetchCloudImage, prettyBigNumber } from '@/utils'
 import { fromWei } from 'web3-utils'
 import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
 const reversi = new Reversi()
+let lastRt = null
 
 export default {
   name: 'KeepClover',
   props: {
     movesString: {type: String, required: true}
+  },
+  head: {
+    meta () {
+      if (lastRt || !this.clover.board) return
+      const img = fetchCloudImage(cloverImage({board: this.clover.board}, 640))
+      return [{ p: 'og:image', c: img, id: 'og-img' }]
+    }
   },
   data () {
     return {
@@ -158,6 +167,10 @@ export default {
     },
 
     ...mapActions(['buy', 'sell', 'addMessage', 'selfDestructMsg'])
+  },
+  beforeRouteEnter (to, from, next) {
+    lastRt = from && from.name
+    next()
   },
   mounted () {
     this.getValue()

@@ -105,12 +105,12 @@
 </template>
 
 <script>
-import Vue from 'vue'
 import utils from 'web3-utils'
 import WaveyMenu from '@/components/Icons/WaveyMenu'
 import { mapState, mapActions, mapGetters } from 'vuex'
 import {
   cloverImage,
+  fetchCloudImage,
   prettyBigNumber,
   bnMinus,
   makeBn,
@@ -125,6 +125,7 @@ import Reversi from 'clovers-reversi'
 import Comments from '@/components/Comments'
 
 const reversi = new Reversi()
+let lastRt = null
 
 export default {
   name: 'Clover',
@@ -136,9 +137,9 @@ export default {
       return { inner: this.metaTitle }
     },
     meta () {
-      const svgURL = `https://api2.clovers.network/clovers/svg/${this.board}/640`
-      const imgUrl = Vue.config.CloudinaryBaseURL + '/image/fetch/f_png/' + svgURL
-      return [{ p: 'og:image', c: imgUrl, id: 'og-img' }]
+      if (lastRt || !this.board) return
+      const img = fetchCloudImage(cloverImage({board: this.board}, 640))
+      return img && [{ p: 'og:image', c: img, id: 'og-img' }]
     }
   },
   data () {
@@ -371,6 +372,10 @@ export default {
       'addMessage',
       'getShares'
     ])
+  },
+  beforeRouteEnter (to, from, next) {
+    lastRt = from && from.name
+    next()
   },
   created () {
     if (this.clover) return this.updateMetaTitle(this.clover.name)

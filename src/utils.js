@@ -3,6 +3,7 @@ import utils from 'web3-utils'
 import store from './store'
 
 const apiBase = process.env.VUE_APP_API_URL
+const cloudinaryBase = process.env.VUE_APP_CLOUDINARY_BASE_URL
 
 export function pad0x (string) {
   if (typeof string !== 'string') return null
@@ -48,6 +49,10 @@ export function cloverImage ({ board, byteBoard }, size = 200) {
     board = byteBoard
   }
   return `${apiBase}/clovers/svg/${board}/${size}`
+}
+
+export function fetchCloudImage (src, transforms = 'f_png') {
+  return `${cloudinaryBase}/image/fetch/${transforms}/${src}`
 }
 
 export function pluralize (word, count) {
