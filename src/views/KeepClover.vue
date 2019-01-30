@@ -3,15 +3,22 @@
     .col-12.max-width-3.mx-auto.flex.flex-column.justify-between.outline
       header
         .h-header.border-bottom.flex.justify-between.items-center
-          .col-3.pl2
+          .col-4.pl2
             button.pointer(@click="$emit('close')") Back
-          //- h1.col-6.font-exp.center.nowrap Keep or Sell
-          .col-9.pr2.right-align
+          h1.col-4.font-exp.center.nowrap {{invalidClover ? 'Not Found' : ''}}
+          .col-4.pr2.right-align
             router-link.font-mono(:to="{name: 'Account/Trade'}") {{ prettyUserBalance }} ♣
       figure.flex-auto.relative
-        //- clv.col-10.sm-col-6.mx-auto(:moveString="clover.movesString")
-        .absolute.bg-contain.bg-no-repeat.bg-center(role="img", v-if="clover", :style="'background-image:url(' + cloverImage(clover) + ')'")
-      footer(v-if="!submitted")
+        .absolute.bg-contain.bg-no-repeat.bg-center(role="img", v-if="clover && !invalidClover", :style="'background-image:url(' + cloverImage(clover) + ')'")
+        .absolute.flex.items-center.justify-center.h1(v-else) <div class="h1">:-(</div>
+
+      //- FOOTER
+      //- invalid clover
+      footer(v-if="invalidClover").bg-green.white
+        router-link(:to="{name: 'Field'}")
+          button.col-12.h-bttm-bar.font-exp.pointer Find More
+      //- keep / sell actions
+      footer(v-else-if="!submitted")
         small.border-top.center.p2.block.h6.bg-white(v-if="sellValue > 0") You found a symmetrical clover! Keep it or claim a reward.
         .flex.border-top
           .col-6.flex-grow.p3.relative.pointer(@click="action = 'keep'")
@@ -30,6 +37,7 @@
           transition(name="fade")
             .p2.center.font-mono(v-if="submitting")
               p {{ infoText }}
+      //- submitting
       footer(v-else)
         .bg-green.white.col-12.h--bar.font-mono.items-center
           .p3.center
@@ -67,6 +75,9 @@ export default {
     clover () {
       const id = `0x${this._reversi.byteBoard}`
       return {board: id, movesString: this.movesString}
+    },
+    invalidClover () {
+      return this._reversi && this._reversi.error
     },
     keepValue () {
       // in club tokens
