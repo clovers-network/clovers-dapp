@@ -1,4 +1,5 @@
 .top-100 { top: 100%; }
+.top-header-h{ top: var(--height-header); }
 .sticky { position: sticky; }
 
 .momentum { -webkit-overflow-scrolling: touch; }
@@ -72,8 +73,8 @@
 .border-dark-gray { border-color: var(--dark-gray);}
 .border-top-dotted { border-top-style: dotted; }
 .border-bottom-dotted{ border-bottom-style: dotted; }
-.border-left-transp{border-left-color:transparent;}
-.border-left-dotted{border-left-style:dotted;}
+.border-right-transp{border-right-color:transparent;}
+.border-right-dotted{border-right-style:dotted;}
 .outline-none { outline: 0;}
 .outline{ outline:1px solid var(--green); }
 
