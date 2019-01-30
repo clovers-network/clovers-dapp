@@ -1,7 +1,6 @@
 <template>
   <div class="mt2 pb-full-height">
     <router-view @close="closeKeep"></router-view>
-    <!-- <keep-clover v-if="viewSingle" :clover="viewSingle" @close="viewSingle = null"></keep-clover> -->
     <ul class="list-reset flex flex-wrap mxn2 mt0 mb3 px2 pb-full-height">
       <!-- item -->
       <li v-for="(clover, i) in generated" :key="i" class="p2 col-6 sm-col-4 relative appear-off" data-expand="-50" :data-appear="i % 3">
@@ -99,9 +98,12 @@ export default {
     },
     closeKeep () {
       /* go BACK if didn't enter component on `/keep` */
-      if (this.entryRt !== 'Keep') return this.$router.go(-1)
-      this.entryRt = null // clear, so always use BACK now
-      this.$router.push({name: 'Field'})
+      if (this.entryRt === 'Keep') {
+        this.entryRt = null
+        this.$router.push({name: 'Field'})
+        return this.getNext()
+      }
+      return this.$router.go(-1)
     },
 
     ...mapMutations({
@@ -110,7 +112,7 @@ export default {
     ...mapActions(['formatFoundClover'])
   },
   beforeMount () {
-    this.getNext()
+    if (this.entryRt !== 'Keep') this.getNext()
   },
   mounted () {
     window.onscroll = debounce(() => {
