@@ -44,10 +44,8 @@ export function getUsername (addr = '') {
           : undefined
 }
 
-export function cloverImage ({ board, byteBoard }, size = 200) {
-  if (byteBoard) {
-    board = byteBoard
-  }
+export function cloverImage (clover, size = 200) {
+  let board = clover.byteBoard || clover.board || clover
   return `${apiBase}/clovers/svg/${board}/${size}`
 }
 
@@ -59,10 +57,8 @@ export function pluralize (word, count) {
   return `${word}${count !== 1 ? 's' : ''}`
 }
 
-export function cloverLink ({ board, byteBoard }) {
-  if (byteBoard) {
-    board = byteBoard
-  }
+export function cloverLink (clover) {
+  let board = clover.byteBoard || clover.board || clover
   return `/clovers/${board}`
 }
 

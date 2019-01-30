@@ -1,6 +1,15 @@
 <template lang="pug">
   .div.pt4.overflow-hidden
-    h1.h1.center.green.font-exp.strong.pb3 Find Rare<br>Clovers
+    h1.h1.center.green.font-exp.strong.pb3.flex
+      //- span.col-6.align-right.cloverVerb.relative
+        transition(
+          mode="out-in"
+          name="custom-classes-transition"
+          enter-active-class="animated faster fadeInDown"
+          leave-active-class="animated faster fadeOutDown"
+        )
+          span.inline-block(:key="cloversVerbIndex") {{cloversVerb}}&nbsp;
+      span.col-12.align-center Clovers <!--♣&#xFE0E;-->
     .center.my3.relative
       .col-12.overflow-x-scroll.invisible-scrollbar.momentum(ref="wide")
         .pb4.nowrap
@@ -12,41 +21,61 @@
               :noMoves="true"
               :autoPlay="i == 2"
               :moveString="c")
-      router-link.block.mb3(
-        :to="{ name: 'Field' }")
+      .px3.py2.h2.black Discover, collect & trade cryptographic icons
+      //- router-link.block.my3(
+        :to="{ name: 'Activity' }")
           dot-btn.mb3(
-            label="Start Now"
+            label="See the Latest Activity"
             text="white"
             bg="green")
-      .px3.py2 Discover, collect and trade mathematically generated artworks.
+      hr
+      router-link.block.mb3(
+        :to="{ name: 'Account/Trade' }")
+        h2.h2.green.font-exp Club Tokens
+        img.p3(src="/img/club.svg")
+        .px3.py2.black Earn Club Tokens by finding or selling Clovers. <br> Redeem Club Tokens for Ether straight from your account page.
+      router-link.block.mb3(
+        :to="{ name: 'Account/Trade' }")
+          dot-btn.mb3(
+            label="Get Club Tokens"
+            text="white"
+            bg="green")
+      hr
+      router-link.block.mb3(
+        :to="{ name: 'Activity' }")
+        h2.h2.green.font-exp The Market
+        img.p3(src="/img/feed.svg")
+        .px3.py2.black This is where Clovers are bought & sold for Club Token.
+      router-link.block.mb3(
+        :to="{ name: 'Market' }")
+          dot-btn.mb3(
+            label="Buy, Sell & Browse "
+            text="white"
+            bg="green")
       hr
       router-link.block.mb3(
         :to="{ name: 'Field' }")
         h2.h2.green.font-exp The Field
         img.p3(src="/img/cloud-face-animated.svg")
-        .px3.py2 Like looking for shapes in clouds you can browse through the Field of clovers as they're grown in real time looking for rare or interesting shapes.
-      hr
+        .px3.py2.black This is where Clovers grow.<br>(Super-charge your search with the Clover Pig)
       router-link.block.mb3(
-        :to="{ name: 'Feed' }")
-        h2.h2.green.font-exp The Feed
-        img.p3(src="/img/feed.svg")
-        .px3.py2 See, share and trade the latest Clovers that everyone has found!
-      hr
-      router-link.block.mb3(
-        :to="{ name: 'Account' }")
-        h2.h2.green.font-exp Club Tokens
-        img.p3(src="/img/club.svg")
-        .px3.py2 Trade or sell Clovers with Club Tokens! You can get Club Tokens by selling the Clovers you find or buying them in your account.
+        :to="{ name: 'Field' }")
+          dot-btn.mb3(
+            label="Pick Some Clovers"
+            text="white"
+            bg="green")
       hr
       h2.h2.green.font-exp Newsletter
       img.p3(src="/img/letter.svg")
-      .px3.py2 Sign up for our newsletter or also feel free to email us at #[a(href="mailto:info@clovers.network") info@clovers.network].
+      .px3.py2.black Sign up for our newsletter or email us at #[u #[a(target="_blank" href="mailto:info@clovers.network") info@clovers.network]].
       newsletter-signup
       hr
       h2.h2.green.font-exp Community
       img.p3(src="/img/github.svg")
-      .px3.py2 Clovers is an open source project. You can #[a(href="//github.com/clovers-network") find us on Github.]
-
+      .px3.py2.black
+        | Clovers is an open source project by #[u #[a(target="_blank" href="//bin.am") Bin Studio]].<br>
+        | You can #[u #[a(target="_blank" href="//github.com/clovers-network") find us on Github]].<br>
+    h1.bg-green.white.h1.center.py4 #[a(target="_blank" href="//rinkeby.etherscan.io/token/0x8a0011ccb1850e18a9d2d4b15bd7f9e9e423c11b") ♣&#xFE0E;]
 </template>
 
 <script>
@@ -57,6 +86,39 @@ export default {
   name: 'Welcome',
   data () {
     return {
+      interval: null,
+      // cloversVerbs: shuffle([
+      cloversVerbs: ([
+        // 'Welcome to',
+        '_',
+        'Play',
+        'Find',
+        'Mine',
+        'Pick',
+        // 'Win',
+        // 'Lose',
+        'Give',
+        // 'Receive',
+        'Trade',
+        'Buy',
+        'Sell',
+        'Grow',
+        // 'Hoard',
+        'Hold'
+        // 'Behold',
+        // 'Discover',
+        // 'Covet',
+        // 'Explain',
+        // 'Print',
+        // 'Amass',
+        // 'Hodl',
+        // 'Love',
+        // 'Get',
+        // 'Redeem',
+        // 'Track'
+      ]),
+      cloversVerbIndex: 0,
+      cloversVerbChanging: false,
       list: [
         'c4c3c2e3f5b2f4g5g3e6d2e1d7e7a2c1f7e2f2g4g6b4b3d6a5a1c6h7d3a3g7g2b1c7f1h5f6a4g1c5g8h1b5h6f8h8d8h2h4f3d1h3b7a6b6e8c8a8b8a7',
         'c4c3d3e3f4f5c2c6f2g3h4b4g6f3d6e6a5d2c1b3c5h3e2a4d7e7a3g1c7b8b7g4b5d8h2g2c8d1e1h7a8g5e8f6h5b6h1a2a7b1a1f8f1b2f7a6g8h6h8g7',
@@ -72,13 +134,39 @@ export default {
   head: {
     title: { inner: 'Welcome' },
     meta: [
-      { name: 'description', content: 'Discover, collect and trade mathematically generated artworks.', id: 'meta-desc' }
+      { name: 'description', content: 'Discover, collect & trade cryptographic icons.', id: 'meta-desc' }
     ]
+  },
+  computed: {
+    cloversVerb () {
+      return this.cloversVerbs[this.cloversVerbIndex]
+    }
   },
   mounted () {
     this.$nextTick(() => this.scrollTo())
+    // setTimeout(() => {
+    //   this.interval = setInterval(() => {
+    //     this.swapVerb()
+    //   }, 1800)
+    // }, 2700)
+  },
+  destroyed () {
+    clearInterval(this.interval)
   },
   methods: {
+    swapVerb () {
+      if (this.cloversVerbIndex === this.cloversVerbs.length - 1) {
+        this.cloversVerbIndex = 1
+        clearInterval(this.interval)
+      } else {
+        this.cloversVerbIndex++
+      }
+      // this.cloversVerbChanging = true
+      // this.cloversVerbIndex = Math.floor(Math.random() * (this.cloversVerbs.length))
+      // setTimeout(() => {
+      //   this.cloversVerbChanging = false
+      // }, 50)
+    },
     cloverClass (c) {
       return {
         'no-border': c === 2,
@@ -91,10 +179,30 @@ export default {
   },
   components: { DotBtn, NewsletterSignup }
 }
+/**
+ * Shuffles array in place. ES6 version
+ * @param {Array} a items An array containing the items.
+ */
+function shuffle (a) {
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
 </script>
 
-<style lang="css" scoped>
+<style lang="scss" scoped>
+  @import '../style/custom-animate.min.css';
   img {
     max-width: 380px;
+  }
+  .cloverVerb:after {
+    content: '';
+    width:50px;
+    // border-bottom: 5px solid var(--green);
+    position: absolute;
+    right:0px;
+    bottom:0px;
   }
 </style>

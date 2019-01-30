@@ -11,12 +11,14 @@ import Clover from '@/views/Clover'
 import MyClovers from '@/views/MyClovers'
 import KeepClover from '@/views/KeepClover'
 
+import Activity from '@/views/Activity.vue'
+
 // Old routes
 // import Home from '@/components/Home'
 // import Clover from '@/components/Clover'
 // import User from '@/components/User'
 // import Users from '@/components/Users'
-import CloverList from '@/components/archive/0.1.0/CloverList'
+// import CloverList from '@/components/archive/0.1.0/CloverList'
 
 Vue.use(Router)
 
@@ -27,13 +29,13 @@ export default new Router({
       path: '/',
       name: 'Welcome',
       component: Welcome,
-      meta: { title: 'Clovers' }
+      meta: { title: '' }
     },
     {
       path: '/field',
       name: 'Field',
       component: Field,
-      meta: { title: 'Find Clovers' },
+      meta: { title: 'Pick Clovers' },
       children: [
         {
           path: '/keep/:movesString',
@@ -45,10 +47,10 @@ export default new Router({
       ]
     },
     {
-      path: '/home(/page/)?:page?',
-      name: 'Feed',
+      path: '/market(/page/)?:page?',
+      name: 'Market',
       component: Feed,
-      meta: { title: 'Home' }
+      meta: { title: 'Market' }
     },
     {
       path: '/account',
@@ -101,6 +103,13 @@ export default new Router({
       meta: {title: 'Buy', backBtn: true}
     },
 
+    {
+      path: '/activity',
+      name: 'Activity',
+      component: Activity,
+      meta: { title: 'Activity Log' }
+    }
+
     //
     // =======================================
     // Old Paths
@@ -145,11 +154,11 @@ export default new Router({
     //   }
     // },
     // add on for reference
-    {
-      path: '/cloverlist',
-      name: 'CloverList',
-      component: CloverList
-    }
+    // {
+    //   path: '/cloverlist',
+    //   name: 'CloverList',
+    //   component: CloverList
+    // }
   ],
   scrollBehavior (to, from, savedPosition) {
     if (savedPosition) {

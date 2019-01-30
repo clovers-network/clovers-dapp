@@ -107,11 +107,16 @@ export default {
 
   // mining/saving clovers. Stored clovers are added to state on load
   SAVE_CLOVER (state, clover) {
-    state.allSavedClovers.unshift(clover)
-    updateLocal('saved_clovers', state.allSavedClovers)
+    const index = state.allSavedClovers.findIndex(c => c.board === clover.board)
+    if (index > -1) {
+      state.allSavedClovers.splice(index, 1)
+      updateLocal('saved_clovers', state.allSavedClovers)
+    } else {
+      state.allSavedClovers.unshift(clover)
+      updateLocal('saved_clovers', state.allSavedClovers)
+    }
   },
   REMOVE_SAVED_CLOVER (state, { board }) {
-    console.log('removing', board)
     const index = state.allSavedClovers.findIndex(c => c.board === board)
     if (index >= 0) {
       state.allSavedClovers.splice(index, 1)
@@ -212,11 +217,11 @@ export default {
     }
   },
 
-  UPDATE_LOGS (state, logs) {
-    state.logs = logs
-  },
   ADD_LOG (state, log) {
-    state.logs.push(log)
+    state.logs.unshift(log)
+  },
+  CLEAR_LOG (state, log) {
+    state.logs = []
   },
   // UPDATE_USERS (state, users) {
   //   state.users = users

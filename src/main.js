@@ -13,7 +13,7 @@ import VueChatScroll from 'vue-chat-scroll'
 import BN from 'bignumber.js'
 
 import Clv from '@/components/Clv'
-import CloverGridItem from '@/components/CloverGridItem'
+// import CloverGridItem from '@/components/CloverGridItem'
 // import './registerServiceWorker'
 import ZeroClientProvider from 'web3-provider-engine/zero.js'
 
@@ -55,7 +55,6 @@ Vue.use(VueTouch, {name: 'v-touch'})
 Vue.use(VueChatScroll)
 
 Vue.component('clv', Clv)
-Vue.component('clover-grid-item', CloverGridItem)
 
 Vue.directive('autofocus', autofocus)
 

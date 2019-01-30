@@ -17,9 +17,9 @@
       </li>
     </ul>
     <!-- <button @click="getNext" class="btn btn-big btn-primary bg-green">Get some</button> -->
-    <div class="fixed-center-max-width bottom-0 bg-green white center p2">
-      <router-link to="/account">
-        <span class="h3 font-exp">{{ pickCount }} {{ pluralize('Pick', pickCount) }}</span>
+    <div class="fixed-center-max-width bottom-0 bg-green white">
+      <router-link to="/account" class="block h-bttm-bar flex">
+        <span class="block m-auto h3 font-exp">Picked {{ pickCount}} {{ pluralize('Clover', pickCount) }}</span>
       </router-link>
     </div>
   </div>

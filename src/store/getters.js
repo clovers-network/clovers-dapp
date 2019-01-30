@@ -1,7 +1,8 @@
 import Reversi from 'clovers-reversi'
 import { Clovers, CurationMarket } from 'clovers-contracts'
-import { prettyBigNumber } from '@/utils'
+import { prettyBigNumber, abbrvAddr } from '@/utils'
 import BigNumber from 'bignumber.js'
+
 export default {
   userBalance (_, { user }) {
     return user && user.balance
@@ -9,6 +10,23 @@ export default {
   prettyUserBalance (_, { user }) {
     if (!user) return prettyBigNumber('0', 0)
     return prettyBigNumber(user.balance, 0)
+  },
+  userName: ({ allUsers, nullAddress }, { cloversBankAddress, curationMarketAddress }) => (addr) => {
+    let name = addr === cloversBankAddress ? 'Clovers'
+      : addr === curationMarketAddress ? 'Curation Mrkt.'
+        : addr === nullAddress ? 'Nobody' : null
+    if (name) return name
+
+    const user = allUsers.find((u) => u.address.toLowerCase() === addr.toLowerCase())
+    if (!user) return name
+
+    name = user.name && user.name.trim() !== '' ? user.name
+      : user.ens ? user.ens : addr
+
+    if (name.startsWith('0x')) {
+      name = abbrvAddr(name)
+    }
+    return name
   },
   sortedClovers ({ sortBy, feedFilter, allClovers }, { curationMarketAddress }) {
     return allClovers
@@ -36,6 +54,7 @@ export default {
   },
   userClovers ({ allClovers }, { user }) {
     if (!user) return []
+    if (!allClovers.length) return []
     return user.clovers
       .slice(0)
       .map(id => {
@@ -82,9 +101,6 @@ export default {
   },
   cloversBankAddress ({ correctNetwork }) {
     return Clovers.networks[correctNetwork].address.toLowerCase()
-  },
-  registeredEvents (state) {
-    // return state.logs.filter(log => log.name === 'Registered')
   },
   symmetries (state) {
     // console.log('symmetries calculated')

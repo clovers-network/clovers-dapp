@@ -14,7 +14,7 @@
         .col-6.px3.py2.border-right.flex
           .col-12.m-auto
             small.block.lh1.h6 Owner
-            .font-exp.mt1.truncate.overflow-hidden {{currentOwner}}
+            .font-exp.mt1.truncate.overflow-hidden {{ currentOwner }}
         //- price / value
         .col-6.px3.py2.flex
           .col-12.m-auto

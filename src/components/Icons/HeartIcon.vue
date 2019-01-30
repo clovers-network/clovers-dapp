@@ -1,5 +1,5 @@
 <template lang="pug">
-  .inline-block.line-height-1.pointer(:class="{'opacity-30': !active}", @click="$emit('click')") &hearts;&#xfe0e;
+  .inline-block.line-height-1.pointer(:class="{'opacity-30': !active}", @click.prevent="$emit('click')") &hearts;&#xfe0e;
 </template>
 
 <script>
