@@ -17,7 +17,7 @@
         <template v-else-if="isFromClover(item)">
           <div class="pr3 h2">&xodot;</div>
           <div class="pr1 light-green">Sent to</div>
-          
+
           <div class="font-mono truncate">
             <router-link :to="'users/' + item.data._to">{{ userName(item.data._to) }}</router-link>
           </div>
@@ -152,7 +152,7 @@ export default {
     cloverImage,
     cloverLink,
     formatName (name) {
-      var re = /[0-9A-Fa-f]{6}/g;
+      var re = /[0-9A-Fa-f]{6}/g
       return !re.test(name) && name
     },
     isBurned ({ name, data }) {
