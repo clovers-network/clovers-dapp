@@ -59,7 +59,16 @@ export default new Router({
           path: '/',
           name: 'Account',
           component: Picks,
-          meta: { title: 'Account', group: 'account' }
+          meta: { title: 'Account', group: 'account' },
+          children: [
+            {
+              path: 'picks/:movesString',
+              name: 'Account/Keep',
+              component: KeepClover,
+              meta: { title: 'Keep' },
+              props: true
+            }
+          ]
         },
         {
           path: 'clovers',

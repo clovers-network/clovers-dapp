@@ -1,12 +1,15 @@
 <template>
   <div>
-    <keep-clover v-if="viewSingle" :movesString="viewSingle.movesString" @close="viewSingle = null"></keep-clover>
+    <router-view @close="closeKeep"></router-view>
     <ul class="list-reset md-flex flex-wrap items-center m0 md-px1 pb4">
+      <!-- clover item -->
       <li v-for="(clover, i) in picks" :key="i" class="md-col-6 md-px1">
         <div class="flex py2 border-bottom justify-between items-center green">
           <div class="col-3 center relative">
             <div class="sym-badge absolute h7 p1" v-if="isSym(clover)">SYM</div>
-            <img class="pointer" :src="cloverImage(clover, 64)" width="64" height="64" @click="viewSingle = clover"/>
+            <router-link :to="{name: 'Account/Keep', params: {movesString: clover.movesString}}">
+              <img class="pointer" :src="cloverImage(clover, 64)" width="64" height="64" />
+            </router-link>
           </div>
           <div class="col-3 pr2 h7 font-mono">
             {{ fromNow(clover) }}
@@ -15,7 +18,7 @@
             <button @click="removeClover(clover)" class="btn btn-big border border-green regular">Remove</button>
           </div>
           <div class="pr2 h6 font-mono">
-            <button @click="viewSingle = clover" class="btn btn-big bg-green white nowrap regular">Keep/Sell</button>
+            <router-link :to="{name: 'Account/Keep', params: {movesString: clover.movesString}}" class="btn btn-big bg-green white nowrap regular">Keep/Sell</router-link>
           </div>
         </div>
       </li>
@@ -57,7 +60,8 @@ export default {
     return {
       viewSingle: null,
       newClover: null,
-      newCloverMoves: null
+      newCloverMoves: null,
+      entryRt: this.$route.name
     }
   },
   watch: {
@@ -91,6 +95,12 @@ export default {
 
     isSym (clover) {
       return clover.symmetrical
+    },
+    closeKeep () {
+      /* go BACK if didn't enter Picks via Keep */
+      if (this.entryRt !== 'Account/Keep') return this.$router.go(-1)
+      this.entryRt = null // clear, so always use BACK now
+      this.$router.push({name: 'Picks'})
     },
     ...mapActions(['formatFoundClover']),
     ...mapMutations({

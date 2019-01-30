@@ -1,6 +1,6 @@
 <template>
   <div class="mt2 pb-full-height">
-    <router-view></router-view>
+    <router-view @close="closeKeep"></router-view>
     <!-- <keep-clover v-if="viewSingle" :clover="viewSingle" @close="viewSingle = null"></keep-clover> -->
     <ul class="list-reset flex flex-wrap mxn2 mt0 mb3 px2 pb-full-height">
       <!-- item -->
@@ -50,7 +50,8 @@ export default {
       }),
       growing: false,
       generated: [],
-      viewSingle: null
+      viewSingle: null,
+      entryRt: this.$route.name
     }
   },
   head: {
@@ -95,6 +96,12 @@ export default {
     isSaved ({ board }) {
       if (!this.picks.length) return false
       return this.picks.findIndex(c => c.board === board) >= 0
+    },
+    closeKeep () {
+      /* go BACK if didn't enter component on `/keep` */
+      if (this.entryRt !== 'Keep') return this.$router.go(-1)
+      this.entryRt = null // clear, so always use BACK now
+      this.$router.push({name: 'Field'})
     },
 
     ...mapMutations({

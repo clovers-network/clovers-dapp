@@ -4,7 +4,7 @@
       header
         .h-header.border-bottom.flex.justify-between.items-center
           .col-3.pl2
-            button.pointer(@click="close") Back
+            button.pointer(@click="$emit('close')") Back
           //- h1.col-6.font-exp.center.nowrap Keep or Sell
           .col-9.pr2.right-align
             router-link.font-mono(:to="{name: 'Account/Trade'}") {{ prettyUserBalance }} ♣
@@ -87,10 +87,6 @@ export default {
   methods: {
     cloverImage,
 
-    close () {
-      this.$emit('close')
-      this.action = 'keep'
-    },
     btnClick () {
       if (this.action === 'keep') this.keep()
       if (this.action === 'sell') this.sellToBank()
