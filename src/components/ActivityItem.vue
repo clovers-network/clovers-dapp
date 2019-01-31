@@ -164,7 +164,7 @@ export default {
       return name === 'Clovers_Transfer' && data._from.startsWith('0x000000000')
     },
     isFromClover ({ name, data }) {
-      return name === 'Clovers_Transfer' && data._from.toLowerCase() === window.contracts.Clovers.instance._address.toLowerCase()
+      return name === 'Clovers_Transfer' && window.contracts && window.contracts.Clovers.instance && window.contracts.Clovers.instance._address.toLowerCase() === data._from.toLowerCase()
     },
     price (string, decimals) {
       let n = makeBn(string)
