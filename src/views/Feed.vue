@@ -46,28 +46,13 @@
         </transition>
       </div>
     </div>
-    <template v-if="prevPage">
-      <router-link :to="prevPage" class="h5 green">
-        <nav  class="list-reset border-bottom border-green">
-          <li class="py4 px3 center">
-            &larr; View previous
-          </li>
-        </nav>
-      </router-link>
-    </template>
 
     <!-- Clover List -->
     <clover-list-cards :clovers="clovers" />
+
     <!-- Pagination -->
-    <template v-if="nextPage">
-      <router-link :to="nextPage" class="h5 green">
-        <nav  class="list-reset bottom-0">
-          <li class="py4 px3 center">
-            View next &rarr;
-          </li>
-        </nav>
-      </router-link>
-    </template>
+    <page-nav :prevRt="prevPage" :nextRt="nextPage" />
+
     <div v-if="newCloversCount" @click="showNewClovers" class="sticky bottom-0 bg-green white p2 center h-bttm-bar flex pointer">
       <span class="block m-auto font-exp">Show {{ newCloversCount }} new {{ pluralize('Clover', newCloversCount) }}</span>
     </div>
@@ -79,6 +64,7 @@ import store from '@/store'
 import { mapState, mapGetters, mapMutations } from 'vuex'
 import { cloverLink, pluralize } from '@/utils'
 import CloverListCards from '@/components/CloverList--Cards'
+import PageNav from '@/components/PageNav'
 import svgX from '@/components/Icons/SVG-X'
 const pageSize = 12
 
@@ -205,7 +191,7 @@ export default {
     }
     this.$store.dispatch('getClubTokenPrice')
   },
-  components: { CloverListCards, svgX }
+  components: { CloverListCards, svgX, PageNav }
 }
 </script>
 

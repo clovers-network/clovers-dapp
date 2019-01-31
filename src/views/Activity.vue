@@ -51,17 +51,24 @@
 
       <div v-if="hasResults" :class="{'opacity-50': loading}">
         <div class="mx-auto bg-white">
-          <nav v-if="prevPossible" class="list-reset font-mono" style="top:93px">
-            <li @click="filters.page--" class="pointer py2 px3 center">
-              <span class="h5">&larr; Previous page</span>
-              <span v-if="liveLogs.length" @click.self="addNew" class="pl2 pointer h5">Show {{ liveLogs.length }} new log(s)</span>
-            </li>
-          </nav>
 
-          <div v-else class="center p2 h5 font-mono">
+          <div v-if="liveLogs.length" class="list-reset font-mono center" style="top:93px">
+            <span @click.self="addNew" class="pl2 pointer h5">Show {{ liveLogs.length }} new log(s)</span>
+          </div>
+
+          <!-- <div v-else class="center p2 h5 font-mono">
             <span class="light-green">{{ currentFilter }}</span>
             <span v-if="liveLogs.length" @click="addNew" class="pl2 pointer h5">Show {{ liveLogs.length }} new log(s)</span>
-          </div>
+          </div> -->
+
+          <nav v-if="prevPossible || nextPossible" class="list-reset border-green flex h5 green">
+            <li v-if="prevPossible" @click="filters.page--" class="col-6 flex-grow pointer px2 py4 center">
+              <span>&larr; Previous</span>
+            </li>
+            <li v-if="nextPossible" @click="filters.page++" class="col-6 flex-grow pointer px2 py4 center">
+              <span>Next &rarr;</span>
+            </li>
+          </nav>
 
           <ul class="m0 p0 list-reset">
             <li v-for="log in activity" :key="log.id || log.transactionHash" class="border-top">
@@ -69,9 +76,12 @@
             </li>
           </ul>
 
-          <nav v-if="nextPossible" class="list-reset border-top border-green">
-            <li @click="filters.page++" class="pointer h-bttm-bar px2 py3 center">
-              <span class="h5">Next page &rarr;</span>
+          <nav v-if="prevPossible || nextPossible" class="list-reset border-top border-green flex h5 green">
+            <li v-if="prevPossible" @click="filters.page--" class="col-6 flex-grow pointer px2 py4 center">
+              <span>&larr; Previous</span>
+            </li>
+            <li v-if="nextPossible" @click="filters.page++" class="col-6 flex-grow pointer px2 py4 center">
+              <span>Next &rarr;</span>
             </li>
           </nav>
 
