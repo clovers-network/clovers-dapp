@@ -12,7 +12,8 @@
         //- chart
         .col-12.relative
           span.block.absolute.left-0.top-0.p2.h6 Price Graph in {{collateral}} per <span v-html="currentToken" />
-          chart.border-bottom(:market="market", :orders="orders.slice(0,6)")
+          span.block.absolute.right-0.top-0.p2.h6.z2.pointer(@click="switchMax") Last {{orders.slice(0, max).length}} trades
+          chart.border-bottom(:market="market", :orders="orders.slice(0,max)")
         //- details
         .col-12.flex.flex-wrap(:class="{'flex-order_-1': isRFT}")
           //- price
@@ -84,6 +85,7 @@ export default {
   name: 'Trade',
   data () {
     return {
+      max: 100,
       view: 'buy',
       buy: '1',
       clubReceive: '1',
@@ -177,6 +179,13 @@ export default {
     ...mapGetters(['userBalance', 'prettyUserBalance'])
   },
   methods: {
+    switchMax () {
+      let len = this.orders.length
+      if (len <= 10) return false
+      else if (this.max === 10 && len >= 10) this.max = 100
+      else if (this.max === 100 && len >= 100) this.max = 1000
+      else this.max = 10
+    },
     checkPrice (amount = '1') {
       this.getBuy({ market: this.market, amount }).then(tokens => {
         this.clubReceive = prettyBigNumber(tokens, 0)
