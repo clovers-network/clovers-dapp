@@ -93,11 +93,11 @@ export default {
     },
     keepValue () {
       // in club tokens
-      return this.value ? fromWei(this.value.toString()) : '...'
+      return this.value ? fromWei(this.value.toString(10)) : '...'
     },
     sellValue () {
       // in club tokens
-      return this.reward ? fromWei(this.reward.toString()) : '...'
+      return this.reward ? fromWei(this.reward.toString(10)) : '...'
     },
     infoText () {
       return this.action === 'keep'

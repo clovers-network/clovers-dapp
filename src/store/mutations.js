@@ -21,7 +21,7 @@ export default {
       state.clubTokenPrice = new BigNumber(orders[0].value)
         .div(new BigNumber(orders[0].tokens))
         .round()
-        .toString()
+        .toString(10)
     }
   },
   ADD_ORDER (state, order) {
@@ -34,7 +34,7 @@ export default {
       state.clubTokenPrice = new BigNumber(order.value)
         .div(new BigNumber(order.tokens))
         .round()
-        .toString()
+        .toString(10)
     }
   },
   CONTRACTS_DEPLOYED (state, value) {
