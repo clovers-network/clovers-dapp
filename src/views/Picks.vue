@@ -1,6 +1,7 @@
 <template>
   <div>
     <router-view @close="closeKeep"></router-view>
+    <small class="border-bottom center p2 block h6 bg-white pointer">Your Picks are stored on this device</small>
     <ul class="list-reset md-flex flex-wrap items-center m0 md-px1 pb-bttm-bar">
       <!-- clover item -->
       <li v-for="(clover, i) in picks" :key="i" class="md-col-6 md-px1">
@@ -23,7 +24,7 @@
         </div>
       </li>
       <li class="p2 center" v-if="!picks.length">No Clovers To Show...</li>
-      <li v-else class="md-col-6 md-px1">
+      <!-- <li v-else class="md-col-6 md-px1">
         <div class="flex py2 border-bottom justify-between items-center green">
           <div class="col-3 center relative">
             <img  class="pointer" :src="newClover ? cloverImage(newClover, 64) : 'https://api2.clovers.network/clovers/svg/0x0/64'" width="64" height="64" @click="viewSingle = newClover"/>
@@ -35,7 +36,7 @@
             <button @click="addNewClover()" class="btn btn-big bg-green white nowrap regular">Add Clover</button>
           </div>
         </div>
-      </li>
+      </li> -->
     </ul>
     <div is="router-link" tag="div" to="/field" class="fixed-center-max-width bottom-0 bg-green white center p2 pointer h-bttm-bar flex">
       <span class="m-auto h3 font-exp">Find more</span>

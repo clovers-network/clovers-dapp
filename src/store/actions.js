@@ -5,7 +5,8 @@ import io from 'socket.io-client'
 import utils from 'web3-utils'
 import axios from 'axios'
 import Web3 from 'web3'
-import { pad0x, formatClover, makeBn, padRight } from '@/utils'
+import { pad0x, formatClover, makeBn, padRight, isHex } from '@/utils'
+import { assert } from 'tcomb'
 
 window.contracts = contracts
 
@@ -547,6 +548,28 @@ export default {
     return contracts.CurationMarket.instance.methods
       .balanceOf(new BigNumber(market, 16).toString(10), state.account)
       .call()
+  },
+  async transferClover ({ state }, {clover, address}) {
+    try {
+      let ENSaddress = await global.ens.resolver(address).addr()
+      address = ENSaddress
+    } catch (error) {
+      console.log('no ens')
+    }
+    assert(isHex(address), 'Not a valid address')
+    assert(address.replace('0x', '').length === 40, 'Not a valid address')
+
+    let currentPrice = await contracts.SimpleCloversMarket.instance.methods
+      .sellPrice(clover.board)
+      .call()
+    currentPrice = makeBn(currentPrice)
+    // if 0 then it's not actually for sale
+    assert(currentPrice.eq(0), 'Can\'t transfer a Clover that is currently for sale')
+    return contracts.Clovers.instance.methods
+      .transferFrom(state.account, address, clover.board)
+      .send({
+        from: state.account
+      })
   },
   async buy ({ dispatch, state, commit }, clover) {
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')

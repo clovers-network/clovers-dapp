@@ -10,7 +10,7 @@
       <div class="col-2 flex pl2 items-center">
         <!-- menu btn -->
         <button
-          v-show="!$route.meta.backBtn"
+          v-if="!$route.meta.backBtn"
           class="menu-btn pointer relative py2 pr2"
           @click="showMenu = !showMenu"
           aria-label="Toggle Menu">
@@ -26,7 +26,7 @@
             </div>
         </button>
         <!-- back btn -->
-        <button v-show="$route.meta.backBtn" class="pointer left-align" @click="$router.go(-1)">Back</button>
+        <button v-else class="pointer left-align" @click="$router.go(-1)">Back</button>
       </div>
       <!-- title -->
       <h1 class="font-exp h3 col-8 py1 center">

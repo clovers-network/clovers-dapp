@@ -11,6 +11,11 @@ export function pad0x (string) {
   return `0x${string}`
 }
 
+export function isHex (foobar) {
+  var re = /^[0-9A-Fa-f]+$/
+  return re.test(foobar.replace('0x', ''))
+}
+
 export function addrToUser (address) {
   /*
   * @return {string} Username or ENS name or 0x addr
