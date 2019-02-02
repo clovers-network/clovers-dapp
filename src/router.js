@@ -101,7 +101,7 @@ export default new Router({
       name: 'Clover',
       component: Clover,
       props: true,
-      meta: {title: 'Buy', backBtn: true}
+      meta: {title: 'Buy', backBtn: false}
     },
 
     {
