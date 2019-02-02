@@ -30,18 +30,6 @@
             bg="green")
       hr
       router-link.block.mb3(
-        :to="{ name: 'Account/Trade' }")
-        h2.h2.green.font-exp Club Tokens
-        img.p3(src="/img/club.svg")
-        .px3.py2.black Earn Club Tokens by finding or selling Clovers. <br> Redeem Club Tokens for Ether straight from your account page.
-      router-link.block.mb3(
-        :to="{ name: 'Account/Trade' }")
-          dot-btn.mb3(
-            label="Get Club Tokens"
-            text="white"
-            bg="green")
-      hr
-      router-link.block.mb3(
         :to="{ name: 'Activity' }")
         h2.h2.green.font-exp The Market
         img.p3(src="/img/feed.svg")
@@ -50,6 +38,18 @@
         :to="{ name: 'Market' }")
           dot-btn.mb3(
             label="Buy, Sell & Browse "
+            text="white"
+            bg="green")
+      hr
+      router-link.block.mb3(
+        :to="{ name: 'Account/Trade' }")
+        h2.h2.green.font-exp Club Tokens
+        img.p3(src="/img/club.svg")
+        .px3.py2.black Earn Club Tokens by finding or selling Clovers. <br> Redeem Club Tokens for Ether straight from your account page.
+      router-link.block.mb3(
+        :to="{ name: 'Account/Trade' }")
+          dot-btn.mb3(
+            label="Get Club Tokens"
             text="white"
             bg="green")
       hr
