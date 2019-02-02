@@ -63,7 +63,7 @@ export default {
   },
   computed: {
     balanceFormatted () {
-      return this.balance && this.balance.toString().split('"').join('').toLocaleString()
+      return this.balance && this.balance.toString(10).split('"').join('').toLocaleString()
     },
     username () {
       return this.user && this.user.name

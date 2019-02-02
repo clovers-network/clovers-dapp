@@ -430,7 +430,7 @@ export default {
       market: 'ClubToken',
       amount: '1'
     })
-    commit('SET_CLUB_TOKEN_PRICE', clubTokenPrice.toString())
+    commit('SET_CLUB_TOKEN_PRICE', clubTokenPrice.toString(10))
   },
   // Contract Interactions
   async getBuy ({ dispatch }, { market, amount }) {
@@ -555,7 +555,7 @@ export default {
         .sellPrice(clover.board)
         .call()
       currentPrice = makeBn(currentPrice)
-      console.log('currentPrice', utils.fromWei(currentPrice.toString()))
+      console.log('currentPrice', utils.fromWei(currentPrice.toString(10)))
       // if 0 then it's not actually for sale
       if (currentPrice.eq(0)) {
         dispatch('syncClover', clover)
@@ -700,7 +700,7 @@ async function getLowestPrice (
     new BigNumber(utils.toWei('0.005'))
   ]
   currentPrice = currentPrice.add(increments[incrementLevel])
-  console.log(currentPrice.toString())
+  console.log(currentPrice.toString(10))
   let resultOfSpend = await contract.instance.methods
     .getBuy(currentPrice)
     .call()
@@ -755,7 +755,7 @@ async function claimClover ({ keep, account, clover }) {
     _tokenId,
     _symmetries,
     _keep,
-    utils.fromWei(value.toString())
+    utils.fromWei(value.toString(10))
   )
   return contracts.CloversController.instance.methods
     .claimClover(moves, _tokenId, _symmetries, _keep)
