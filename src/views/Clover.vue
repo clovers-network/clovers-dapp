@@ -43,12 +43,26 @@
         //- Owner Options
         div(v-if="isMyClover", )
           //- Sell / RFT Options
-          small.border-top.center.p2.block.h6.bg-white(v-show="!view") You own this Clover
+          //- small.border-top.center.p2.block.h6.bg-white(v-show="!view") You own this Clover
+          small.border-top.center.p2.block.h6.bg-white.pointer(v-show="!view && showSalePrice" @click="makeSell(true)")
+            span(v-if="!loading") Remove From Market
+            wavey-menu.m-auto(v-else :isWhite="false")
+          small.border-top.center.p2.block.h6.bg-white.pointer(v-show="!view" @click="view='transfer'") Transfer
           .bg-green.flex.white.font-exp.h-bttm-bar.justify-center(v-show="!view")
             button.col-6.flex.border-right.pointer(@click="view = 'sell'")
-              span.block.m-auto Sell
+              span.block.m-auto {{showSalePrice ? 'Change Price' : 'Sell'}}
             button.col-6.flex.pointer(@click="view = 'RFT'")
               span.block.m-auto RFT
+          //- transferView
+          .bg-green.white(v-show="view === 'transfer'")
+            .pt2.pb3.px3
+              .mt1.mb2.font-exp.center Transfer
+              label.h6.lh1.block To
+              .relative
+                input.block.col-12.mt1.border-bottom.font-exp.py1.pr3(@keyup.enter="transferTo" v-model="transferToAddress")
+            button(@click="transferTo").h-bttm-bar.flex.col-12.border-top.pointer
+              span(v-if="!loading").block.m-auto.font-exp Confirm
+              wavey-menu.m-auto(v-else :isWhite="true")
           //- sellView
           .bg-green.white(v-show="view === 'sell'")
             .pt2.pb3.px3
@@ -58,7 +72,7 @@
                 input.block.col-12.mt1.border-bottom.font-exp.py1.pr3(type="number", v-model="sellPrice", min="0")
                 span.absolute.top-0.right-0.h-100.opacity-50.flex
                   span.block.m-auto ♣&#xFE0E;
-            button(@click="makeSell").h-bttm-bar.flex.col-12.border-top.pointer
+            button(@click="makeSell()").h-bttm-bar.flex.col-12.border-top.pointer
               span(v-if="!loading").block.m-auto.font-exp Confirm
               wavey-menu.m-auto(v-else :isWhite="true")
           //- make RFT view
@@ -145,6 +159,7 @@ export default {
   },
   data () {
     return {
+      transferToAddress: null,
       formFocussed: false,
       form: { name: null },
       localClover: null,
@@ -263,7 +278,19 @@ export default {
   methods: {
     cloverImage,
     prettyBigNumber,
-
+    async transferTo () {
+      if (this.loading) return
+      try {
+        this.loading = true
+        await this.transferClover({
+          clover: this.clover,
+          address: this.transferToAddress
+        })
+      } catch (err) {
+        this.handleError(err)
+      }
+      this.loading = false
+    },
     async makeBuy () {
       if (this.loading) return
       try {
@@ -275,16 +302,17 @@ export default {
       this.view = false
       this.loading = false
     },
-    async makeSell () {
+    async makeSell (remove = false) {
       if (this.loading) return
       try {
         this.loading = true
-        await this.sell({ clover: this.clover, price: this.sellPriceWei })
+        await this.sell({ clover: this.clover, price: remove ? '0' : this.sellPriceWei })
       } catch (error) {
         console.log(error)
       }
       this.view = false
       this.loading = false
+      this.sellPrice = 0
     },
     async makeRFT () {
       if (this.loading) return
@@ -338,7 +366,7 @@ export default {
     // },
     handleError ({ message }) {
       this.selfDestructMsg({
-        msg: message.replace('Error: ', ''),
+        msg: message.replace('Error: ', '').replace('[tcomb] ', ''),
         type: 'error'
       })
     },
@@ -365,6 +393,7 @@ export default {
     ...mapActions([
       'buy',
       'sell',
+      'transferClover',
       'makeCloverRFT',
       'signIn',
       'invest',
