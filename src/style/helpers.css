@@ -8,6 +8,7 @@
 
 .h7 { font-size: .94rem; }
 .h8 { font-size: .75rem; }
+.w-100{width:100%;}
 .h-100{height:100%;}
 .h-header{height:var(--height-header);}
 .h-bttm-bar{height:var(--height-bttm-bar);}
