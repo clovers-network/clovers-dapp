@@ -62,7 +62,7 @@ const state = {
   stakeAmount: new BigNumber(96842)
     .mul(1000000000)
     .mul(40)
-    .toString()
+    .toString(10)
 }
 
 export default new Vuex.Store({

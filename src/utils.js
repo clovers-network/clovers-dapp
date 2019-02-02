@@ -77,15 +77,15 @@ export function formatClover (clover) {
   return clover
 }
 
-export function padRight (val, number) {
+export function padRight (val, number, base = 16) {
   let diff = parseInt(number) - val.length
   if (diff === 0) return val
-  return val.toString() + '0'.repeat(diff)
+  return val.toString(base) + '0'.repeat(diff)
 }
 
 export function makeBn (v = 0) {
   if (typeof v === 'object') return v
-  return new BigNumber(v)
+  return new BigNumber(v.toString(10))
 }
 
 export function cloverIsMonochrome (clover) {
