@@ -4,3 +4,5 @@
 ## https://clovers.network/
 
 Made by [Alan Woo](https://github.com/alancwoo/), [Billy Rennekamp](https://github.com/okwme/), [Everett Williams](https://github.com/evvvritt) & [Nics Kort](https://github.com/n-kort/) 
+
+[White Paper (Work In Progress)](https://docs.google.com/document/d/1If-yoN-4cbIT0X_PSEfxVYqlZ7kgFRQapx8AR79mhME/edit?usp=sharing)
