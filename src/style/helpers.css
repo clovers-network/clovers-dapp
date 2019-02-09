@@ -54,6 +54,7 @@
 .bg-inherit { background-color: inherit; }
 .bg-transparent { background-color: transparent;}
 .bg-dark-gray { background-color: var(--dark-gray);}
+.bg-lightest-green{ background-color: var(--lightest-green); }
 .bg-current-color{background-color: currentColor;}
 .bg-green { background-color: var(--green); }
 .bg-white { background-color: white; }

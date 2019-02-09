@@ -1,5 +1,5 @@
 <template>
-  <div class="h4 p2">
+  <div class="h4 p2" :class="{'bg-lightest-green': isMyLog}">
     <div :class="{'opacity-50': isBurned(item)}" class="flex justify-start items-center">
       <div class="font-mono light-green h6 xs-hide">#{{ item.blockNumber }}</div>
 
@@ -152,7 +152,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userName'])
+    ...mapGetters(['userName']),
+    isMyLog () {
+      const me = this.$store.state.account
+      return me && Object.values(this.item.data).includes(me)
+    }
   },
   methods: {
     cloverImage,

@@ -16,6 +16,7 @@
   --teal:  #39CCCC;
   --green: rgb(0, 180, 100); /* #01B463 */
   --light-green: rgba(0, 180, 100, .4); /* #01B463 */
+  --lightest-green: rgba(0, 180, 100, .08); /* #01B463 */
   --olive: #3D9970;
   --lime:  #01FF70;
 
