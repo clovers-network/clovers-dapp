@@ -80,6 +80,11 @@ export default {
       submitted: false
     }
   },
+  watch: {
+    _reversi () {
+      this.checkClover()
+    }
+  },
   computed: {
     _reversi () {
       return reversi.playGameMovesString(this.movesString)
@@ -152,8 +157,17 @@ export default {
         this.handleError(error)
       }
     },
-    getValue () {
+    checkClover () {
       if (!this.clover) return null
+      this.cloverExists(this._reversi.byteBoard).then((exists) => {
+        if (!exists) return
+        this.addMessage({
+          type: 'error',
+          title: 'This Clover already exists',
+          msg: 'Click here to view the original',
+          link: '/clovers/0x' + this._reversi.byteBoard
+        })
+      })
       const syms = this._reversi.returnSymmetriesAsBN()
       this.$store.dispatch('getReward', syms).then(wei => {
         wei = new BigNumber(wei)
@@ -174,14 +188,14 @@ export default {
     },
 
     ...mapMutations({saveClover: 'SAVE_CLOVER'}),
-    ...mapActions(['buy', 'sell', 'addMessage', 'selfDestructMsg'])
+    ...mapActions(['buy', 'sell', 'addMessage', 'selfDestructMsg', 'cloverExists'])
   },
   beforeRouteEnter (to, from, next) {
     lastRt = from && from.name
     next()
   },
   mounted () {
-    this.getValue()
+    this.checkClover()
   },
   components: { WaveyMenu, HeartIcon }
 }
