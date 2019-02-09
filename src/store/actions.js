@@ -284,7 +284,7 @@ export default {
     }
     return msg.id
   },
-  async cloverExists ({ state }, byteBoard) {
+  async cloverExists (_, byteBoard) {
     // let exists = await contracts.Clovers.instance.methods.exists(byteBoard).call()
     return axios.get(apiUrl(`/clovers/0x${byteBoard}`)).then(({ data }) => true).catch(() => false)
   },
@@ -577,7 +577,6 @@ export default {
     // if clover exists it must be in SimpleCloversMarket
     // otherwise it is a claimClover
     let cloverExists = await dispatch('cloverExists', clover.board)
-    console.log('cloverExists', cloverExists)
     if (cloverExists) {
       // get current price
       let currentPrice = await contracts.SimpleCloversMarket.instance.methods
