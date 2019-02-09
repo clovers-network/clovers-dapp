@@ -20,7 +20,7 @@
               : require('../assets/icons/hamburger.svg')" />
             <span @click.stop>
               <router-link :to="{ name: 'Account' }">
-                <div v-if="true || showBadge"
+                <div v-if="showBadge"
                   class="found-badge border border-green bounceIn animated">
                     <span class="block">
                       {{ symms }}
