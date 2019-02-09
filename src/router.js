@@ -101,7 +101,13 @@ export default new Router({
       name: 'Clover',
       component: Clover,
       props: true,
-      meta: {title: 'Buy', backBtn: false}
+      meta: {title: 'Buy', backBtn: false},
+      children: [
+        {
+          path: 'comments',
+          name: 'Clover/Comments'
+        }
+      ]
     },
 
     {
