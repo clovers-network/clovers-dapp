@@ -39,6 +39,11 @@ if (global.ethereum) {
 
 global.ens = new ENS(global.web3.currentProvider)
 
+router.beforeEach((to, from, next) => {
+  to.meta.fromName = from.name
+  next()
+})
+
 router.afterEach(() => {
   if (ga) ga('send', 'pageview')
 })

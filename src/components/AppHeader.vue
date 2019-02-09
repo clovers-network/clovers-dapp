@@ -10,7 +10,7 @@
       <div class="col-2 flex pl2 items-center">
         <!-- menu btn -->
         <button
-          v-if="!$route.meta.backBtn"
+          v-if="!showBackButton"
           class="menu-btn pointer relative py2 pr2"
           @click="showMenu = !showMenu"
           aria-label="Toggle Menu">
@@ -31,7 +31,7 @@
       <!-- title -->
       <h1 class="font-exp h3 col-8 py1 center">
         <span class="nowrap pointer"
-          @click="showMenu = $route.meta.backBtn ? showMenu : !showMenu">
+          @click="showMenu = showBackButton ? showMenu : !showMenu">
           {{showMenu ? 'Clovers' : $route.meta.title}}
         </span>
       </h1>
@@ -93,6 +93,10 @@ export default {
     },
     newLogs () {
       return this.$store.state.logs.length
+    },
+    showBackButton () {
+      return this.$route.name === "Clover" &&
+        this.$route.meta.fromName !== null
     }
   },
   watch: {
