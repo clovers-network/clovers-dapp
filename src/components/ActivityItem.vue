@@ -106,7 +106,7 @@
       <!-- New Comment -->
       <template v-else-if="item.name === 'Comment_Added'">
         <div class="pr3 sm-px3 flex-none">
-          <router-link :to="cloverLink(item.data.board)">
+          <router-link :to="{name: 'Clover/Comments', params: {board: item.data.board}}">
             <img :src="cloverImage(item.data.board, 50)" style="width:50px;height:50px" class="block"/>
           </router-link>
         </div>

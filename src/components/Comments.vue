@@ -89,6 +89,7 @@ export default {
     toggleChat () {
       this.showChat = !this.showChat
       const rtName = this.showChat ? 'Clover/Comments' : 'Clover'
+      console.log('hi')
       return this.board && this.$router.replace({name: rtName, params: {board: this.board}})
     },
     commentDate (d) {

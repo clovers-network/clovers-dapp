@@ -105,7 +105,8 @@ export default new Router({
       children: [
         {
           path: 'comments',
-          name: 'Clover/Comments'
+          name: 'Clover/Comments',
+          component: Clover
         }
       ]
     },
