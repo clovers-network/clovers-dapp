@@ -41,10 +41,9 @@
               p {{ infoText }}
       //- submitting
       footer(v-else)
-        .bg-green.white.col-12.h--bar.font-mono.items-center
-          .p3.center
-            img(:src="cloverImage(clover, 36)")
-            p.m-auto.pt2 {{ submitted }}
+        .bg-green.white.col-12.h--bar.font-mono.items-center.pointer
+          router-link.p3.center(:to="('/clovers/' + clover.board)")
+            p.m-auto.pt2 Transaction complete! Click here to view Clover.
 </template>
 
 <script>
@@ -76,8 +75,7 @@ export default {
       action: 'keep',
       value: null,
       reward: null,
-      submitting: false,
-      submitted: false
+      submitting: false
     }
   },
   watch: {
@@ -183,7 +181,6 @@ export default {
     },
     handleSuccess (msg, clover) {
       this.selfDestructMsg({msg, type: 'success'})
-      this.submitted = msg
       this.$store.commit('REMOVE_SAVED_CLOVER', this.clover)
     },
 
