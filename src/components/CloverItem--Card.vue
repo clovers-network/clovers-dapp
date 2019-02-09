@@ -60,7 +60,7 @@ export default {
       return this.isRFT ? '♣︎' : 'ETH'
     },
     owner () {
-      return this.userName(this.clover.owner)
+      return this.userName(this.clover.owner) || '---'
     },
     isRFT () {
       // inCurationMarket
