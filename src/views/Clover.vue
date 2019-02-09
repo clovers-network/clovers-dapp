@@ -16,7 +16,7 @@
             small.block.lh1.h6.mb1 Owner
             .font-exp.mt1.truncate.overflow-hidden
               router-link(v-if="owner", :to="{name: 'User', params:{addr: owner}}") {{ currentOwner }}
-              span(v-else) {{currenOwner}}
+              span(v-else) {{currentOwner}}
         //- price / value
         .col-6.px3.py2.flex
           .col-12.m-auto
