@@ -285,8 +285,8 @@ export default {
     return msg.id
   },
   async cloverExists ({ state }, byteBoard) {
-    return contracts.Clovers.instance.methods.exists(byteBoard).call()
-    // return axios.get(apiUrl(`/clovers/${byteBoard}`)).then(({ data }) => data)
+    // let exists = await contracts.Clovers.instance.methods.exists(byteBoard).call()
+    return axios.get(apiUrl(`/clovers/0x${byteBoard}`)).then(({ data }) => true).catch(() => false)
   },
   getAllUsers ({ state, commit }, page = 1) {
     console.log('getting users')

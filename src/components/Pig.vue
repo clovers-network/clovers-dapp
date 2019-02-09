@@ -10,7 +10,7 @@
             <div class="font-exp mt1">{{ hashRate }}/s</div>
             <div class="h7 pt1">{{ timeSpent }}</div>
           </div>
-          <div class="col-6 px2 h3" @click="$emit('viewPicks')">
+          <div class="col-6 px2 h3" :class="totalMined !== 0 ? 'pointer' : ''" @click="$emit('viewPicks')">
             <div class="nowrap">Rare Clovers</div>
             <div class="font-exp mt1">{{ symms }}</div>
             <div class="h7 pt1">~ {{ totalMined.toLocaleString() }} mined</div>
