@@ -86,6 +86,8 @@
 .pointer-events-auto{pointer-events: auto}
 .not-allowed { cursor: not-allowed; }
 
+.hover-underline:hover{text-decoration: underline;}
+
 .rotate-180 { transform: Rotate(180DEG); }
 .transl-x-100{ transform: translateX(100%); }
 .flip-x{transform:scaleX(-1);}

@@ -3,6 +3,7 @@
     <div :class="{'opacity-50': isBurned(item)}" class="flex justify-start items-center">
       <div class="font-mono light-green h6 xs-hide">#{{ item.blockNumber }}</div>
 
+      <!-- Clover Transfered -->
       <template v-if="item.name === 'Clovers_Transfer'">
         <div class="pr3 sm-px3 flex-none">
           <router-link :to="isBurned(item) ? '' : cloverLink(item.data._tokenId)">
@@ -17,8 +18,7 @@
         <template v-else-if="isFromClover(item)">
           <div class="pr3 h2">&xodot;</div>
           <div class="pr1 light-green">Sent to</div>
-
-          <div class="font-mono truncate">{{ userName(item.data._to) }}</div>
+          <router-link class="block font-mono truncate hover-underline" :to="userRt(item.data._to)">{{ userName(item.data._to) }}</router-link>
         </template>
         <template v-else-if="isBorn(item)">
           <div class="pr3 h2">&xodot;</div>
@@ -26,12 +26,13 @@
         </template>
         <template v-else>
           <div class="pr3 h2">&xodot;</div>
-          <div class="font-mono truncate">{{ userName(item.data._from) }}</div>
+          <router-link class="block font-mono truncate hover-underline" :to="userRt(item.data._from)">{{ userName(item.data._from) }}</router-link>
           <div class="pr1 light-green">&nbsp;sent to&nbsp;</div>
-          <div class="font-mono truncate">{{ userName(item.data._to) }}</div>
+          <router-link class="block font-mono truncate hover-underline" :to="userRt(item.data._to)">{{ userName(item.data._to) }}</router-link>
         </template>
       </template>
 
+      <!-- Clover price updated -->
       <template v-else-if="item.name === 'SimpleCloversMarket_updatePrice'">
         <div class="pr3 sm-px3 flex-none">
           <router-link :to="cloverLink(item.data._tokenId)">
@@ -48,13 +49,12 @@
         </div>
       </template>
 
+      <!-- Bought Tokens -->
       <template v-else-if="item.name === 'ClubTokenController_Buy'">
         <div class="h1 mr3 sm-mx3 center black border circle" style="width:50px;height:50px">&clubs;</div>
         <div class="pr3 h3 line-height-1">&nearr;</div>
         <div class="font-mono truncate">
-          <router-link :to="'/users/' + item.data.buyer">
-            {{ userName(item.data.buyer) }}
-          </router-link>
+          <router-link class="hover-underline" :to="'/users/' + item.data.buyer">{{ userName(item.data.buyer) }}</router-link>
           </div>
         <div class="nowrap pl1">
           <span class="light-green">bought </span>
@@ -62,16 +62,18 @@
         </div>
       </template>
 
+      <!-- Sold Tokens -->
       <template v-else-if="item.name === 'ClubTokenController_Sell'">
         <div class="h1 mr3 sm-mx3 center black border circle" style="width:50px;height:50px">&clubs;</div>
         <div class="pr3 h3 line-height-1">&searr;</div>
-        <div class="font-mono truncate">{{ userName(item.data.seller) }}</div>
+        <router-link class="font-mono truncate hover-underline" :to="userRt(item.data.seller)">{{ userName(item.data.seller) }}</router-link>
         <div class="nowrap pl1">
           <span class="light-green">sold </span>
           <span class="font-mono">{{ price(item.data.tokens) }} &clubs;</span>
         </div>
       </template>
 
+      <!-- Bought RFT Shares -->
       <template v-else-if="item.name === 'CurationMarket_Buy'">
         <div class="pr3 sm-px3 flex-none">
           <router-link :to="cloverLink(item.data._tokenId)">
@@ -86,6 +88,7 @@
         </div>
       </template>
 
+      <!-- Sold RFT Shares -->
       <template v-else-if="item.name === 'CurationMarket_Sell'">
         <div class="pr3 sm-px3 flex-none">
           <router-link :to="cloverLink(item.data._tokenId)">
@@ -100,6 +103,7 @@
         </div>
       </template>
 
+      <!-- New Comment -->
       <template v-else-if="item.name === 'Comment_Added'">
         <div class="pr3 sm-px3 flex-none">
           <router-link :to="cloverLink(item.data.board)">
@@ -109,10 +113,11 @@
         <div class="pr3 h3">
           <chat-icon :size="15" :blank="true" :invert="false"/>
         </div>
-        <div class="light-green">New comment by&nbsp;</div>
-        <div class="font-mono truncate">{{ item.data.userName }}</div>
+        <div class="light-green">New comment by&emsp;</div>
+        <router-link class="block font-mono truncate hover-underline" :to="userRt(item.data.userAddress)">{{ item.data.userName }}</router-link>
       </template>
 
+      <!-- Renamed -->
       <template v-else-if="item.name === 'CloverName_Changed'">
         <div class="pr3 sm-px3 flex-none">
           <router-link :to="cloverLink(item.data.board)">
@@ -121,8 +126,7 @@
         </div>
         <div class="pr3 h3">✎</div>
         <div>
-          <span class="font-mono truncate">{{ formatName(item.data.prevName) || '' }}</span>
-          <span class="light-green ">&emsp;is now called&emsp;</span>
+          <span class="light-green ">is now named&emsp;</span>
           <span>{{ item.data.newName }}</span>
         </div>
       </template>
@@ -170,6 +174,9 @@ export default {
       let n = makeBn(string)
       // get rid of trailing zeros
       return parseFloat(prettyBigNumber(n, decimals))
+    },
+    userRt (addr) {
+      return {name: 'User', params: {addr: addr}}
     }
   },
   components: { ChatIcon }
