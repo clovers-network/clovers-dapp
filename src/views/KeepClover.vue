@@ -75,7 +75,8 @@ export default {
       action: 'keep',
       value: null,
       reward: null,
-      submitting: false
+      submitting: false,
+      submitted: false
     }
   },
   watch: {
@@ -182,6 +183,7 @@ export default {
     handleSuccess (msg, clover) {
       this.selfDestructMsg({msg, type: 'success'})
       this.$store.commit('REMOVE_SAVED_CLOVER', this.clover)
+      this.submitted = true
     },
 
     ...mapMutations({saveClover: 'SAVE_CLOVER'}),
