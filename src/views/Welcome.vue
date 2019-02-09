@@ -30,7 +30,7 @@
             bg="green")
       hr
       router-link.block.mb3(
-        :to="{ name: 'Activity' }")
+        :to="{ name: 'Market' }")
         h2.h2.green.font-exp The Market
         img.p3(src="/img/feed.svg")
         .px3.py2.black This is where Clovers are bought & sold for Club Token.
