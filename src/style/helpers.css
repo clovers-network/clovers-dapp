@@ -9,6 +9,7 @@
 .h7 { font-size: .94rem; }
 .h8 { font-size: .75rem; }
 .w-100{width:100%;}
+.w-1em{width:1em;}
 .h-100{height:100%;}
 .h-header{height:var(--height-header);}
 .h-bttm-bar{height:var(--height-bttm-bar);}
@@ -54,6 +55,7 @@
 .bg-inherit { background-color: inherit; }
 .bg-transparent { background-color: transparent;}
 .bg-dark-gray { background-color: var(--dark-gray);}
+.bg-lightest-green{ background-color: var(--lightest-green); }
 .bg-current-color{background-color: currentColor;}
 .bg-green { background-color: var(--green); }
 .bg-white { background-color: white; }
@@ -85,6 +87,8 @@
 .pointer-events-none{ pointer-events: none }
 .pointer-events-auto{pointer-events: auto}
 .not-allowed { cursor: not-allowed; }
+
+.hover-underline:hover{text-decoration: underline;}
 
 .rotate-180 { transform: Rotate(180DEG); }
 .transl-x-100{ transform: translateX(100%); }

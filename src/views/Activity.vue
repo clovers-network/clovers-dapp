@@ -71,6 +71,7 @@
           </nav>
 
           <ul class="m0 p0 list-reset">
+            <!-- log item -->
             <li v-for="log in activity" :key="log.id || log.transactionHash" class="border-top">
               <activity-item :item="log"/>
             </li>
