@@ -1,9 +1,9 @@
 <template lang="pug">
   article.green.relative(v-if="user")
     header.sticky.top-header-h.left-0.bg-white.z1.border-bottom.md-py1
-      h1.block.m-auto.pt2.font-mono.h-header.flex
+      h1.block.m-auto.px2.font-mono.h-header.flex
         span.block.m-auto {{username}}
-        span.block.m-auto {{prettyBigNumber(user.balance)}} ♣&#xFE0E;
+        //- span.block.m-auto {{prettyBigNumber(user.balance)}} ♣&#xFE0E;
     section
       clover-list-cards(v-if="clovers.length", :clovers="clovers")
 </template>
