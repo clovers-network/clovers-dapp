@@ -126,8 +126,8 @@
         </div>
         <div class="pr3 h3">✎</div>
         <div>
-          <span class="light-green ">is now named&emsp;</span>
-          <span>{{ item.data.newName }}</span>
+          <span class="light-green">is now named&ensp;</span>
+          <router-link class="hover-underline" :to="{name: 'Clover', params:{board:item.data.board}}">{{ item.data.newName }}</router-link>
         </div>
       </template>
 
