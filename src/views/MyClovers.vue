@@ -89,6 +89,6 @@ export default {
       }
     }
   },
-  components: { CloverListCards, CloverItemRow },
+  components: { CloverListCards, CloverItemRow }
 }
 </script>

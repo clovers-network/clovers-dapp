@@ -306,11 +306,11 @@ export default {
     return axios.get(url, {
       params: { ...filters }
     }).then(({ data }) => commit('SET_PAGED_CLOVERS', data))
-    .catch((err) => {
-      if (err.response && err.response.data) {
-        commit('SET_PAGED_CLOVERS', err.response.data)
-      }
-    })
+      .catch((err) => {
+        if (err.response && err.response.data) {
+          commit('SET_PAGED_CLOVERS', err.response.data)
+        }
+      })
   },
 
   getClover ({ state, commit }, board) {

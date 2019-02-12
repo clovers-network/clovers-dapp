@@ -151,7 +151,7 @@ export default {
     },
     feedFilterName () {
       let type = null
-      let by = !!this.filters.sort ? ' by Price' : ''
+      let by = this.filters.sort ? ' by Price' : ''
       let order = this.filters.asc ? ' (oldest first)' : ''
 
       switch (this.filters.filter) {
