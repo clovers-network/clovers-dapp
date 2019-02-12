@@ -1,45 +1,60 @@
 <template>
   <div>
     <div class="sticky z1 border-bottom green font-mono bg-white top-header-h">
-      <div class="center col-12">
-        <div class="relative" :class="{'bg-green white': feedFilter !== 'all'}">
+      <div :class="filtersColors" class="transition-delay center col-12">
+        <div class="relative">
           <div @click.stop="toggleFilters" class="h-header col-12 flex items-center justify-center pointer">
-            <span class="h5 block">{{filtersVisible ? 'Close' : feedFilterName}}</span>
+            <div>
+              <span class="h5">{{ filtersVisible ? 'Close' : feedFilterName }}</span>
+              <span v-if="!filtersVisible" class="h5 opacity-50 pl1">{{ filters.page }} of {{ maxPage }}</span>
+            </div>
             <div v-show="!filtersVisible" class="absolute top-0 right-0 h-100 flex items-center justify-center" style="width:40px">
               <img class="block" src="~../assets/icons/sort-arrows.svg" width="20"/>
             </div>
           </div>
-          <div v-show="feedFilter !== 'all' && !filtersVisible" class="absolute top-0 right-0 h-100 flex items-center justify-center" style="width:40px" @click.stop="feedFilter = 'all'">
+          <div v-show="showFilters" class="absolute top-0 right-0 h-100 flex items-center justify-center pointer" style="width:40px" @click.stop="addNew">
             <svg-x width="14" height="14" />
           </div>
         </div>
         <transition name="fade">
           <div
-            v-if="filtersVisible"
-            class="absolute top-100 left-0 right-0 border-bottom" :class="feedFilter !== 'all' ? 'bg-green white' : 'bg-white green'">
-            <div class="flex left-align">
+            v-if="filtersVisible" @click.stop
+            class="absolute top-100 left-0 right-0 border-bottom bg-inherit">
+            <div class="flex left-align items-end">
               <div class="col-6 pt1 pb2 pl2 pr1">
                 <div class="flex flex-column">
                   <p class="h5 mb1 font-reg">Type</p>
                   <div class="border center h3 select">
-                    <select v-model="feedFilter">
-                      <option value="all">All</option>
-                      <option value="market">For sale</option>
-                      <option value="curationMarket">RFT</option>
+                    <select v-model="filters.filter">
+                      <option :value="undefined">All</option>
+                      <option value="forsale">For sale</option>
+                      <option value="rft">RFT</option>
                     </select>
                   </div>
                 </div>
               </div>
-              <div class="col-6 pt1 pb2 pr2 pl1">
+              <div class="col-5 pt1 pb2 pr2 pl1">
                 <div class="flex flex-column">
                   <p class="h5 mb1 font-reg">Sort</p>
                   <div class="border center h3 select">
-                    <select v-model="sortBy">
-                      <option value="modified">Date</option>
+                    <select v-model="filters.sort">
+                      <option :value="undefined">Date</option>
                       <option value="price">Price</option>
                     </select>
                   </div>
                 </div>
+              </div>
+              <div class="col-1 pb2 pr1">
+                <span v-if="!filters.asc">
+                  <button @click="filters.asc = true" class="pointer p2 h3">
+                    &darr;
+                  </button>
+                </span>
+                <span v-else>
+                  <button @click="filters.asc = false" class="pointer p2 h3">
+                    &uarr;
+                  </button>
+                </span>
               </div>
             </div>
           </div>
@@ -47,13 +62,30 @@
       </div>
     </div>
 
+    <nav v-if="prevPossible || nextPossible" class="list-reset border-bottom flex h5 green">
+      <li v-if="prevPossible" @click="back" class="col-6 flex-grow pointer px2 py3 center">
+        <span>&larr; Previous</span>
+      </li>
+      <li v-if="nextPossible" @click="forward" class="col-6 flex-grow pointer px2 py3 center">
+        <span>Next &rarr;</span>
+      </li>
+    </nav>
+
     <!-- Clover List -->
-    <clover-list-cards :clovers="clovers" />
+    <div v-if="hasResults" :class="{'opacity-50': loading}" class="fade-enter-active">
+      <clover-list-cards :clovers="clovers" />
+    </div>
 
-    <!-- Pagination -->
-    <page-nav :prevRt="prevPage" :nextRt="nextPage" />
+    <nav v-if="(prevPossible || nextPossible) && hasResults" class="list-reset flex h5 green">
+      <li v-if="prevPossible" @click="back" class="col-6 flex-grow pointer px2 py4 center">
+        <span>&larr; Previous</span>
+      </li>
+      <li v-if="nextPossible" @click="forward" class="col-6 flex-grow pointer px2 py4 center">
+        <span>Next &rarr;</span>
+      </li>
+    </nav>
 
-    <div v-if="newCloversCount" @click="showNewClovers" class="sticky bottom-0 bg-green white p2 center h-bttm-bar flex pointer">
+    <div v-if="newCloversCount" @click="addNew" class="sticky bottom-0 bg-green white p2 center h-bttm-bar flex pointer">
       <span class="block m-auto font-exp">Show {{ newCloversCount }} new {{ pluralize('Clover', newCloversCount) }}</span>
     </div>
   </div>
@@ -61,18 +93,26 @@
 
 <script>
 import store from '@/store'
-import { mapState, mapGetters, mapMutations } from 'vuex'
-import { cloverLink, pluralize } from '@/utils'
+import { mapState, mapGetters } from 'vuex'
+import { cloverLink, pluralize, cleanObj } from '@/utils'
 import CloverListCards from '@/components/CloverList--Cards'
 import PageNav from '@/components/PageNav'
 import svgX from '@/components/Icons/SVG-X'
-const pageSize = 12
+
+const apiUrl = process.env.VUE_APP_API_URL + '/clovers'
 
 export default {
   name: 'Feed',
   data () {
     return {
-      filtersVisible: false
+      filtersVisible: false,
+      loading: false,
+      filters: {
+        sort: undefined,
+        filter: undefined,
+        page: undefined,
+        asc: undefined
+      }
     }
   },
   head: {
@@ -82,75 +122,57 @@ export default {
     ]
   },
   computed: {
-    feedFilterName () {
-      switch (this.feedFilter) {
-        case 'all': return 'All'
-        case 'market': return 'For Sale'
-        case 'curationMarket': return 'RFT'
-        default: return ''
-      }
-    },
-    page () {
-      return Number(this.$route.params.page) || 1
+    results () {
+      return this.$store.state.pagedClovers
     },
     clovers () {
-      const start = (this.page - 1) * pageSize
-      const end = this.page * pageSize
-      return this.$store.getters.sortedClovers.slice(start, end)
+      if (!this.results.results) return []
+      return this.results.results
     },
-    allLoadedCloverCount () {
-      return this.$store.state.allClovers.length
+    prevPossible () {
+      return this.results.prevPage
     },
-    nextPage () {
-      if (this.clovers.length < 12) return false
-      return `/market/page/${this.page + 1}`
+    nextPossible () {
+      return this.results.nextPage
     },
-    prevPage () {
-      if (this.page === 1) {
-        return false
-      } else if (this.page === 2) {
-        return '/market'
-      } else {
-        return `/market/page/${this.page - 1}`
+    maxPage () {
+      if (!this.results.allResults) return 0
+      return Math.ceil(this.results.allResults / 12)
+    },
+    hasResults () {
+      return this.results.results && !!this.results.results.length
+    },
+    isFiltered () {
+      return !!Object.keys(this.$route.query).length
+    },
+    showFilters () {
+      if (!this.hasResults) return false
+      return !!this.filters.filter || this.filters.asc || !!this.filters.sort
+    },
+    feedFilterName () {
+      let type = null
+      let by = !!this.filters.sort ? ' by Price' : ''
+      let order = this.filters.asc ? ' (oldest first)' : ''
+
+      switch (this.filters.filter) {
+        case 'forsale':
+          type = 'For Sale'; break
+          // return 'For Sale' + by
+        case 'rft':
+          type = 'RFT'; break
+          // return 'RFT' + by
+        default:
+          type = 'All'
+          // return 'All' + by
       }
+      return type + by + order
     },
-    newCloversCount () {
-      return this.newClovers.length
-    },
-    filterBorderStyles () {
-      if (!this.filtersVisible) return
-      return {
-        borderTopColor: 'rgb(0, 180, 100)'
-      }
-    },
-    sortBy: {
-      get () {
-        return this.$store.state.sortBy
-      },
-      set (newVal) {
-        this.updateOrder(newVal)
-        this.toggleFilters()
-      }
-    },
-    feedFilter: {
-      get () {
-        return this.$store.state.feedFilter
-      },
-      set (newVal) {
-        this.$router.push({name: 'Market'})
-        this.updateFilter(newVal)
-        this.hideFilters()
-      }
-    },
-    dropArrowRotate () {
-      if (!this.filtersVisible) return
-      return {
-        transform: 'rotate(180deg)'
-      }
+    filtersColors () {
+      return this.showFilters ? 'bg-green white' : 'bg-white green'
     },
 
     ...mapState(['newClovers']),
-    ...mapGetters(['newCloversCount', 'curationMarketAddress'])
+    ...mapGetters(['newCloversCount'])
   },
   methods: {
     cloverLink,
@@ -163,32 +185,71 @@ export default {
     toggleFilters () {
       this.filtersVisible = !this.filtersVisible
     },
-    showFilters () {
-      this.filtersVisible = true
-    },
     hideFilters () {
       this.filtersVisible = false
     },
 
-    ...mapMutations({
-      showNew: 'SHOW_NEW_CLOVERS',
-      updateOrder: 'UPDATE_FEED_ORDER',
-      updateFilter: 'UPDATE_FEED_FILTER'
-    })
+    setFilters () {
+      this.$store.commit('CLEAR_NEW_CLOVERS')
+      const { query } = this.$route
+      this.filters.filter = query.filter || undefined
+      this.filters.sort = query.sort || undefined
+      this.filters.page = query.page || 1
+      this.filters.asc = query.asc || false
+    },
+    query () {
+      if (this.loading) return
+      this.filtersVisible = false
+      this.loading = true
+
+      this.$store.dispatch('getPagedClovers', {
+        url: apiUrl,
+        filters: this.filters
+      }).finally(() => {
+        this.loading = false
+      })
+    },
+    addNew () {
+      if (this.isFiltered) {
+        this.$router.push({ name: 'Market' })
+      } else {
+        this.results.results.unshift(...this.newClovers)
+        this.$store.commit('CLEAR_NEW_CLOVERS')
+      }
+    },
+    back () {
+      if (!this.prevPossible) return
+      console.log('going back')
+      this.filters.page = this.results.prevPage
+    },
+    forward () {
+      if (!this.nextPossible) return
+      console.log('going forward')
+      this.filters.page = this.results.nextPage
+    }
   },
   watch: {
-    /* -------- paginated version ---------------- */
-    // page (newVal, oldVal) {
-    //   if (Number(newVal) > Number(oldVal)) {
-    //     store.dispatch('getClovers', newVal)
-    //   }
-    // }
+    filters: {
+      deep: true,
+      handler ({ filter }) {
+        console.log('filters changed')
+        let q = { ...this.filters }
+        cleanObj(q)
+        const cf = this.$route.query.filter
+        if (cf !== filter) {
+          delete q.page
+        }
+        this.$router.push({ name: 'Market', query: { ...q } })
+      }
+    },
+    $route () {
+      this.setFilters()
+      this.query()
+    }
   },
   mounted () {
-    if (!this.clovers.length) {
-      let lastPage = Math.ceil(this.allLoadedCloverCount / 12)
-      this.$router.replace(`/market/page/${lastPage}`)
-    }
+    this.setFilters()
+    this.query()
     this.$store.dispatch('getClubTokenPrice')
   },
   components: { CloverListCards, svgX, PageNav }

@@ -105,3 +105,13 @@ export function abbrvAddr (addr) {
   // Function to abbreviate 0x addresses
   return addr.substr(0, 6) + addr.slice(-4)
 }
+
+export function cleanObj (o) {
+  for (let n in o) {
+    if ((o[n] === null || o[n] === undefined) ||
+        typeof o[n] === 'number' && o[n] === 1 ||
+        typeof o[n] === 'boolean' && !o[n]) {
+      delete o[n]
+    }
+  }
+}

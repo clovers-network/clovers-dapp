@@ -149,18 +149,8 @@ export default {
     clover.price = new BigNumber(clover.price)
     state.newClovers.unshift(clover)
   },
-  SHOW_NEW_CLOVERS (state) {
-    // move new chain clovers to feed
-    let i = state.newClovers.length
-    while (i--) {
-      if (
-        state.allClovers.findIndex(c => c.board === state.newClovers[i].board) >
-        -1
-      ) {
-        state.newClovers.splice(i, 1)
-      }
-    }
-    state.allClovers.unshift(...state.newClovers.splice(0))
+  CLEAR_NEW_CLOVERS (state) {
+    state.newClovers = []
   },
   UPDATE_FEED_ORDER (state, sortBy) {
     state.sortBy = sortBy
@@ -169,51 +159,44 @@ export default {
     state.feedFilter = filter
   },
 
-  UPDATE_CLOVER_PRICE (state, { byteBoard, newVal }) {
-    // let i = state.allSavedClovers.findIndex(cl => cl.byteBoard === byteBoard)
-    // Object.assign(state.allSavedClovers[i], { startPrice: newVal })
-  },
-  STORED_CLOVERS (state, clovers) {
-    // state.allSavedClovers = clovers
-  },
-  // UPDATE_ALLCLOVERS (state, allClovers) {
-  //   state.allClovers = allClovers
-  // },
-  GOT_USERS (state, data) {
-    state.allUsers = data
+  SET_CURRENT_CLOVER (state, clover) {
+    state.currentClover = formatClover(clover)
   },
 
-  // clovers on chain
-  GOT_CLOVERS (state, data) {
-    state.allClovers = data.map(c => formatClover(c))
+  SET_USER (state, data) {
+    state.accountData = data
   },
+  SET_OTHER_USER (state, data) {
+    state.otherUser = data
+  },
+
+  SET_PAGED_CLOVERS (state, page) {
+    state.pagedClovers = page
+  },
+
   ADD_CLOVER (state, clover) {
-    clover = formatClover(clover)
-    let cloverIndex = state.allClovers.findIndex(v => v.board === clover.board)
-    if (cloverIndex < 0) {
-      // clover.price = new BigNumber(clover.price)
-      state.allClovers.push(clover)
+    const { board } = clover
+    const cb = state.currentClover.board && state.currentClover.board.toLowerCase()
+    if (cb === board.toLowerCase()) {
+      state.currentClover = {
+        ...state.currentClover,
+        ...formatClover(clover)
+      }
     } else {
-      state.allClovers.splice(cloverIndex, 1, clover)
-    }
-  },
-  UPDATE_CLOVER (state, clover) {
-    let cloverKey = state.allClovers.findIndex(
-      u => u.board.toLowerCase() === clover.board.toLowerCase()
-    )
-    if (cloverKey > -1) {
-      state.allClovers.splice(cloverKey, 1, clover)
+      if (!state.pagedClovers.results) return
+      let inPage = state.pagedClovers.results.findIndex(c => c.board === board)
+      if (inPage > -1) {
+        console.log('update in feed')
+        state.pagedClovers.results.splice(inPage, 1, clover)
+      }
     }
   },
 
   UPDATE_USER (state, user) {
-    let userKey = state.allUsers.findIndex(
-      u => u.address.toLowerCase() === user.address.toLowerCase()
-    )
-    if (userKey > -1) {
-      state.allUsers.splice(userKey, 1, user)
-    } else {
-      state.allUsers.push(user)
+    if (state.account === user.address) {
+      state.accountData = user
+    } else if (state.otherUser && state.otherUser.address === user.address) {
+      state.otherUser = user
     }
   },
 

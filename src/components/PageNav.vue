@@ -15,6 +15,3 @@ export default {
   props: ['prevRt', 'nextRt']
 }
 </script>
-
-<style>
-</style>

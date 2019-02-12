@@ -70,7 +70,6 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
 import WaveyBtn from '@/components/Icons/WaveyMenu'
 import Pig from '@/components/Pig'
 import PersonIcon from '@/components/Icons/PersonIcon'

@@ -109,16 +109,15 @@ export default {
   },
   methods: {
     cloverImage,
+
     cloverPrice ({ price }) {
+      const p = new BigNumber(price, 16)
       return prettyBigNumber(price, 0)
     },
     forSale ({ price }) {
-      if (typeof price !== 'object') price = new BigNumber(price)
+      if (typeof price !== 'object') price = new BigNumber(price, 16)
       return price.gt(0)
     }
   }
 }
 </script>
-
-<style>
-</style>
