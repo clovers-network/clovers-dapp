@@ -94,7 +94,7 @@
 <script>
 import store from '@/store'
 import { mapState, mapGetters } from 'vuex'
-import { cloverLink, pluralize, cleanObj } from '@/utils'
+import { pluralize, cleanObj } from '@/utils'
 import CloverListCards from '@/components/CloverList--Cards'
 import PageNav from '@/components/PageNav'
 import svgX from '@/components/Icons/SVG-X'
@@ -152,18 +152,15 @@ export default {
     feedFilterName () {
       let type = null
       let by = this.filters.sort ? ' by Price' : ''
-      let order = this.filters.asc ? ' (oldest first)' : ''
+      let order = !this.filters.asc ? '' : this.filters.sort ? ' (low to high)' : ' (oldest first)'
 
       switch (this.filters.filter) {
         case 'forsale':
           type = 'For Sale'; break
-          // return 'For Sale' + by
         case 'rft':
           type = 'RFT'; break
-          // return 'RFT' + by
         default:
           type = 'All'
-          // return 'All' + by
       }
       return type + by + order
     },
@@ -175,13 +172,8 @@ export default {
     ...mapGetters(['newCloversCount'])
   },
   methods: {
-    cloverLink,
     pluralize,
 
-    showNewClovers () {
-      this.$router.push({name: 'Market'})
-      this.showNew()
-    },
     toggleFilters () {
       this.filtersVisible = !this.filtersVisible
     },
@@ -219,12 +211,10 @@ export default {
     },
     back () {
       if (!this.prevPossible) return
-      console.log('going back')
       this.filters.page = this.results.prevPage
     },
     forward () {
       if (!this.nextPossible) return
-      console.log('going forward')
       this.filters.page = this.results.nextPage
     }
   },
@@ -232,7 +222,6 @@ export default {
     filters: {
       deep: true,
       handler ({ filter }) {
-        console.log('filters changed')
         let q = { ...this.filters }
         cleanObj(q)
         const cf = this.$route.query.filter
