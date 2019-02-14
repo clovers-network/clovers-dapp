@@ -12,7 +12,7 @@
         //- chart
         .col-12.relative
           span.block.absolute.left-0.top-0.p2.h6 Price Graph in {{collateral}} per <span v-html="currentToken" />
-          span.block.absolute.right-0.top-0.p2.h6.z2.pointer(@click="switchMax") Last {{orders.slice(0, max).length}} trades
+          span.block.absolute.right-0.top-0.p2.h6.pointer(@click="switchMax") Last {{orders.slice(0, max).length}} trades
           chart.border-bottom(:market="market", :orders="orders.slice(0,max)")
         //- details
         .col-12.flex.flex-wrap(:class="{'flex-order_-1': isRFT}")

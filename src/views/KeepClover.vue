@@ -41,10 +41,9 @@
               p {{ infoText }}
       //- submitting
       footer(v-else)
-        .bg-green.white.col-12.h--bar.font-mono.items-center
-          .p3.center
-            img(:src="cloverImage(clover, 36)")
-            p.m-auto.pt2 {{ submitted }}
+        .bg-green.white.col-12.h--bar.font-mono.items-center.pointer
+          router-link.p3.center(:to="('/clovers/' + clover.board)")
+            p.m-auto.pt2 Transaction complete! Click here to view Clover.
 </template>
 
 <script>
@@ -78,6 +77,11 @@ export default {
       reward: null,
       submitting: false,
       submitted: false
+    }
+  },
+  watch: {
+    _reversi () {
+      this.checkClover()
     }
   },
   computed: {
@@ -152,8 +156,17 @@ export default {
         this.handleError(error)
       }
     },
-    getValue () {
+    checkClover () {
       if (!this.clover) return null
+      this.cloverExists(this._reversi.byteBoard).then((exists) => {
+        if (!exists) return
+        this.addMessage({
+          type: 'error',
+          title: 'This Clover already exists',
+          msg: 'Click here to view the original',
+          link: '/clovers/0x' + this._reversi.byteBoard
+        })
+      })
       const syms = this._reversi.returnSymmetriesAsBN()
       this.$store.dispatch('getReward', syms).then(wei => {
         wei = new BigNumber(wei)
@@ -169,19 +182,19 @@ export default {
     },
     handleSuccess (msg, clover) {
       this.selfDestructMsg({msg, type: 'success'})
-      this.submitted = msg
       this.$store.commit('REMOVE_SAVED_CLOVER', this.clover)
+      this.submitted = true
     },
 
     ...mapMutations({saveClover: 'SAVE_CLOVER'}),
-    ...mapActions(['buy', 'sell', 'addMessage', 'selfDestructMsg'])
+    ...mapActions(['buy', 'sell', 'addMessage', 'selfDestructMsg', 'cloverExists'])
   },
   beforeRouteEnter (to, from, next) {
     lastRt = from && from.name
     next()
   },
   mounted () {
-    this.getValue()
+    this.checkClover()
   },
   components: { WaveyMenu, HeartIcon }
 }

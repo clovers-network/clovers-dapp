@@ -14,6 +14,7 @@ self.addEventListener(
       function mine () {
         hashRate++
         reversi.mine()
+        // reversi.playGameMovesString('c4c3e6d6c6c5c2b4a4')
         if (reversi.symmetrical) {
           self.postMessage(reversi)
         }

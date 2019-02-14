@@ -48,7 +48,7 @@ export default new Router({
       ]
     },
     {
-      path: '/market(/page/)?:page?',
+      path: '/market',
       name: 'Market',
       component: Feed,
       meta: { title: 'Market' }
@@ -101,7 +101,14 @@ export default new Router({
       name: 'Clover',
       component: Clover,
       props: true,
-      meta: {title: 'Buy'}
+      meta: {title: 'Buy'},
+      children: [
+        {
+          path: 'comments',
+          name: 'Clover/Comments',
+          component: Clover
+        }
+      ]
     },
 
     {

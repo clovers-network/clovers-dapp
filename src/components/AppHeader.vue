@@ -18,12 +18,16 @@
             <img class="block" v-show="!mining" :src="showMenu
               ? require('../assets/icons/hamburger-white.svg')
               : require('../assets/icons/hamburger.svg')" />
-            <div v-if="showBadge"
-              class="found-badge border border-green bounceIn animated">
-                <span class="block">
-                  {{ symms }}
-                </span>
-            </div>
+            <span @click.stop>
+              <router-link :to="{ name: 'Account' }">
+                <div v-if="showBadge"
+                  class="found-badge border border-green bounceIn animated">
+                    <span class="block">
+                      {{ symms }}
+                    </span>
+                </div>
+              </router-link>
+            </span>
         </button>
         <!-- back btn -->
         <button v-else class="pointer left-align" @click="$router.go(-1)">Back</button>
@@ -70,7 +74,6 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex'
 import WaveyBtn from '@/components/Icons/WaveyMenu'
 import Pig from '@/components/Pig'
 import PersonIcon from '@/components/Icons/PersonIcon'
@@ -95,7 +98,7 @@ export default {
       return this.$store.state.logs.length
     },
     showBackButton () {
-      return this.$route.name === "Clover" &&
+      return this.$route.name === 'Clover' &&
         this.$route.meta.fromName !== null
     }
   },
@@ -134,8 +137,8 @@ export default {
 <style lang="css" scoped>
   .found-badge {
     position: absolute;
-    left: 15px;
-    top: -3px;
+    left: 53px;
+    top: 6px;
     border-radius: 16px;
     padding: 3px;
     padding-left: 7px;

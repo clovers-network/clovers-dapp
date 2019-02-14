@@ -1,8 +1,10 @@
 <template lang="pug">
   div
+    //- toggle button
     .pointer(@click="toggleChat")
       chat-icon.block(:invert="commentCount > 0" :count="commentCount")
 
+    //- comments view
     transition(name="fade")
       section(v-if="showChat", @click.stop.prevent, name="comments").fixed-center-max-width.top-0.bottom-0.bg-green.white.z4.overflow-hidden
         .flex.flex-column.chat-scroll
@@ -60,7 +62,7 @@ export default {
   data () {
     return {
       socket: null,
-      showChat: false,
+      showChat: this.$route.name === 'Clover/Comments',
       comments: [],
       newComment: '',
       posting: false
@@ -85,11 +87,9 @@ export default {
   },
   methods: {
     toggleChat () {
-      if (!this.showChat) {
-        this.showChat = true
-      } else {
-        this.showChat = false
-      }
+      this.showChat = !this.showChat
+      const rtName = this.showChat ? 'Clover/Comments' : 'Clover'
+      return this.board && this.$router.replace({name: rtName, params: {board: this.board}})
     },
     commentDate (d) {
       return moment(d).fromNow()
