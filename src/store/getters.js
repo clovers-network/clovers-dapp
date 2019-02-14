@@ -4,28 +4,35 @@ import { prettyBigNumber, abbrvAddr } from '@/utils'
 import BigNumber from 'bignumber.js'
 
 export default {
+  user ({ account, accountData }) {
+    if (!account) return { address: null, name: 'anon', clovers: [], balance: '0' }
+    return accountData || {
+      address: account,
+      name: account,
+      clovers: [],
+      balance: '0'
+    }
+  },
+
   userBalance (_, { user }) {
-    return user && user.balance
+    return user ? user.balance : '0'
   },
-  prettyUserBalance (_, { user }) {
-    if (!user) return prettyBigNumber('0', 0)
-    return prettyBigNumber(user.balance, 0)
+  prettyUserBalance (_, { userBalance }) {
+    return prettyBigNumber(userBalance, 0)
   },
-  userName: ({ allUsers, nullAddress }, { cloversBankAddress, curationMarketAddress }) => (addr) => {
-    let name = addr === cloversBankAddress ? 'Clovers'
-      : addr === curationMarketAddress ? 'Curation Mrkt.'
-        : addr === nullAddress ? 'Nobody' : null
+  userName: ({ nullAddress }, { cloversBankAddress, curationMarketAddress }) => (user) => {
+    let { address } = user
+    let name = address === cloversBankAddress ? 'Clovers'
+      : address === curationMarketAddress ? 'Curation Mrkt.'
+        : address === nullAddress ? 'Nobody' : null
     if (name) return name
 
-    const user = allUsers.find((u) => u.address.toLowerCase() === addr.toLowerCase())
-    if (!user) return name
-
     name = user.name && user.name.trim() !== '' ? user.name
-      : user.ens ? user.ens : addr
+      : user.ens ? user.ens : address
 
-    if (name.startsWith('0x')) {
-      name = abbrvAddr(name)
-    }
+    // if (name.startsWith('0x')) {
+    //   name = abbrvAddr(name)
+    // }
     return name
   },
   sortedClovers ({ sortBy, feedFilter, allClovers }, { curationMarketAddress }) {
@@ -55,28 +62,17 @@ export default {
   userClovers ({ allClovers }, { user }) {
     if (!user) return []
     if (!allClovers.length) return []
-    return user.clovers
-      .slice(0)
-      .map(id => {
-        return allClovers.find(c => c.board.toLowerCase() === id.toLowerCase())
-      })
-      .sort((a, b) => {
-        return Number(b.modified) - Number(a.modified)
-      })
-  },
-  user ({ allUsers, account }) {
-    if (!account) return { address: null, name: 'anon', clovers: [] }
-    let current = allUsers.find(
-      u => u.address.toLowerCase() === account.toLowerCase()
-    )
-    if (!current) {
-      return {
-        address: account,
-        name: account,
-        clovers: []
-      }
-    }
-    return current
+    return allClovers.filter((c) => {
+      return user.address.toLowerCase() === c.owner.toLowerCase()
+    }).sort((a, b) => Number(b.modified) - Number(a.modified))
+    // return user.clovers
+    //   .slice(0)
+    //   .map(id => {
+    //     return allClovers.find(c => c.board.toLowerCase() === id.toLowerCase())
+    //   })
+    //   .sort((a, b) => {
+    //     return Number(b.modified) - Number(a.modified)
+    //   })
   },
   newCloversCount ({ newClovers }) {
     return newClovers.length

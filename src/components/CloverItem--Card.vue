@@ -26,7 +26,7 @@
           h6.h7 {{isRFT ? 'Market Cap' : 'Owner'}}
           h4.h6.font-mono.truncate
             span(v-if="isRFT") ${{ marketCapInUSD.toFormat(2) }}
-            span(v-else) {{ owner }}
+            span(v-else) {{ userName(clover.user) }}
         .px1.col-6(v-if="isRFT || clover.price.toString(10) !== '0'")
           .pl1
             h6.h7 {{ isRFT ? '&clubs; / Share' : 'Price &clubs;' }}
@@ -49,18 +49,12 @@ export default {
     clover: {type: Object, default: () => {}, required: true},
     borderLeft: false
   },
-  components: {
-    ChatIcon, SymmetryIcons
-  },
   computed: {
     marketContract () {
       return this.isRFT ? 'CurationMarket' : 'ClubTokenController'
     },
     collateral () {
       return this.isRFT ? '♣︎' : 'ETH'
-    },
-    owner () {
-      return this.userName(this.clover.owner) || '---'
     },
     isRFT () {
       // inCurationMarket
@@ -105,13 +99,11 @@ export default {
     ...mapState(['ethPrice', 'clubTokenPrice']),
     ...mapGetters(['curationMarketAddress', 'userName'])
   },
-  methods: {
-    cloverImage,
-    prettyBigNumber
-  },
-  created () {
-    console.log(this.clover.name)
-  }
+  // created () {
+  //   console.log(this.clover.name)
+  // },
+  methods: { cloverImage, prettyBigNumber },
+  components: { ChatIcon, SymmetryIcons }
 }
 </script>
 

@@ -20,13 +20,17 @@ const state = {
   // stored signin tokens
   tokens: getTokens(),
 
+  account: null,
+  accountData: null,
+
+  pagedClovers: {},
+
   // web3 stuff
   enabled: false,
   waitToPing: true,
   unlocked: false,
   querying: false,
   tryAgain: false,
-  account: null,
   networkId: null,
   correctNetwork: 4,
   contractsDeployed: false,
@@ -38,8 +42,9 @@ const state = {
   newClovers: [],
   // all pages get pushed to full list
   allClovers: [],
-  feedFilter: 'all', // 'all' || 'market'
-  sortBy: 'modified', // 'modified' || 'price'
+  currentPage: {},
+  currentClover: {},
+  otherUser: null,
 
   // saved clovers, organized by account ID
   // use getter 'picks' in views
@@ -51,7 +56,7 @@ const state = {
   market: null,
   orders: [],
 
-  allUsers: [],
+  // allUsers: [],
 
   // new log items from socket
   logs: [],

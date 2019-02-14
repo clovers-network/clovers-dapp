@@ -121,6 +121,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+import store from '@/store'
 import utils from 'web3-utils'
 import WaveyMenu from '@/components/Icons/WaveyMenu'
 import { mapState, mapActions, mapGetters } from 'vuex'
@@ -163,7 +165,6 @@ export default {
       transferToAddress: null,
       formFocussed: false,
       form: { name: null },
-      localClover: null,
       view: null,
       sellPrice: 0,
       invesment: 0,
@@ -174,6 +175,9 @@ export default {
     }
   },
   computed: {
+    clover () {
+      return this.$store.state.currentClover
+    },
     user () {
       return this.$store.state.user
     },
@@ -181,7 +185,7 @@ export default {
       return !!this.$store.getters.authHeader
     },
     showSalePrice () {
-      return this.clover && this.clover.price && this.clover.price.gt(0)
+      return this.price.gt(0)
     },
     sellPriceWei () {
       return this.sellPrice ? utils.toWei(this.sellPrice) : '0'
@@ -193,13 +197,13 @@ export default {
       )
     },
     owner () {
-      return this.clover && addrToUser(this.clover.owner)
+      return this.clover.user
     },
     prettyPrice () {
-      return this.clover && prettyBigNumber(this.clover.price, 0)
+      return prettyBigNumber(this.price, 0)
     },
     price () {
-      return this.clover && this.clover.price
+      return this.clover.price
     },
     investmentInWei () {
       return this.invesment ? utils.toWei(this.invesment) : '0'
@@ -224,8 +228,6 @@ export default {
     },
     isMyClover () {
       return (
-        this.clover &&
-        this.clover.owner &&
         this.account &&
         this.clover.owner.toLowerCase() === this.account
       )
@@ -237,7 +239,7 @@ export default {
       )
     },
     currentOwner () {
-      const owner = this.owner
+      const owner = this.owner.address
       return !owner ? '---'
         : this.isMyClover ? 'You'
           : this.isRFT ? 'Public'
@@ -246,11 +248,7 @@ export default {
               ? this.price > 0
                 ? 'Clovers'
                 : 'Pending...'
-              : owner
-    },
-    clover () {
-      let cloverIndex = this.allClovers.findIndex(c => c.board === this.board)
-      return cloverIndex >= 0 ? this.allClovers[cloverIndex] : this.localClover
+              : this.userName(this.owner)
     },
     cloverMovesString () {
       const mvs = this.clover && this.clover.moves && this.clover.moves[0]
@@ -268,10 +266,11 @@ export default {
       return this.clover && this.clover.name || this.board
     },
 
-    ...mapState(['account', 'allUsers', 'allClovers', 'orders']),
+    ...mapState(['account', 'orders']),
     ...mapGetters([
       'prettyUserBalance',
       'user',
+      'userName',
       'userBalance',
       'curationMarketAddress'
     ])
@@ -279,6 +278,7 @@ export default {
   methods: {
     cloverImage,
     prettyBigNumber,
+
     async transferTo () {
       if (this.loading) return
       try {
@@ -406,14 +406,11 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     lastRt = from && from.name
-    next()
+    const { board } = to.params
+    store.dispatch('getClover', board.toLowerCase()).then(next)
   },
   created () {
     if (this.clover) return this.updateMetaTitle(this.clover.name)
-    this.$store.dispatch('getClover', this.board).then(clvr => {
-      this.localClover = clvr
-      this.updateMetaTitle(clvr.name)
-    })
   },
   mounted () {
     this.setFormName(this.clover)

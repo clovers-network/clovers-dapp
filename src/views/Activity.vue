@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="fade-enter-active">
-
       <div @click="toggleFilters" :class="filtersColors" class="transition-delay sticky z1 border-bottom font-mono" style="top:46px">
         <div :class="{pointer: !showFilters}" class="col-12 transition-all">
           <div class="relative px2">
@@ -49,7 +48,7 @@
         </transition>
       </div>
 
-      <div v-if="hasResults" :class="{'opacity-50': loading}">
+      <div v-if="hasResults" :class="{'opacity-50': loading}" class="fade-enter-active">
         <div class="mx-auto bg-white">
 
           <div v-if="liveLogs.length" class="list-reset font-mono center" style="top:93px">
@@ -108,9 +107,8 @@ import ActivityItem from '@/components/ActivityItem'
 import svgX from '@/components/Icons/SVG-X'
 import xss from 'xss'
 import axios from 'axios'
+import { cleanObj } from '@/utils'
 
-// fetch from global.contracts.Clovers.instance._address
-const contractAddress = '0x8A0011ccb1850e18A9D2D4b15bd7F9E9E423c11b'
 const logUrl = process.env.VUE_APP_API_URL + '/logs'
 
 export default {
@@ -231,7 +229,7 @@ export default {
       deep: true,
       handler ({ filter }) {
         let q = { ...this.filters }
-        clean(q)
+        cleanObj(q)
         const cf = this.$route.query.filter
         if (cf !== filter) {
           delete q.page
@@ -256,15 +254,5 @@ export default {
     clearInterval(this.interval)
   },
   components: { ActivityItem, svgX }
-}
-
-function clean (o) {
-  for (let n in o) {
-    if ((o[n] === null || o[n] === undefined) ||
-        typeof o[n] === 'number' && o[n] === 1 ||
-        typeof o[n] === 'boolean' && !o[n]) {
-      delete o[n]
-    }
-  }
 }
 </script>
