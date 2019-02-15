@@ -158,7 +158,8 @@ export default {
   computed: {
     isMyLog () {
       const me = this.$store.state.account
-      return me && Object.values(this.item.data).includes(me)
+      const u = this.item.data.userAddress || this.item.userAddress
+      return me && u && (me.toLowerCase() === u.toLowerCase())
     },
     userName () {
       return this.parseUser(this.item.user || {})
