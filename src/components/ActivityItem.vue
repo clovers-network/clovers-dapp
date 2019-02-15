@@ -66,7 +66,7 @@
       <template v-else-if="item.name === 'ClubTokenController_Sell'">
         <div class="h1 mr2 sm-mx3 center black border circle" style="width:50px;height:50px">&clubs;&#xfe0e;</div>
         <div class="activity-itm__icon mr2 sm-mr3 h3 line-height-1">&searr;</div>
-        <router-link class="font-mono truncate hover-underline" :to="userRt(item.data.seller)">{{ userName }}</router-link>
+        <router-link class="font-mono truncate hover-underline" :to="userRt(item.userAddress)">{{ userName }}</router-link>
         <div class="nowrap pl1">
           <span class="light-green">sold&ensp;</span>
           <span>{{ price(item.data.tokens) }} &clubs;&#xfe0e;</span>
@@ -81,7 +81,9 @@
           </router-link>
         </div>
         <div class="activity-itm__icon mr2 sm-mr3 h6 red">RFT</div>
-        <div class="font-mono truncate red">{{ userName }}</div>
+        <div class="font-mono truncate red">
+          <router-link :to="userRt(item.userAddress)" class="hover-underline">{{ userName }}</router-link>
+        </div>
         <div class="red pl1">
           <span class="opacity-50">bought&ensp;</span>
           <span>{{ price(item.data.tokens) }} shares</span>
@@ -96,7 +98,9 @@
           </router-link>
         </div>
         <div class="activity-itm__icon mr2 sm-mr3 h6 red">RFT</div>
-        <div class="font-mono truncate red">{{ userName }}</div>
+        <div class="font-mono truncate red">
+          <router-link :to="userRt(item.userAddress)" class="hover-underline">{{ userName }}</router-link>
+        </div>
         <div class="red pl1">
           <span class="opacity-50">sold&ensp;</span>
           <span>{{ price(item.data.tokens) }} shares</span>
@@ -169,10 +173,10 @@ export default {
     cloverImage,
     cloverLink,
 
-    formatName (name) {
-      var re = /[0-9A-Fa-f]{6}/g
-      return !re.test(name) && name
-    },
+    // formatName (name) {
+    //   var re = /[0-9A-Fa-f]{6}/g
+    //   return !re.test(name) && name
+    // },
     isBurned ({ name, data }) {
       return name === 'Clovers_Transfer' && data._to.startsWith('0x000000000')
     },
