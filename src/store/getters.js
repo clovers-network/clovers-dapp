@@ -1,4 +1,5 @@
 import Reversi from 'clovers-reversi'
+import utils from 'web3-utils'
 import { Clovers, CurationMarket } from 'clovers-contracts'
 import { prettyBigNumber, abbrvAddr } from '@/utils'
 import BigNumber from 'bignumber.js'
@@ -30,9 +31,9 @@ export default {
     name = user.name && user.name.trim() !== '' ? user.name
       : user.ens ? user.ens : address
 
-    // if (name.startsWith('0x')) {
-    //   name = abbrvAddr(name)
-    // }
+    if (utils.isAddress(name)) {
+      name = abbrvAddr(name)
+    }
     return name
   },
   sortedClovers ({ sortBy, feedFilter, allClovers }, { curationMarketAddress }) {

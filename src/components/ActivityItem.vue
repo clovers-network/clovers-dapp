@@ -18,7 +18,7 @@
         <template v-else-if="isFromClovers(item)">
           <div class="activity-itm__icon mr2 sm-mr3 h2">&xodot;</div>
           <div class="pr1 light-green">Sent to</div>
-          <router-link class="block font-mono truncate hover-underline" :to="userRt(item.data._to)">{{ userName(item.data._to) }}</router-link>
+          <router-link class="block font-mono truncate hover-underline" :to="userRt(item.data._to)">{{ userName }}</router-link>
         </template>
         <template v-else-if="isBorn(item)">
           <div class="activity-itm__icon mr2 sm-mr3 h2">&xodot;</div>
@@ -26,9 +26,9 @@
         </template>
         <template v-else>
           <div class="activity-itm__icon mr2 sm-mr3 h2">&xodot;</div>
-          <router-link class="block font-mono truncate hover-underline" :to="userRt(item.data._from)">{{ userName(item.data._from) }}</router-link>
+          <router-link class="block font-mono truncate hover-underline" :to="userRt(item.data._from)">{{ userName }}</router-link>
           <div class="light-green nowrap">&ensp;sent to&ensp;</div>
-          <router-link class="block font-mono truncate hover-underline" :to="userRt(item.data._to)">{{ userName(item.data._to) }}</router-link>
+          <router-link class="block font-mono truncate hover-underline" :to="userRt(item.data._to)">{{ userName }}</router-link>
         </template>
       </template>
 
@@ -54,7 +54,7 @@
         <div class="h1 mr2 sm-mx3 center black border circle" style="flex:0 0 50px;height:50px">&clubs;&#xfe0e;</div>
         <div class="activity-itm__icon mr2 sm-mr3 h3 line-height-1">&nearr;</div>
         <div class="font-mono truncate">
-          <router-link class="hover-underline" :to="'/users/' + item.data.buyer">{{ userName(item.data.buyer) }}</router-link>
+          <router-link class="hover-underline" :to="'/users/' + item.data.buyer">{{ userName }}</router-link>
           </div>
         <div class="nowrap pl1">
           <span class="light-green">bought&ensp;</span>
@@ -66,7 +66,7 @@
       <template v-else-if="item.name === 'ClubTokenController_Sell'">
         <div class="h1 mr2 sm-mx3 center black border circle" style="width:50px;height:50px">&clubs;&#xfe0e;</div>
         <div class="activity-itm__icon mr2 sm-mr3 h3 line-height-1">&searr;</div>
-        <router-link class="font-mono truncate hover-underline" :to="userRt(item.data.seller)">{{ userName(item.data.seller) }}</router-link>
+        <router-link class="font-mono truncate hover-underline" :to="userRt(item.userAddress)">{{ userName }}</router-link>
         <div class="nowrap pl1">
           <span class="light-green">sold&ensp;</span>
           <span>{{ price(item.data.tokens) }} &clubs;&#xfe0e;</span>
@@ -81,7 +81,9 @@
           </router-link>
         </div>
         <div class="activity-itm__icon mr2 sm-mr3 h6 red">RFT</div>
-        <div class="font-mono truncate red">{{ userName(item.data.buyer) }}</div>
+        <div class="font-mono truncate red">
+          <router-link :to="userRt(item.userAddress)" class="hover-underline">{{ userName }}</router-link>
+        </div>
         <div class="red pl1">
           <span class="opacity-50">bought&ensp;</span>
           <span>{{ price(item.data.tokens) }} shares</span>
@@ -96,7 +98,9 @@
           </router-link>
         </div>
         <div class="activity-itm__icon mr2 sm-mr3 h6 red">RFT</div>
-        <div class="font-mono truncate red">{{ userName(item.data.seller) }}</div>
+        <div class="font-mono truncate red">
+          <router-link :to="userRt(item.userAddress)" class="hover-underline">{{ userName }}</router-link>
+        </div>
         <div class="red pl1">
           <span class="opacity-50">sold&ensp;</span>
           <span>{{ price(item.data.tokens) }} shares</span>
@@ -152,19 +156,27 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['userName']),
     isMyLog () {
       const me = this.$store.state.account
       return me && Object.values(this.item.data).includes(me)
-    }
+    },
+    userName () {
+      return this.parseUser(this.item.user || {})
+    },
+
+    ...mapGetters({
+      parseUser: 'userName',
+      cloversBankAddress: 'cloversBankAddress'
+    })
   },
   methods: {
     cloverImage,
     cloverLink,
-    formatName (name) {
-      var re = /[0-9A-Fa-f]{6}/g
-      return !re.test(name) && name
-    },
+
+    // formatName (name) {
+    //   var re = /[0-9A-Fa-f]{6}/g
+    //   return !re.test(name) && name
+    // },
     isBurned ({ name, data }) {
       return name === 'Clovers_Transfer' && data._to.startsWith('0x000000000')
     },
@@ -172,7 +184,7 @@ export default {
       return name === 'Clovers_Transfer' && data._from.startsWith('0x000000000')
     },
     isFromClovers ({ name, data }) {
-      return name === 'Clovers_Transfer' && window.contracts && window.contracts.Clovers.instance && window.contracts.Clovers.instance._address.toLowerCase() === data._from.toLowerCase()
+      return name === 'Clovers_Transfer' && this.cloversBankAddress === data._from.toLowerCase()
     },
     price (string, decimals) {
       let n = makeBn(string)

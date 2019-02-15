@@ -132,7 +132,6 @@ import {
   prettyBigNumber,
   bnMinus,
   makeBn,
-  addrToUser,
   abbrvAddr
 } from '@/utils'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
