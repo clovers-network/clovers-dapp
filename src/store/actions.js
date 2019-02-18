@@ -286,7 +286,7 @@ export default {
   },
   async cloverExists (_, byteBoard) {
     // let exists = await contracts.Clovers.instance.methods.exists(byteBoard).call()
-    return axios.get(apiUrl(`/clovers/0x${byteBoard}`)).then(({ data }) => true).catch(() => false)
+    return axios.get(apiUrl(`/clovers/${byteBoard}`)).then(() => true).catch(() => false)
   },
 
   getCurrentUser ({ commit }, account) {
@@ -606,12 +606,11 @@ export default {
 
     // if clover exists it must be in SimpleCloversMarket
     // otherwise it is a claimClover
-    // TODO Figure out why cloverExists is returning a promise
-    if (await dispatch('cloverExists', clover.board)) {
+    const cloverExists = await dispatch('cloverExists', clover.board)
+    if (cloverExists) {
       // get the owner of the clover
       let owner = await contracts.Clovers.instance.methods
-        .ownerOf(clover.board)
-        .call()
+        .ownerOf(clover.board).call()
       // if not current user, then error
       if (owner.toLowerCase() !== state.account.toLowerCase()) {
         throw new Error('cant-sell-dont-own')

@@ -16,10 +16,13 @@ export default {
   },
 
   userBalance (_, { user }) {
-    return user ? user.balance : '0'
+    return utils.fromWei(user.balance || '0')
+  },
+  userBalanceWei (_, { user }) {
+    return new BigNumber(user.balance || '0')
   },
   prettyUserBalance (_, { userBalance }) {
-    return prettyBigNumber(userBalance, 0)
+    return parseInt(userBalance || 0).toFixed(0).toLocaleString()
   },
   userName: ({ nullAddress }, { cloversBankAddress, curationMarketAddress }) => (user) => {
     let { address } = user
@@ -79,7 +82,7 @@ export default {
     return newClovers.length
   },
 
-  picks ({ account, allSavedClovers }) {
+  picks ({ allSavedClovers }) {
     return allSavedClovers || []
   },
   pickCount (_, { picks }) {
