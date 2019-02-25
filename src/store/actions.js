@@ -5,7 +5,7 @@ import io from 'socket.io-client'
 import utils from 'web3-utils'
 import axios from 'axios'
 import Web3 from 'web3'
-import { pad0x, formatClover, makeBn, padRight, isHex } from '@/utils'
+import { pad0x, makeBn, padRight, isHex } from '@/utils'
 import { assert } from 'tcomb'
 
 window.contracts = contracts
@@ -286,56 +286,43 @@ export default {
   },
   async cloverExists (_, byteBoard) {
     // let exists = await contracts.Clovers.instance.methods.exists(byteBoard).call()
-    return axios.get(apiUrl(`/clovers/0x${byteBoard}`)).then(({ data }) => true).catch(() => false)
-  },
-  getAllUsers ({ state, commit }, page = 1) {
-    console.log('getting users')
-    if (state.allUsers.length) return
-    return axios
-      .get(apiUrl('/users'))
-      .then(({ data }) => {
-        commit('GOT_USERS', data)
-      })
-      .catch(console.log)
-  },
-  getClovers ({ state, commit }, page = 1) {
-    console.log('getting clovers')
-    // if (state.allClovers.length) return
-    return axios
-      .get(apiUrl('/clovers'))
-      .then(({ data }) => {
-        commit('GOT_CLOVERS', data)
-      })
-      .catch(console.log)
-
-    /* -------- paginated version ---------------- */
-    // let cloverCount = state.allClovers.length
-    // let params = { page }
-    // if (!cloverCount) {
-    //   // all prev, up to end of requested page
-    //   params.all = true
-    // } else {
-    //   // can just get next page (offset in case of new)
-    //   params.before = state.allClovers[cloverCount - 1].modified
-    // }
-    // return axios
-    //   .get(apiUrl('/clovers'), { params })
-    //   .then(({ data }) => {
-    //     commit('GOT_CLOVERS', data)
-    //   })
-    //  .catch(console.log)
+    return axios.get(apiUrl(`/clovers/${byteBoard}`)).then(() => true).catch(() => false)
   },
 
-  getClover ({ state }, board) {
+  getCurrentUser ({ commit }, account) {
+    if (!account) {
+      return commit('SET_USER', null)
+    }
+    return axios.get(apiUrl(`/users/${account.toLowerCase()}`))
+      .then(({ data }) => commit('SET_USER', data))
+  },
+  getUser ({ commit }, account) {
+    if (!account) return
+    return axios.get(apiUrl(`/users/${account.toLowerCase()}`))
+      .then(({ data }) => commit('SET_OTHER_USER', data))
+  },
+
+  getPagedClovers ({ state, commit }, { url, filters }) {
+    return axios.get(url, {
+      params: { ...filters }
+    }).then(({ data }) => commit('SET_PAGED_CLOVERS', data))
+      .catch((err) => {
+        if (err.response && err.response.data) {
+          commit('SET_PAGED_CLOVERS', err.response.data)
+        }
+      })
+  },
+
+  getClover ({ state, commit }, board) {
     if (!board) {
       return Promise.reject(new Error('Missing parameter: `board` (address)'))
     }
-    const found = state.allClovers.filter(clvr => clvr.board === board)
-    if (found && found[0]) return Promise.resolve(found[0])
     return axios
       .get(apiUrl('/clovers/' + board))
-      .then(clvr => clvr && clvr.data && formatClover(clvr.data))
-      .catch(console.error)
+      .then(({ data }) => {
+        if (!data) throw new Error('404')
+        commit('SET_CURRENT_CLOVER', data)
+      }).catch(console.error)
   },
 
   getComments (_, board) {
@@ -619,12 +606,11 @@ export default {
 
     // if clover exists it must be in SimpleCloversMarket
     // otherwise it is a claimClover
-    // TODO Figure out why cloverExists is returning a promise
-    if (await dispatch('cloverExists', clover.board)) {
+    const cloverExists = await dispatch('cloverExists', clover.board)
+    if (cloverExists) {
       // get the owner of the clover
       let owner = await contracts.Clovers.instance.methods
-        .ownerOf(clover.board)
-        .call()
+        .ownerOf(clover.board).call()
       // if not current user, then error
       if (owner.toLowerCase() !== state.account.toLowerCase()) {
         throw new Error('cant-sell-dont-own')

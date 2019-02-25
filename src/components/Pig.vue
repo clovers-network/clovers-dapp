@@ -119,7 +119,7 @@ export default {
       }
       if ('symmetrical' in data) {
         try {
-          const exists = await this.cloverExists(data.byteBoard)
+          const exists = await this.cloverExists('0x' + data.byteBoard)
           const isMono = cloverIsMonochrome(data)
           if (!exists && !isMono) {
             this.symms = 1

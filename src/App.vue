@@ -17,21 +17,28 @@ import { mapActions } from 'vuex'
 
 export default {
   name: 'App',
+  computed: {
+    account () {
+      return this.$store.state.account
+    }
+  },
   methods: {
     ...mapActions([
       'poll',
       'setUpSocket',
-      'getAllUsers',
-      'getClovers',
-      'pollEthPrice'
+      'pollEthPrice',
+      'getCurrentUser'
     ])
   },
-  async mounted () {
+  watch: {
+    account (newVal) {
+      this.getCurrentUser(newVal)
+    }
+  },
+  mounted () {
     this.setUpSocket()
-    this.getClovers()
-    this.getAllUsers()
-    this.poll()
     this.pollEthPrice()
+    this.poll()
   },
   components: { AppHeader, Foot, Messages }
 }
