@@ -158,7 +158,7 @@ export default {
     },
     checkClover () {
       if (!this.clover) return null
-      this.cloverExists(this._reversi.byteBoard).then((exists) => {
+      this.cloverExists('0x' + this._reversi.byteBoard).then((exists) => {
         if (!exists) return
         this.addMessage({
           type: 'error',

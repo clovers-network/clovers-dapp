@@ -60,7 +60,7 @@
               .mt1.mb2.font-exp.center Transfer
               label.h6.lh1.block To
               .relative
-                input.block.col-12.mt1.border-bottom.font-exp.py1.pr3(@keyup.enter="transferTo" v-model="transferToAddress")
+                input.block.col-12.mt1.border-bottom.font-exp.py1.pr3.white.font-mono(@keyup.enter="transferTo" v-model="transferToAddress" placeholder="Address")
             button(@click="transferTo").h-bttm-bar.flex.col-12.border-top.pointer
               span(v-if="!loading").block.m-auto.font-exp Confirm
               wavey-menu.m-auto(v-else :isWhite="true")
@@ -80,16 +80,20 @@
           .bg-green.white(v-show="view === 'RFT'")
             .p3
               .pb3.font-exp.center Make Public
-              p.mb3.h5 Relinquish ownership and convert this clover into a publicly tradable asset.
-              label.block.h6 Your initial invesment&nbsp; <span class="opacity-50">(optional)</span>
-              .relative.pb1
-                input.block.col-12.mt1.border-bottom.font-exp.py1.pr3(type="number", v-model="invesment", min="0")
-                span.absolute.top-0.right-0.h-100.opacity-50.flex
-                  span.block.m-auto ♣&#xFE0E;
-            .p3.md-p2.bg-orange.p2.center.h5 This action cannot be undone!
-            button.h-bttm-bar.flex.col-12.pointer(@click="makeRFT")
+              p.mb3.h5(:class="{center: showSalePrice}") Relinquish ownership and convert this clover into a publicly tradable asset.
+              template(v-if="!showSalePrice")
+                label.block.h6 Your initial invesment&nbsp; <span class="opacity-50">(optional)</span>
+                .relative.pb1
+                  input.block.col-12.mt1.border-bottom.font-exp.py1.pr3(type="number", v-model="invesment", min="0")
+                  span.absolute.top-0.right-0.h-100.opacity-50.flex
+                    span.block.m-auto ♣&#xFE0E;
+            .p3.md-p2.bg-orange.p2.center.h5
+              span(v-if="!showSalePrice") This action cannot be undone!
+              span.pointer(v-else @click="makeSell(true)") First, remove from market
+            button.h-bttm-bar.flex.col-12.pointer(v-if="!showSalePrice" @click="makeRFT")
               span(v-if="!loading").block.m-auto.font-exp Confirm
               wavey-menu.m-auto(v-else :isWhite="true")
+
         //- Buy
         .bg-green(v-else-if="canBuy")
           button.h-bttm-bar.white.flex.col-12.pointer(@click="view = 'buy'")
@@ -121,7 +125,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 import store from '@/store'
 import utils from 'web3-utils'
 import WaveyMenu from '@/components/Icons/WaveyMenu'
@@ -218,11 +221,12 @@ export default {
     balanceAfterBn () {
       if (!this.userBalance) return new this.$BN('0')
       if (!this.price) return new this.$BN('0')
-      return bnMinus(this.userBalance, this.price, 0)
+      return bnMinus(this.userBalanceWei, this.price, 0)
     },
     balanceAfter () {
       if (!this.userBalance) return '0'
       if (!this.price) return new this.$BN('0')
+
       return prettyBigNumber(this.balanceAfterBn, 0)
     },
     isMyClover () {
@@ -243,7 +247,7 @@ export default {
         : this.isMyClover ? 'You'
           : this.isRFT ? 'Public'
           // owned by Bank
-            : owner.toLowerCase() === this.$store.getters.cloversBankAddress
+            : owner.toLowerCase() === this.cloversBankAddress
               ? this.price > 0
                 ? 'Clovers'
                 : 'Pending...'
@@ -254,12 +258,10 @@ export default {
       return mvs && reversi.byteMovesToStringMoves(...mvs)
     },
     canBuy () {
-      if (!this.user || !this.price) return false
-      if (!makeBn(this.price).gt(0)) return false
-      return true
+      return this.user && this.price && this.price.gt(0)
     },
     canAfford () {
-      return this.canBuy && (this.userBalance > 0 && this.balanceAfterBn.gte(0))
+      return this.canBuy && this.balanceAfterBn.gte(0)
     },
     cloverName () {
       return this.clover && this.clover.name || this.board
@@ -267,10 +269,12 @@ export default {
 
     ...mapState(['account', 'orders']),
     ...mapGetters([
-      'prettyUserBalance',
       'user',
       'userName',
       'userBalance',
+      'userBalanceWei',
+      'prettyUserBalance',
+      'cloversBankAddress',
       'curationMarketAddress'
     ])
   },

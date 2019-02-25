@@ -251,10 +251,10 @@ export default {
       this.checkSell()
     },
     spendAll () {
-      this.buy = prettyBigNumber(this.userBalance, 18)
+      this.buy = this.userBalance
     },
     sellAll () {
-      this.sell = prettyBigNumber(this.isRFT ? this.sharesOwnedWei : this.userBalance, 18)
+      this.sell = this.isRFT ? prettyBigNumber(this.sharesOwnedWei, 18) : this.userBalance
     },
 
     ...mapActions([

@@ -93,7 +93,7 @@
 
       <div v-else>
         <div class="center h5 font-mono px2 py4">
-          <span class="light-green">No results</span>
+          <span class="light-green">{{ loading ? 'Loading...' : 'No results' }}</span>
         </div>
       </div>
     </div>
