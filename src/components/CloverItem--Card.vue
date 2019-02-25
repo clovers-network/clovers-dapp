@@ -99,9 +99,6 @@ export default {
     ...mapState(['ethPrice', 'clubTokenPrice']),
     ...mapGetters(['curationMarketAddress', 'userName'])
   },
-  // created () {
-  //   console.log(this.clover.name)
-  // },
   methods: { cloverImage, prettyBigNumber },
   components: { ChatIcon, SymmetryIcons }
 }
