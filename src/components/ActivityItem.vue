@@ -1,5 +1,5 @@
 <template>
-  <div class="h5 sm-h4 p2" :class="{'bg-lightest-green': isMyLog}">
+  <div class="h5 sm-h4 p2" :class="isMyLog">
     <div :class="{'opacity-50': isBurned(item)}" class="flex justify-start items-center">
       <div :class="{mr3: noImg}" class="font-mono opacity-50 h6 xs-hide">#{{ item.blockNumber }}</div>
 
@@ -80,11 +80,11 @@
             <img :src="cloverImage(item.data._tokenId, 50)" style="width:50px;height:50px" class="block"/>
           </router-link>
         </div>
-        <div class="activity-itm__icon mr2 sm-mr3 h6 red">RFT</div>
-        <div class="font-mono truncate red">
+        <div :class="{ red: !noImg }" class="activity-itm__icon mr2 sm-mr3 h6">RFT</div>
+        <div :class="{ red: !noImg }" class="font-mono truncate">
           <router-link :to="userRt(item.userAddress)" class="hover-underline">{{ userName }}</router-link>
         </div>
-        <div class="red pl1">
+        <div :class="{ red: !noImg }" class="pl1">
           <span class="opacity-50">bought&ensp;</span>
           <span>{{ price(item.data.tokens) }} shares</span>
         </div>
@@ -97,11 +97,11 @@
             <img :src="cloverImage(item.data._tokenId, 50)" style="width:50px;height:50px" class="block"/>
           </router-link>
         </div>
-        <div class="activity-itm__icon mr2 sm-mr3 h6 red">RFT</div>
-        <div class="font-mono truncate red">
+        <div :class="{ red: !noImg }" class="activity-itm__icon mr2 sm-mr3 h6">RFT</div>
+        <div :class="{ red: !noImg }" class="font-mono truncate">
           <router-link :to="userRt(item.userAddress)" class="hover-underline">{{ userName }}</router-link>
         </div>
-        <div class="red pl1">
+        <div :class="{ red: !noImg }" class="pl1">
           <span class="opacity-50">sold&ensp;</span>
           <span>{{ price(item.data.tokens) }} shares</span>
         </div>
@@ -160,7 +160,8 @@ export default {
     isMyLog () {
       const me = this.$store.state.account
       const u = this.item.data.userAddress || this.item.userAddress
-      return me && u && (me.toLowerCase() === u.toLowerCase())
+      const isMine = me && u && (me.toLowerCase() === u.toLowerCase())
+      return !isMine ? '' : this.noImg ? 'bg-lighten-2' : 'bg-lightest-green'
     },
     userName () {
       return this.parseUser(this.item.user || {})

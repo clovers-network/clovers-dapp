@@ -161,8 +161,10 @@ export default {
           this.$refs.chat.addEventListener('scroll', this.scrollListen)
         }
       })
+      if (!this.showChat) this.view = 'chat'
     },
     scrollListen ({ target }) {
+      if (this.view !== 'chat') return
       if (target.scrollTop < 10 && !this.loading) {
         this.loadComments().then(() => {
           if (!this.moreCommentsToLoad) {
