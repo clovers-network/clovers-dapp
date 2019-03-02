@@ -3,7 +3,7 @@
     header.sticky.top-header-h.left-0.bg-white.z1.border-bottom.md-py1
       h1.block.m-auto.py2.font-mono.h-header.flex
         span.block.m-auto {{ userName(user) }}
-        span.block.m-auto {{ prettyBigNumber(user.balance) }} ♣&#xFE0E;
+        // span.block.m-auto {{ prettyBigNumber(user.balance) }} ♣&#xFE0E;
       .border-top.green.font-mono.bg-white
         .transition-delay.center.col-12(:class="filtersColors")
           .relative
@@ -40,7 +40,6 @@
                     button.pointer.p2.h3(@click="filters.asc = true") &darr;
                   span(v-else)
                     button.pointer.p2.h3(@click="filters.asc = false") &uarr;
-
     section
       nav.list-reset.border-bottom.flex.h5.green(v-if="prevPossible || nextPossible")
         li.col-6.flex-grow.pointer.px2.py3.center(v-if="prevPossible" @click="back")

@@ -182,13 +182,12 @@ export default {
         ...state.currentClover,
         ...formatClover(clover)
       }
-    } else {
-      if (!state.pagedClovers.results) return
-      let inPage = state.pagedClovers.results.findIndex(c => c.board === board)
-      if (inPage > -1) {
-        console.log('update in feed')
-        state.pagedClovers.results.splice(inPage, 1, clover)
-      }
+    }
+    if (!state.pagedClovers.results) return
+    let inPage = state.pagedClovers.results.findIndex(c => c.board === board)
+    if (inPage > -1) {
+      console.log('update in feed')
+      state.pagedClovers.results.splice(inPage, 1, clover)
     }
   },
 

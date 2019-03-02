@@ -8,7 +8,7 @@ import ENS from 'ethereum-ens'
 import { PortisProvider } from 'portis'
 import VueHead from 'vue-head'
 import VueTouch from 'vue-touch'
-import VueChatScroll from 'vue-chat-scroll'
+// import VueChatScroll from 'vue-chat-scroll'
 
 import BN from 'bignumber.js'
 
@@ -57,7 +57,7 @@ Vue.config.APIBaseUrl = process.env.VUE_APP_API_URL
 
 Vue.use(VueHead, {separator: '|', complement: 'Clovers'})
 Vue.use(VueTouch, {name: 'v-touch'})
-Vue.use(VueChatScroll)
+// Vue.use(VueChatScroll)
 
 Vue.component('clv', Clv)
 
