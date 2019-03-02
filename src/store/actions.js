@@ -10,7 +10,8 @@ import { assert } from 'tcomb'
 
 window.contracts = contracts
 
-const apiBase = process.env.VUE_APP_API_URL
+export const apiBase = process.env.VUE_APP_API_URL
+
 const signingParams = [
   {
     type: 'string',
@@ -317,42 +318,36 @@ export default {
     if (!board) {
       return Promise.reject(new Error('Missing parameter: `board` (address)'))
     }
-    return axios
-      .get(apiUrl('/clovers/' + board))
+    return axios.get(apiUrl('/clovers/' + board))
       .then(({ data }) => {
         if (!data) throw new Error('404')
         commit('SET_CURRENT_CLOVER', data)
       }).catch(console.error)
   },
 
-  getComments (_, board) {
+  getComments (_, { board, params }) {
     if (!board) {
       return Promise.reject(new Error('Missing parameter: `board` (address)'))
     }
-    return axios
-      .get(apiUrl(`/chats/${board}`))
-      .catch(console.error)
+    return axios.get(apiUrl(`/chats/${board}`), { params })
   },
   addComment ({ getters }, { board, comment }) {
     if (!board) {
       return Promise.reject(new Error('Missing parameter: `board` (address)'))
     }
-    return axios
-      .post(apiUrl(`/chats/${board}`), { comment }, {
-        headers: {
-          Authorization: getters.authHeader
-        }
-      })
+    return axios.post(apiUrl(`/chats/${board}`), { comment }, {
+      headers: {
+        Authorization: getters.authHeader
+      }
+    })
       .catch(console.error)
   },
   flagOrDeleteComment ({ getters }, id) {
-    return axios
-      .delete(apiUrl(`/chats/${id}`), {
-        headers: {
-          Authorization: getters.authHeader
-        }
-      })
-      .catch()
+    return axios.delete(apiUrl(`/chats/${id}`), {
+      headers: {
+        Authorization: getters.authHeader
+      }
+    }).catch(console.error)
   },
 
   formatFoundClover (_, clover) {
