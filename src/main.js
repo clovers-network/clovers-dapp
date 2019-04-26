@@ -5,7 +5,7 @@ import router from './router'
 import store from './store'
 import Web3 from 'web3'
 import ENS from 'ethereum-ens'
-import { PortisProvider } from 'portis'
+import Portis from '@portis/web3';
 import VueHead from 'vue-head'
 import VueTouch from 'vue-touch'
 // import VueChatScroll from 'vue-chat-scroll'
@@ -29,12 +29,8 @@ if (global.ethereum) {
 } else if (global.web3) {
   global.web3 = new Web3(global.web3.currentProvider)
 } else {
-  global.web3 = new Web3(
-    new PortisProvider({
-      apiKey: process.env.VUE_APP_PORTIS_KEY,
-      network: networks[store.state.correctNetwork]
-    })
-  )
+  const portis = new Portis(process.env.VUE_APP_PORTIS_DAPP, networks[store.state.correctNetwork]);
+  global.web3 = new Web3(portis.provider);
 }
 
 global.ens = new ENS(global.web3.currentProvider)
