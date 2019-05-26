@@ -1,11 +1,11 @@
 <template>
-  <div class="fixed top-0 left-0 col-12 z3 pointer-events-none" style="max-height:100vh;overflow-y:scroll">
-    <div class="max-width-3 mt-header-h m-auto pointer-events-auto" style="background:linear-gradient(to bottom, rgba(255,255,255,.9) 90%, transparent);">
+  <div class="fixed top-0 left-0 col-12 z3 pointer-events-none" style="max-height:100vh;overflow-y:auto">
+    <div class="max-width-3 mt-header-h m-auto pointer-events-auto">
       <ul class="list-reset pt1" v-if="messages.length > 0">
         <li
           v-for="msg in messages"
           :class="msgClass(msg)"
-          class="relative pt1 px2 pb2 h6 mx1 mb1 rounded"
+          class="relative pt1 px2 pb2 h6 mx1 mb1 rounded border-white border"
           :key="msg.id"
           >
             <h6 class="h2 mb1" v-if="msg.title" :class="{'anim--msg-strobe': msg.type === 'progress'}" v-html="escape(msg.title)"></h6>
