@@ -5,10 +5,10 @@
         <div class="relative">
           <div @click.stop="toggleFilters" class="h-header col-12 flex items-center justify-center pointer">
             <div>
-              <span class="h5">{{ filtersVisible ? 'Close' : feedFilterName }}</span>
-              <span v-if="!filtersVisible" class="h5 opacity-50 pl1">{{ filters.page }} of {{ maxPage }}</span>
+              <span class="h5">{{ filtersVisible ? 'Close' : 'Showing ' + feedFilterName }}</span>
+              <span v-if="!filtersVisible" class="h5 opacity-50 pl1">/ {{ filters.page }} of {{ maxPage }}</span>
             </div>
-            <div v-show="!filtersVisible" class="absolute top-0 right-0 h-100 flex items-center justify-center" style="width:40px">
+            <div v-show="!filtersVisible" class="absolute top-0 left-0 h-100 flex items-center justify-center" style="width:40px">
               <img class="block" src="~../assets/icons/sort-arrows.svg" width="20"/>
             </div>
           </div>
@@ -24,11 +24,11 @@
               <div class="col-6 pt1 pb2 pl2 pr1">
                 <div class="flex flex-column">
                   <p class="h5 mb1 font-reg">Type</p>
-                  <div class="border center h3 select">
+                  <div class="border center h3 select ">
                     <select v-model="filters.filter">
                       <option :value="undefined">All</option>
                       <option value="forsale">For sale</option>
-                      <option value="rft">RFT</option>
+                      <!-- <option value="rft">RFT</option> -->
                     </select>
                   </div>
                 </div>
@@ -165,7 +165,9 @@ export default {
       return type + by + order
     },
     filtersColors () {
-      return this.showFilters ? 'bg-green white' : 'bg-white green'
+      return 'bg-white green'
+      // can't change bg of select element to green when text is white
+      // return this.showFilters ? 'bg-green white' : 'bg-white green'
     },
 
     ...mapState(['newClovers']),

@@ -14,7 +14,7 @@ export function pad0x (string) {
 export function toDec (num, len = 2) {
   num = num.toString(10)
   let foo = num.split('.')
-  if (foo.length === 1) return foo
+  if (foo.length === 1) return foo.join('.')
   foo[1] = foo[1].substr(0, len)
   return foo.join('.')
 }
