@@ -51,7 +51,7 @@ import Vue from 'vue'
 import WaveyMenu from '@/components/Icons/WaveyMenu'
 import HeartIcon from '@/components/Icons/HeartIcon'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
-import { cloverImage, fetchCloudImage, prettyBigNumber } from '@/utils'
+import { cloverImage, fetchCloudImage, prettyBigNumber, toDec } from '@/utils'
 import { fromWei } from 'web3-utils'
 import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
@@ -97,11 +97,11 @@ export default {
     },
     keepValue () {
       // in club tokens
-      return this.value ? fromWei(this.value.toString(10)) : '...'
+      return this.value ? toDec(fromWei(this.value.toString(10))) : '...'
     },
     sellValue () {
       // in club tokens
-      return this.reward ? fromWei(this.reward.toString(10)) : '...'
+      return this.reward ? toDec(fromWei(this.reward.toString(10))) : '...'
     },
     infoText () {
       return this.action === 'keep'

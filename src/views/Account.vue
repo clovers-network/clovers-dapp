@@ -6,15 +6,15 @@
         .h-header.relative.flex.items-center.justify-center(v-if="signedIn")
           //- not editing
           div.absolute.top-0.left-0.right-0.bottom-0.bg-white.flex(v-show="!formFocussed")
-            label.h-100.input.truncate.flex-auto.center.px4.font-mono
-              router-link(:to="{name: 'User', params: {addr: account}}", v-text="form.name || user.address")
-            label.absolute.top-0.right-0.h-100.px2.block.regular.nowrap.flex.pointer(for="uname")
-              span.block.flip-x.m-auto ✎
+            label.pointer.h-100.input.truncate.flex-auto.center.px4.font-mono(for="uname")
+              span(v-text="form.name || user.address")
+              span.h-100.px2.regular.nowrap
+                span.flip-x.m-auto.on-hover ✎
           //- editing
-          form.col-12(@submit.prevent="updateName")
-            input#uname.input.font-mono.center.col-12.px4(@focus="focusUsername", @blur="blurUsername", ref="nameInput", placeholder="name", v-model="form.name", autocomplete="off")
+          form.col-12.h-100(@submit="updateName")
+            input#uname.input.font-mono.center.col-12.px4(@focus="focusUsername", @blur="blurUsername", @keyup.enter="blurUsername" ref="nameInput", placeholder="name", v-model="form.name", autocomplete="off")
             transition(name="fade")
-              button.absolute.right-0.top-0.p2(v-if="formFocussed", type="submit")
+              button.pointer.absolute.right-0.top-0.p2(v-if="formFocussed", type="submit" @click.prevent="() => null")
                 img(src="~../assets/icons/arrow-right.svg", width="18", height="18")
         //- else, Login
         .h-header.font-mono.flex.px2.flex(v-else)
@@ -64,19 +64,29 @@ export default {
     ...mapGetters(['prettyUserBalance', 'user'])
   },
   methods: {
+    checkEsc (e) {
+      if (e.keyCode === 27) {
+        this.form.name = this.name
+        this.formFocussed = false
+      }
+    },
     focusUsername () {
+      window.addEventListener('keyup', this.checkEsc)
       setTimeout(() => {
         this.formFocussed = true
       }, 100)
     },
     blurUsername () {
+      this.updateName()
+    },
+    updateName () {
+      window.removeEventListener('keyup', this.checkEsc)
       setTimeout(() => {
         this.formFocussed = false
       }, 50)
-    },
-    updateName () {
       if (!this.form.name.length || !this.user) return
-      this.$refs.nameInput.blur()
+      if (this.form.name === this.name) return
+      if (this.form.name.trim() === '') this.form.name = this.user.address
       this.changeUsername({
         address: this.user.address,
         name: this.form.name
@@ -112,5 +122,12 @@ export default {
 }
 [data-view='Account/Trade'] {
   transform: translateX(200%);
+}
+.on-hover {
+  visibility: hidden;
+  margin-right:-37.41px;
+}
+label:hover .on-hover {
+  visibility: visible;
 }
 </style>
