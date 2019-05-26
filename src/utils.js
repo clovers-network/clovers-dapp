@@ -114,3 +114,14 @@ export function cleanObj (o) {
     }
   }
 }
+
+export function abbrvNum (n, decimals = 2) {
+  if (typeof n === 'number') {
+    return parseFloat(n.toFixed(decimals))
+  } if (typeof n === 'string') {
+    const f = parseFloat(n)
+    return f ? parseFloat(f.toFixed(decimals)) : n
+  } else {
+    return n
+  }
+}
