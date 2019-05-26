@@ -1,13 +1,13 @@
 <template lang="pug">
-  article.green.fixed.z3.overlay.bg-white.flex
-    .col-12.max-width-3.mx-auto.flex.flex-column.justify-between.outline
+  .green.fixed.z3.flex.modal.justify-center(@click.self="cancel")
+    .col-12.bg-white.flex.flex-column.justify-between.outline
       header
         .h-header.border-bottom.flex.justify-between.items-center
           .col-4.pl2
-            button.pointer(@click="$emit('close')") Back
+            button.pointer(@click="cancel") Cancel
           h1.col-4.font-exp.center.nowrap {{invalidClover ? 'Not Found' : ''}}
           .col-4.pr2.right-align
-            router-link.font-mono(:to="{name: 'Account/Trade'}") {{ prettyUserBalance }} ♣
+            router-link.font-mono(:to="{name: 'Trade'}") {{ prettyUserBalance }} ♣
       figure.flex-auto.relative
         //- image
         .keep__figure__img.absolute.bg-contain.bg-no-repeat.bg-center(role="img", v-if="clover && !invalidClover", :style="'background-image:url(' + cloverImage(clover) + ')'")
@@ -25,12 +25,12 @@
         .flex.border-top
           .col-6.flex-grow.p3.relative.pointer(@click="action = 'keep'")
             div(:class="{'opacity-25': action !== 'keep'}")
-              small.block.lh1 Keep for ♣
-              .font-exp.mt1.truncate {{keepValue}}
+              small.block.lh1 Keep for
+              .font-exp.mt1.truncate {{ keepValue }} Coins
           .col-6.flex-grow.p3.relative.pointer.border-left(v-if="sellValue > 0", @click="action = 'sell'")
             div(:class="{'opacity-25': action !== 'sell'}")
-              small.block.lh1 Claim reward ♣
-              .font-exp.mt1.truncate {{sellValue}}
+              small.block.lh1 Claim reward
+              .font-exp.mt1.truncate {{ sellValue }} Coins
         //- confirm btn
         .bg-green.white
           button.col-12.h-bttm-bar.font-exp.pointer(@click="btnClick", :class="{'pointer-events-none': submitting}")
@@ -51,7 +51,7 @@ import Vue from 'vue'
 import WaveyMenu from '@/components/Icons/WaveyMenu'
 import HeartIcon from '@/components/Icons/HeartIcon'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
-import { cloverImage, fetchCloudImage, prettyBigNumber } from '@/utils'
+import { cloverImage, fetchCloudImage, prettyBigNumber, abbrvNum } from '@/utils'
 import { fromWei } from 'web3-utils'
 import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
@@ -96,17 +96,17 @@ export default {
       return this._reversi && this._reversi.error
     },
     keepValue () {
-      // in club tokens
-      return this.value ? fromWei(this.value.toString(10)) : '...'
+      // in Coins
+      return this.value ? abbrvNum(fromWei(this.value.toString(10))) : '...'
     },
     sellValue () {
-      // in club tokens
-      return this.reward ? fromWei(this.reward.toString(10)) : '...'
+      // in Coins
+      return this.reward ? abbrvNum(fromWei(this.reward.toString(10))) : '...'
     },
     infoText () {
       return this.action === 'keep'
         ? 'Your Clover is being submitted to the Contract. Once the Clover is verified by our Oracle, you will be confirmed as the owner.'
-        : 'This reward is based on the rarity of the Clover. The Contract will buy this from you with Club Token (♣). Once the Oracle has verified the Clover you will receive the payout.'
+        : 'This reward is based on the rarity of the Clover. The Contract will buy this from you with Coin (♣). Once the Oracle has verified the Clover you will receive the payout.'
     },
     isSaved () {
       if (!this.picks.length) return false
@@ -118,6 +118,10 @@ export default {
   methods: {
     cloverImage,
 
+    cancel () {
+      let current = { name: this.$route.name }
+      this.$router.push(current)
+    },
     btnClick () {
       if (this.action === 'keep') this.keep()
       if (this.action === 'sell') this.sellToBank()
