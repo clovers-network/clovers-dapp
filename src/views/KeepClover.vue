@@ -101,7 +101,7 @@ export default {
     },
     sellValue () {
       // in club tokens
-      return this.reward ? abbrvNum(fromWei(this.reward.toString(10)), 4) : '...'
+      return this.reward ? abbrvNum(fromWei(this.reward.toString(10))) : '...'
     },
     infoText () {
       return this.action === 'keep'
