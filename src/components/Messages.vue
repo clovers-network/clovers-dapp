@@ -5,7 +5,7 @@
         <li
           v-for="msg in messages"
           :class="msgClass(msg)"
-          class="relative pt1 px2 pb2 h6 mx1 mb1 rounded border-white border"
+          class="relative pt1 px2 pb2 h6 mx1 mb1 rounded border"
           :key="msg.id"
           >
             <h6 class="h2 mb1" v-if="msg.title" :class="{'anim--msg-strobe': msg.type === 'progress'}" v-html="escape(msg.title)"></h6>
@@ -58,11 +58,11 @@ export default {
     },
     msgClass (msg) {
       switch (msg.type) {
-        case 'success': return 'bg-green white'
-        case 'info': return 'bg-white orange border'
-        case 'progress': return 'bg-white green border'
-        case 'error': return 'bg-red white'
-        default: return 'bg-white green border'
+        case 'success': return 'bg-green white border-white'
+        case 'info': return 'bg-white orange '
+        case 'progress': return 'bg-white green '
+        case 'error': return 'bg-red white border-white'
+        default: return 'bg-white green '
       }
     },
     ...mapMutations({

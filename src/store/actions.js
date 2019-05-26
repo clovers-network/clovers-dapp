@@ -382,6 +382,10 @@ export default {
           })
           return
         }
+        dispatch('selfDestructMsg', {
+          type: 'success',
+          msg: 'Successfully signed in'
+        })
         commit('SIGN_IN', { account, signature: result })
       }
     )
@@ -472,7 +476,6 @@ export default {
       if (balance.lt(amount)) {
         value = await getLowestPrice(contracts.ClubTokenController, amount)
       }
-      console.log(getters.curationMarketAddress, market, amount)
       return contracts.CurationMarket.instance.methods
         .buy(state.account, market, amount)
         .send({
