@@ -30,20 +30,31 @@ export default {
   data () {
     return {}
   },
+  mounted () {
+    window.addEventListener('keyup', this.checkEsc)
+  },
+  destroyed () {
+    window.removeEventListener('keyup', this.checkEsc)
+  },
   computed: {
     messages () {
       return this.$store.state.messages
     }
   },
   methods: {
+    checkEsc (e) {
+      if (e.keyCode === 27 && this.messages.length > 0) {
+        this.removeMessage(this.messages[0].id)
+      }
+    },
     escape (msg) {
       return xss(msg)
     },
     clickMessage (msg) {
       if (msg.link) {
         this.$router.push(msg.link)
-        this.removeMessage(msg.id)
       }
+      this.removeMessage(msg.id)
     },
     msgClass (msg) {
       switch (msg.type) {
