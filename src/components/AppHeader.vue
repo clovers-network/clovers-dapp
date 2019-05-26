@@ -42,9 +42,32 @@
       <!-- right col -->
       <div class="col-2 flex justify-end items-center">
         <!-- account btn -->
-        <router-link class="p2" :to="{name: 'Account/Clovers'}" @click.native="showMenu = false">
+        <div @click="accountMenuToggle" class="p2 pointer">
           <person-icon></person-icon>
-        </router-link>
+        </div>
+        <div id="accountMenu" v-if="accountMenu">
+          <div class="pointer">
+            <div @click="signInOut">{{authHeader ? 'Sign Out' : 'Sign In'}}</div>
+          </div>
+          <div>--------------------</div>
+          <template v-if="!!account">
+            <div class="pointer">
+              <router-link :to="'/users/' + account">Profile</router-link>
+            </div>
+          </template>
+          <template v-else>
+            <div class="opacity-50">Profile</div>
+          </template>
+          <div class="pointer">
+            <router-link :to="{name: 'Dashboard'}">Dashboard</router-link>
+          </div>
+          <div class="pointer indent">
+            <router-link :to="{name: 'Account'}"> - Picked Clovers</router-link>
+          </div>
+          <div class="pointer indent">
+            <router-link :to="{name: 'Account/Clovers'}"> - Owned Clovers</router-link>
+          </div>
+        </div>
       </div>
     </div>
     <!-- nav -->
@@ -77,13 +100,14 @@
 import WaveyBtn from '@/components/Icons/WaveyMenu'
 import Pig from '@/components/Pig'
 import PersonIcon from '@/components/Icons/PersonIcon'
-
+import {mapActions, mapGetters, mapState} from 'vuex'
 export default {
   name: 'AppHeader',
   data () {
     return {
       mining: false,
       showMenu: false,
+      accountMenu: false,
       showBadge: false
     }
   },
@@ -100,7 +124,9 @@ export default {
     showBackButton () {
       return this.$route.name === 'Clover' &&
         this.$route.meta.fromName !== null
-    }
+    },
+    ...mapState(['account']),
+    ...mapGetters(['authHeader'])
   },
   watch: {
     symms () {
@@ -117,6 +143,14 @@ export default {
     window.removeEventListener('keyup', this.checkEsc)
   },
   methods: {
+    accountMenuToggle () {
+      this.accountMenu = !this.accountMenu
+      setTimeout(() => document.addEventListener('click', this.closeAccountMenuRemoveEventListener), 0)
+    },
+    closeAccountMenuRemoveEventListener () {
+      this.accountMenu = false
+      document.removeEventListener('click', this.closeAccountMenuRemoveEventListener)
+    },
     toggleMenu () {
       this.showMenu = !this.showMenu
     },
@@ -128,7 +162,8 @@ export default {
     viewPicks () {
       this.showMenu = false
       this.$router.push({ name: 'Picks' })
-    }
+    },
+    ...mapActions(['signInOut'])
   },
   components: { Pig, PersonIcon, WaveyBtn }
 }
@@ -152,5 +187,13 @@ export default {
     & .nav__account-link--active{
       text-decoration: underline;
     }
+  }
+  #accountMenu {
+    position: absolute;
+    top: 45px;
+    right: -1px;
+    background-color: white;
+    border: 1px solid;
+    padding: 10px;
   }
 </style>

@@ -357,7 +357,20 @@ export default {
       createdAt: new Date()
     }
   },
-
+  signInOut ({ getters, dispatch }) {
+    if (!getters.authHeader) {
+      dispatch('signIn')
+    } else {
+      dispatch('signOut')
+    }
+  },
+  signOut ({ commit, dispatch }) {
+    commit('SIGN_OUT')
+    dispatch('selfDestructMsg', {
+      type: 'success',
+      msg: 'Succesfully signed out'
+    })
+  },
   async signIn ({ state, commit, dispatch }) {
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
     const { account } = state
@@ -383,6 +396,10 @@ export default {
           return
         }
         commit('SIGN_IN', { account, signature: result })
+        dispatch('selfDestructMsg', {
+          type: 'success',
+          msg: 'Succesfully signed in'
+        })
       }
     )
   },
