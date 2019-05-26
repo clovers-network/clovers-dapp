@@ -13,7 +13,7 @@
           </router-link>
         </div>
         <!-- fav btn -->
-        <heart-icon class="green h2 absolute top-0 right-0 mr2" :active="isSaved(clover)" @click="saveClover(clover)" />
+        <heart-icon class="green absolute top-0 right-0 mr2 p1" :active="isSaved(clover)" @click="saveClover(clover)" />
       </li>
     </ul>
     <!-- <button @click="getNext" class="btn btn-big btn-primary bg-green">Get some</button> -->

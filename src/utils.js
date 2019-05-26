@@ -11,6 +11,14 @@ export function pad0x (string) {
   return `0x${string}`
 }
 
+export function toDec (num, len = 2) {
+  num = num.toString(10)
+  let foo = num.split('.')
+  if (foo.length === 1) return foo
+  foo[1] = foo[1].substr(0, len)
+  return foo.join('.')
+}
+
 export function isHex (foobar) {
   var re = /^[0-9A-Fa-f]+$/
   return re.test(foobar.replace('0x', ''))

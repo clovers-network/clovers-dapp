@@ -197,7 +197,10 @@ export default {
       this.$store.dispatch('getPagedClovers', {
         url: apiUrl,
         filters: this.filters
-      }).finally(() => {
+      }).then(() => {
+        this.loading = false
+      }).catch((error) => {
+        console.log(error)
         this.loading = false
       })
     },
