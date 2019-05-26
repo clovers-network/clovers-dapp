@@ -116,11 +116,12 @@ export function cleanObj (o) {
 }
 
 export function abbrvNum (n, decimals = 2) {
+  const args = [undefined, { maximumFractionDigits: decimals }]
   if (typeof n === 'number') {
-    return parseFloat(n.toFixed(decimals))
+    return parseFloat(n.toFixed(decimals)).toLocaleString(...args)
   } if (typeof n === 'string') {
     const f = parseFloat(n)
-    return f ? parseFloat(f.toFixed(decimals)) : n
+    return f ? parseFloat(f.toFixed(decimals)).toLocaleString(...args) : n
   } else {
     return n
   }
