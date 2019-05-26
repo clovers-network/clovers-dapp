@@ -53,45 +53,87 @@ export default new Router({
       component: Feed,
       meta: { title: 'Market' }
     },
+
+    {
+      path: '/trade',
+      name: 'Trade',
+      component: Trade
+    },
+
+    // account dashboard
     {
       path: '/account',
+      name: 'Account',
       component: Account,
+      meta: { title: 'Account' }
+    },
+    {
+      path: '/account/picks',
+      name: 'Picks',
+      component: Picks,
+      meta: { title: 'Picks' },
       children: [
         {
-          // default
-          path: '/',
-          name: 'Account',
-          component: Picks,
-          meta: { title: 'Account', group: 'account' },
-          children: [
-            {
-              path: 'picks/:movesString',
-              name: 'Account/Keep',
-              component: KeepClover,
-              meta: { title: 'Keep' },
-              props: true
-            }
-          ]
-        },
-        {
-          path: 'clovers',
-          name: 'Account/Clovers',
-          component: MyClovers,
-          meta: { title: 'Account', group: 'account' }
-        },
-        {
-          path: 'trade',
-          name: 'Account/Trade',
-          component: Trade,
-          meta: {title: 'Trade', group: 'account'}
-        },
-        {
-          path: 'picks',
-          name: 'Picks',
-          redirect: {name: 'Account'}
+          path: ':movesString',
+          name: 'Account/Keep',
+          component: KeepClover,
+          meta: { title: 'Keep' },
+          props: true
         }
       ]
     },
+    {
+      path: '/account/clovers',
+      name: 'Account/Clovers',
+      component: MyClovers,
+      meta: { title: 'My Clovers' }
+    },
+
+    // {
+    //   path: '/account/activity',
+    //   name: 'Account/Activity',
+    //   name: MyActivity
+    // },
+    // {
+    //   path: '/account',
+    //   component: Account,
+    //   children: [
+    //     {
+    //       // default
+    //       path: '/',
+    //       name: 'Account',
+    //       component: Picks,
+    //       meta: { title: 'Account', group: 'account' },
+    //       children: [
+    //         {
+    //           path: 'picks/:movesString',
+    //           name: 'Account/Keep',
+    //           component: KeepClover,
+    //           meta: { title: 'Keep' },
+    //           props: true
+    //         }
+    //       ]
+    //     },
+    //     {
+    //       path: 'clovers',
+    //       name: 'Account/Clovers',
+    //       component: MyClovers,
+    //       meta: { title: 'Account', group: 'account' }
+    //     },
+    //     {
+    //       path: 'trade',
+    //       name: 'Account/Trade',
+    //       component: Trade,
+    //       meta: {title: 'Trade', group: 'account'}
+    //     },
+    //     {
+    //       path: 'picks',
+    //       name: 'Picks',
+    //       redirect: {name: 'Account'}
+    //     }
+    //   ]
+    // },
+
     {
       path: '/about',
       redirect: '/'

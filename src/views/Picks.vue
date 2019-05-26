@@ -1,47 +1,43 @@
-<template>
-  <div>
-    <router-view @close="closeKeep"></router-view>
-    <small class="border-bottom center p2 block h6 bg-white pointer">Your Picks are stored on this device</small>
-    <ul class="list-reset md-flex flex-wrap items-center m0 md-px1 pb-bttm-bar">
-      <!-- clover item -->
-      <li v-for="(clover, i) in picks" :key="i" class="md-col-6 md-px1">
-        <div class="flex py2 border-bottom justify-between items-center green">
-          <div class="col-3 center relative">
-            <div class="sym-badge absolute h7 p1" v-if="isSym(clover)">SYM</div>
-            <router-link :to="{name: 'Account/Keep', params: {movesString: clover.movesString}}">
-              <img class="pointer" :src="cloverImage(clover, 64)" width="64" height="64" />
-            </router-link>
-          </div>
-          <div class="col-3 pr2 h7 font-mono">
-            {{ fromNow(clover) }}
-          </div>
-          <div class="pr1 h6 font-mono">
-            <button @click="removeClover(clover)" class="btn btn-big border border-green regular">Remove</button>
-          </div>
-          <div class="pr2 h6 font-mono">
-            <router-link :to="{name: 'Account/Keep', params: {movesString: clover.movesString}}" class="btn btn-big bg-green white nowrap regular">Keep/Sell</router-link>
-          </div>
-        </div>
-      </li>
-      <li class="p2 center" v-if="!picks.length">No Clovers To Show...</li>
-      <!-- <li v-else class="md-col-6 md-px1">
-        <div class="flex py2 border-bottom justify-between items-center green">
-          <div class="col-3 center relative">
-            <img  class="pointer" :src="newClover ? cloverImage(newClover, 64) : 'https://api2.clovers.network/clovers/svg/0x0/64'" width="64" height="64" @click="viewSingle = newClover"/>
-          </div>
-          <div class="col-6 pr2 font-mono">
-            <input id="manual-clover" type="text" pattern="[a-fA-F\d]+" placeholder="Add Clover Manually" class="col-12 font-mono border-bottom" v-model="newCloverMoves" />
-          </div>
-          <div class="pr3 h6 font-mono">
-            <button @click="addNewClover()" class="btn btn-big bg-green white nowrap regular">Add Clover</button>
-          </div>
-        </div>
-      </li> -->
-    </ul>
-    <div is="router-link" tag="div" to="/field" class="fixed-center-max-width bottom-0 bg-green white center p2 pointer h-bttm-bar flex">
-      <span class="m-auto h3 font-exp">Find more</span>
-    </div>
-  </div>
+<template lang="pug">
+  div
+    //- router-view(@close="closeKeep")
+
+    .green.border-bottom.py1.center
+      p.my0.md-my1 Your unregistered Clovers
+
+    ul.list-reset.md-flex.flex-wrap.items-center.m0.md-px1.pb-bttm-bar
+      //- clover item
+      li.md-col-6.md-px1(v-for="(clover, i) in picks" :key="i")
+        .flex.py2.border-bottom.justify-between.items-center.green
+          .col-3.center.relative
+            .sym-badge.absolute.h7.p1(v-if="isSym(clover)") SYM
+            router-link(:to="{ query: { pick: clover.movesString } }")
+              img.pointer(:src="cloverImage(clover, 64)" width="64" height="64")
+
+          .col-3.pr2.h7.font-mono {{ fromNow(clover) }}
+
+          .pr1.h6.font-mono
+            button.btn.btn-big.border.border-green.regular(@click="removeClover(clover)") Remove
+
+          .pr2.h6.font-mono
+            router-link.btn.btn-big.bg-green.white.nowrap.regular(:to="{ query: { pick: clover.movesString } }") Keep/Sell
+
+      li.p2.center(v-if="!picks.length") No Clovers To Show...
+        .flex.py2.border-bottom.justify-between.items-center.green
+          .col-3.center.relative
+            img.pointer(:src="newClover ? cloverImage(newClover, 64) : 'https://api2.clovers.network/clovers/svg/0x0/64'" width="64" height="64" @click="viewSingle = newClover")
+          .col-6.pr2.font-mono
+            input.col-12.font-mono.border-bottom(id="manual-clover" type="text" pattern="[a-fA-F\d]+" placeholder="Add Clover Manually" v-model="newCloverMoves")
+          .pr3.h6.font-mono
+            button.btn.btn-big.bg-green.white.nowrap.regular(@click="addNewClover()") Add Clover
+
+    .fixed-center-max-width.bottom-0.bg-green.white.center.p2.pointer.h-bttm-bar.flex(is="router-link" tag="div" to="/field")
+      span.m-auto.h3.font-exp Find more
+
+    transition(name="fade")
+      div(v-if="showPickModal")
+        keep-clover(:movesString="showPickModal")
+
 </template>
 
 <script>
@@ -81,10 +77,15 @@ export default {
     }
   },
   computed: {
+    showPickModal () {
+      return this.$route.query.pick
+    },
+
     ...mapGetters(['picks', 'pickCount'])
   },
   methods: {
     cloverImage,
+
     addNewClover () {
       if (!this.newClover) return
       this.saveClover(this.newClover)
@@ -103,6 +104,7 @@ export default {
       this.entryRt = null // clear, so always use BACK now
       this.$router.push({name: 'Picks'})
     },
+
     ...mapActions(['formatFoundClover']),
     ...mapMutations({
       removeClover: 'REMOVE_SAVED_CLOVER',

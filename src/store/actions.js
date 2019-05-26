@@ -303,7 +303,7 @@ export default {
       .then(({ data }) => commit('SET_OTHER_USER', data))
   },
 
-  getPagedClovers ({ state, commit }, { url, filters }) {
+  getPagedClovers ({ state, commit }, { url, filters = {} }) {
     return axios.get(url, {
       params: { ...filters }
     }).then(({ data }) => commit('SET_PAGED_CLOVERS', data))

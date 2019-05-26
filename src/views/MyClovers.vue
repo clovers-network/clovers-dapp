@@ -1,8 +1,8 @@
 <template lang="pug">
   div.md-pb3
-    //- .fade-enter-active(:class="{'opacity-50': loading}")
-    //-   clover-list-cards(:clovers="clovers")
-    header.sticky.top-header-h-2.left-0.bg-white.z1.border-bottom.md-py1
+    header.bg-white.z1.border-bottom.md-py1
+      .green.border-bottom.py1.center
+        p.mb0.md-mb1 Your registered Clovers
       .green.font-mono.bg-white
         .transition-delay.center.col-12(:class="filtersColors")
           .relative
