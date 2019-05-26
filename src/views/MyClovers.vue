@@ -95,7 +95,7 @@ export default {
       return this.results.results
     },
     apiUrl () {
-      if (!this.account) return
+      if (!this.account) return '/'
 
       return `${process.env.VUE_APP_API_URL}/users/${this.account}/clovers`
     },
