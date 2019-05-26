@@ -664,7 +664,7 @@ export default {
     investmentInWei = investmentInWei < 0 ? 0 : investmentInWei
     // have enough tokens ?
     let value = '0'
-    // check balance of user in club token
+    // check balance of user in Coin
     let userBalance = await contracts.ClubToken.instance.methods
       .balanceOf(state.account)
       .call()

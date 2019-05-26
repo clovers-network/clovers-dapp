@@ -4,7 +4,7 @@
       h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
         router-link(:to="profileLink") My public profile
       p
-        span You have <strong>{{ prettyUserBalance }}</strong> Club Tokens (♣&#xFE0E;)
+        span You have <strong>{{ prettyUserBalance }}</strong> Coins (♣&#xFE0E;)
 
     section.px2.md-px3.bg-green.white.border.border-green(name="My unregistered Clovers")
       h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
