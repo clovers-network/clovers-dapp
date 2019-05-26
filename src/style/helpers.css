@@ -25,6 +25,8 @@
 .lh0 { line-height: 0 }
 .lh1 { line-height: 1;}
 .lh2 { line-height: 1.25;}
+.lh3 { line-height: 1.5;}
+.lh4 { line-height: 2;}
 
 .strikethrough { text-decoration: line-through; }
 .capitalize{text-transform: capitalize;}

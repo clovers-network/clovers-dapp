@@ -42,32 +42,10 @@
       <!-- right col -->
       <div class="col-2 flex justify-end items-center">
         <!-- account btn -->
-        <div @click="accountMenuToggle" class="p2 pointer">
+        <div id="personToggle" @click="accountMenuToggle"  class="p1 mr3 pointer select pr4 border rounded">
           <person-icon></person-icon>
         </div>
-        <div id="accountMenu" v-if="accountMenu">
-          <div class="pointer">
-            <div @click="signInOut">{{authHeader ? 'Sign Out' : 'Sign In'}}</div>
-          </div>
-          <div>--------------------</div>
-          <template v-if="!!account">
-            <div class="pointer">
-              <router-link :to="'/users/' + account">Profile</router-link>
-            </div>
-          </template>
-          <template v-else>
-            <div class="opacity-50">Profile</div>
-          </template>
-          <div class="pointer">
-            <router-link :to="{name: 'Dashboard'}">Dashboard</router-link>
-          </div>
-          <div class="pointer indent">
-            <router-link :to="{name: 'Account'}"> - Picked Clovers</router-link>
-          </div>
-          <div class="pointer indent">
-            <router-link :to="{name: 'Account/Clovers'}"> - Owned Clovers</router-link>
-          </div>
-        </div>
+        <account-menu v-if="accountMenu"/>
       </div>
     </div>
     <!-- nav -->
@@ -98,6 +76,7 @@
 
 <script>
 import WaveyBtn from '@/components/Icons/WaveyMenu'
+import AccountMenu from '@/components/AccountMenu'
 import Pig from '@/components/Pig'
 import PersonIcon from '@/components/Icons/PersonIcon'
 import {mapActions, mapGetters, mapState} from 'vuex'
@@ -125,8 +104,6 @@ export default {
       return this.$route.name === 'Clover' &&
         this.$route.meta.fromName !== null
     },
-    ...mapState(['account']),
-    ...mapGetters(['authHeader'])
   },
   watch: {
     symms () {
@@ -144,12 +121,23 @@ export default {
   },
   methods: {
     accountMenuToggle () {
-      this.accountMenu = !this.accountMenu
-      setTimeout(() => document.addEventListener('click', this.closeAccountMenuRemoveEventListener), 0)
+      if (!this.accountMenu) {
+        this.openAccountAddEventListener()
+      } else {
+        this.closeAccountMenuRemoveEventListener()
+      }
+    },
+    openAccountAddEventListener () {
+      this.$nextTick(() => {
+        this.accountMenu = true
+        document.addEventListener('click', this.closeAccountMenuRemoveEventListener)
+      })
     },
     closeAccountMenuRemoveEventListener () {
-      this.accountMenu = false
-      document.removeEventListener('click', this.closeAccountMenuRemoveEventListener)
+      this.$nextTick(() => {
+        this.accountMenu = false
+        document.removeEventListener('click', this.closeAccountMenuRemoveEventListener)
+      })
     },
     toggleMenu () {
       this.showMenu = !this.showMenu
@@ -163,9 +151,8 @@ export default {
       this.showMenu = false
       this.$router.push({ name: 'Picks' })
     },
-    ...mapActions(['signInOut'])
   },
-  components: { Pig, PersonIcon, WaveyBtn }
+  components: { Pig, PersonIcon, WaveyBtn, AccountMenu }
 }
 </script>
 
@@ -188,12 +175,10 @@ export default {
       text-decoration: underline;
     }
   }
-  #accountMenu {
-    position: absolute;
-    top: 45px;
-    right: -1px;
-    background-color: white;
-    border: 1px solid;
-    padding: 10px;
+  #personToggle {
+    padding-right: 42px;
+  }
+  #personToggle.select:after {
+    top:0px;
   }
 </style>

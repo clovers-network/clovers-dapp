@@ -1,11 +1,13 @@
 <template>
+  <div>
+  <app-header/>
   <div id="app" class="relative min-h-100vh max-width-3 mx-auto outline">
-    <app-header/>
     <main class="">
       <router-view class=""/>
     </main>
     <foot/>
     <messages/>
+  </div>
   </div>
 </template>
 

@@ -351,6 +351,9 @@ textarea {
     top: var(--space-1);
     transform: translateY(7px);
   }
+  &.active:after {
+    transform: rotate(180DEG);
+  }
 }
 
 .textarea {

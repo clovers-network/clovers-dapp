@@ -387,8 +387,8 @@ export default {
         params: [signingParams, account],
         from: account
       },
-      (err, { result }) => {
-        if (err) {
+      (err, { error, result }) => {
+        if (error || err) {
           dispatch('selfDestructMsg', {
             type: 'error',
             msg: 'Could not sign in'
@@ -400,10 +400,6 @@ export default {
           msg: 'Successfully signed in'
         })
         commit('SIGN_IN', { account, signature: result })
-        dispatch('selfDestructMsg', {
-          type: 'success',
-          msg: 'Succesfully signed in'
-        })
       }
     )
   },
