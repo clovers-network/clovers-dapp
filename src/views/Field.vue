@@ -1,15 +1,8 @@
 <template lang="pug">
   .mt2.pb-full-height
     ul.list-reset.flex.flex-wrap.mxn2.mt0.mb3.px2.pb-full-height
-      // item
-      li.p2.col-6.sm-col-4.relative.appear-off(v-for='(clover, i) in generated' :key='i' data-expand='-50' :data-appear='i % 3')
-        .pb-100.relative
-          router-link(:to="{ query: {pick: clover.movesString } }")
-            .absolute.overlay.flex
-              // image
-              img.block.m-auto.pointer(:src='cloverImage(clover)' @click='viewSingle = clover')
-        // fav btn
-        heart-icon.green.h2.absolute.top-0.right-0.mr2(:active='isSaved(clover)' @click='saveClover(clover)')
+      field-item(v-for='(clover, i) in generated' :key='i' data-expand='-50' :data-appear='i % 3' :clover="clover")
+
     .fixed-center-max-width.bottom-0.bg-green.white
       router-link.block.h-bttm-bar.flex(to='/account')
         span.block.m-auto.h3.font-exp Picked {{ pickCount}} {{ pluralize(&apos;Clover&apos;, pickCount) }}
@@ -24,6 +17,7 @@
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import HeartIcon from '@/components/Icons/HeartIcon'
 import KeepClover from '@/views/KeepClover'
+import FieldItem from '@/components/FieldItem'
 import Bottleneck from 'bottleneck'
 import Reversi from 'clovers-reversi'
 import { pad0x, cloverImage, pluralize, cloverIsMonochrome } from '@/utils'
@@ -34,7 +28,7 @@ const scrollEl = document.scrollingElement
 
 export default {
   name: 'Field',
-  components: { HeartIcon, KeepClover },
+  components: { HeartIcon, KeepClover, FieldItem },
   data () {
     return {
       limiter: new Bottleneck({
@@ -131,19 +125,23 @@ export default {
 </script>
 
 <style>
+.border-dashed {
+  border-style: dashed;
+}
 .pb-full-height {
   padding-bottom: calc(100vh - 375px);
 }
-img {
+[data-expand] {
+  transition-property: all;
   animation-duration: 800ms;
 }
-[data-appear='0'] img {
+[data-appear='0'] {
   animation-name: appear0;
 }
-[data-appear='1'] img {
+[data-appear='1'] {
   animation-name: appear1;
 }
-[data-appear='2'] img {
+[data-appear='2'] {
   animation-name: appear2;
 }
 
