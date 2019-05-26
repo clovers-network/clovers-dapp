@@ -27,7 +27,6 @@
     </div>
 </template>
 
-
 <script>
 import {mapActions, mapGetters, mapState} from 'vuex'
 export default {
@@ -52,7 +51,7 @@ export default {
     right: 20px;
     width: 200px;
   }
-  #accountMenu:before, 
+  #accountMenu:before,
   #accountMenu:after {
         content: '';
         width:0px;

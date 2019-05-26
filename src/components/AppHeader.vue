@@ -103,7 +103,7 @@ export default {
     showBackButton () {
       return this.$route.name === 'Clover' &&
         this.$route.meta.fromName !== null
-    },
+    }
   },
   watch: {
     symms () {
@@ -150,7 +150,7 @@ export default {
     viewPicks () {
       this.showMenu = false
       this.$router.push({ name: 'Picks' })
-    },
+    }
   },
   components: { Pig, PersonIcon, WaveyBtn, AccountMenu }
 }
