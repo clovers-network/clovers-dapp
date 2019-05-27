@@ -84,7 +84,7 @@
         <pig @minerStatus="mining = $event" @viewPicks="viewPicks" ref="pig"/>
       </div>
     </div>
-    
+
   </header>
 </template>
 
@@ -202,7 +202,7 @@ export default {
   #personToggle.select:after {
     top:0px;
   }
-  #accountHeader > div:not(#accountMenu), 
+  #accountHeader > div:not(#accountMenu),
   #accountHeader > a {
     height: 30px;
   }
@@ -214,6 +214,6 @@ export default {
     border-top-color: transparent;
     border-left-color: transparent;
     margin: 5px 10px;
-    margin-top:0px; 
+    margin-top:0px;
   }
 </style>
