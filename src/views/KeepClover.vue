@@ -65,9 +65,9 @@
             p {{ infoText }}
       //- submitting
       footer(v-else)
-        .bg-green.white.col-12.h--bar.font-mono.items-center.pointer
-          router-link.p3.center(:to="('/clovers/' + clover.board)")
-            p.m-auto.pt2 Transaction complete! Click here to view Clover.
+        .m3.rounded.white.bg-green.center
+          router-link.col-12.pointer.p2.inline-block(:to="('/clovers/' + clover.board)")
+            p.m0.m-auto Complete! Click here to view ↗
 </template>
 
 <script>
