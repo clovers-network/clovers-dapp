@@ -357,7 +357,20 @@ export default {
       createdAt: new Date()
     }
   },
-
+  signInOut ({ getters, dispatch }) {
+    if (!getters.authHeader) {
+      dispatch('signIn')
+    } else {
+      dispatch('signOut')
+    }
+  },
+  signOut ({ commit, dispatch }) {
+    commit('SIGN_OUT')
+    dispatch('selfDestructMsg', {
+      type: 'success',
+      msg: 'Succesfully signed out'
+    })
+  },
   async signIn ({ state, commit, dispatch }) {
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
     const { account } = state
@@ -374,14 +387,18 @@ export default {
         params: [signingParams, account],
         from: account
       },
-      (err, { result }) => {
-        if (err) {
+      (err, { error, result }) => {
+        if (error || err) {
           dispatch('selfDestructMsg', {
             type: 'error',
             msg: 'Could not sign in'
           })
           return
         }
+        dispatch('selfDestructMsg', {
+          type: 'success',
+          msg: 'Successfully signed in'
+        })
         commit('SIGN_IN', { account, signature: result })
       }
     )
@@ -472,7 +489,6 @@ export default {
       if (balance.lt(amount)) {
         value = await getLowestPrice(contracts.ClubTokenController, amount)
       }
-      console.log(getters.curationMarketAddress, market, amount)
       return contracts.CurationMarket.instance.methods
         .buy(state.account, market, amount)
         .send({

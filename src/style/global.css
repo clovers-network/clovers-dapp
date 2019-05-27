@@ -50,6 +50,9 @@ h1,h2,h3,h4,h5,h6{
   font-size:inherit;
   font-weight: inherit;
 }
+.mh {
+  margin-top: 46px;
+}
 
 button{
   appearance:none;
@@ -351,6 +354,9 @@ textarea {
     top: var(--space-1);
     transform: translateY(7px);
   }
+  &.active:after {
+    transform: rotate(180DEG);
+  }
 }
 
 .textarea {
@@ -372,6 +378,10 @@ button {
     border-color: currentColor;
     outline: none;
   }
+}
+
+.bg-currentColor {
+  background-color: currentColor;
 }
 
 
