@@ -3,7 +3,7 @@
         <template >
         <div class=" center bold border-bottom pointer" >
             <template  v-if="!authHeader">
-                <div @click="signInOut" class="p2">Sign In</div>
+                <div @click="signClick" class="p2">Sign In</div>
             </template>
             <template v-else>
                 <router-link class="block p2" :to="'/users/' + account">{{userName(user)}}</router-link>
@@ -13,13 +13,13 @@
             <template v-if="!authHeader">Sign in to edit your profile, make comments and rename Clovers.</template>
             <template v-else>
                 <div class="pointer">
-                    <router-link :to="{name: 'Dashboard'}">Your Dashboard</router-link>
+                    <router-link @click.native="$emit('closeAccountMenu')" :to="{name: 'Account'}">Your Dashboard</router-link>
                 </div>
                 <div class="pointer">
-                    <router-link :to="'/users/' + account">Your Profile</router-link>
+                    <router-link @click.native="$emit('closeAccountMenu')" :to="'/users/' + account">Your Profile</router-link>
                 </div>
                 <div class="pointer">
-                    <div @click="signInOut" class="pointer">Sign Out</div>
+                    <div @click="signClick" class="pointer">Sign Out</div>
                 </div>
             </template>
         </div>
@@ -41,6 +41,10 @@ export default {
     ...mapGetters(['authHeader', 'userName', 'user'])
   },
   methods: {
+    signClick () {
+        this.$emit('closeAccountMenu')
+        this.signInOut()
+    },
     ...mapActions(['signInOut'])
   }
 }

@@ -8,9 +8,17 @@
       :class="{'border-bottom': !showMenu}">
       <!-- left col -->
       <div class="col-4 flex pl2 items-center">
+        <!-- desktop menu -->
+        <div id="desktopMenu" class="flex flex-center ml3">
+          <router-link class="pr2" :to="{name: 'Account'}">Dashboard</router-link>
+          <router-link class="pr2" :to="{name: 'Market'}">Feed</router-link>
+          <router-link class="pr2" :to="{name: 'Field'}">Garden</router-link>
+          <router-link class="pr2" :to="{name: 'Learn'}">Learn</router-link>
+        </div>
         <!-- menu btn -->
         <button
           v-if="!showBackButton"
+          id="mobileMenu"
           class="menu-btn pointer relative py2 pr2"
           @click="showMenu = !showMenu"
           aria-label="Toggle Menu">
@@ -42,23 +50,27 @@
       <!-- right col -->
       <div id="accountHeader" class="col-4 flex justify-end items-center">
         <!-- account btn -->
-        <div @click="triggerPig" class="flex items-center pointer px1 border rounded-left lh1">
-          <span id="pigIcon" :class="mining && 'bg-currentColor'" class="border mr1 inline-block" style="border-radius:100%; width:13px; height:13px;"></span>
+        <div @click="pigMenuToggle" class="flex items-center pointer px1 border rounded-left lh1">
+          <span class="border mr1 inline-block" style="border-radius:100%; width:13px; height:13px;">
+            <span :class="mining && 'bg-currentColor throb'" class="block" style="border-radius:100%; width: 13px; height: 13px; margin-top: -1px; margin-left: -1px;">
+            </span>
+          </span>
           <span >PIG</span>
         </div>
         <router-link class="block flex items-center pointer pr1 border-top border-bottom border-right" :to="{name: 'Picks'}">
           <cart-icon class="mx1"></cart-icon>
           <span>{{pickCount}}</span>
         </router-link>
-        <router-link :to="{name: 'Account/Trade'}" class="flex pr1 items-center border-top border-bottom">
+        <router-link :to="{name: 'Trade'}" class="flex pr1 items-center border-top border-bottom">
           <coin-icon class="mx1"></coin-icon>
           <span style="">{{prettyUserBalance}}</span>
         </router-link>
         <div id="personToggle" @click="accountMenuToggle" class="mr3 flex items-center p1 pointer border rounded-right">
-          <person-icon></person-icon>
+          <person-icon :class="!authHeader && 'red'"></person-icon>
           <div class="chevron"></div>
         </div>
-        <account-menu v-if="accountMenu"/>
+        <account-menu @closeAccountMenu="closeAccountMenu" v-click-outside='closeAccountMenu' v-if="accountMenu"/>
+        <pig-menu @closePigMenu="closePigMenu" v-click-outside="closePigMenu" v-if="pigMenu" :mining="mining" @triggerPig="triggerPig"/>
       </div>
     </div>
     <!-- nav -->
@@ -70,8 +82,8 @@
         <ul class="h1 list-reset">
           <!-- <li class="mt1"><router-link :to="{ name: 'Account' }" :class="{'nav__account-link--active': $route.meta.group === 'account'}">Account</router-link></li> -->
           <li class="mt1"><router-link :to="{ name: 'Welcome' }" exact>Welcome</router-link></li>
-          <li class="mt1"><router-link :to="{ name: 'Market' }">Market</router-link></li>
-          <li class="mt1"><router-link :to="{ name: 'Field' }">Field</router-link></li>
+          <li class="mt1"><router-link :to="{ name: 'Market' }">Feed</router-link></li>
+          <li class="mt1"><router-link :to="{ name: 'Field' }">Garden</router-link></li>
           <li class="mt1">
             <router-link :to="{ name: 'Activity' }" class="relative">
               <span>Log</span>
@@ -89,8 +101,10 @@
 </template>
 
 <script>
+import ClickOutside from 'vue-click-outside'
 import WaveyBtn from '@/components/Icons/WaveyMenu'
 import AccountMenu from '@/components/AccountMenu'
+import PigMenu from '@/components/PigMenu'
 import Pig from '@/components/Pig'
 import PersonIcon from '@/components/Icons/PersonIcon'
 import CartIcon from '@/components/Icons/CartIcon'
@@ -103,6 +117,7 @@ export default {
     return {
       mining: false,
       showMenu: false,
+      pigMenu: false,
       accountMenu: false,
       showBadge: false
     }
@@ -122,9 +137,9 @@ export default {
         this.$route.meta.fromName !== null
     },
     prettyUserBalance () {
-      return toDec(this.userBalance)
+      return this.user.address ? toDec(this.userBalance) : '-'
     },
-    ...mapGetters(['userBalance', 'pickCount'])
+    ...mapGetters(['user', 'userBalance', 'pickCount', 'authHeader'])
   },
   watch: {
     symms () {
@@ -144,24 +159,19 @@ export default {
     triggerPig () {
       this.$refs.pig.togglePig()
     },
-    accountMenuToggle () {
-      if (!this.accountMenu) {
-        this.openAccountAddEventListener()
-      } else {
-        this.closeAccountMenuRemoveEventListener()
-      }
+    pigMenuToggle () {
+      this.pigMenu = !this.pigMenu
     },
-    openAccountAddEventListener () {
-      this.$nextTick(() => {
-        this.accountMenu = true
-        document.addEventListener('click', this.closeAccountMenuRemoveEventListener)
-      })
-    },
-    closeAccountMenuRemoveEventListener () {
-      this.$nextTick(() => {
+    closeAccountMenu () {
+      if(this.accountMenu)
         this.accountMenu = false
-        document.removeEventListener('click', this.closeAccountMenuRemoveEventListener)
-      })
+    },
+    closePigMenu () {
+      if(this.pigMenu)
+        this.pigMenu = false
+    },
+    accountMenuToggle () {
+      this.accountMenu = !this.accountMenu
     },
     toggleMenu () {
       this.showMenu = !this.showMenu
@@ -176,11 +186,13 @@ export default {
       this.$router.push({ name: 'Picks' })
     }
   },
-  components: { Pig, CartIcon, CoinIcon, PersonIcon, WaveyBtn, AccountMenu }
+  directives: { ClickOutside },
+  components: { Pig, CartIcon, CoinIcon, PersonIcon, WaveyBtn, AccountMenu, PigMenu }
 }
 </script>
 
 <style lang="css" scoped>
+  @import '../style/settings.css';
   .found-badge {
     position: absolute;
     left: 53px;
@@ -202,7 +214,7 @@ export default {
   #personToggle.select:after {
     top:0px;
   }
-  #accountHeader > div:not(#accountMenu),
+  #accountHeader > div:not(#accountMenu):not(#pigMenu),
   #accountHeader > a {
     height: 30px;
   }
@@ -215,5 +227,35 @@ export default {
     border-left-color: transparent;
     margin: 5px 10px;
     margin-top:0px;
+  }
+  #desktopMenu .router-link-exact-active {
+    text-decoration: underline;
+  }
+  .throb {
+    animation-name: throb;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes throb {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  @media (--breakpoint-md) {
+    #mobileMenu {
+      display: none;
+    }
+  }
+  @media (--breakpoint-sm-only) {
+    #desktopMenu {
+      display: none;
+    }
   }
 </style>
