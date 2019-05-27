@@ -56,6 +56,7 @@
 }
 
 .overflow-x-scroll{overflow-x:scroll;}
+.overflow-y-scroll{overflow-y:scroll;}
 .invisible-scrollbar::-webkit-scrollbar {display: none;}
 
 .flex-grow{flex-grow: 1;}
@@ -116,6 +117,8 @@
 .pre {white-space: pre;}
 
 .object-contain{object-fit: contain}
+
+.shadow-1{box-shadow:0 3px 4px currentColor;}
 
 /* #APP */
 .material-icons

@@ -191,6 +191,7 @@ export default {
       } else {
         this.stop = true
         this.animatedBoard = null
+        this.$emit('endPlayMoves')
       }
     }
   },

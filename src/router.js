@@ -11,6 +11,8 @@ import Clover from '@/views/Clover'
 import MyClovers from '@/views/MyClovers'
 import KeepClover from '@/views/KeepClover'
 import User from '@/views/User'
+import Learn from '@/views/Learn/Learn'
+// parsing error: const Learn = () => import(/* webpackChunkName: "learn" */ './views/Learn/Learn.vue')
 
 import Activity from '@/views/Activity.vue'
 
@@ -58,6 +60,12 @@ export default new Router({
       path: '/trade',
       name: 'Trade',
       component: Trade
+    },
+
+    {
+      path: '/learn',
+      name: 'Learn',
+      component: Learn
     },
 
     // account dashboard
