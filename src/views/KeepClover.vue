@@ -22,12 +22,19 @@
       .flex.flex-wrap.pt3.pb2
         .col-6.align-right Your balance
         .col-6.pl2
-          span &cent; &nbsp; {{ prettyUserBalance }}
+          span.bold &cent; &nbsp; {{ prettyUserBalance }}
           span.light-green &nbsp; ({{ userBalanceInETH }} <sup>ETH</sup>)
         .col-6.align-right Cost to keep
-        .col-6.pl2
-          span &cent; &nbsp; {{ keepValue }}
+        .col-6.pl2(v-if="unavailable")
+          span.red.opacity-50 &times; Already registered
+        .col-6.pl2(v-else)
+          span.bold &cent; &nbsp; {{ keepValue }}
           span.light-green &nbsp; ({{ keepValueInETH }} <sup>ETH</sup>)
+        template(v-if="_reversi.symmetrical")
+          .col-6.align-right Reward
+          .col-6.pl2
+            span.bold &cent; &nbsp; {{ sellValue }}
+            span.light-green &nbsp; ({{ sellValueInETH }} <sup>ETH</sup>)
 
       //- invalid clover
       footer(v-if="invalidClover").bg-green.white
@@ -48,13 +55,14 @@
         //-       .font-exp.mt1.truncate {{ sellValue }} Coins
 
         //- confirm btn
-        .m3.bg-green.rounded.white
+        .m3.rounded.white.trans-bg(:class="cancelled ? 'bg-red' : 'bg-green'")
           button.col-12.pointer.p2(@click="btnClick", :class="{'pointer-events-none': submitting}")
-            span.block.m-auto.capitalize(v-show="!submitting") {{action}}
-            wavey-menu.m-auto(v-show="submitting", :isWhite="true")
-          transition(name="fade")
-            .p2.center.font-mono(v-if="submitting")
-              p {{ infoText }}
+            span.block.m-auto.capitalize(v-show="!submitting") {{ buttonText }}
+            template(v-if="submitting")
+              .p1
+              wavey-menu.m-auto(:isWhite="true")
+          .p2.center.font-mono(v-if="submitting")
+            p {{ infoText }}
       //- submitting
       footer(v-else)
         .bg-green.white.col-12.h--bar.font-mono.items-center.pointer
@@ -75,6 +83,11 @@ import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 
 const reversi = new Reversi()
 let lastRt = null
+const actions = {
+  keep: 'Keep Clover',
+  sell: 'Claim Reward',
+  view: 'View ↗'
+}
 
 export default {
   name: 'KeepClover',
@@ -90,16 +103,25 @@ export default {
   },
   data () {
     return {
+      unavailable: false,
       action: 'keep',
       value: null,
       reward: null,
       submitting: false,
-      submitted: false
+      submitted: false,
+      cancelled: false
     }
   },
   watch: {
     _reversi () {
       this.checkClover()
+    },
+    cancelled (newVal) {
+      if (newVal) {
+        setTimeout(() => {
+          this.cancelled = false
+        }, 1500)
+      }
     }
   },
   computed: {
@@ -126,10 +148,14 @@ export default {
       // in Coins
       return this.reward ? abbrvNum(fromWei(this.reward.toString(10))) : '...'
     },
+    sellValueInETH () {
+      if (!this.reward) return '...'
+      return abbrvNum(this.reward.div(this.clubTokenPrice).toString(10))
+    },
     infoText () {
       return this.action === 'keep'
-        ? 'Your Clover is being submitted to the Contract. Once the Clover is verified by our Oracle, you will be confirmed as the owner.'
-        : 'This reward is based on the rarity of the Clover. The Contract will buy this from you with Coin (♣). Once the Oracle has verified the Clover you will receive the payout.'
+        ? 'Registering Clover. It will show up in your dashboard soon!'
+        : 'The reward is based on rarity in the network. Validity will be checked before payout.'
     },
     isSaved () {
       if (!this.picks.length) return false
@@ -137,6 +163,9 @@ export default {
     },
     clubTokenPrice () {
       return new BigNumber(this.$store.state.clubTokenPrice)
+    },
+    buttonText () {
+      return this.cancelled ? 'Transaction cancelled' : actions[this.action]
     },
 
     ...mapGetters(['picks', 'prettyUserBalance', 'userBalanceInETH'])
@@ -149,53 +178,51 @@ export default {
       this.$router.push(current)
     },
     btnClick () {
+      if (this.cancelled || this.submitting) return
       if (this.action === 'keep') this.keep()
       if (this.action === 'sell') this.sellToBank()
+      if (this.action === 'view') this.viewClover()
     },
     async keep () {
       this.submitting = true
       try {
         const tx = await this.buy(this.clover)
-        console.log(tx)
         this.submitting = false
         this.handleSuccess(
           `Success! You kept ${this.clover.board}`,
           this.clover
         )
-      } catch (error) {
-        console.log(error)
+      } catch (err) {
         this.submitting = false
+        this.cancelled = true
         // notification
-        this.handleError(error)
+        this.handleError(err)
       }
     },
     async sellToBank () {
       this.submitting = true
       try {
         const tx = await this.sell({ clover: this.clover })
-        console.log(tx)
         this.submitting = false
         this.handleSuccess(
           `Success! You sold ${this.clover.board} to the bank`,
           this.clover
         )
-      } catch (error) {
-        console.log(error)
+      } catch (err) {
         this.submitting = false
-        // notification
-        this.handleError(error)
+        this.handleError(err)
       }
     },
     checkClover () {
       if (!this.clover) return null
       this.cloverExists('0x' + this._reversi.byteBoard).then((exists) => {
-        if (!exists) return
-        this.addMessage({
-          type: 'error',
-          title: 'This Clover already exists',
-          msg: 'Click here to view the original',
-          link: '/clovers/0x' + this._reversi.byteBoard
-        })
+        if (!exists) {
+          this.unavailable = false
+          this.action = this._reversi.symmetrical ? 'sell' : 'keep'
+          return
+        }
+        this.unavailable = true
+        this.action = this._reversi.symmetrical ? 'sell' : 'keep'
       })
       const syms = this._reversi.returnSymmetriesAsBN()
       this.$store.dispatch('getReward', syms).then(wei => {
@@ -204,6 +231,10 @@ export default {
         this.value = wei.plus(this.$store.state.basePrice)
       })
     },
+    viewClover () {
+      this.$router.push(`/clovers/0x${this._reversi.byteBoard}`)
+    },
+
     handleError ({ message }) {
       this.selfDestructMsg({
         msg: message.replace('Error: ', ''),

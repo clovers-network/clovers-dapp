@@ -99,27 +99,21 @@
 .pointer-events-auto{pointer-events: auto}
 .not-allowed { cursor: not-allowed; }
 
-.hover-underline:hover{text-decoration: underline;}
+.hover-underline:hover { text-decoration: underline; }
 
 .rotate-180 { transform: Rotate(180DEG); }
-.transl-x-100{ transform: translateX(100%); }
-.flip-x{transform:scaleX(-1);}
+.transl-x-100 { transform: translateX(100%); }
+.flip-x { transform:scaleX(-1); }
 
-.trans-transform{ transition: transform var(--anim-timing-medium); }
-.trans-opacity-long{ transition: opacity var(--anim-timing-long); }
+.trans-transform { transition: transform var(--anim-timing-medium); }
+.trans-opacity-long { transition: opacity var(--anim-timing-long); }
+.trans-bg { transition: background var(--anim-timing-medium); }
 
 .pre {white-space: pre;}
 
 .object-contain{object-fit: contain}
 
 /* #APP */
-.material-icons
-.material-icons {
-  transition: all ease 500ms;
-  font-size: inherit;
-  line-height: inherit;
-}
-
 .asc:after {
   color: var(--green);
   content: '\002193';
