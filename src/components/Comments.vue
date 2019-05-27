@@ -6,7 +6,7 @@
 
     //- comments view
     transition(name="fade")
-      section(v-if="showChat", @click.stop.prevent, name="comments").fixed-center-max-width.top-0.bottom-0.bg-green.white.z4.overflow-hidden
+      section(v-if="showChat", @click.stop.prevent, name="comments").mh.fixed-center-max-width.top-0.bottom-0.bg-green.white.z4.overflow-hidden
         .flex.flex-column.chat-scroll
           .relative.white.p1.border-bottom
             .flex.items-center.justify-start.p2
@@ -69,7 +69,7 @@
           .sticky.left-0.right-0.bottom-0.bg-green(v-if="view === 'chat'")
             div(v-if="signedIn").border-top
               form(@submit.prevent="postComment")
-                input(v-model="newComment", type="text", placeholder="Comment...").p3.col-12.h4.border-none.bg-green.font-exp.white
+                input(v-model="newComment", ref="input" type="text", placeholder="Comment...").p3.col-12.h4.border-none.bg-green.font-exp.white
                 //- .right-align.mt2.hide
                 //-   button(type="submit", :disabled="posting", v-text="buttonTxt").px3.py2.bg-green.white.font-exp
             div(v-else).border-top
@@ -160,6 +160,7 @@ export default {
         if (this.moreCommentsToLoad && this.showChat) {
           this.$refs.chat.addEventListener('scroll', this.scrollListen)
         }
+        if (this.$refs.input) this.$refs.input.focus()
       })
       if (!this.showChat) this.view = 'chat'
     },
@@ -220,6 +221,7 @@ export default {
             chat.scrollTop = newTop
           })
         }
+        if (this.$refs.input) this.$refs.input.focus()
       }).catch(() => {
         this.moreCommentsToLoad = false
       })

@@ -35,7 +35,6 @@ export default {
       : address === curationMarketAddress ? 'Curation Mrkt.'
         : address === nullAddress ? 'Nobody' : null
     if (name) return name
-
     name = user.name && user.name.trim() !== '' ? user.name
       : user.ens ? user.ens : address
 

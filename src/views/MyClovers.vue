@@ -95,7 +95,7 @@ export default {
       return this.results.results
     },
     apiUrl () {
-      if (!this.account) return
+      if (!this.account) return '/'
 
       return `${process.env.VUE_APP_API_URL}/users/${this.account}/clovers`
     },
@@ -164,7 +164,10 @@ export default {
       this.$store.dispatch('getPagedClovers', {
         url: this.apiUrl,
         filters: this.filters
-      }).finally(() => {
+      }).then(() => {
+        this.loading = false
+      }).catch((error) => {
+        console.log(error)
         this.loading = false
       })
     },

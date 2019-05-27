@@ -1,10 +1,11 @@
+
 <template lang="pug">
   #app.relative.min-h-100vh
     app-header
     main.mx-auto.md-col-10.lg-col-8
       router-view
     foot
-      messages
+    messages
 </template>
 
 <script>
