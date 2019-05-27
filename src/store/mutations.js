@@ -18,7 +18,7 @@ export default {
     state.mined += hashrate
   },
   RESET_MINED (state) {
-    state.mined  = 0
+    state.mined = 0
   },
   SET_ENABLED (state, enabled) {
     state.enabled = enabled

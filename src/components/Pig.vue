@@ -50,7 +50,7 @@ export default {
         this.mine()
       }
     },
-    ...mapActions(['mine', 'stop']),
+    ...mapActions(['mine', 'stop'])
   },
   components: { ToggleBtn }
 }

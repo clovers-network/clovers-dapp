@@ -20,20 +20,20 @@ export default {
     }
   },
   computed: {
-      mining () {
-          return this.miners.length > 0
-      },
+    mining () {
+      return this.miners.length > 0
+    },
     ...mapState(['account', 'miners']),
     ...mapGetters(['authHeader', 'userName', 'user'])
   },
   methods: {
     triggerPig () {
-        console.log('mining', this.mining)
-        if (!this.mining) {
-            this.mine()
-        } else {
-            this.stop()
-        }
+      console.log('mining', this.mining)
+      if (!this.mining) {
+        this.mine()
+      } else {
+        this.stop()
+      }
     },
     ...mapActions(['signInOut', 'mine', 'stop'])
   }

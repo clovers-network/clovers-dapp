@@ -78,7 +78,7 @@ export default {
   },
   stopAll ({state, dispatch}) {
     dispatch('stop')
-    while(state.miners.length > 0) {
+    while (state.miners.length > 0) {
       dispatch('stop')
     }
   },
