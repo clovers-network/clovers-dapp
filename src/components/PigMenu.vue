@@ -19,16 +19,23 @@ export default {
     return {
     }
   },
-  props: ['mining'],
   computed: {
-    ...mapState(['account']),
+      mining () {
+          return this.miners.length > 0
+      },
+    ...mapState(['account', 'miners']),
     ...mapGetters(['authHeader', 'userName', 'user'])
   },
   methods: {
     triggerPig () {
-      this.$emit('triggerPig')
+        console.log('mining', this.mining)
+        if (!this.mining) {
+            this.mine()
+        } else {
+            this.stop()
+        }
     },
-    ...mapActions(['signInOut'])
+    ...mapActions(['signInOut', 'mine', 'stop'])
   }
 }
 </script>

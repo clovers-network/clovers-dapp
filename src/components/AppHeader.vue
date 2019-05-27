@@ -70,7 +70,7 @@
           <div class="chevron"></div>
         </div>
         <account-menu @closeAccountMenu="closeAccountMenu" v-click-outside='closeAccountMenu' v-if="accountMenu"/>
-        <pig-menu @closePigMenu="closePigMenu" v-click-outside="closePigMenu" v-if="pigMenu" :mining="mining" @triggerPig="triggerPig"/>
+        <pig-menu @closePigMenu="closePigMenu" v-click-outside="closePigMenu" v-if="pigMenu" />
       </div>
     </div>
     <!-- nav -->
@@ -93,7 +93,7 @@
         </ul>
       </nav>
       <div class="px2">
-        <pig @minerStatus="mining = $event" @viewPicks="viewPicks" ref="pig"/>
+        <pig/>
       </div>
     </div>
 
@@ -115,7 +115,6 @@ export default {
   name: 'AppHeader',
   data () {
     return {
-      mining: false,
       showMenu: false,
       pigMenu: false,
       accountMenu: false,
@@ -123,6 +122,9 @@ export default {
     }
   },
   computed: {
+    mining () {
+      return this.miners.length > 0
+    },
     title () {
       return this.$route.meta.title || 'Clovers'
     },
@@ -139,6 +141,7 @@ export default {
     prettyUserBalance () {
       return this.user.address ? toDec(this.userBalance) : '-'
     },
+    ...mapState(['miners']),
     ...mapGetters(['user', 'userBalance', 'pickCount', 'authHeader'])
   },
   watch: {
@@ -156,9 +159,6 @@ export default {
     window.removeEventListener('keyup', this.checkEsc)
   },
   methods: {
-    triggerPig () {
-      this.$refs.pig.togglePig()
-    },
     pigMenuToggle () {
       this.pigMenu = !this.pigMenu
     },

@@ -5,8 +5,9 @@ import io from 'socket.io-client'
 import utils from 'web3-utils'
 import axios from 'axios'
 import Web3 from 'web3'
-import { pad0x, makeBn, padRight, isHex } from '@/utils'
+import { pad0x, makeBn, padRight, isHex, cloverIsMonochrome } from '@/utils'
 import { assert } from 'tcomb'
+import CloverWorker from 'worker-loader!../assets/clover-worker'
 
 window.contracts = contracts
 
@@ -31,7 +32,59 @@ const anonUser = {
   modified: null
 }
 
+let miner
+
 export default {
+  mine ({dispatch, commit, state}) {
+    console.log('mine')
+    if (state.miners.length === 0) {
+      commit('RESET_MINED')
+    }
+    miner = new CloverWorker()
+    const dispatchMinerEvent = async (event) => {
+      let { data } = event
+      if ('hashRate' in data) {
+        commit('UPDATE_HASHRATE', data.hashRate)
+      }
+      if ('symmetrical' in data) {
+        try {
+          const exists = await dispatch('cloverExists', '0x' + data.byteBoard)
+          const isMono = cloverIsMonochrome(data)
+          if (!exists && !isMono) {
+            dispatch('newSymFound')
+            const clvr = dispatch('formatFoundClover', data)
+            commit('SAVE_CLOVER', clvr)
+          }
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    }
+    miner.onmessage = dispatchMinerEvent
+    miner.postMessage('start')
+    commit('ADD_MINER', miner)
+  },
+  stop ({state, commit}) {
+    console.log('stop')
+    if (state.miners.length) {
+      let last = state.miners.length - 1
+      let removed = state.miners[last]
+      removed.postMessage('stop')
+      commit('REMOVE_MINER', last)
+    }
+    if (!state.miners.length) {
+      commit('UPDATE_HASHRATE', 0)
+    }
+  },
+  stopAll ({state, dispatch}) {
+    dispatch('stop')
+    while(state.miners.length > 0) {
+      dispatch('stop')
+    }
+  },
+  newSymFound (_) {
+    alert('new sym!!!!')
+  },
   async poll ({ dispatch, commit }) {
     if (!global.web3.currentProvider.isPortis) {
       await dispatch('checkWeb3')

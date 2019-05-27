@@ -3,6 +3,23 @@ import BigNumber from 'bignumber.js'
 import { formatClover } from '@/utils'
 
 export default {
+  ADD_MINER (state, miner) {
+    state.miners.push(miner)
+  },
+  REMOVE_MINER (state, minerIndex) {
+    if (minerIndex > -1 && minerIndex < state.miners.length) {
+      state.miners.splice(minerIndex, 1)
+    } else {
+      console.error('Miner not found in miners list', minerIndex)
+    }
+  },
+  UPDATE_HASHRATE (state, hashrate) {
+    state.hashrate = hashrate
+    state.mined += hashrate
+  },
+  RESET_MINED (state) {
+    state.mined  = 0
+  },
   SET_ENABLED (state, enabled) {
     state.enabled = enabled
   },
@@ -82,19 +99,6 @@ export default {
   ROUTE_CHANGED (state, { to, from }) {
     console.log('route changed from', from.name, 'to', to.name)
   },
-
-  MINE_INCREMENT (state, increment) {
-    if (!increment) return
-    state.miningStats.totalMined =
-      parseInt(state.miningStats.totalMined) + parseInt(increment)
-    updateLocal('clover_pig_stats', state.miningStats)
-  },
-  TIME_INCREMENT (state, inc) {
-    if (!inc) return
-    state.miningStats.mineTime =
-      parseInt(state.miningStats.mineTime) + parseInt(inc)
-    updateLocal('clover_pig_stats', state.miningStats)
-  },
   SYMMS_INCREMENT (state, inc) {
     if (!inc) return
     state.miningStats.symms++
@@ -104,7 +108,6 @@ export default {
     state.miningStats = { mineTime: 0, totalMined: 0, symms: 0 }
     updateLocal('clover_pig_stats', state.miningStats)
   },
-
   // mining/saving clovers. Stored clovers are added to state on load
   SAVE_CLOVER (state, clover) {
     const index = state.allSavedClovers.findIndex(c => c.board === clover.board)

@@ -66,7 +66,12 @@ const state = {
   stakeAmount: new BigNumber(96842)
     .mul(1000000000)
     .mul(40)
-    .toString(10)
+    .toString(10),
+
+  // pig
+  miners: [],
+  hashrate: 0,
+  mined: 0
 }
 
 export default new Vuex.Store({
