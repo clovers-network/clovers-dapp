@@ -42,8 +42,8 @@ export default {
   },
   methods: {
     signClick () {
-        this.$emit('closeAccountMenu')
-        this.signInOut()
+      this.$emit('closeAccountMenu')
+      this.signInOut()
     },
     ...mapActions(['signInOut'])
   }

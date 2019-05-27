@@ -163,12 +163,10 @@ export default {
       this.pigMenu = !this.pigMenu
     },
     closeAccountMenu () {
-      if(this.accountMenu)
-        this.accountMenu = false
+      if (this.accountMenu) { this.accountMenu = false }
     },
     closePigMenu () {
-      if(this.pigMenu)
-        this.pigMenu = false
+      if (this.pigMenu) { this.pigMenu = false }
     },
     accountMenuToggle () {
       this.accountMenu = !this.accountMenu

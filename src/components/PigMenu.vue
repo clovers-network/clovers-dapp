@@ -25,9 +25,9 @@ export default {
     ...mapGetters(['authHeader', 'userName', 'user'])
   },
   methods: {
-      triggerPig () {
-        this.$emit('triggerPig')
-      },
+    triggerPig () {
+      this.$emit('triggerPig')
+    },
     ...mapActions(['signInOut'])
   }
 }
