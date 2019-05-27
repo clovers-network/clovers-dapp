@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed top-0 left-0 col-12 z3 pointer-events-none" style="max-height:100vh;overflow-y:auto">
+  <div class="fixed top-0 left-0 col-12 z3 pointer-events-none" style="max-height:100vh;overflow-y:auto; overflow-x: hidden;">
     <div class="max-width-3 mt-header-h m-auto pointer-events-auto">
       <ul class="list-reset pt1" v-if="messages.length > 0">
         <li
