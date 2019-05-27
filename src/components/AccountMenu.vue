@@ -6,7 +6,7 @@
                 <div @click="signInOut" class="p2">Sign In</div>
             </template>
             <template v-else>
-                <router-link class="block p2" :to="{name: 'User', addr: account}">{{userName(user)}}</router-link>
+                <router-link class="block p2" :to="'/users/' + account">{{userName(user)}}</router-link>
             </template>
         </div>
         <div class="p2 h5 lh3">
@@ -16,7 +16,7 @@
                     <router-link :to="{name: 'Dashboard'}">Your Dashboard</router-link>
                 </div>
                 <div class="pointer">
-                    <router-link :to="{name: 'User', addr: account}">Your Profile</router-link>
+                    <router-link :to="'/users/' + account">Your Profile</router-link>
                 </div>
                 <div class="pointer">
                     <div @click="signInOut" class="pointer">Sign Out</div>

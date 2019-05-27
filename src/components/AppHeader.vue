@@ -7,7 +7,7 @@
       class="relative z2 h-header flex items-center"
       :class="{'border-bottom': !showMenu}">
       <!-- left col -->
-      <div class="col-2 flex pl2 items-center">
+      <div class="col-4 flex pl2 items-center">
         <!-- menu btn -->
         <button
           v-if="!showBackButton"
@@ -33,17 +33,30 @@
         <button v-else class="pointer left-align" @click="$router.go(-1)">Back</button>
       </div>
       <!-- title -->
-      <h1 class="font-exp h3 col-8 py1 center">
+      <h1 class="font-exp h3 col-4 py1 center">
         <span class="nowrap pointer"
           @click="showMenu = showBackButton ? showMenu : !showMenu">
           {{showMenu ? 'Clovers' : $route.meta.title}}
         </span>
       </h1>
       <!-- right col -->
-      <div class="col-2 flex justify-end items-center">
+      <div id="accountHeader" class="col-4 flex justify-end items-center">
         <!-- account btn -->
-        <div id="personToggle" @click="accountMenuToggle"  class="p1 mr3 pointer select pr4 border rounded">
+        <div @click="triggerPig" class="flex items-center pointer px1 border rounded-left lh1">
+          <span id="pigIcon" :class="mining && 'bg-currentColor'" class="border mr1 inline-block" style="border-radius:100%; width:13px; height:13px;"></span>
+          <span >PIG</span>
+        </div>
+        <router-link class="block flex items-center pointer pr1 border-top border-bottom border-right" :to="{name: 'Picks'}">
+          <cart-icon class="mx1"></cart-icon>
+          <span>{{pickCount}}</span>
+        </router-link>
+        <router-link :to="{name: 'Account/Trade'}" class="flex pr1 items-center border-top border-bottom">
+          <coin-icon class="mx1"></coin-icon>
+          <span style="">{{prettyUserBalance}}</span>
+        </router-link>
+        <div id="personToggle" @click="accountMenuToggle" class="mr3 flex items-center p1 pointer border rounded-right">
           <person-icon></person-icon>
+          <div class="chevron"></div>
         </div>
         <account-menu v-if="accountMenu"/>
       </div>
@@ -68,9 +81,10 @@
         </ul>
       </nav>
       <div class="px2">
-        <pig @minerStatus="mining = $event" @viewPicks="viewPicks"/>
+        <pig @minerStatus="mining = $event" @viewPicks="viewPicks" ref="pig"/>
       </div>
     </div>
+    
   </header>
 </template>
 
@@ -79,6 +93,9 @@ import WaveyBtn from '@/components/Icons/WaveyMenu'
 import AccountMenu from '@/components/AccountMenu'
 import Pig from '@/components/Pig'
 import PersonIcon from '@/components/Icons/PersonIcon'
+import CartIcon from '@/components/Icons/CartIcon'
+import CoinIcon from '@/components/Icons/CoinIcon'
+import {toDec} from '@/utils'
 import {mapActions, mapGetters, mapState} from 'vuex'
 export default {
   name: 'AppHeader',
@@ -103,7 +120,11 @@ export default {
     showBackButton () {
       return this.$route.name === 'Clover' &&
         this.$route.meta.fromName !== null
-    }
+    },
+    prettyUserBalance () {
+      return toDec(this.userBalance)
+    },
+    ...mapGetters(['userBalance', 'pickCount'])
   },
   watch: {
     symms () {
@@ -120,6 +141,9 @@ export default {
     window.removeEventListener('keyup', this.checkEsc)
   },
   methods: {
+    triggerPig () {
+      this.$refs.pig.togglePig()
+    },
     accountMenuToggle () {
       if (!this.accountMenu) {
         this.openAccountAddEventListener()
@@ -152,7 +176,7 @@ export default {
       this.$router.push({ name: 'Picks' })
     }
   },
-  components: { Pig, PersonIcon, WaveyBtn, AccountMenu }
+  components: { Pig, CartIcon, CoinIcon, PersonIcon, WaveyBtn, AccountMenu }
 }
 </script>
 
@@ -175,10 +199,21 @@ export default {
       text-decoration: underline;
     }
   }
-  #personToggle {
-    padding-right: 42px;
-  }
   #personToggle.select:after {
     top:0px;
+  }
+  #accountHeader > div:not(#accountMenu), 
+  #accountHeader > a {
+    height: 30px;
+  }
+  .chevron {
+    width:10px;
+    height:10px;
+    border:1px solid currentColor;
+    transform: rotate(45DEG);
+    border-top-color: transparent;
+    border-left-color: transparent;
+    margin: 5px 10px;
+    margin-top:0px; 
   }
 </style>

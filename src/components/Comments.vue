@@ -6,7 +6,7 @@
 
     //- comments view
     transition(name="fade")
-      section(v-if="showChat", @click.stop.prevent, name="comments").fixed-center-max-width.top-0.bottom-0.bg-green.white.z4.overflow-hidden
+      section(v-if="showChat", @click.stop.prevent, name="comments").mh.fixed-center-max-width.top-0.bottom-0.bg-green.white.z4.overflow-hidden
         .flex.flex-column.chat-scroll
           .relative.white.p1.border-bottom
             .flex.items-center.justify-start.p2
