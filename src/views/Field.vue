@@ -1,7 +1,7 @@
 <template lang="pug">
   .mt2.pb-full-height
     ul.list-reset.flex.flex-wrap.mxn2.mt0.mb3.px2.pb-full-height
-      field-item(v-for='(clover, i) in generated' :key='i' data-expand='-50' :data-appear='i % 3' :clover="clover")
+      field-item(v-for='(clover, i) in generated' :key='i' data-expand='-50' :data-appear='i % 3' :clover="clover" :in-field="true")
 
     .fixed-center-max-width.bottom-0.bg-green.white
       router-link.block.h-bttm-bar.flex(to='/account')

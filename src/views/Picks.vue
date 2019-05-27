@@ -1,38 +1,39 @@
 <template lang="pug">
   div
-    //- router-view(@close="closeKeep")
+    //- .green.border-bottom.py1.center
+    //-   p.my0.md-my1 Your unregistered Clovers
 
-    .green.border-bottom.py1.center
-      p.my0.md-my1 Your unregistered Clovers
+    ul.list-reset.flex.flex-wrap.mxn2.mt0.mb3.px2.pb-full-height
+      field-item(v-for='(clover, i) in picks' :key='i' data-expand='-50' :data-appear='i % 3' :clover="clover")
 
-    ul.list-reset.md-flex.flex-wrap.items-center.m0.md-px1.pb-bttm-bar
-      //- clover item
-      li.md-col-6.md-px1(v-for="(clover, i) in picks" :key="i")
-        .flex.py2.border-bottom.justify-between.items-center.green
-          .col-3.center.relative
-            .sym-badge.absolute.h7.p1(v-if="isSym(clover)") SYM
-            router-link(:to="{ query: { pick: clover.movesString } }")
-              img.pointer(:src="cloverImage(clover, 64)" width="64" height="64")
+    //- ul.list-reset.md-flex.flex-wrap.items-center.m0.md-px1.pb-bttm-bar
+    //-   //- clover item
+    //-   li.md-col-6.md-px1(v-for="(clover, i) in picks" :key="i")
+    //-     .flex.py2.border-bottom.justify-between.items-center.green
+    //-       .col-3.center.relative
+    //-         .sym-badge.absolute.h7.p1(v-if="isSym(clover)") SYM
+    //-         router-link(:to="{ query: { pick: clover.movesString } }")
+    //-           img.pointer(:src="cloverImage(clover, 64)" width="64" height="64")
 
-          .col-3.pr2.h7.font-mono {{ fromNow(clover) }}
+    //-       .col-3.pr2.h7.font-mono {{ fromNow(clover) }}
 
-          .pr1.h6.font-mono
-            button.btn.btn-big.border.border-green.regular(@click="removeClover(clover)") Remove
+    //-       .pr1.h6.font-mono
+    //-         button.btn.btn-big.border.border-green.regular(@click="removeClover(clover)") Remove
 
-          .pr2.h6.font-mono
-            router-link.btn.btn-big.bg-green.white.nowrap.regular(:to="{ query: { pick: clover.movesString } }") Keep/Sell
+    //-       .pr2.h6.font-mono
+    //-         router-link.btn.btn-big.bg-green.white.nowrap.regular(:to="{ query: { pick: clover.movesString } }") Keep/Sell
 
-      li.p2.center(v-if="!picks.length") No Clovers To Show...
-        .flex.py2.border-bottom.justify-between.items-center.green
-          .col-3.center.relative
-            img.pointer(:src="newClover ? cloverImage(newClover, 64) : 'https://api2.clovers.network/clovers/svg/0x0/64'" width="64" height="64" @click="viewSingle = newClover")
-          .col-6.pr2.font-mono
-            input.col-12.font-mono.border-bottom(id="manual-clover" type="text" pattern="[a-fA-F\d]+" placeholder="Add Clover Manually" v-model="newCloverMoves")
-          .pr3.h6.font-mono
-            button.btn.btn-big.bg-green.white.nowrap.regular(@click="addNewClover()") Add Clover
+    //-   li.p2.center(v-if="!picks.length") No Clovers To Show...
+    //-     .flex.py2.border-bottom.justify-between.items-center.green
+    //-       .col-3.center.relative
+    //-         img.pointer(:src="newClover ? cloverImage(newClover, 64) : 'https://api2.clovers.network/clovers/svg/0x0/64'" width="64" height="64" @click="viewSingle = newClover")
+    //-       .col-6.pr2.font-mono
+    //-         input.col-12.font-mono.border-bottom(id="manual-clover" type="text" pattern="[a-fA-F\d]+" placeholder="Add Clover Manually" v-model="newCloverMoves")
+    //-       .pr3.h6.font-mono
+    //-         button.btn.btn-big.bg-green.white.nowrap.regular(@click="addNewClover()") Add Clover
 
-    .fixed-center-max-width.bottom-0.bg-green.white.center.p2.pointer.h-bttm-bar.flex(is="router-link" tag="div" to="/field")
-      span.m-auto.h3.font-exp Find more
+    //- .fixed-center-max-width.bottom-0.bg-green.white.center.p2.pointer.h-bttm-bar.flex(is="router-link" tag="div" to="/field")
+    //-   span.m-auto.h3.font-exp Find more
 
     transition(name="fade")
       div(v-if="showPickModal")
@@ -46,6 +47,7 @@ import { cloverImage } from '@/utils'
 import KeepClover from '@/views/KeepClover'
 import moment from 'moment'
 import Reversi from 'clovers-reversi'
+import FieldItem from '@/components/FieldItem'
 
 export default {
   name: 'Picks',
@@ -111,7 +113,7 @@ export default {
       saveClover: 'SAVE_CLOVER'
     })
   },
-  components: { KeepClover }
+  components: { KeepClover, FieldItem }
 }
 </script>
 

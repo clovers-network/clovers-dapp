@@ -50,6 +50,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import Reversi from 'clovers-reversi'
 import SvgText from './SvgText'

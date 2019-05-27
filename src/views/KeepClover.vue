@@ -1,39 +1,55 @@
 <template lang="pug">
-  .green.fixed.z3.flex.modal.justify-center(@click.self="cancel")
-    .col-12.bg-white.flex.flex-column.justify-between.outline
+  .green.fixed.z3.flex.modal(@click.self="cancel")
+    .m-auto.col-11.md-col-8.lg-col-4.bg-white.flex.flex-column.justify-between.border.border-dashed.rounded
       header
-        .h-header.border-bottom.flex.justify-between.items-center
-          .col-4.pl2
+        .h-header.flex.justify-between.items-center
+          .col-4.pl3.pt1
             button.pointer(@click="cancel") Cancel
           h1.col-4.font-exp.center.nowrap {{invalidClover ? 'Not Found' : ''}}
-          .col-4.pr2.right-align
-            router-link.font-mono(:to="{name: 'Trade'}") {{ prettyUserBalance }} ♣
-      figure.flex-auto.relative
+          .green.mt3.mr3(v-if="clover.symmetrical")
+            symmetry-icons(:board="clover")
+      div.flex-auto.relative.p2.center
         //- image
-        .keep__figure__img.absolute.bg-contain.bg-no-repeat.bg-center(role="img", v-if="clover && !invalidClover", :style="'background-image:url(' + cloverImage(clover) + ')'")
-        .keep__figure__img.absolute.flex.items-center.justify-center.h1(v-else) <div class="h1">:-(</div>
+        img(:src="cloverImage(clover, 290)" width="290" height="290")
+        //- .keep__figure__img.absolute.bg-contain.bg-no-repeat.bg-center(role="img", v-if="clover && !invalidClover", :style="'background-image:url(' + cloverImage(clover) + ')'")
+        //- .keep__figure__img.absolute.flex.items-center.justify-center.h1(v-else)
+        //-   .h1 :-(
         //- fav btn
-        .absolute.bottom-0.right-0.p2(@click="saveClover(clover)", v-if="!invalidClover")
-          <heart-icon class="green h1" :active="isSaved" />
+        //- .absolute.bottom-0.right-0.p2(@click="saveClover(clover)", v-if="!invalidClover")
+        //-   heart-icon.green.h1(:active="isSaved")
+
+      //- stats
+      .flex.flex-wrap.pt3.pb2
+        .col-6.align-right Your balance
+        .col-6.pl2
+          span &cent; &nbsp; {{ prettyUserBalance }}
+          span.light-green &nbsp; ({{ userBalanceInETH }} <sup>ETH</sup>)
+        .col-6.align-right Cost to keep
+        .col-6.pl2
+          span &cent; &nbsp; {{ keepValue }}
+          span.light-green &nbsp; ({{ keepValueInETH }} <sup>ETH</sup>)
+
       //- invalid clover
       footer(v-if="invalidClover").bg-green.white
         router-link(:to="{name: 'Field'}")
           button.col-12.h-bttm-bar.font-exp.pointer Find More
+
       //- keep / sell actions
       footer(v-else-if="!submitted")
-        small.border-top.center.p2.block.h6.bg-white(v-if="sellValue > 0") You found a symmetrical clover! Keep it or claim a reward.
-        .flex.border-top
-          .col-6.flex-grow.p3.relative.pointer(@click="action = 'keep'")
-            div(:class="{'opacity-25': action !== 'keep'}")
-              small.block.lh1 Keep for
-              .font-exp.mt1.truncate {{ keepValue }} Coins
-          .col-6.flex-grow.p3.relative.pointer.border-left(v-if="sellValue > 0", @click="action = 'sell'")
-            div(:class="{'opacity-25': action !== 'sell'}")
-              small.block.lh1 Claim reward
-              .font-exp.mt1.truncate {{ sellValue }} Coins
+        //- small.border-top.center.p2.block.h6.bg-white(v-if="sellValue > 0") You found a symmetrical clover! Keep it or claim a reward.
+        //- .flex.border-top
+        //-   .col-6.flex-grow.p3.relative.pointer(@click="action = 'keep'")
+        //-     div(:class="{'opacity-25': action !== 'keep'}")
+        //-       small.block.lh1 Keep for
+        //-       .font-exp.mt1.truncate {{ keepValue }} Coins
+        //-   .col-6.flex-grow.p3.relative.pointer.border-left(v-if="sellValue > 0", @click="action = 'sell'")
+        //-     div(:class="{'opacity-25': action !== 'sell'}")
+        //-       small.block.lh1 Claim reward
+        //-       .font-exp.mt1.truncate {{ sellValue }} Coins
+
         //- confirm btn
-        .bg-green.white
-          button.col-12.h-bttm-bar.font-exp.pointer(@click="btnClick", :class="{'pointer-events-none': submitting}")
+        .m3.bg-green.rounded.white
+          button.col-12.pointer.p2(@click="btnClick", :class="{'pointer-events-none': submitting}")
             span.block.m-auto.capitalize(v-show="!submitting") {{action}}
             wavey-menu.m-auto(v-show="submitting", :isWhite="true")
           transition(name="fade")
@@ -55,6 +71,8 @@ import { cloverImage, fetchCloudImage, prettyBigNumber, abbrvNum } from '@/utils
 import { fromWei } from 'web3-utils'
 import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
+import SymmetryIcons from '@/components/Icons/SymmetryIcons'
+
 const reversi = new Reversi()
 let lastRt = null
 
@@ -90,7 +108,8 @@ export default {
     },
     clover () {
       const id = `0x${this._reversi.byteBoard}`
-      return {board: id, movesString: this.movesString}
+      const saved = this.picks.find(b => b.board === id)
+      return saved || this._reversi
     },
     invalidClover () {
       return this._reversi && this._reversi.error
@@ -98,6 +117,10 @@ export default {
     keepValue () {
       // in Coins
       return this.value ? abbrvNum(fromWei(this.value.toString(10))) : '...'
+    },
+    keepValueInETH () {
+      if (!this.value) return '...'
+      return abbrvNum(this.value.div(this.clubTokenPrice).toString(10))
     },
     sellValue () {
       // in Coins
@@ -112,8 +135,11 @@ export default {
       if (!this.picks.length) return false
       return this.picks.findIndex(c => c.board === this.clover.board) >= 0
     },
+    clubTokenPrice () {
+      return new BigNumber(this.$store.state.clubTokenPrice)
+    },
 
-    ...mapGetters(['picks', 'prettyUserBalance'])
+    ...mapGetters(['picks', 'prettyUserBalance', 'userBalanceInETH'])
   },
   methods: {
     cloverImage,
@@ -190,8 +216,17 @@ export default {
       this.submitted = true
     },
 
-    ...mapMutations({saveClover: 'SAVE_CLOVER'}),
-    ...mapActions(['buy', 'sell', 'addMessage', 'selfDestructMsg', 'cloverExists'])
+    ...mapMutations({
+      saveClover: 'SAVE_CLOVER'
+    }),
+    ...mapActions([
+      'buy',
+      'sell',
+      'addMessage',
+      'selfDestructMsg',
+      'cloverExists',
+      'getClubTokenPrice'
+    ])
   },
   beforeRouteEnter (to, from, next) {
     lastRt = from && from.name
@@ -199,16 +234,20 @@ export default {
   },
   mounted () {
     this.checkClover()
+    this.getClubTokenPrice()
   },
-  components: { WaveyMenu, HeartIcon }
+  components: { WaveyMenu, HeartIcon, SymmetryIcons }
 }
 </script>
 
-<style lang="css">
+<style>
 .keep__figure__img {
   width: calc(100% - 2rem);
   height: calc(100% - 4rem);
   top: 2rem;
   left: 1rem;
+}
+sup {
+  font-size: 56%;
 }
 </style>

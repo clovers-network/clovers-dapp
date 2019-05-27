@@ -1,13 +1,6 @@
-<template>
-  <ul
-    :class="{absolute:absolute, 'all-symmetries': horizontal}"
-    class=" list-reset ">
-    <li
-      v-for="(sym, i) in symmetries"
-      :key="i"
-      :class="[sym, {'inline-block': horizontal}]"
-      class="symmetry-type"/>
-  </ul>
+<template lang="pug">
+  ul.list-reset(:class="{absolute:absolute, 'all-symmetries': horizontal}")
+    li.symmetry-type(v-for='(sym, i) in symmetries' :key='i' :class="[sym, {'inline-block': horizontal}]")
 </template>
 
 <script>

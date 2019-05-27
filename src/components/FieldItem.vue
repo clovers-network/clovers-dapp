@@ -3,16 +3,20 @@
     .pb-100.pt3.relative.pick-border.rounded
       router-link(:to="{ query: {pick: clover.movesString } }")
         .absolute.overlay.flex.items-end.justify-center
-          // image
-          img.block.pointer.p3(:src='cloverImage(clover)' @click='viewSingle = clover')
-      // fav btn
-      heart-icon.icon.green.h2.absolute.top-0.left-0.mt2.ml2(:active='isSaved' @click='saveClover(clover)')
+          img.block.pointer.p3(:src="cloverImage(clover)" @click="viewSingle = clover")
+      heart-icon.icon.green.h2.absolute.top-0.left-0.mt2.ml2(:active="isSaved" @click="save" v-if="inField")
+      .icon.green.h6.absolute.top-0.left-0.ml2.pointer(v-else @click="remove")
+        span.h1.md-h0 &times;
+
+      .green.absolute.top-0.right-0.mt2.mr2(v-if="clover.symmetrical")
+        symmetry-icons(:board="clover")
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import { cloverImage } from '@/utils'
 import HeartIcon from '@/components/Icons/HeartIcon'
+import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 
 export default {
   name: 'FieldItem',
@@ -20,7 +24,8 @@ export default {
     clover: {
       type: Object,
       required: true
-    }
+    },
+    inField: Boolean // default falsy
   },
   computed: {
     isSaved () {
@@ -32,13 +37,17 @@ export default {
   },
   methods: {
     cloverImage,
-
-    ...mapMutations({
-      saveClover: 'SAVE_CLOVER'
-    }),
-    ...mapActions(['formatFoundClover'])
+    save () {
+      this.$store.commit('SAVE_CLOVER', this.clover)
+    },
+    remove () {
+      let yes = window.confirm('Are you sure? This can\'t be undone...')
+      if (yes) {
+        this.$store.commit('SAVE_CLOVER', this.clover)
+      }
+    }
   },
-  components: { HeartIcon }
+  components: { HeartIcon, SymmetryIcons }
 }
 </script>
 
