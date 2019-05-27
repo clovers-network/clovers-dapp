@@ -303,7 +303,7 @@ export default {
       .then(({ data }) => commit('SET_OTHER_USER', data))
   },
 
-  getPagedClovers ({ state, commit }, { url, filters }) {
+  getPagedClovers ({ state, commit }, { url, filters = {} }) {
     return axios.get(url, {
       params: { ...filters }
     }).then(({ data }) => commit('SET_PAGED_CLOVERS', data))
@@ -680,7 +680,7 @@ export default {
     investmentInWei = investmentInWei < 0 ? 0 : investmentInWei
     // have enough tokens ?
     let value = '0'
-    // check balance of user in club token
+    // check balance of user in Coin
     let userBalance = await contracts.ClubToken.instance.methods
       .balanceOf(state.account)
       .call()

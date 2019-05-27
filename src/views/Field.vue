@@ -1,33 +1,30 @@
-<template>
-  <div class="mt2 pb-full-height">
-    <router-view @close="closeKeep"></router-view>
-    <ul class="list-reset flex flex-wrap mxn2 mt0 mb3 px2 pb-full-height">
-      <!-- item -->
-      <li v-for="(clover, i) in generated" :key="i" class="p2 col-6 sm-col-4 relative appear-off" data-expand="-50" :data-appear="i % 3">
-        <div class="pb-100 relative">
-          <router-link :to="{name: 'Keep', params: {movesString: clover.movesString}}">
-            <div class="absolute overlay flex">
-              <!-- image -->
-              <img :src="cloverImage(clover)" @click="viewSingle = clover" class="block m-auto pointer"/>
-            </div>
-          </router-link>
-        </div>
-        <!-- fav btn -->
-        <heart-icon class="green absolute top-0 right-0 mr2 p1" :active="isSaved(clover)" @click="saveClover(clover)" />
-      </li>
-    </ul>
-    <!-- <button @click="getNext" class="btn btn-big btn-primary bg-green">Get some</button> -->
-    <div class="fixed-center-max-width bottom-0 bg-green white">
-      <router-link to="/account" class="block h-bttm-bar flex">
-        <span class="block m-auto h3 font-exp">Picked {{ pickCount}} {{ pluralize('Clover', pickCount) }}</span>
-      </router-link>
-    </div>
-  </div>
+
+<template lang="pug">
+  .mt2.pb-full-height
+    ul.list-reset.flex.flex-wrap.mxn2.mt0.mb3.px2.pb-full-height
+      // item
+      li.p2.col-6.sm-col-4.relative.appear-off(v-for='(clover, i) in generated' :key='i' data-expand='-50' :data-appear='i % 3')
+        .pb-100.relative
+          router-link(:to="{ query: {pick: clover.movesString } }")
+            .absolute.overlay.flex
+              // image
+              img.block.m-auto.pointer(:src='cloverImage(clover)' @click='viewSingle = clover')
+        // fav btn
+        heart-icon.green.h2.absolute.top-0.right-0.mr2(:active='isSaved(clover)' @click='saveClover(clover)')
+    .fixed-center-max-width.bottom-0.bg-green.white
+      router-link.block.h-bttm-bar.flex(to='/account')
+        span.block.m-auto.h3.font-exp Picked {{ pickCount}} {{ pluralize(&apos;Clover&apos;, pickCount) }}
+
+    transition(name="fade")
+      div(v-if="showPickModal")
+        keep-clover(:movesString="showPickModal")
+
 </template>
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import HeartIcon from '@/components/Icons/HeartIcon'
+import KeepClover from '@/views/KeepClover'
 import Bottleneck from 'bottleneck'
 import Reversi from 'clovers-reversi'
 import { pad0x, cloverImage, pluralize, cloverIsMonochrome } from '@/utils'
@@ -38,7 +35,7 @@ const scrollEl = document.scrollingElement
 
 export default {
   name: 'Field',
-  components: { HeartIcon },
+  components: { HeartIcon, KeepClover },
   data () {
     return {
       limiter: new Bottleneck({
@@ -57,6 +54,10 @@ export default {
     ]
   },
   computed: {
+    showPickModal () {
+      return this.$route.query.pick
+    },
+
     ...mapGetters(['picks', 'pickCount'])
   },
   methods: {

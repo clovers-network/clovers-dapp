@@ -40,7 +40,20 @@
 .pb-100 { padding-bottom: 100%; }
 .pb-bttm-bar { padding-bottom: var(--height-bttm-bar); }
 
-.overlay{top:0;left:0;bottom:0;right:0;}
+.overlay {top:0;left:0;bottom:0;right:0;}
+
+.modal {
+  background-color: rgba(255, 255, 255, .7);
+  padding: 8rem 1rem 3rem;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  & > div {
+    max-width: calc(var(--width-3) - 8rem);
+  }
+}
 
 .overflow-x-scroll{overflow-x:scroll;}
 .invisible-scrollbar::-webkit-scrollbar {display: none;}
