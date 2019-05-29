@@ -1,6 +1,6 @@
 <template lang="pug">
   .green.fixed.z3.flex.modal(@click.self="cancel")
-    .m-auto.col-11.md-col-8.lg-col-4.bg-white.flex.flex-column.justify-between.border.border-dashed.rounded
+    .m-auto.col-10.md-col-6.lg-col-3.bg-white.flex.flex-column.justify-between.border.border-dashed.rounded
       header
         .h-header.flex.justify-between.items-center
           .col-4.pl3.pt1
@@ -10,7 +10,7 @@
             symmetry-icons(:board="clover")
       div.flex-auto.relative.p2.center
         //- image
-        img(:src="cloverImage(clover, 290)" width="290" height="290")
+        img(:src="cloverImage(clover, 196)" width="196" height="196")
         //- .keep__figure__img.absolute.bg-contain.bg-no-repeat.bg-center(role="img", v-if="clover && !invalidClover", :style="'background-image:url(' + cloverImage(clover) + ')'")
         //- .keep__figure__img.absolute.flex.items-center.justify-center.h1(v-else)
         //-   .h1 :-(
@@ -19,51 +19,48 @@
         //-   heart-icon.green.h1(:active="isSaved")
 
       //- stats
-      .flex.flex-wrap.pt3.pb2
-        .col-6.align-right Your balance
-        .col-6.pl2
-          span.bold &cent; &nbsp; {{ prettyUserBalance }}
-          span.light-green &nbsp; ({{ userBalanceInETH }} <sup>ETH</sup>)
-        .col-6.align-right Cost to keep
-        .col-6.pl2(v-if="unavailable")
-          span.red.opacity-50 &times; Already registered
-        .col-6.pl2(v-else)
-          span.bold &cent; &nbsp; {{ keepValue }}
-          span.light-green &nbsp; ({{ keepValueInETH }} <sup>ETH</sup>)
-        template(v-if="_reversi.symmetrical")
-          .col-6.align-right Reward
-          .col-6.pl2
-            span.bold &cent; &nbsp; {{ sellValue }}
-            span.light-green &nbsp; ({{ sellValueInETH }} <sup>ETH</sup>)
+      .flex.justify-center(v-if="unavailable")
+        p.m0.red.opacity-50 &times; Already registered
+
+      .options.px3.pt2.mx3(v-else)
+        div
+          label.radio.block.pointer.border.rounded.py1.px2.mb1.flex.items-center(:active="mode === 'keep'")
+            input(v-model="mode" type="radio" value="keep")
+            .dot.mr2
+            span.flex-auto Keep Clover
+            .bold - {{ keepValue }} &cent;
+          label.radio.block.pointer.border.rounded.py1.px2.mb1.flex.items-center(v-if="_reversi.symmetrical" :active="mode === 'sell'")
+            input(v-model="mode" type="radio" value="sell")
+            .dot.mr2
+            span.flex-auto Claim Reward
+            .bold + {{ sellValue }} &cent;
+
+        p.center.h6.underline.mb0.mt2 More information
+
+      //- .flex.flex-wrap.pt3.pb2(v-else)
+      //-   .col-6.align-right Your balance
+      //-   .col-6.pl2
+      //-     span.bold &cent; &nbsp; {{ prettyUserBalance }}
+      //-     span.light-green &nbsp; ({{ userBalanceInETH }} <sup>ETH</sup>)
+      //-   .col-6.align-right Cost to keep
+      //-   .col-6.pl2
+      //-     span.bold &cent; &nbsp; {{ keepValue }}
+      //-     span.light-green &nbsp; ({{ keepValueInETH }} <sup>ETH</sup>)
 
       //- invalid clover
-      footer(v-if="invalidClover").bg-green.white
-        router-link(:to="{name: 'Field'}")
-          button.col-12.h-bttm-bar.font-exp.pointer Find More
+      //- footer(v-if="invalidClover").bg-green.white
+      //-   router-link(:to="{name: 'Field'}")
+      //-     button.col-12.h-bttm-bar.font-exp.pointer Find More
 
       //- keep / sell actions
-      footer(v-else-if="!submitted")
-        //- small.border-top.center.p2.block.h6.bg-white(v-if="sellValue > 0") You found a symmetrical clover! Keep it or claim a reward.
-        //- .flex.border-top
-        //-   .col-6.flex-grow.p3.relative.pointer(@click="action = 'keep'")
-        //-     div(:class="{'opacity-25': action !== 'keep'}")
-        //-       small.block.lh1 Keep for
-        //-       .font-exp.mt1.truncate {{ keepValue }} Coins
-        //-   .col-6.flex-grow.p3.relative.pointer.border-left(v-if="sellValue > 0", @click="action = 'sell'")
-        //-     div(:class="{'opacity-25': action !== 'sell'}")
-        //-       small.block.lh1 Claim reward
-        //-       .font-exp.mt1.truncate {{ sellValue }} Coins
-
-        //- confirm btn
+      footer.flex.justify-center(v-if="!submitted")
         .m3.rounded.white.trans-bg(:class="cancelled ? 'bg-red' : 'bg-green'")
-          button.col-12.pointer.p2(@click="btnClick", :class="{'pointer-events-none': submitting}")
+          button.pointer.py2.px3(@click="btnClick", :class="{'pointer-events-none': submitting}")
             span.block.m-auto.capitalize(v-show="!submitting") {{ buttonText }}
             template(v-if="submitting")
-              .p1
-              wavey-menu.m-auto(:isWhite="true")
-          .p2.center.font-mono(v-if="submitting")
-            p {{ infoText }}
-      //- submitting
+              span.block.m-auto.capitalize Submitting ...
+
+      //- submitted
       footer(v-else)
         .m3.rounded.white.bg-green.center
           router-link.col-12.pointer.p2.inline-block(:to="('/clovers/' + clover.board)")
@@ -105,6 +102,7 @@ export default {
     return {
       unavailable: false,
       action: 'keep',
+      mode: 'keep', // || 'sell'
       value: null,
       reward: null,
       submitting: false,
@@ -165,7 +163,12 @@ export default {
       return new BigNumber(this.$store.state.clubTokenPrice)
     },
     buttonText () {
-      return this.cancelled ? 'Transaction cancelled' : actions[this.action]
+      if (this.cancelled) {
+        return 'Transaction cancelled'
+      } else if (this.unavailable) {
+        return 'View Clover'
+      }
+      return 'Confirm'
     },
 
     ...mapGetters(['picks', 'prettyUserBalance', 'userBalanceInETH'])
@@ -178,10 +181,18 @@ export default {
       this.$router.push(current)
     },
     btnClick () {
+      console.log(this.mode, this.action)
       if (this.cancelled || this.submitting) return
-      if (this.action === 'keep') this.keep()
-      if (this.action === 'sell') this.sellToBank()
-      if (this.action === 'view') this.viewClover()
+      if (this.action === 'view') {
+        this.viewClover()
+        return
+      }
+
+      if (this.mode === 'keep') {
+        this.keep()
+      } else {
+        this.sellToBank()
+      }
     },
     async keep () {
       this.submitting = true
@@ -195,8 +206,6 @@ export default {
       } catch (err) {
         this.submitting = false
         this.cancelled = true
-        // notification
-        this.handleError(err)
       }
     },
     async sellToBank () {
@@ -204,13 +213,13 @@ export default {
       try {
         const tx = await this.sell({ clover: this.clover })
         this.submitting = false
-        this.handleSuccess(
-          `Success! You sold ${this.clover.board} to the bank`,
-          this.clover
-        )
+        // this.handleSuccess(
+        //   `Success! You sold ${this.clover.board} to the bank`,
+        //   this.clover
+        // )
       } catch (err) {
         this.submitting = false
-        this.handleError(err)
+        this.cancelled = true
       }
     },
     checkClover () {
@@ -222,7 +231,7 @@ export default {
           return
         }
         this.unavailable = true
-        this.action = this._reversi.symmetrical ? 'sell' : 'keep'
+        this.action = 'view'
       })
       const syms = this._reversi.returnSymmetriesAsBN()
       this.$store.dispatch('getReward', syms).then(wei => {

@@ -50,6 +50,29 @@
   right: 0;
   bottom: 0;
   overflow-y: auto;
+
+  & > div {
+    box-shadow: 4px 4px 4px rgba(1, 180, 99, 0.08);
+  }
+}
+
+.radio {
+  background-color: var(--white);
+  transition: background var(--anim-timing-medium);
+
+  & .dot {
+    background: url('./assets/icons/radio.svg');
+    width: 16px;
+    height: 16px;
+  }
+
+  &[active] {
+    background-color: var(--lightest-green);
+
+    & .dot {
+      background: url('./assets/icons/radio-filled.svg');
+    }
+  }
 }
 
 .overflow-x-scroll{overflow-x:scroll;}
