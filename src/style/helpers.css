@@ -10,6 +10,7 @@
 .h7 { font-size: .94rem; }
 .h8 { font-size: .75rem; }
 .w-100{width:100%;}
+.w-100vw{width: 100vw;}
 .w-1em{width:1em;}
 .h-100{height:100%;}
 .h-header{height:var(--height-header);}
@@ -111,6 +112,7 @@
 
 .rotate-180 { transform: Rotate(180DEG); }
 .transl-x-100{ transform: translateX(100%); }
+.transl-x-50{transform: translateX(50%);}
 .flip-x{transform:scaleX(-1);}
 
 .trans-transform{ transition: transform var(--anim-timing-medium); }

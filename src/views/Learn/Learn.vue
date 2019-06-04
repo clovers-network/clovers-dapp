@@ -5,22 +5,23 @@
     #learn_index_1.h-100vh.relative(v-if="index > 0")
       create-clovers(:clovers="clovers", @addClover="addClover")
     #learn_index_2.h-100vh.relative(v-if="index > 1")
+      symm-clovers
 </template>
 
 <script>
 import Intro from './Learn__Section--Intro'
 import CreateClovers from './Learn__Section--CreateClovers'
+import SymmClovers from './Learn__Section--SymmClovers'
 export default {
   name: 'Learn',
   data () {
     return {
-      index: 0,
+      index: 2,
       clovers: []
     }
   },
   methods: {
     next (to) {
-      console.log('next')
       this.index++
       this.$nextTick(() => this.$scrollTo('#learn_index_' + to, 600, { container: '#learn' }))
     },
@@ -31,7 +32,8 @@ export default {
   },
   components: {
     Intro,
-    CreateClovers
+    CreateClovers,
+    SymmClovers
   }
 }
 </script>

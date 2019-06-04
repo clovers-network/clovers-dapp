@@ -43,9 +43,13 @@ export default {
       text: 'You can create clovers in your browser.',
       canCreate: true,
       noLimit: false,
-      showDoneBtn: false,
       showBasket: false,
       showNextArrow: false
+    }
+  },
+  computed: {
+    showDoneBtn () {
+      return this.clovers.length > 3 && !this.showNextArrow
     }
   },
   methods: {
@@ -72,8 +76,6 @@ export default {
           this.text = 'Keep going!'
           this.canCreate = this.noLimit = true
           break
-        case 5:
-          this.showDoneBtn = true
       }
     },
     scrollToEnd () {
@@ -85,7 +87,6 @@ export default {
       })
     },
     end () {
-      this.showDoneBtn = false
       this.showNextArrow = true
       this.showBasket = true
     }
