@@ -28,6 +28,12 @@
                     <select v-model="filters.filter">
                       <option :value="undefined">All</option>
                       <option value="forsale">For sale</option>
+                      <option value="Sym">Symmetrical</option>
+                      <option value="RotSym">Sym. Rotational</option>
+                      <option value="X0Sym">Sym. Vertical</option>
+                      <option value="Y0Sym">Sym. Horizontal</option>
+                      <option value="XYSym">Sym. Diagonal Up</option>
+                      <option value="XnYSym">Sym. Diagonal Down</option>
                       <!-- <option value="rft">RFT</option> -->
                     </select>
                   </div>
@@ -159,6 +165,18 @@ export default {
           type = 'For Sale'; break
         case 'rft':
           type = 'RFT'; break
+        case 'Sym':
+          type = 'Symmetrical'; break
+        case 'RotSym':
+          type = 'Rotational'; break
+        case 'X0Sym':
+          type = 'Horizontal'; break
+        case 'Y0Sym':
+          type = 'Vertical'; break
+        case 'XYSym':
+          type = 'Diagonal Up'; break
+        case 'XnYSym':
+          type = 'Diagonal Down'; break
         default:
           type = 'All'
       }

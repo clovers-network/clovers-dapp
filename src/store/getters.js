@@ -1,7 +1,7 @@
 import Reversi from 'clovers-reversi'
 import utils from 'web3-utils'
 import { Clovers, CurationMarket } from 'clovers-contracts'
-import { prettyBigNumber, abbrvAddr } from '@/utils'
+import { prettyBigNumber, abbrvAddr, abbrvNum } from '@/utils'
 import BigNumber from 'bignumber.js'
 
 export default {
@@ -23,6 +23,11 @@ export default {
   },
   prettyUserBalance (_, { userBalance }) {
     return parseInt(userBalance || 0).toFixed(0).toLocaleString()
+  },
+  userBalanceInETH ({ clubTokenPrice }, { userBalanceWei }) {
+    if (!clubTokenPrice) return 0
+    let ctp = new BigNumber(clubTokenPrice)
+    return abbrvNum(userBalanceWei.div(ctp).toString(10))
   },
   userName: ({ nullAddress }, { cloversBankAddress, curationMarketAddress }) => (user) => {
     let { address } = user

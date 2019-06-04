@@ -1,14 +1,11 @@
-<template>
-  <div>
-  <app-header/>
-  <div id="app" class="relative min-h-100vh max-width-3 mx-auto outline">
-    <main class="">
-      <router-view class=""/>
-    </main>
-    <foot/>
-    <messages/>
-  </div>
-  </div>
+
+<template lang="pug">
+  #app.relative.min-h-100vh
+    app-header
+    main.mx-auto.md-col-10.lg-col-8
+      router-view
+    foot
+    messages
 </template>
 
 <script>

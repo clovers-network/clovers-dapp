@@ -1,17 +1,11 @@
-<template>
-  <ul :class="['m0 lh0', {'center': horizontal}]">
-    <li
-      role="img"
-      v-for="(sym, i) in symmetries"
-      :key="i"
-      :class="[sym, {'inline-block': horizontal}]"
-      class="symmetry-type"/>
-  </ul>
+<template lang="pug">
+  ul(:class="['m0 lh0', {'center': horizontal}]")
+    li.symmetry-type(role='img' v-for='(sym, i) in symmetries' :key='i' :class="[sym, {'inline-block': horizontal}]")
 </template>
 
 <script>
 export default {
-  name: 'Symmetry',
+  name: 'SymmetryIcons',
   props: {
     board: {
       type: Object,
@@ -29,9 +23,6 @@ export default {
       for (let key in this.board) {
         if (types.includes(key) && this.board[key]) list.push(key)
       }
-      // if (!list.length) {
-
-      // }
       return list
     }
   }
@@ -39,7 +30,6 @@ export default {
 </script>
 
 <style scoped>
-
 .symmetry-type {
   border-radius: 100%;
   border: 1px solid;

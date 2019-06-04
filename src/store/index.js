@@ -46,7 +46,6 @@ const state = {
   currentClover: {},
   otherUser: null,
 
-  // saved clovers, organized by account ID
   // use getter 'picks' in views
   allSavedClovers: getSavedClovers(),
 

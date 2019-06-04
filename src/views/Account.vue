@@ -39,7 +39,7 @@
         //-       p View all
         .mxn2
           ul.list-reset.items-center.m0.nowrap.overflow-hidden
-            pick-list-item.inline-block(v-for="pick in pickList" :key="pick.board" :pick="pick")
+            pick-list-item.inline-block(v-for="pick in pickList" :key="pick.byteBoard" :pick="pick" :data-key="pick.board")
 
         div
           p

@@ -47,15 +47,12 @@
 
 .modal {
   background-color: rgba(255, 255, 255, .7);
-  padding: 8rem 1rem 3rem;
+  padding: 2rem;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-
-  & > div {
-    max-width: calc(var(--width-3) - 8rem);
-  }
+  overflow-y: auto;
 }
 
 .overflow-x-scroll{overflow-x:scroll;}
@@ -108,15 +105,16 @@
 .pointer-events-auto{pointer-events: auto}
 .not-allowed { cursor: not-allowed; }
 
-.hover-underline:hover{text-decoration: underline;}
+.hover-underline:hover { text-decoration: underline; }
 
 .rotate-180 { transform: Rotate(180DEG); }
-.transl-x-100{ transform: translateX(100%); }
+.transl-x-100 { transform: translateX(100%); }
 .transl-x-50{transform: translateX(50%);}
-.flip-x{transform:scaleX(-1);}
+.flip-x { transform:scaleX(-1); }
 
-.trans-transform{ transition: transform var(--anim-timing-medium); }
-.trans-opacity-long{ transition: opacity var(--anim-timing-long); }
+.trans-transform { transition: transform var(--anim-timing-medium); }
+.trans-opacity-long { transition: opacity var(--anim-timing-long); }
+.trans-bg { transition: background var(--anim-timing-medium); }
 
 .pre {white-space: pre;}
 
@@ -125,13 +123,6 @@
 .shadow-1{box-shadow:0 3px 4px currentColor;}
 
 /* #APP */
-.material-icons
-.material-icons {
-  transition: all ease 500ms;
-  font-size: inherit;
-  line-height: inherit;
-}
-
 .asc:after {
   color: var(--green);
   content: '\002193';

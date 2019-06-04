@@ -1,5 +1,6 @@
 <template lang="pug">
-  .inline-block.line-height-1.pointer.h1(:class="{'opacity-30': !active}", @click.prevent="$emit('click')") &hearts;&#xfe0e;
+  .inline-block.line-height-1.pointer(:class="{'opacity-100': active}", @click.prevent="$emit('click')")
+    img(src="../../assets/icons/cart.svg")
 </template>
 
 <script>
@@ -10,6 +11,3 @@ export default {
   }
 }
 </script>
-
-<style>
-</style>
