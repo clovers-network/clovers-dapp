@@ -3,7 +3,8 @@
     #learn_index_0.h-100vh.relative
       intro(@next="next(1)")
     #learn_index_1.h-100vh.relative(v-if="index > 0")
-      create-clovers
+      create-clovers(:clovers="clovers", @addClover="addClover")
+    #learn_index_2.h-100vh.relative(v-if="index > 1")
 </template>
 
 <script>
@@ -13,7 +14,8 @@ export default {
   name: 'Learn',
   data () {
     return {
-      index: 0
+      index: 0,
+      clovers: []
     }
   },
   methods: {
@@ -21,6 +23,10 @@ export default {
       console.log('next')
       this.index++
       this.$nextTick(() => this.$scrollTo('#learn_index_' + to, 600, { container: '#learn' }))
+    },
+    addClover (clvr) {
+      this.clovers.push(clvr)
+      this.$store.commit('SAVE_CLOVER', clvr)
     }
   },
   components: {
