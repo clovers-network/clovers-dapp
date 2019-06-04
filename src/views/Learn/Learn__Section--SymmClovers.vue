@@ -12,14 +12,16 @@
               button.border.rounded.green.px3.py1.h5.pointer.nowrap(@click="step", v-if="no === 1") Show Reward
         transition(name="fade")
           .absolute.top-100.left-0.col-12.font-mono.pt3.flex.justify-center(v-show="no === 2")
-            .nowrap {{cleanReward}} coins = XXXX USD
+            .nowrap {{cleanReward}} coins = ${{rewardInUSD}}
     .absolute.left-0.w-100.pt2.px3.pb3.center(:class="no > 1 ? 'top-0' : 'bottom-0'")
       .font-ext.h2.mx-auto(v-html="text", style="max-width:26em")
+    down-arrow-btn(v-if="no > 1", v-on="$listeners")
 </template>
 
 <script>
 import LearnFrame from './Learn__Section__Frame'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
+import DownArrowBtn from './Learn__DownArrowBtn'
 import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
 import { abbrvNum } from '@/utils'
@@ -41,6 +43,9 @@ export default {
     },
     cleanReward () {
       return this.reward ? abbrvNum(fromWei(this.reward.toString(10))) : '...'
+    },
+    rewardInUSD () {
+      return this.reward && abbrvNum(this.$store.getters.clubTokenInUSD.toFormat(2) * this.cleanReward)
     }
   },
   methods: {
@@ -65,8 +70,9 @@ export default {
   },
   created () {
     this.setReward()
+    this.$store.dispatch('getOrders')
   },
-  components: { LearnFrame, SymmetryIcons }
+  components: { LearnFrame, SymmetryIcons, DownArrowBtn }
 }
 </script>
 
