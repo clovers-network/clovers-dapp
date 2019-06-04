@@ -106,6 +106,14 @@ export default {
   cloversBankAddress ({ correctNetwork }) {
     return Clovers.networks[correctNetwork].address.toLowerCase()
   },
+  priceInCollateral ({ orders }) {
+    if (!orders.length) return new BigNumber(0)
+    let recent = orders[0]
+    return new BigNumber(recent.value).div(new BigNumber(recent.tokens))
+  },
+  clubTokenInUSD ({ ethPrice }, { priceInCollateral }) {
+    return priceInCollateral.times(new BigNumber(ethPrice))
+  },
   symmetries (state) {
     // console.log('symmetries calculated')
     // // return {Symmetricals: 0, RotSym: 0, X0Sym: 0, Y0Sym: 0, XYSym: 0, XnYSym: 0, PayMultiplier: 100}
