@@ -134,3 +134,17 @@ export function abbrvNum (n, decimals = 2) {
     return n
   }
 }
+
+export function formatFoundClover (clover) {
+  return {
+    board: pad0x(clover.byteBoard),
+    movesString: clover.movesString,
+    symmetrical: clover.symmetrical,
+    X0Sym: clover.X0Sym,
+    XYSym: clover.XYSym,
+    XnYSym: clover.XnYSym,
+    Y0Sym: clover.Y0Sym,
+    RotSym: clover.RotSym,
+    createdAt: new Date()
+  }
+}
