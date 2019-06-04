@@ -12,7 +12,7 @@
               button.border.rounded.green.px3.py1.h5.pointer.nowrap(@click="step", v-if="no === 1") Show Reward
         transition(name="fade")
           .absolute.top-100.left-0.col-12.font-mono.pt3.flex.justify-center(v-show="no === 2")
-            .nowrap 10 coins = $0.50 USD
+            .nowrap {{cleanReward}} coins = XXXX USD
     .absolute.left-0.w-100.pt2.px3.pb3.center(:class="no > 1 ? 'top-0' : 'bottom-0'")
       .font-ext.h2.mx-auto(v-html="text", style="max-width:26em")
 </template>
@@ -21,7 +21,10 @@
 import LearnFrame from './Learn__Section__Frame'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 import Reversi from 'clovers-reversi'
-const clover = new Reversi()
+import BigNumber from 'bignumber.js'
+import { abbrvNum } from '@/utils'
+import { fromWei } from 'web3-utils'
+const reversi = new Reversi()
 export default {
   name: 'Learn__Section--SymmClovers',
   data () {
@@ -34,7 +37,10 @@ export default {
   },
   computed: {
     clover () {
-      return clover.playGameMovesString(this.exampleClvr)
+      return reversi.playGameMovesString(this.exampleClvr)
+    },
+    cleanReward () {
+      return this.reward ? abbrvNum(fromWei(this.reward.toString(10))) : '...'
     }
   },
   methods: {
@@ -45,10 +51,20 @@ export default {
           this.text = 'Clovers with symmetry are rare.<br>If you find one, you can claim a reward!'
           break
         case 2:
-          this.text = 'This clover is worth <b>10 coins</b>.<br>You can use these coins to buy and sell clovers, or exchange them for Ether (ETH).'
+          this.text = 'This clover is worth <b>' + this.cleanReward + ' clover coins</b>.<br>You can use these coins to buy and sell clovers, or exchange them for Ether (ETH).'
           break
       }
+    },
+    setReward () {
+      const syms = this.clover.returnSymmetriesAsBN()
+      this.$store.dispatch('getReward', syms).then(wei => {
+        wei = new BigNumber(wei)
+        this.reward = wei
+      })
     }
+  },
+  created () {
+    this.setReward()
   },
   components: { LearnFrame, SymmetryIcons }
 }
