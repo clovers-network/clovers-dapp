@@ -1,10 +1,12 @@
 <template lang="pug">
   li.px2
-    .py3.justify-between.items-center.green
+    .py3.justify-between.items-center.green.relative
       .center.relative
-        .sym-badge.absolute.h7.p1(v-if="isSym") SYM
         router-link(:to="to")
           img.pointer(:src="image" width="160" height="160")
+
+      .green.absolute.top-0.right-0(v-if="pick.symmetrical")
+        symmetry-icons.h7(:board="pick")
 
       //- .col-3.pr2.h7.font-mono {{ date }}
 
@@ -18,6 +20,7 @@
 <script>
 import moment from 'moment'
 import { cloverImage } from '@/utils'
+import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 
 export default {
   name: 'PickListItem',
@@ -53,6 +56,7 @@ export default {
     removeClover () {
       this.$store.commit('REMOVE_SAVED_CLOVER', this.pick)
     }
-  }
+  },
+  components: { SymmetryIcons }
 }
 </script>

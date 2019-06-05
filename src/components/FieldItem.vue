@@ -9,7 +9,7 @@
         span Remove
 
       .green.absolute.top-0.right-0.mt2.mr2(v-if="clover.symmetrical")
-        symmetry-icons(:board="clover")
+        symmetry-icons.h6(:board="clover")
 </template>
 
 <script>

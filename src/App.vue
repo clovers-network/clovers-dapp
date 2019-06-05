@@ -1,4 +1,3 @@
-
 <template lang="pug">
   #app.relative.min-h-100vh
     app-header

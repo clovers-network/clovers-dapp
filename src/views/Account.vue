@@ -15,28 +15,21 @@
       .absolute.top-0.right-0
         a.p2.block.h4.pointer(@click="signOrEdit" style="transform:scale(-1, 1)") ✎
 
-    section.px2.md-px3.bg-green.white.border.border-green(name="My unregistered Clovers")
+    section(name="My unregistered Clovers")
       h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
         router-link(to="/account/picks") Basket
 
       div(v-if="pickCount")
         div
-          p.m0 You have <strong>{{ pickCount }}</strong> unregistered {{ pluralize('Clover', pickCount) }}
-        //- .mxn3
-        //-   ul.list-reset.md-flex.flex-wrap.items-center.m0
-        //-     pick-list-item(v-for="pick in pickList" :key="pick.board" :pick="pick")
-
-        //-     li.flex-auto.col-12
-        //-       p View all
+          p You have <strong>{{ pickCount }}</strong> unregistered {{ pluralize('Clover', pickCount) }}
         .mxn2
-          ul.list-reset.items-center.m0.nowrap.overflow-hidden
-            pick-list-item.inline-block(v-for="pick in pickList" :key="pick.byteBoard" :pick="pick" :data-key="pick.board")
+          ul.list-reset.items-center.m0.nowrap.overflow-visible
+            pick-list-item.inline-block(v-for="(pick, i) in pickList" :key="pick.byteBoard" :pick="pick" :data-key="pick.board" :style="fadeOut(i)")
 
-        div
+        .py3
           p
-            router-link(to="/account/picks")
-              span.underline View all
-              span.font-mono.bold &nbsp;&rarr;
+            router-link.bg-green.px3.py2.rounded.white(to="/account/picks")
+              span View all
 
       div(v-else)
         div
@@ -51,7 +44,7 @@
               span.underline Pick some now
               span.font-mono.bold &nbsp;&rarr;
 
-    section.border-top.px2.md-px3(name="My Clovers")
+    section(name="My Clovers")
       h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
         router-link(to="/account/clovers") My Clovers
       div(v-if="cloversCount")
@@ -60,15 +53,14 @@
         .border-top.border-top-dotted.mxn3.mt3.mb2
           clover-list-cards(:clovers="clovers")
 
-        div
+        .py3
           p
-            router-link(to="/account/clovers")
-              span.underline View all
-              span.font-mono.bold &nbsp;&rarr;
+            router-link.bg-green.px3.py2.rounded.white(to="/account/clovers")
+              span View all
       div(v-else)
         p.max-width-1 Clovers that are registered to your account (wallet address). Save some from your basket and they will show up here.
 
-    .border-top.py2.center
+    .py2.center
       p.h1(style="filter:hue-rotate(292deg)") ☘️
 
     transition(name="fade")
@@ -120,7 +112,7 @@ export default {
     },
 
     pickList () {
-      return this.picks.slice(0, 6)
+      return this.picks.slice(0, 8)
     },
     blankCloverImage () {
       return cloverImage('0', 160)
@@ -178,6 +170,11 @@ export default {
       } else {
         this.signIn()
       }
+    },
+    fadeOut (i) {
+      if (!i) return
+      const o = (100 - (i * 18)) / 100
+      return { opacity: o }
     },
 
     ...mapActions(['getPagedClovers', 'signIn'])
