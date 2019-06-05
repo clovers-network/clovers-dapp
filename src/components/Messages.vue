@@ -4,8 +4,9 @@
       ul.list-reset(v-if="messages.length > 0")
         li.relative.pt2.px3.pb2.mb2.h4.rounded.border.shadow.border-dashed.bg-white(v-for="msg in messages", :class="msgClass(msg)" :key="msg.id")
           .flex.items-center.justify-between.wrap-word
-            h6.h2.mb1(v-if="msg.title", :class="{'anim--msg-strobe': msg.type === 'progress'}" v-html="escape(msg.title)")
-            p.block.m0(:class="msg.link ? 'pointer' : ''" @click="clickMessage(msg)" v-html="escape(msg.msg)")
+            div
+              h6.h2.mb1(v-if="msg.title", :class="{'anim--msg-strobe': msg.type === 'progress'}" v-html="escape(msg.title)")
+              p.block.m0(:class="msg.link ? 'pointer' : ''" @click="clickMessage(msg)" v-html="escape(msg.msg)")
 
             button.pointer.pl3(@click="removeMessage(msg.id)")
               svg-x(width="12" height="12")

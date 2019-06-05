@@ -55,6 +55,8 @@
 
   & > div {
     box-shadow: 4px 4px 4px rgba(1, 180, 99, 0.08);
+    width: 100%;
+    max-width: var(--width-1);
   }
 }
 

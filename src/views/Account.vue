@@ -1,28 +1,19 @@
 <template lang="pug">
   .green
-    section.border-bottom.px2.md-px3(v-if="name" name="My profile")
-      h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
-        router-link(:to="profileLink") My public profile
-      //- username, editable
-      .h-header.relative.flex.items-center.justify-center(v-if="signedIn")
-        //- not editing
-        div.absolute.top-0.left-0.right-0.bottom-0.bg-white.flex(v-show="!formFocussed")
-          label.pointer.h-100.input.truncate.flex-auto.center.px4.font-mono(for="uname")
-            span(v-text="form.name || user.address")
-            span.h-100.px2.regular.nowrap
-              span.flip-x.m-auto.on-hover ✎
-        //- editing
-        form.col-12.h-100(@submit="updateName")
-          input#uname.input.font-mono.center.col-12.px4(@focus="focusUsername", @blur="blurUsername", @keyup.enter="blurUsername" ref="nameInput", placeholder="name", v-model="form.name", autocomplete="off")
-          transition(name="fade")
-            button.pointer.absolute.right-0.top-0.p2(v-if="formFocussed", type="submit" @click.prevent="() => null")
-              img(src="~../assets/icons/arrow-right.svg", width="18", height="18")
-      //- else, Login
-      .h-header.font-mono.flex.px2.flex(v-else)
-        button.block.p2.m-auto.h6.regular.pointer(@click="signIn") Login
-          span(v-if="account" class="truncate")  as {{name.substr(0,7) + (name.length > 7 ? '...' : '')}}
-      p
-        span You have <strong>{{ prettyUserBalance }}</strong> Coins (♣&#xFE0E;)
+    section.border.rounded.px2.md-px3.max-width-2.my4.relative(name="My profile")
+      .flex.items-center
+        .mr3
+          img(:src="userImage(user, 87)" width="87" height="87")
+        div
+          h2.h3.md-h2.mt3.mb0.font-exp
+            router-link(:to="profileLink") {{ name }}
+          small.h6(v-if="user.created") Member since block # {{ user.created.toLocaleString() }}
+          .mt2.mb3
+            span.flex.items-center
+              img(src="../assets/icons/coin.svg" width="16" height="16")
+              span.pl1 {{ prettyUserBalance }}
+      .absolute.top-0.right-0
+        a.p2.block.h4.pointer(@click="signOrEdit" style="transform:scale(-1, 1)") ✎
 
     section.px2.md-px3.bg-green.white.border.border-green(name="My unregistered Clovers")
       h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
@@ -84,6 +75,10 @@
       div(v-if="showPickModal")
         keep-clover(:movesString="showPickModal")
 
+    transition(name="fade")
+      div(v-if="editing")
+        edit-user(@cancel="editing = false")
+
 </template>
 
 <script>
@@ -93,6 +88,7 @@ import { pluralize, cloverImage } from '@/utils'
 import KeepClover from '@/views/KeepClover'
 import PickListItem from '@/components/PickListItem'
 import CloverListCards from '@/components/CloverList--Cards'
+import EditUser from '@/components/EditUser'
 
 export default {
   name: 'Account',
@@ -103,13 +99,13 @@ export default {
   data () {
     return {
       loading: false,
-      formFocussed: false,
+      editing: false,
       form: { name: null }
     }
   },
   computed: {
     name () {
-      return this.user && this.user.name || this.account
+      return this.userName(this.user)
     },
     signedIn () {
       return !!this.$store.getters.authHeader
@@ -157,15 +153,16 @@ export default {
     },
 
     ...mapState(['account']),
-    ...mapGetters(['prettyUserBalance', 'user', 'picks', 'pickCount'])
+    ...mapGetters([
+      'prettyUserBalance',
+      'user',
+      'picks',
+      'pickCount',
+      'userName',
+      'userImage'
+    ])
   },
   methods: {
-    checkEsc (e) {
-      if (e.keyCode === 27) {
-        this.form.name = this.name
-        this.formFocussed = false
-      }
-    },
     pluralize,
 
     query () {
@@ -175,35 +172,17 @@ export default {
         this.loading = false
       })
     },
-    focusUsername () {
-      window.addEventListener('keyup', this.checkEsc)
-      setTimeout(() => {
-        this.formFocussed = true
-      }, 100)
-    },
-    blurUsername () {
-      this.updateName()
-    },
-    updateName () {
-      window.removeEventListener('keyup', this.checkEsc)
-      setTimeout(() => {
-        this.formFocussed = false
-      }, 50)
-      if (!this.form.name.length || !this.user) return
-      if (this.form.name === this.name) return
-      if (this.form.name.trim() === '') this.form.name = this.user.address
-      this.changeUsername({
-        address: this.user.address,
-        name: this.form.name
-      })
+    signOrEdit () {
+      if (this.signedIn) {
+        this.editing = true
+      } else {
+        this.signIn()
+      }
     },
 
-    ...mapActions(['getPagedClovers', 'changeUsername', 'signIn'])
+    ...mapActions(['getPagedClovers', 'signIn'])
   },
   watch: {
-    // '$route.name' (val) {
-    //   this.$refs.nav.setActive(val)
-    // },
     account () {
       this.$nextTick(() => {
         this.query()
@@ -219,7 +198,7 @@ export default {
     if (!this.user) return
     this.form.name = this.user.name
   },
-  components: { KeepClover, PickListItem, CloverListCards }
+  components: { KeepClover, PickListItem, CloverListCards, EditUser }
 }
 </script>
 

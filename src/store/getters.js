@@ -1,7 +1,7 @@
 import Reversi from 'clovers-reversi'
 import utils from 'web3-utils'
 import { Clovers, CurationMarket } from 'clovers-contracts'
-import { prettyBigNumber, abbrvAddr, abbrvNum } from '@/utils'
+import { prettyBigNumber, abbrvAddr, abbrvNum, cloverImage } from '@/utils'
 import BigNumber from 'bignumber.js'
 
 export default {
@@ -42,6 +42,13 @@ export default {
       name = abbrvAddr(name)
     }
     return name
+  },
+  userImage: (_, { userName }) => (user, size = 200) => {
+    if (typeof user === 'string') {
+      return cloverImage(user || '0', size)
+    }
+    const str = user.image || userName(user)
+    return cloverImage(str || '0', size)
   },
   sortedClovers ({ sortBy, feedFilter, allClovers }, { curationMarketAddress }) {
     return allClovers

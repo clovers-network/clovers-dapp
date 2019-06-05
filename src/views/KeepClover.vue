@@ -1,10 +1,10 @@
 <template lang="pug">
   .green.fixed.z3.flex.modal(@click.self="cancel")
-    .m-auto.col-10.md-col-6.lg-col-3.bg-white.flex.flex-column.justify-between.border.border-dashed.rounded
+    .m-auto.bg-white.flex.flex-column.justify-between.border.border-dashed.rounded
       header
         .h-header.flex.justify-between.items-center
           .col-4.pl3.pt1
-            button.pointer(@click="cancel") Cancel
+            button.pointer.h5(@click="cancel") Cancel
           h1.col-4.font-exp.center.nowrap {{invalidClover ? 'Not Found' : ''}}
           .green.mt3.mr3(v-if="clover.symmetrical")
             symmetry-icons(:board="clover")
@@ -21,12 +21,12 @@
           label.radio.block.pointer.border.rounded.py1.px2.mb1.flex.items-center(:active="mode === 'keep'")
             input(v-model="mode" type="radio" value="keep")
             .dot.mr2
-            span.flex-auto Keep Clover
+            span.flex-auto.mr3 Keep Clover
             .bold - {{ keepValue }} &cent;
           label.radio.block.pointer.border.rounded.py1.px2.mb1.flex.items-center(v-if="_reversi.symmetrical" :active="mode === 'sell'")
             input(v-model="mode" type="radio" value="sell")
             .dot.mr2
-            span.flex-auto Claim Reward
+            span.flex-auto.mr3 Claim Reward
             .bold + {{ sellValue }} &cent;
 
         p.center.h6.underline.mb0.mt3.help(@click="showMore = true" v-if="!showMore") More information

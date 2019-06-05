@@ -1,103 +1,67 @@
-<template>
-  <header
-    class="sticky top-0 z2"
-    :class="{'bg-white green': !showMenu, 'white': showMenu}">
-    <!-- top bar -->
-    <div
-      class="relative z2 h-header flex items-center"
-      :class="{'border-bottom': !showMenu}">
-      <!-- left col -->
-      <div class="col-4 flex pl2 items-center">
-        <!-- desktop menu -->
-        <div id="desktopMenu" class="flex flex-center ml3">
-          <router-link class="pr2" :to="{name: 'Account'}">Dashboard</router-link>
-          <router-link class="pr2" :to="{name: 'Market'}">Feed</router-link>
-          <router-link class="pr2" :to="{name: 'Field'}">Garden</router-link>
-          <router-link class="pr2" :to="{name: 'Learn'}">Learn</router-link>
-        </div>
-        <!-- menu btn -->
-        <button
-          v-if="!showBackButton"
-          id="mobileMenu"
-          class="menu-btn pointer relative py2 pr2"
-          @click="showMenu = !showMenu"
-          aria-label="Toggle Menu">
-            <wavey-btn v-show="mining" :isWhite="showMenu"></wavey-btn>
-            <img class="block" v-show="!mining" :src="showMenu
-              ? require('../assets/icons/hamburger-white.svg')
-              : require('../assets/icons/hamburger.svg')" />
-            <span @click.stop>
-              <router-link :to="{ name: 'Account' }">
-                <div v-if="showBadge"
-                  class="found-badge border border-green bounceIn animated">
-                    <span class="block">
-                      {{ symms }}
-                    </span>
-                </div>
-              </router-link>
-            </span>
-        </button>
-        <!-- back btn -->
-        <button v-else class="pointer left-align" @click="$router.go(-1)">Back</button>
-      </div>
-      <!-- title -->
-      <h1 class="font-exp h3 col-4 py1 center">
-        <span class="nowrap pointer"
-          @click="showMenu = showBackButton ? showMenu : !showMenu">
-          {{showMenu ? 'Clovers' : $route.meta.title}}
-        </span>
-      </h1>
-      <!-- right col -->
-      <div id="accountHeader" class="col-4 flex justify-end items-center">
-        <!-- account btn -->
-        <div @click="pigMenuToggle" class="flex items-center pointer px1 border rounded-left lh1">
-          <span class="border mr1 inline-block" style="border-radius:100%; width:13px; height:13px;">
-            <span :class="mining && 'bg-currentColor throb'" class="block" style="border-radius:100%; width: 13px; height: 13px; margin-top: -1px; margin-left: -1px;">
-            </span>
-          </span>
-          <span >PIG</span>
-        </div>
-        <router-link class="block flex items-center pointer pr1 border-top border-bottom border-right" :to="{name: 'Picks'}">
-          <cart-icon class="mx1"></cart-icon>
-          <span>{{pickCount}}</span>
-        </router-link>
-        <router-link :to="{name: 'Trade'}" class="flex pr1 items-center border-top border-bottom">
-          <coin-icon class="mx1"></coin-icon>
-          <span style="">{{prettyUserBalance}}</span>
-        </router-link>
-        <div id="personToggle" @click="accountMenuToggle" class="mr3 flex items-center p1 pointer border rounded-right">
-          <person-icon :class="!authHeader && 'red'"></person-icon>
-          <div class="chevron"></div>
-        </div>
-        <account-menu @closeAccountMenu="closeAccountMenu" v-click-outside='closeAccountMenu' v-if="accountMenu"/>
-        <pig-menu @closePigMenu="closePigMenu" v-click-outside="closePigMenu" v-if="pigMenu" :mining="mining" @triggerPig="triggerPig"/>
-      </div>
-    </div>
-    <!-- nav -->
-    <div
-      v-show="showMenu"
-      class="absolute z1 h-100vh col-12 bg-green top-0 left-0 flex flex-column justify-between center">
-      <div class="h-header"/>
-      <nav class="flex-auto flex items-center justify-center" @click="showMenu = !showMenu">
-        <ul class="h1 list-reset">
-          <!-- <li class="mt1"><router-link :to="{ name: 'Account' }" :class="{'nav__account-link--active': $route.meta.group === 'account'}">Account</router-link></li> -->
-          <li class="mt1"><router-link :to="{ name: 'Welcome' }" exact>Welcome</router-link></li>
-          <li class="mt1"><router-link :to="{ name: 'Market' }">Feed</router-link></li>
-          <li class="mt1"><router-link :to="{ name: 'Field' }">Garden</router-link></li>
-          <li class="mt1">
-            <router-link :to="{ name: 'Activity' }" class="relative">
-              <span>Log</span>
-              <span v-if="newLogs" class="circle bg-orange absolute" style="width:14px;height:14px"></span>
-            </router-link>
-          </li>
-        </ul>
-      </nav>
-      <div class="px2">
-        <pig @minerStatus="mining = $event" @viewPicks="viewPicks" ref="pig"/>
-      </div>
-    </div>
-
-  </header>
+<template lang="pug">
+  header.sticky.top-0.z2(:class="{'bg-white green': !showMenu, 'white': showMenu}")
+    //- top bar
+    .relative.z2.h-header.flex.items-center
+      //- left col
+      .col-4.flex.pl2.items-center
+        //- desktop menu
+        #desktopMenu.flex.flex-center.ml3
+          router-link.pr2(:to="{name: 'Account'}") Dashboard
+          router-link.pr2(:to="{name: 'Market'}") Feed
+          router-link.pr2(:to="{name: 'Field'}") Garden
+          router-link.pr2(:to="{name: 'Learn'}") Learn
+        //- menu btn
+        button#mobileMenu.menu-btn.pointer.relative.py2.pr2(v-if='!showBackButton' @click='showMenu = !showMenu' aria-label='Toggle Menu')
+          wavey-btn(v-show='mining' :is-white='showMenu')
+          img.block(v-show='!mining' :src="showMenu\
+            ? require('../assets/icons/hamburger-white.svg')\
+            : require('../assets/icons/hamburger.svg')")
+          span(@click.stop='')
+            router-link(:to="{ name: 'Account' }")
+              .found-badge.border.border-green.bounceIn.animated(v-if='showBadge')
+                span.block
+                  | {{ symms }}
+        //- back btn
+        button.pointer.left-align(v-else='' @click='$router.go(-1)') Back
+      //- title
+      h1.font-exp.h3.col-4.py1.center
+        span.nowrap.pointer(@click='showMenu = showBackButton ? showMenu : !showMenu')
+          | {{showMenu ? &apos;Clovers&apos; : $route.meta.title}}
+      //- right col
+      #accountHeader.col-4.flex.justify-end.items-center
+        //- account btn
+        .flex.items-center.pointer.px1.border.rounded-left.lh1(@click='pigMenuToggle')
+          span.border.mr1.inline-block(style='border-radius:100%; width:13px; height:13px;')
+            span.block(:class="mining && 'bg-currentColor throb'" style='border-radius:100%; width: 13px; height: 13px; margin-top: -1px; margin-left: -1px;')
+          span PIG
+        router-link.block.flex.items-center.pointer.pr1.border-top.border-bottom.border-right(:to="{name: 'Picks'}")
+          cart-icon.mx1
+          span {{pickCount}}
+        router-link.flex.pr1.items-center.border-top.border-bottom(:to="{name: 'Trade'}")
+          coin-icon.mx1
+          span(style='') {{prettyUserBalance}}
+        #personToggle.mr3.flex.items-center.p1.pointer.border.rounded-right(@click="accountMenuToggle")
+          person-icon(:class="!authHeader && 'red'")
+          .chevron
+        account-menu(@closeaccountmenu="closeAccountMenu" v-click-outside="closeAccountMenu" v-if="accountMenu")
+        pig-menu(@closepigmenu="closePigMenu" v-click-outside="closePigMenu" v-if="pigMenu" :mining="mining" @triggerpig="triggerPig")
+    //- nav
+    .absolute.z1.h-100vh.col-12.bg-green.top-0.left-0.flex.flex-column.justify-between.center(v-show='showMenu')
+      .h-header
+        nav.flex-auto.flex.items-center.justify-center(@click="showMenu = !showMenu")
+          ul.h1.list-reset
+            li.mt1
+              router-link(:to="{ name: 'Welcome' }" exact) Welcome
+            li.mt1
+              router-link(:to="{ name: 'Market' }") Feed
+            li.mt1
+              router-link(:to="{ name: 'Field' }") Garden
+            li.mt1
+              router-link.relative(:to="{ name: 'Activity' }")
+                span Log
+                span.circle.bg-orange.absolute(v-if="newLogs" style="width:14px;height:14px")
+        .px2
+          pig(@minerstatus="mining = $event" @viewpicks="viewPicks" ref="pig")
 </template>
 
 <script>
@@ -163,10 +127,10 @@ export default {
       this.pigMenu = !this.pigMenu
     },
     closeAccountMenu () {
-      if (this.accountMenu) { this.accountMenu = false }
+      if (this.accountMenu) this.accountMenu = false
     },
     closePigMenu () {
-      if (this.pigMenu) { this.pigMenu = false }
+      if (this.pigMenu) this.pigMenu = false
     },
     accountMenuToggle () {
       this.accountMenu = !this.accountMenu

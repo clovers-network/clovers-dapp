@@ -57,9 +57,9 @@ export function isHex (foobar) {
 //           : undefined
 // }
 
-export function cloverImage (clover, size = 200) {
+export function cloverImage (clover = '0', size = 200) {
   let board = clover.byteBoard || clover.board || clover
-  return `${apiBase}/clovers/svg/${board}/${size}`
+  return `${apiBase}/clovers/svg/${encodeURIComponent(board)}/${size}`
 }
 
 export function fetchCloudImage (src, transforms = 'f_png') {

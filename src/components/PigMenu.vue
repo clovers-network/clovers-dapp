@@ -1,24 +1,15 @@
-<template>
-    <div id="pigMenu" class="border green bg-white absolute">
-        <template >
-        <div class=" center bold border-bottom pointer" >
-           <div class="p2">{{mining ? 'Your Pig is Running' : 'Your Pig is Paused'}}</div>
-        </div>
-        <div class="p2 h5 lh3">
-           <div class="pointer" @click="triggerPig">{{mining ? 'Stop Pig' : 'Start Pig'}}</div>
-        </div>
-        </template>
-    </div>
+<template lang="pug">
+  #pigMenu.border.green.bg-white.absolute
+    .center.bold.border-bottom.pointer
+      .p2 {{ mining ? &apos;Your Pig is Running&apos; : &apos;Your Pig is Paused&apos; }}
+    .p2.h5.lh3
+      .pointer(@click='triggerPig') {{ mining ? &apos;Stop Pig&apos; : &apos;Start Pig&apos; }}
 </template>
 
 <script>
 import {mapActions, mapGetters, mapState} from 'vuex'
 export default {
-  name: 'AcountMenu',
-  data () {
-    return {
-    }
-  },
+  name: 'PigMenu',
   props: ['mining'],
   computed: {
     ...mapState(['account']),
@@ -26,12 +17,14 @@ export default {
   },
   methods: {
     triggerPig () {
-      this.$emit('triggerPig')
+      this.$emit('triggerpig')
     },
+
     ...mapActions(['signInOut'])
   }
 }
 </script>
+
 <style lang="css" scoped>
  #pigMenu {
     top: 65px;

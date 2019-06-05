@@ -59,6 +59,11 @@ export default new Router({
       name: 'Trade',
       component: Trade
     },
+    {
+      path: '/learn',
+      name: 'Learn',
+      template: '<div>Learn</div>'
+    },
 
     // account dashboard
     {

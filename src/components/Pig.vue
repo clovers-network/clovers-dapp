@@ -1,24 +1,18 @@
-<template>
-  <div >
-    <div class="py3">
-      <nav>
-        <h6 class="center h3">Clover Pig</h6>
-        <toggle-btn class="mx-auto my3" :active="minerOn" @click="togglePig" @swiperight="togglePig(true)" @swipeleft="togglePig(false)"></toggle-btn>
-        <div class="flex justify-between items-center">
-          <div class="col-6 px2 h3">
-            <div>Speed</div>
-            <div class="font-exp mt1">{{ hashRate }}/s</div>
-            <div class="h7 pt1">{{ timeSpent }}</div>
-          </div>
-          <div class="col-6 px2 h3" :class="totalMined !== 0 ? 'pointer' : ''" @click="$emit('viewPicks')">
-            <div class="nowrap">Rare Clovers</div>
-            <div class="font-exp mt1">{{ symms }}</div>
-            <div class="h7 pt1">~ {{ totalMined.toLocaleString() }} mined</div>
-          </div>
-        </div>
-      </nav>
-    </div>
-  </div>
+<template lang="pug">
+  div
+    .py3
+      nav
+        h6.center.h3 Clover Pig
+        toggle-btn.mx-auto.my3(:active="minerOn" @click="togglePig" @swiperight="togglePig(true)" @swipeleft="togglePig(false)")
+        .flex.justify-between.items-center
+          .col-6.px2.h3
+            div Speed
+            .font-exp.mt1 {{ hashRate }}/s
+            .h7.pt1 {{ timeSpent }}
+          .col-6.px2.h3(:class="totalMined !== 0 ? 'pointer' : ''" @click="$emit('viewPicks')")
+            .nowrap Rare Clovers
+            .font-exp.mt1 {{ symms }}
+            .h7.pt1 ~ {{ totalMined.toLocaleString() }} mined
 </template>
 
 <script>
@@ -75,7 +69,7 @@ export default {
   methods: {
     togglePig (value = null) {
       this.minerOn = value === null ? !this.minerOn : value
-      this.$emit('minerStatus', this.minerOn)
+      this.$emit('minerstatus', this.minerOn)
       if (this.minerOn) {
         this.resetStats()
         this.mine()
