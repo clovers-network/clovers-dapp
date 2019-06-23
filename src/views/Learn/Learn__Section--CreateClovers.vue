@@ -2,26 +2,13 @@
   learn-frame
     .absolute.top-0.left-0.w-100.h-100.flex.items-center
       //- basket
-      .absolute.top-0.right-0.p2.flex.items-center(v-show="showBasket")
-        h6.mx2 Your clovers are saved to your <b>Basket</b> &rarr;
-        .border.green.rounded.p1.flex.items-center
-          cart-icon.mx1
-          span.block.mx1 {{clovers.length}}
-      //- row of clovers
-      .relative.w-100
-        .overflow-x-scroll.invisible-scrollbar(ref="container")
-          .center.nowrap(ref="row", style="min-width:100%")
-            .inline-block.px1
-            .inline-block.px2.content-box(v-for="clover in clovers")
-              figure(style="width:162px")
-                clv(:moveString="clover.movesString", :autoPlay="true", @endPlayMoves="step")
-            .inline-block.px2.content-box(v-show="canCreate")
-              button.block.pointer(@click="create", style="width:162px")
-                img.block(src="./learn-icon-add-clover.svg", style="vertical-align: auto")
-            .inline-block.px1
+      basket(:count="clovers.length", v-show="showBasket")
+        h6.mr2.right-align.h6.sm-h5 Your clovers are saved to your <b>Basket</b> &rarr;
+      //- clovers
+      row-of-clovers(ref="cloverList", :clovers="clovers", :canCreate="canCreate", @create="create", @endPlayMoves="step")
     //- text
-    .absolute.bottom-0.left-0.w-100.pb3.px2.center
-      .font-ext.h2(v-if="!showDoneBtn && !showNextArrow", v-html="text")
+    .absolute.bottom-0.left-0.w-100.pb3.px3.center
+      .font-ext.h3.sm-h2(v-if="!showDoneBtn && !showNextArrow", v-html="text")
       button.inline-block.bg-green.white.rounded.px3.py1.h4.pointer(v-if="showDoneBtn", @click="end") Continue
       down-arrow-btn(v-if="showNextArrow", v-on="$listeners")
 </template>
@@ -29,14 +16,15 @@
 <script>
 import LearnFrame from './Learn__Section__Frame'
 import DownArrowBtn from './Learn__DownArrowBtn'
-import CartIcon from '@/components/Icons/CartIcon'
+import Basket from './Learn__Basket'
+import RowOfClovers from './RowOfClovers'
 import Reversi from 'clovers-reversi'
 import { cloverIsMonochrome } from '@/utils'
 const clover = new Reversi()
 export default {
   name: 'Learn__Section--CreateClovers',
   props: ['clovers'],
-  components: { LearnFrame, DownArrowBtn, CartIcon },
+  components: { LearnFrame, DownArrowBtn, Basket, RowOfClovers },
   data () {
     return {
       no: 0,
@@ -49,7 +37,7 @@ export default {
   },
   computed: {
     showDoneBtn () {
-      return this.clovers.length > 3 && !this.showNextArrow
+      return this.clovers.length > 2 && !this.showNextArrow
     }
   },
   methods: {
@@ -80,10 +68,7 @@ export default {
     },
     scrollToEnd () {
       this.$nextTick(() => {
-        const container = this.$refs.container
-        if (container.scrollWidth > container.offsetWidth) {
-          return container.scroll(container.scrollWidth * 2, 0)
-        }
+        if (window.innerWidth > 600) this.$refs.cloverList.scrollToEnd()
       })
     },
     end () {

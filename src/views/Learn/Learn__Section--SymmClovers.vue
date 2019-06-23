@@ -14,7 +14,7 @@
           .absolute.top-100.left-0.col-12.font-mono.pt3.flex.justify-center(v-show="no === 2")
             .nowrap {{cleanReward}} coins = ${{rewardInUSD}}
     .absolute.left-0.w-100.pt2.px3.pb3.center(:class="no > 1 ? 'top-0' : 'bottom-0'")
-      .font-ext.h2.mx-auto(v-html="text", style="max-width:26em")
+      .font-ext.h4.sm-h2.mx-auto(v-html="text", style="max-width:26em")
     down-arrow-btn(v-if="no > 1", v-on="$listeners")
 </template>
 
@@ -53,10 +53,10 @@ export default {
       this.no++
       switch (this.no) {
         case 1:
-          this.text = 'Clovers with symmetry are rare.<br>If you find one, you can claim a reward!'
+          this.text = 'Clovers with symmetry are rare. <br class="hide sm-show">If you find one, you can claim a reward!'
           break
         case 2:
-          this.text = 'This clover is worth <b>' + this.cleanReward + ' clover coins</b>.<br>You can use these coins to buy and sell clovers, or exchange them for Ether (ETH).'
+          this.text = 'This clover is worth <b>' + this.cleanReward + ' clover coins</b>.<br class="hide sm-show">You can use these coins to buy clovers, or exchange them for Ether (ETH).'
           break
       }
     },

@@ -16,6 +16,7 @@
     "axios": "^0.18.0",
     "basscss": "^8.1.0",
     "basscss-addons": "https://github.com/n-kort/addons.git",
+    "basscss-responsive-states": "^1.0.6",
     "bignumber.js": "^4.1.0",
     "bottleneck": "^2.6.0",
     "chart.js": "^2.7.2",
