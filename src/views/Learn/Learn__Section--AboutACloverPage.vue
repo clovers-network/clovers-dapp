@@ -1,6 +1,6 @@
 <template lang="pug">
   learn-frame.flex.items-center.justify-center
-    header.absolute.w-100.top-0.left-0.font-ext.h4.md-h2.px3.md-px4.flex.items-center.justify-center.center(style="height:16vh") 
+    header.absolute.w-100.top-0.left-0.font-ext.h4.md-h2.px3.md-px4.flex.items-center.justify-center.center(style="height:16vh")
       slot(name="header")
     .relative.px-1.pb2.sm-pb0(style="padding-top:14vmin")
       slot(name="graphic")

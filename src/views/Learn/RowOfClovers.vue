@@ -5,7 +5,7 @@
         .inline-block.px3.md-px1
         .inline-block.px3.md-px2.content-box(v-for="clover in clovers")
           figure
-            clv(:moveString="clover.movesString", :autoPlay="true", v-on="$listeners") 
+            clv(:moveString="clover.movesString", :autoPlay="true", v-on="$listeners")
             //- @endPlayMoves="step")
         .inline-block.px3.md-px2.content-box(v-show="canCreate")
           button.block.pointer(@click="$emit('create')")

@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     step (step = null) {
-      this.no = step ? step : this.no + 1
+      this.no = step || this.no + 1
       switch (this.no) {
         case 1:
           const syms = this.syms
