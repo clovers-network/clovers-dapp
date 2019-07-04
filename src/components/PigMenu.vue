@@ -1,33 +1,42 @@
-<template>
-    <div id="pigMenu" class="border green bg-white absolute">
-        <template >
-        <div class=" center bold border-bottom pointer" >
-           <div class="p2">{{mining ? 'Your Pig is Running' : 'Your Pig is Paused'}}</div>
-        </div>
-        <div class="p2 h5 lh3">
-           <div class="pointer" @click="triggerPig">{{mining ? 'Stop Pig' : 'Start Pig'}}</div>
-        </div>
-        </template>
-    </div>
+<template lang="pug">
+    #pigMenu.border.green.bg-white.absolute
+      .justify-between.align-left.bold.border-bottom.pointer.flex.py2.pl2
+        .col-3
+          .h6 Speed
+          .h4 {{hashrate}}/s
+        .col-3
+          .h6 Searched
+          .h4 {{mined.toLocaleString()}}
+        .col-6
+          #pig-toggle
+            toggle-btn.mx-auto( :small="true" :theme="'green'" :active="mining" @click="togglePig" @swiperight="togglePig()" @swipeleft="togglePig()")
+      .p3.h4.lh3.center
+        template(v-if="newSyms.length == 0") Your Pig {{mining ? 'is sniffing' : 'can sniff'}} out rare Clovers. They'll be added to your basket automatically.
+        template(v-else) Your Pig has found <br><b>{{newSyms.length}}</b> rare clover{{newSyms.length > 1 ? 's' : ''}}!
+          .m3.rounded.white.bg-green.center
+            router-link.col-12.pointer.p1.inline-block(:to="{name: 'Picks'}")
+              p.m0.m-auto Go to your Basket
 </template>
 
 <script>
+import ToggleBtn from '@/components/ToggleBtn'
 import {mapActions, mapGetters, mapState} from 'vuex'
 export default {
   name: 'AcountMenu',
   data () {
     return {
+      found: []
     }
   },
   computed: {
     mining () {
       return this.miners.length > 0
     },
-    ...mapState(['account', 'miners']),
+    ...mapState(['hashrate', 'miners', 'mined', 'newSyms']),
     ...mapGetters(['authHeader', 'userName', 'user'])
   },
   methods: {
-    triggerPig () {
+    togglePig () {
       console.log('mining', this.mining)
       if (!this.mining) {
         this.mine()
@@ -36,14 +45,15 @@ export default {
       }
     },
     ...mapActions(['signInOut', 'mine', 'stop'])
-  }
+  },
+  components: { ToggleBtn }
 }
 </script>
 <style lang="css" scoped>
  #pigMenu {
     top: 65px;
     right: 180px;
-    width: 200px;
+    width: 260px;
   }
   #pigMenu:before,
   #pigMenu:after {

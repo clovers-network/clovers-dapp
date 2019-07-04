@@ -8,6 +8,7 @@ import Web3 from 'web3'
 import { pad0x, makeBn, padRight, isHex, cloverIsMonochrome } from '@/utils'
 import { assert } from 'tcomb'
 import CloverWorker from 'worker-loader!../assets/clover-worker'
+import confetti from 'canvas-confetti'
 
 window.contracts = contracts
 
@@ -40,6 +41,7 @@ export default {
     if (state.miners.length === 0) {
       commit('RESET_MINED')
     }
+    commit('CLEAR_NEW_SYMS')
     miner = new CloverWorker()
     const dispatchMinerEvent = async (event) => {
       let { data } = event
@@ -51,8 +53,9 @@ export default {
           const exists = await dispatch('cloverExists', '0x' + data.byteBoard)
           const isMono = cloverIsMonochrome(data)
           if (!exists && !isMono) {
+            const clvr = await dispatch('formatFoundClover', data)
             dispatch('newSymFound')
-            const clvr = dispatch('formatFoundClover', data)
+            commit('SAVE_NEW_SYM', clvr)
             commit('SAVE_CLOVER', clvr)
           }
         } catch (error) {
@@ -83,7 +86,36 @@ export default {
     }
   },
   newSymFound (_) {
-    alert('new sym!!!!')
+    // alert('new sym!!!!')
+    var end = Date.now() + (1 * 1000)
+
+    // go Buckeyes!
+    var colors = ['#01B463', '#FF4136', '#FFDC00', '#0074D9'];
+
+    (function frame () {
+      confetti({
+        particleCount: 4,
+        angle: 60,
+        spread: 65,
+        origin: {
+          x: 0
+        },
+        colors: colors
+      })
+      confetti({
+        particleCount: 4,
+        angle: 120,
+        spread: 65,
+        origin: {
+          x: 1
+        },
+        colors: colors
+      })
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame)
+      }
+    }())
   },
   async poll ({ dispatch, commit }) {
     if (!global.web3.currentProvider.isPortis) {
@@ -808,7 +840,7 @@ async function claimClover ({ keep, account, clover }) {
   let reversi = new Reversi()
   reversi.playGameMovesString(clover.movesString)
   let moves = reversi.returnByteMoves().map(m => '0x' + padRight(m, 56))
-  let _tokenId = clover.board
+  let _tokenId = clover.byteBoard
   let _symmetries = reversi.returnSymmetriesAsBN().toString(10)
   let _keep = keep
   let from = account

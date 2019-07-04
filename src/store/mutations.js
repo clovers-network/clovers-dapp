@@ -108,6 +108,12 @@ export default {
     state.miningStats = { mineTime: 0, totalMined: 0, symms: 0 }
     updateLocal('clover_pig_stats', state.miningStats)
   },
+  CLEAR_NEW_SYMS (state) {
+    state.newSyms = []
+  },
+  SAVE_NEW_SYM (state, clover) {
+    state.newSyms.unshift(clover)
+  },
   // mining/saving clovers. Stored clovers are added to state on load
   SAVE_CLOVER (state, clover) {
     const index = state.allSavedClovers.findIndex(c => c.board === clover.board)

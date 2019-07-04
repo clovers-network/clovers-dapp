@@ -18,6 +18,7 @@
     "basscss-addons": "https://github.com/n-kort/addons.git",
     "bignumber.js": "^4.1.0",
     "bottleneck": "^2.6.0",
+    "canvas-confetti": "^0.3.0",
     "chart.js": "^2.7.2",
     "clovers-contracts": "^1.0.19",
     "clovers-reversi": "^1.0.14",

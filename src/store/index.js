@@ -38,6 +38,7 @@ const state = {
 
   miningStats: getMiningStats(),
 
+  newSyms: [],
   // socket events pushed to clover queue
   newClovers: [],
   // all pages get pushed to full list
