@@ -7,7 +7,7 @@
 
 <script>
 export default {
-  name: 'Learn__DownArrowBtn'
+  name: 'LearnDownArrowBtn'
 }
 </script>
 

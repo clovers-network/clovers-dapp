@@ -19,9 +19,9 @@ import RowOfClovers from './RowOfClovers'
 import Basket from './Learn__Basket'
 import DownArrowBtn from './Learn__DownArrowBtn'
 export default {
-  name: 'Learn_AboutRegistration',
-  props: ['clovers', 'visible'],
+  name: 'LearnAboutRegistration',
   components: { LearnFrame, RowOfClovers, Basket, DownArrowBtn },
+  props: ['clovers', 'visible'],
   data () {
     return {
       no: 0,
@@ -38,6 +38,13 @@ export default {
       return this.no === 1 && this.syms.length ? this.syms : this.clovers
     }
   },
+  watch: {
+    visible () {
+      setTimeout(() => {
+        this.showClovers = true
+      }, 600)
+    }
+  },
   methods: {
     step (step = null) {
       this.no = step || this.no + 1
@@ -52,13 +59,6 @@ export default {
           this.showNextArrow = true
           break
       }
-    }
-  },
-  watch: {
-    visible () {
-      setTimeout(() => {
-        this.showClovers = true
-      }, 600)
     }
   }
 }

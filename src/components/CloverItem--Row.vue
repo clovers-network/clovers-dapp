@@ -1,26 +1,41 @@
 <template>
-  <article v-if="clover.board" :class="{'red': isRFT}" class="flex py2 relative">
+  <article
+    v-if="clover.board"
+    :class="{'red': isRFT}"
+    class="flex py2 relative">
     <!-- RFT highlight -->
-    <div v-if="isRFT" class="absolute top-0 left-0 h-100 bg-red" style="width:4px"></div>
+    <div
+      v-if="isRFT"
+      class="absolute top-0 left-0 h-100 bg-red"
+      style="width:4px"/>
     <!-- image -->
     <div class="col-3 center">
-      <img :src="cloverImage(clover, 64)" width="64" height="64"/>
+      <img
+        :src="cloverImage(clover, 64)"
+        width="64"
+        height="64">
     </div>
     <!-- name -->
-    <div class="flex flex-column justify-center" :class="{'col-3': showOwnerCol, 'col-6': !showOwnerCol}">
+    <div
+      :class="{'col-3': showOwnerCol, 'col-6': !showOwnerCol}"
+      class="flex flex-column justify-center">
       <h3 class="h4 truncate font-mono">
         <span v-if="clover.name !== clover.board">{{ clover.name }}</span>
       </h3>
     </div>
     <!-- owner / RFT market cap -->
-    <div class="col-3 flex flex-column justify-center px2" v-if="showOwnerCol">
+    <div
+      v-if="showOwnerCol"
+      class="col-3 flex flex-column justify-center px2">
       <template v-if="isRFT">
         <p class="h7 m0">Market Cap</p>
         <p class="h4 m0 truncate font-mono">${{ marketCapInUSD.toFormat(2) }}</p>
       </template>
       <template v-else>
         <h6 class="h7 m0">Owner</h6>
-        <h5 class="h4 m0 truncate font-mono" style="max-width:4.5em">{{clover.owner}}</h5>
+        <h5
+          class="h4 m0 truncate font-mono"
+          style="max-width:4.5em">{{ clover.owner }}</h5>
       </template>
     </div>
     <!-- price / RFT share -->
@@ -31,13 +46,20 @@
       </template>
       <template v-else>
         <p class="h7 m0 nowrap">Price &clubs;</p>
-        <p v-if="forSale(clover)" class="h4 m0 truncate">{{ cloverPrice(clover) }}</p>
-        <p v-else class="h4 m0 font-mono">---</p>
+        <p
+          v-if="forSale(clover)"
+          class="h4 m0 truncate">{{ cloverPrice(clover) }}</p>
+        <p
+          v-else
+          class="h4 m0 font-mono">---</p>
       </template>
     </div>
     <!-- arrow -->
     <div class="col-1 center flex justify-center pr2">
-      <img src="~../assets/icons/arrow-right.svg" width="18" height="18"/>
+      <img
+        src="~../assets/icons/arrow-right.svg"
+        width="18"
+        height="18">
     </div>
   </article>
 </template>
@@ -49,7 +71,7 @@ import { cloverImage, prettyBigNumber } from '@/utils'
 import BigNumber from 'bignumber.js'
 
 export default {
-  name: 'CloverItem--Row',
+  name: 'CloverItemRow',
   props: {
     clover: {type: Object, default: () => {}, required: true},
     hideOwner: false

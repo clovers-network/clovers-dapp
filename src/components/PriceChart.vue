@@ -3,8 +3,8 @@ import { Line, mixins } from 'vue-chartjs'
 const { reactiveProp } = mixins
 
 export default {
-  extends: Line,
   name: 'PriceChart',
+  extends: Line,
   mixins: [reactiveProp],
   props: ['options'],
   mounted () {

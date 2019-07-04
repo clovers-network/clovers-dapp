@@ -140,6 +140,28 @@ export default {
 
     ...mapGetters(['userName'])
   },
+  watch: {
+    filters: {
+      deep: true,
+      handler ({ filter }) {
+        let q = { ...this.filters }
+        cleanObj(q)
+        const cf = this.$route.query.filter
+        if (cf !== filter) {
+          delete q.page
+        }
+        this.$router.push({ query: { ...q } })
+      }
+    },
+    $route () {
+      this.setFilters()
+      this.query()
+    }
+  },
+  mounted () {
+    this.setFilters()
+    this.query()
+  },
   methods: {
     prettyBigNumber,
 
@@ -187,28 +209,6 @@ export default {
       if (!this.nextPossible) return
       this.filters.page = this.results.nextPage
     }
-  },
-  watch: {
-    filters: {
-      deep: true,
-      handler ({ filter }) {
-        let q = { ...this.filters }
-        cleanObj(q)
-        const cf = this.$route.query.filter
-        if (cf !== filter) {
-          delete q.page
-        }
-        this.$router.push({ query: { ...q } })
-      }
-    },
-    $route () {
-      this.setFilters()
-      this.query()
-    }
-  },
-  mounted () {
-    this.setFilters()
-    this.query()
   },
   beforeRouteEnter (to, from, next) {
     const { addr } = to.params

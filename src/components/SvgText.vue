@@ -8,8 +8,8 @@
         fill="transparent"
         d="M123.71,122.73A249.21,249.21,0,0,1,300,50c138.07,0,250,111.93,250,250S438.07,550,300,550,50,438.07,50,300c0-68.75,25.4-128.62,70.31-173.81"/>
       <text
-        width="600"
         :fill="fill"
+        width="600"
         font-size="1.3em">
         <textPath xlink:href="#circle">{{ displayString }}</textPath>
       </text>
@@ -42,6 +42,18 @@ export default {
       return this.animation ? this.animString : this.moveString
     }
   },
+  watch: {
+    moveString () {
+      if (!this.animation) return
+      this.stop()
+      setTimeout(() => {
+        this.start()
+      }, 20)
+    }
+  },
+  mounted () {
+    this.start()
+  },
   methods: {
     start () {
       let tmpMoves = this.moveString
@@ -64,18 +76,6 @@ export default {
       this.stringList = []
       this.animString = ''
     }
-  },
-  watch: {
-    moveString () {
-      if (!this.animation) return
-      this.stop()
-      setTimeout(() => {
-        this.start()
-      }, 20)
-    }
-  },
-  mounted () {
-    this.start()
   }
 }
 </script>

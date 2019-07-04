@@ -1,15 +1,15 @@
 <template>
   <div class="bg-dark-gray white px2 py3 zig-zag relative">
     <div
-      id='claim-outer'
+      id="claim-outer"
       class="flex items-center justify-between">
       <div class="relative mx3">
-        <template v-if='byteBoard'>
+        <template v-if="byteBoard">
           <div class="h2">
             <clv
-              class='no-border'
               :move-string="movesString"
-              :byte-board="byteBoard"/>
+              :byte-board="byteBoard"
+              class="no-border"/>
           </div>
         </template>
       </div>
@@ -38,18 +38,18 @@
             <div class="col-6 px3 ">
               <label class="block right-align h2">You will receive</label>
               <input
+                :value="rewardTxt"
                 class="input big white right-align"
-                disabled
-                :value="rewardTxt">
+                disabled>
             </div>
             <div class="col-6 px3 ">
               <label class="block right-align h2">List on flip market for</label>
               <div class="flex content-stretch items-center border-bottom">
                 <input
+                  v-model="flipPrice"
                   class="input big white right-align"
                   style="padding-right:0"
-                  type="number"
-                  v-model="flipPrice">
+                  type="number">
                 <span class="h1">♧</span>
               </div>
             </div>
@@ -59,14 +59,14 @@
                 class="btn btn-outline py3 col-12 regular h3">
                 <span>Claim Clover and register on Flip Market</span>
                 <span
-                  class="pl2 sending"
-                  v-if="submitting">✨</span>
+                  v-if="submitting"
+                  class="pl2 sending">✨</span>
               </button>
               <p class="right-align mt1 mb0">
                 <button
-                  @click="remove"
                   type="button"
-                  class="border-none bg-transparent white h5 pointer">Remove clover</button>
+                  class="border-none bg-transparent white h5 pointer"
+                  @click="remove">Remove clover</button>
               </p>
             </div>
           </div>
@@ -85,18 +85,18 @@ import Reversi from 'clovers-reversi'
 
 export default {
   name: 'ClaimClover',
+  props: {
+    cloverData: {
+      type: Object,
+      required: true
+    }
+  },
   data () {
     return {
       byteBoard: null,
       movesString: null,
       reward: null,
       flipPrice: 100
-    }
-  },
-  props: {
-    cloverData: {
-      type: Object,
-      required: true
     }
   },
   computed: {
@@ -123,9 +123,6 @@ export default {
       'symmetries'
     ])
   },
-  mounted () {
-    this.setBoard()
-  },
   watch: {
     cloverData () {
       this.setBoard()
@@ -137,6 +134,9 @@ export default {
       reversi.isSymmetrical()
       this.byteBoard = reversi.byteBoard
     }
+  },
+  mounted () {
+    this.setBoard()
   },
   methods: {
     setBoard () {

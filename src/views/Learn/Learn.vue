@@ -35,6 +35,18 @@ import AboutPig from './Learn__Section--AboutPig'
 import End from './Learn__Section--End'
 export default {
   name: 'Learn',
+  components: {
+    Intro,
+    CreateClovers,
+    SymmClovers,
+    AboutRegis,
+    AboutProfile,
+    AboutMarket,
+    AboutGarden,
+    AboutBasket,
+    AboutPig,
+    End
+  },
   data () {
     return {
       index: 0,
@@ -50,18 +62,6 @@ export default {
       this.clovers.push(clvr)
       this.$store.commit('SAVE_CLOVER', clvr)
     }
-  },
-  components: {
-    Intro,
-    CreateClovers,
-    SymmClovers,
-    AboutRegis,
-    AboutProfile,
-    AboutMarket,
-    AboutGarden,
-    AboutBasket,
-    AboutPig,
-    End
   }
 }
 </script>

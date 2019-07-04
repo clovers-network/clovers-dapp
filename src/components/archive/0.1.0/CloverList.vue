@@ -2,10 +2,10 @@
   <div class="relative z1">
     <div class="bg-green  white pb2 md-p3 flex justify-around">
       <div
-        class="center"
         v-for="(sym, i) in symTypes"
-        :key="i">
-        <div class='px1'>{{ symmetries[sym] }} x</div>
+        :key="i"
+        class="center">
+        <div class="px1">{{ symmetries[sym] }} x</div>
         <div
           :class="sym"
           class="symmetry-type"/>
@@ -31,38 +31,38 @@
           class="border-bottom inline-block my1"
           @submit.prevent="search">
           <input
-            class="input"
             v-model="search"
+            class="input"
             placeholder="search">
         </form>
       </div>
 
       <div class=" max-width-4 mx-auto flex justify-between align-middle py3" >
         <div
-          class=" "
-          :class="{hide: pagedTotal === 1}">
+          :class="{hide: pagedTotal === 1}"
+          class=" ">
           <button
-            class="btn btn-outline mb1 blue"
             :disabled="!prevPossible"
+            class="btn btn-outline mb1 blue"
             @click="chPage(-1)">←</button>&nbsp;
         </div>
 
         <div class="">
           <span
-            @click="clickSort(i)"
+            v-for="(sort, i) in sortable"
             :class="sortableClass(i)"
-            class="inline-block mx2 pointer no-select"
-            v-html="sort"
             :key="i"
-            v-for="(sort, i) in sortable"/>
+            class="inline-block mx2 pointer no-select"
+            @click="clickSort(i)"
+            v-html="sort"/>
         </div>
 
         <div
-          class=" "
-          :class="{hide: pagedTotal === 1}">
+          :class="{hide: pagedTotal === 1}"
+          class=" ">
           <button
-            class="btn btn-outline mb1 blue"
             :disabled="!nextPossible"
+            class="btn btn-outline mb1 blue"
             @click="chPage(1)">→</button>&nbsp;
         </div>
       </div>
@@ -80,42 +80,42 @@
             :board="board"/>
         </li>
         <li
-          class="list-reset flex flex-wrap mxn2 center justify-center"
-          v-if="cloversSliced.length === 0">Go claim some Clovers...
+          v-if="cloversSliced.length === 0"
+          class="list-reset flex flex-wrap mxn2 center justify-center">Go claim some Clovers...
 
         </li>
       </ul>
       <div class="hide">
         <span
-          class="btn btn-outline mb1 orange"
-          @click="limit = amount"
           v-for="(amount, i) in limits"
           :key="i"
           :class="{'bg-red': limit === amount}"
+          class="btn btn-outline mb1 orange"
+          @click="limit = amount"
           v-html="amount"/>
       </div>
       <div class=" max-width-4 mx-auto flex justify-between align-middle pb4" >
         <div
-          class=" "
-          :class="{hide: pagedTotal === 1}">
+          :class="{hide: pagedTotal === 1}"
+          class=" ">
           <button
-            class="btn btn-outline mb1 blue"
             :disabled="!prevPossible"
+            class="btn btn-outline mb1 blue"
             @click="chPage(-1)">←</button>&nbsp;
         </div>
 
         <div
-          class="center mb2"
-          :class="{hide: pagedTotal === 0}">
+          :class="{hide: pagedTotal === 0}"
+          class="center mb2">
           <span>{{ paged }} / {{ pagedTotal }}</span>
         </div>
 
         <div
-          class=" "
-          :class="{hide: pagedTotal === 1}">
+          :class="{hide: pagedTotal === 1}"
+          class=" ">
           <button
-            class="btn btn-outline mb1 blue"
             :disabled="!nextPossible"
+            class="btn btn-outline mb1 blue"
             @click="chPage(1)">→</button>&nbsp;
         </div>
       </div>
@@ -131,6 +131,12 @@ import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'CloverList',
   components: { Email },
+  props: {
+    filter: {
+      type: String,
+      default: null
+    }
+  },
   data () {
     return {
       paged: 1,
@@ -151,12 +157,6 @@ export default {
   watch: {
     limit () {
       this.paged = 1
-    }
-  },
-  props: {
-    filter: {
-      type: String,
-      default: null
     }
   },
   computed: {

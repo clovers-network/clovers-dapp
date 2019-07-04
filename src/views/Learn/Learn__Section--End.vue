@@ -11,7 +11,7 @@
 import LearnFrame from './Learn__Section__Frame'
 import DownArrowBtn from './Learn__DownArrowBtn'
 export default {
-  name: 'Learn__Section--End',
+  name: 'LearnSectionEnd',
   components: {
     LearnFrame,
     DownArrowBtn

@@ -6,6 +6,6 @@ svg.block
 
 <script>
 export default {
-  name: 'SVG-X'
+  name: 'SVGX'
 }
 </script>

@@ -93,8 +93,11 @@
       "no-new": 0
     },
     "root": false,
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
     "extends": [
-      "plugin:vue/essential",
+      "plugin:vue/base",
       "standard"
     ],
     "globals": {

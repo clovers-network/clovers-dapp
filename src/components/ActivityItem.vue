@@ -1,13 +1,24 @@
 <template>
-  <div class="h5 sm-h4 p2" :class="isMyLog">
-    <div :class="{'opacity-50': isBurned(item)}" class="flex justify-start items-center">
-      <div :class="{mr3: noImg}" class="font-mono opacity-50 h6 xs-hide">#{{ item.blockNumber }}</div>
+  <div
+    :class="isMyLog"
+    class="h5 sm-h4 p2">
+    <div
+      :class="{'opacity-50': isBurned(item)}"
+      class="flex justify-start items-center">
+      <div
+        :class="{mr3: noImg}"
+        class="font-mono opacity-50 h6 xs-hide">#{{ item.blockNumber }}</div>
 
       <!-- Clover Transfered -->
       <template v-if="item.name === 'Clovers_Transfer'">
-        <div v-if="!noImg" class="mr2 sm-mx3 flex-none">
+        <div
+          v-if="!noImg"
+          class="mr2 sm-mx3 flex-none">
           <router-link :to="isBurned(item) ? '' : cloverLink(item.data._tokenId)">
-            <img :src="cloverImage(item.data._tokenId, 50)" style="width:50px;height:50px" class="block"/>
+            <img
+              :src="cloverImage(item.data._tokenId, 50)"
+              style="width:50px;height:50px"
+              class="block">
           </router-link>
         </div>
         <!-- <div class="pr3 h6">bought by</div> -->
@@ -18,7 +29,9 @@
         <template v-else-if="isFromClovers(item)">
           <div class="activity-itm__icon mr2 sm-mr3 h2">&xodot;</div>
           <div class="pr1 opacity-50">Sent to</div>
-          <router-link class="block font-mono truncate hover-underline" :to="userRt(item.data._to)">{{ userName }}</router-link>
+          <router-link
+            :to="userRt(item.data._to)"
+            class="block font-mono truncate hover-underline">{{ userName }}</router-link>
         </template>
         <template v-else-if="isBorn(item)">
           <div class="activity-itm__icon mr2 sm-mr3 h2">&xodot;</div>
@@ -26,17 +39,26 @@
         </template>
         <template v-else>
           <div class="activity-itm__icon mr2 sm-mr3 h2">&xodot;</div>
-          <router-link class="block font-mono truncate hover-underline" :to="userRt(item.data._from)">{{ userName }}</router-link>
+          <router-link
+            :to="userRt(item.data._from)"
+            class="block font-mono truncate hover-underline">{{ userName }}</router-link>
           <div class="opacity-50 nowrap">&ensp;sent to&ensp;</div>
-          <router-link class="block font-mono truncate hover-underline" :to="userRt(item.data._to)">{{ userName }}</router-link>
+          <router-link
+            :to="userRt(item.data._to)"
+            class="block font-mono truncate hover-underline">{{ userName }}</router-link>
         </template>
       </template>
 
       <!-- Clover price updated -->
       <template v-else-if="item.name === 'SimpleCloversMarket_updatePrice'">
-        <div v-if="!noImg" class="mr2 sm-mx3 flex-none">
+        <div
+          v-if="!noImg"
+          class="mr2 sm-mx3 flex-none">
           <router-link :to="cloverLink(item.data._tokenId)">
-            <img :src="cloverImage(item.data._tokenId, 50)" style="width:50px;height:50px" class="block"/>
+            <img
+              :src="cloverImage(item.data._tokenId, 50)"
+              style="width:50px;height:50px"
+              class="block">
           </router-link>
         </div>
         <div class="activity-itm__icon mr2 sm-mr3 h2 line-height-1">&clubs;&#xfe0e;</div>
@@ -51,11 +73,16 @@
 
       <!-- Bought Tokens -->
       <template v-else-if="item.name === 'ClubTokenController_Buy'">
-        <div v-if="!noImg" class="h1 mr2 sm-mx3 center black border circle" style="flex:0 0 50px;height:50px">&clubs;&#xfe0e;</div>
+        <div
+          v-if="!noImg"
+          class="h1 mr2 sm-mx3 center black border circle"
+          style="flex:0 0 50px;height:50px">&clubs;&#xfe0e;</div>
         <div class="activity-itm__icon mr2 sm-mr3 h3 line-height-1">&nearr;</div>
         <div class="font-mono truncate">
-          <router-link class="hover-underline" :to="'/users/' + item.data.buyer">{{ userName }}</router-link>
-          </div>
+          <router-link
+            :to="'/users/' + item.data.buyer"
+            class="hover-underline">{{ userName }}</router-link>
+        </div>
         <div class="nowrap pl1">
           <span class="opacity-50">bought&ensp;</span>
           <span>{{ price(item.data.tokens) }} &clubs;&#xfe0e;</span>
@@ -64,9 +91,14 @@
 
       <!-- Sold Tokens -->
       <template v-else-if="item.name === 'ClubTokenController_Sell'">
-        <div v-if="!noImg" class="h1 mr2 sm-mx3 center black border circle" style="width:50px;height:50px">&clubs;&#xfe0e;</div>
+        <div
+          v-if="!noImg"
+          class="h1 mr2 sm-mx3 center black border circle"
+          style="width:50px;height:50px">&clubs;&#xfe0e;</div>
         <div class="activity-itm__icon mr2 sm-mr3 h3 line-height-1">&searr;</div>
-        <router-link class="font-mono truncate hover-underline" :to="userRt(item.userAddress)">{{ userName }}</router-link>
+        <router-link
+          :to="userRt(item.userAddress)"
+          class="font-mono truncate hover-underline">{{ userName }}</router-link>
         <div class="nowrap pl1">
           <span class="opacity-50">sold&ensp;</span>
           <span>{{ price(item.data.tokens) }} &clubs;&#xfe0e;</span>
@@ -75,16 +107,29 @@
 
       <!-- Bought RFT Shares -->
       <template v-else-if="item.name === 'CurationMarket_Buy'">
-        <div v-if="!noImg" class="mr2 sm-mx3 flex-none">
+        <div
+          v-if="!noImg"
+          class="mr2 sm-mx3 flex-none">
           <router-link :to="cloverLink(item.data._tokenId)">
-            <img :src="cloverImage(item.data._tokenId, 50)" style="width:50px;height:50px" class="block"/>
+            <img
+              :src="cloverImage(item.data._tokenId, 50)"
+              style="width:50px;height:50px"
+              class="block">
           </router-link>
         </div>
-        <div :class="{ red: !noImg }" class="activity-itm__icon mr2 sm-mr3 h6">RFT</div>
-        <div :class="{ red: !noImg }" class="font-mono truncate">
-          <router-link :to="userRt(item.userAddress)" class="hover-underline">{{ userName }}</router-link>
+        <div
+          :class="{ red: !noImg }"
+          class="activity-itm__icon mr2 sm-mr3 h6">RFT</div>
+        <div
+          :class="{ red: !noImg }"
+          class="font-mono truncate">
+          <router-link
+            :to="userRt(item.userAddress)"
+            class="hover-underline">{{ userName }}</router-link>
         </div>
-        <div :class="{ red: !noImg }" class="pl1">
+        <div
+          :class="{ red: !noImg }"
+          class="pl1">
           <span class="opacity-50">bought&ensp;</span>
           <span>{{ price(item.data.tokens) }} shares</span>
         </div>
@@ -92,16 +137,29 @@
 
       <!-- Sold RFT Shares -->
       <template v-else-if="item.name === 'CurationMarket_Sell'">
-        <div v-if="!noImg" class="mr2 sm-mx3 flex-none">
+        <div
+          v-if="!noImg"
+          class="mr2 sm-mx3 flex-none">
           <router-link :to="cloverLink(item.data._tokenId)">
-            <img :src="cloverImage(item.data._tokenId, 50)" style="width:50px;height:50px" class="block"/>
+            <img
+              :src="cloverImage(item.data._tokenId, 50)"
+              style="width:50px;height:50px"
+              class="block">
           </router-link>
         </div>
-        <div :class="{ red: !noImg }" class="activity-itm__icon mr2 sm-mr3 h6">RFT</div>
-        <div :class="{ red: !noImg }" class="font-mono truncate">
-          <router-link :to="userRt(item.userAddress)" class="hover-underline">{{ userName }}</router-link>
+        <div
+          :class="{ red: !noImg }"
+          class="activity-itm__icon mr2 sm-mr3 h6">RFT</div>
+        <div
+          :class="{ red: !noImg }"
+          class="font-mono truncate">
+          <router-link
+            :to="userRt(item.userAddress)"
+            class="hover-underline">{{ userName }}</router-link>
         </div>
-        <div :class="{ red: !noImg }" class="pl1">
+        <div
+          :class="{ red: !noImg }"
+          class="pl1">
           <span class="opacity-50">sold&ensp;</span>
           <span>{{ price(item.data.tokens) }} shares</span>
         </div>
@@ -109,29 +167,46 @@
 
       <!-- New Comment -->
       <template v-else-if="item.name === 'Comment_Added'">
-        <div v-if="!noImg" class="mr2 sm-mx3 flex-none">
+        <div
+          v-if="!noImg"
+          class="mr2 sm-mx3 flex-none">
           <router-link :to="{name: 'Clover/Comments', params: {board: item.data.board}}">
-            <img :src="cloverImage(item.data.board, 50)" style="width:50px;height:50px" class="block"/>
+            <img
+              :src="cloverImage(item.data.board, 50)"
+              style="width:50px;height:50px"
+              class="block">
           </router-link>
         </div>
         <div class="activity-itm__icon mr2 sm-mr3 h3">
-          <chat-icon :size="15" :blank="true" :invert="false"/>
+          <chat-icon
+            :size="15"
+            :blank="true"
+            :invert="false"/>
         </div>
         <div class="opacity-50 nowrap">Comment by&ensp;</div>
-        <router-link class="block font-mono truncate hover-underline" :to="userRt(item.data.userAddress)">{{ item.data.userName }}</router-link>
+        <router-link
+          :to="userRt(item.data.userAddress)"
+          class="block font-mono truncate hover-underline">{{ item.data.userName }}</router-link>
       </template>
 
       <!-- Renamed -->
       <template v-else-if="item.name === 'CloverName_Changed'">
-        <div v-if="!noImg" class="mr2 sm-mx3 flex-none">
+        <div
+          v-if="!noImg"
+          class="mr2 sm-mx3 flex-none">
           <router-link :to="cloverLink(item.data.board)">
-            <img :src="cloverImage(item.data.board, 50)" style="width:50px;height:50px" class="block"/>
+            <img
+              :src="cloverImage(item.data.board, 50)"
+              style="width:50px;height:50px"
+              class="block">
           </router-link>
         </div>
         <div class="activity-itm__icon mr2 sm-mr3 h3">✎</div>
         <div>
           <span class="opacity-50">Renamed&ensp;</span>
-          <router-link class="hover-underline" :to="{name: 'Clover', params:{board:item.data.board}}">{{ item.data.newName }}</router-link>
+          <router-link
+            :to="{name: 'Clover', params:{board:item.data.board}}"
+            class="hover-underline">{{ item.data.newName }}</router-link>
         </div>
       </template>
 

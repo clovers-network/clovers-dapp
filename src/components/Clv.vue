@@ -1,29 +1,29 @@
 <template>
   <div
-    ref='body'
+    ref="body"
+    :class="{isRFT:isRFT}"
+    class="clover nowrap pointer relative"
     @mouseenter="activate()"
     @click="playAnimate()"
-    class="clover nowrap pointer relative"
-    :class="{isRFT:isRFT}"
-    >
+  >
     <div
       v-if="showFlags"
       :class="{h6: !compact, h7: compact}"
-      class='center  absolute top-0  right-0 mxn3 gridItemBadge z1'>
+      class="center  absolute top-0  right-0 mxn3 gridItemBadge z1">
       <div
-        :class="{px1: !compact, py1: !compact}"
         v-if="badgeClass.multiple"
+        :class="{px1: !compact, py1: !compact}"
         class="px1 mb1 py1 bg-red rounded multipleBagde">{{ badgeClass.count }}x Sym</div>
     </div>
 
     <div
       v-if="showFlags"
       :class="{h6: !compact, h7: compact}"
-      class='center absolute bottom-0  right-0 mxn3 gridItemBadge z1'>
+      class="center absolute bottom-0  right-0 mxn3 gridItemBadge z1">
       <div
         v-if="badgeClass[mostRare.name]"
-        class="px1 py1 bg-green rounded rareBadge"
-        :class="[{px1: !compact, py1: !compact}, mostRare.name + 'Badge']">Rare</div>
+        :class="[{px1: !compact, py1: !compact}, mostRare.name + 'Badge']"
+        class="px1 py1 bg-green rounded rareBadge">Rare</div>
     </div>
     <!-- address string -->
     <div v-if="displayString && !noMoves && showAddress">
@@ -33,7 +33,9 @@
         :move-string="displayString"/>
     </div>
     <!-- circle -->
-    <div class="clover__circle absolute overlay" :class="circleStyle">
+    <div
+      :class="circleStyle"
+      class="clover__circle absolute overlay">
       <div class="row-body">
         <!-- rows -->
         <div
@@ -77,15 +79,15 @@ export default {
       symTypes: ['RotSym', 'Y0Sym', 'X0Sym', 'XYSym', 'XnYSym']
     }
   },
+  watch: {
+    moveString () {
+      this.displayString = this.moveString
+    }
+  },
   mounted () {
     this.displayString = this.moveString
     if (this.autoPlay) {
       this.playAnimate()
-    }
-  },
-  watch: {
-    moveString () {
-      this.displayString = this.moveString
     }
   },
   computed: {
@@ -196,6 +198,9 @@ export default {
       }
     }
   },
+  components: {
+    SvgText
+  },
   props: {
     compact: {
       type: Boolean,
@@ -253,9 +258,6 @@ export default {
       type: Boolean,
       default: false
     }
-  },
-  components: {
-    SvgText
   }
 }
 </script>

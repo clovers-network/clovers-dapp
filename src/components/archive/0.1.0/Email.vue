@@ -1,27 +1,27 @@
 <template>
   <div
-    class="sticky center z3"
-    v-show="!success || !hide">
+    v-show="!success || !hide"
+    class="sticky center z3">
     <div class="max-width-2 bg-purple  inline-block mx-auto p2">
 
       <form
         v-show="!success"
-        @submit="success = true"
+        id="mc-embedded-subscribe-form"
         action="https://billyrennekamp.us4.list-manage.com/subscribe/post?u=31bb13f30ace8a3f55fd90d3f&amp;id=aea3ef4627"
         method="post"
-        id="mc-embedded-subscribe-form"
         name="mc-embedded-subscribe-form"
         class="validate"
         target="_blank"
-        novalidate>
+        novalidate
+        @submit="success = true">
         <div>Email:&nbsp;</div>
         <input
+          id="mce-EMAIL"
           ref="email"
           type="email"
           value=""
           name="EMAIL"
           class="required email"
-          id="mce-EMAIL"
           placeholder="">
         <input
           style="display: none;"
@@ -30,18 +30,18 @@
           tabindex="-1"
           value="">
         <input
+          id="mc-embedded-subscribe"
           style="display: none;"
           type="submit"
           value="Subscribe"
           name="subscribe"
-          id="mc-embedded-subscribe"
           class="button">
       </form>
       <div
-        class='pointer h2 thankyou'
-        v-if='success'
-        v-html='thanks'
-        @click='hide = true'/>
+        v-if="success"
+        class="pointer h2 thankyou"
+        @click="hide = true"
+        v-html="thanks"/>
     </div>
   </div>
 </template>
@@ -66,12 +66,17 @@ export default {
       emojiIndex: 0
     }
   },
-  mounted () {
-    if (window.localStorage.getItem('email_added')) {
-      this.success = true
-      this.hide = true
-    } else {
-      // this.$refs.email.focus()
+  computed: {
+    thanks () {
+      return 'Thanks, talk soon ' + emoji.get(this.emojis[this.emojiIndex])
+    },
+    formClass () {
+      return {
+        animating: this.animating,
+        error: this.error,
+        success: this.success,
+        loading: this.loading
+      }
     }
   },
   watch: {
@@ -79,6 +84,14 @@ export default {
       if (this.success) {
         window.localStorage.setItem('email_added', true)
       }
+    }
+  },
+  mounted () {
+    if (window.localStorage.getItem('email_added')) {
+      this.success = true
+      this.hide = true
+    } else {
+      // this.$refs.email.focus()
     }
   },
   methods: {
@@ -106,19 +119,6 @@ export default {
     changeEmoji () {
       this.emojiIndex += 1
       this.emojiIndex = this.emojiIndex % this.emojis.length
-    }
-  },
-  computed: {
-    thanks () {
-      return 'Thanks, talk soon ' + emoji.get(this.emojis[this.emojiIndex])
-    },
-    formClass () {
-      return {
-        animating: this.animating,
-        error: this.error,
-        success: this.success,
-        loading: this.loading
-      }
     }
   }
 }

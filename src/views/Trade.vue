@@ -83,6 +83,13 @@ import WaveyMenu from '@/components/Icons/WaveyMenu'
 
 export default {
   name: 'Trade',
+  props: {
+    market: {
+      type: String,
+      default: 'ClubToken'
+    },
+    sharesOwnedWei: String
+  },
   data () {
     return {
       max: 100,
@@ -97,13 +104,6 @@ export default {
   head: {
     title: { inner: 'Trade' },
     meta: [{ name: 'description', content: 'Exchange Ether for Clovers Coins', id: 'meta-desc' }]
-  },
-  props: {
-    market: {
-      type: String,
-      default: 'ClubToken'
-    },
-    sharesOwnedWei: String
   },
   watch: {
     'orders.length' () {

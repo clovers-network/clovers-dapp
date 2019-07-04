@@ -2,38 +2,38 @@
   <div>
     <div class="bg-green white md-p3 intro-screen relative ">
       <div class="p2 overflow-hidden">
-        <div class='pointer h2 absolute top-0 right-0 mr3 mt3'>
+        <div class="pointer h2 absolute top-0 right-0 mr3 mt3">
           <i
-            @click="copy('link')"
-            class="material-icons mr1">link</i>
+            class="material-icons mr1"
+            @click="copy('link')">link</i>
           <i
-            @click="copy('moves')"
-            class="material-icons">content_copy</i>
+            class="material-icons"
+            @click="copy('moves')">content_copy</i>
         </div>
         <div class="flex flex-wrap items-center justify-center">
           <div class="center my3 px4 relative order-1 ">
             <div class="h1">
               <clv
-                class="no-border"
                 :key="boardId"
                 :byte-board="boardId"
-                :move-string="moveString"/>
+                :move-string="moveString"
+                class="no-border"/>
             </div>
             <symmetry
-              id='sym'
+              id="sym"
               :board="reversi"/>
           </div>
           <div class="order-0 md-right-align col-6 sm-col-3">
             <span class="h2">
               <form
-                v-if='currentOwner'
-                class='inline-block border-bottom'
+                v-if="currentOwner"
+                class="inline-block border-bottom"
                 @submit.prevent="changeName()">
                 <input
-                  class='input big align-right white'
+                  v-model="name"
+                  class="input big align-right white"
                   type="text"
-                  placeholder="Name"
-                  v-model="name"></form>
+                  placeholder="Name"></form>
               <span
                 v-else
                 class="h1"
@@ -64,8 +64,8 @@
               <p class="h2">
                 <router-link
                   :to="'/users/' + founderAddress"
-                  v-html="founderName"
-                  class="white"/>
+                  class="white"
+                  v-html="founderName"/>
               </p>
             </div>
             <div>
@@ -81,12 +81,12 @@
             </template>
             <template v-else-if="board">
               <a
-                @click="flip"
-                class="m0 px2 py1 border inline-block pointer white">
+                class="m0 px2 py1 border inline-block pointer white"
+                @click="flip">
                 <span v-html="'Buy it from ' + ownerName"/>
                 <span
-                  class="pl2 sending"
-                  v-if="flipping">✨</span>
+                  v-if="flipping"
+                  class="pl2 sending">✨</span>
               </a>
             </template>
           </div>
@@ -95,15 +95,15 @@
       <div class="center py2 relative">
         <div>
           <a
-            @click="toggleHistory"
-            class="silver inline-block pointer">{{ historyToggleText }}</a>
+            class="silver inline-block pointer"
+            @click="toggleHistory">{{ historyToggleText }}</a>
         </div>
         <div
-          @click="toggleHistory"
-          class="absolute bg-orange pointer circle h1 toggle-history">
+          class="absolute bg-orange pointer circle h1 toggle-history"
+          @click="toggleHistory">
           <span
-            class="material-icons"
-            :class="{'rotate-180': showHistory}">keyboard_arrow_down</span>
+            :class="{'rotate-180': showHistory}"
+            class="material-icons">keyboard_arrow_down</span>
         </div>
       </div>
     </div>
@@ -137,8 +137,8 @@
                 <td>{{ calcEarnings(idx) }} &clubs;</td>
               </tr>
               <tr
-                class="h3"
-                :class="{muted: flippers > 2}">
+                :class="{muted: flippers > 2}"
+                class="h3">
                 <td>{{ created }}</td>
                 <td>
                   <router-link

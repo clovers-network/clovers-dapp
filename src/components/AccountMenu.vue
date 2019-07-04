@@ -1,41 +1,53 @@
 <template>
-    <div id="accountMenu" class="border green bg-white absolute">
-        <template >
-        <div class=" center bold border-bottom pointer" >
-            <template  v-if="!authHeader">
-                <div @click="signClick" class="p2">Sign In</div>
-            </template>
-            <template v-else>
-                <router-link class="block p2" :to="'/users/' + account">{{userName(user)}}</router-link>
-            </template>
-        </div>
-        <div class="p2 h5 lh3">
-            <template v-if="!authHeader">Sign in to edit your profile, make comments and rename Clovers.</template>
-            <template v-else>
-                <div class="pointer">
-                    <router-link @click.native="$emit('closeAccountMenu')" :to="{name: 'Account'}">Your Dashboard</router-link>
-                </div>
-                <div class="pointer">
-                    <router-link @click.native="$emit('closeAccountMenu')" :to="'/users/' + account">Your Profile</router-link>
-                </div>
-                <div class="pointer">
-                    <div @click="signClick" class="pointer">Sign Out</div>
-                </div>
-            </template>
-        </div>
+  <div
+    id="accountMenu"
+    class="border green bg-white absolute">
+    <template >
+      <div class=" center bold border-bottom pointer" >
+        <template v-if="!authHeader">
+          <div
+            class="p2"
+            @click="signClick">Sign In</div>
         </template>
-    </div>
+        <template v-else>
+          <router-link
+            :to="'/users/' + account"
+            class="block p2">{{ userName(user) }}</router-link>
+        </template>
+      </div>
+      <div class="p2 h5 lh3">
+        <template v-if="!authHeader">Sign in to edit your profile, make comments and rename Clovers.</template>
+        <template v-else>
+          <div class="pointer">
+            <router-link
+              :to="{name: 'Account'}"
+              @click.native="$emit('closeAccountMenu')">Your Dashboard</router-link>
+          </div>
+          <div class="pointer">
+            <router-link
+              :to="'/users/' + account"
+              @click.native="$emit('closeAccountMenu')">Your Profile</router-link>
+          </div>
+          <div class="pointer">
+            <div
+              class="pointer"
+              @click="signClick">Sign Out</div>
+          </div>
+        </template>
+      </div>
+    </template>
+  </div>
 </template>
 
 <script>
 import {mapActions, mapGetters, mapState} from 'vuex'
 export default {
   name: 'AcountMenu',
+  props: ['visible'],
   data () {
     return {
     }
   },
-  props: ['visible'],
   computed: {
     ...mapState(['account']),
     ...mapGetters(['authHeader', 'userName', 'user'])

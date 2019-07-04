@@ -1,7 +1,18 @@
 <template>
-  <v-touch tag="button" class="outer block border col-12 pointer" :class="outerClass" @click.native="$emit('click')" @swipeleft="$emit('swipeleft')" @swiperight="$emit('swiperight')" :swipe-options="{threshold: 150}">
-    <div class="middle col-6 bg-current-color trans-transform flex" :class="[middleClass, {'transl-x-100': active}]">
-      <div class="inner block font-ext h2 m-auto line-height-1" :class="innerClass">{{!active ? labels[1] : labels[0]}}</div>
+  <v-touch
+    :class="outerClass"
+    :swipe-options="{threshold: 150}"
+    tag="button"
+    class="outer block border col-12 pointer"
+    @click.native="$emit('click')"
+    @swipeleft="$emit('swipeleft')"
+    @swiperight="$emit('swiperight')">
+    <div
+      :class="[middleClass, {'transl-x-100': active}]"
+      class="middle col-6 bg-current-color trans-transform flex">
+      <div
+        :class="innerClass"
+        class="inner block font-ext h2 m-auto line-height-1">{{ !active ? labels[1] : labels[0] }}</div>
     </div>
   </v-touch>
 </template>

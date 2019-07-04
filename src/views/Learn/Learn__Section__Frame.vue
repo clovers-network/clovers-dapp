@@ -5,7 +5,7 @@
 
 <script>
 export default {
-  name: 'Learn__Section__Frame'
+  name: 'LearnSectionFrame'
 }
 </script>
 

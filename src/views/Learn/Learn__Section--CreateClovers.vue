@@ -22,9 +22,9 @@ import Reversi from 'clovers-reversi'
 import { cloverIsMonochrome } from '@/utils'
 const clover = new Reversi()
 export default {
-  name: 'Learn__Section--CreateClovers',
-  props: ['clovers'],
+  name: 'LearnSectionCreateClovers',
   components: { LearnFrame, DownArrowBtn, Basket, RowOfClovers },
+  props: ['clovers'],
   data () {
     return {
       no: 0,
@@ -38,6 +38,11 @@ export default {
   computed: {
     showDoneBtn () {
       return this.clovers.length > 2 && !this.showNextArrow
+    }
+  },
+  watch: {
+    canCreate (can) {
+      if (can) this.scrollToEnd()
     }
   },
   methods: {
@@ -74,11 +79,6 @@ export default {
     end () {
       this.showNextArrow = true
       this.showBasket = true
-    }
-  },
-  watch: {
-    canCreate (can) {
-      if (can) this.scrollToEnd()
     }
   }
 }

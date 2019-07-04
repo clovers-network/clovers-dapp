@@ -28,8 +28,8 @@
       <div class="center my3 relative">
         <div class="h1">
           <clv
-            class="no-border no-bg no-hover"
-            :move-string="this.heart"/>
+            :move-string="this.heart"
+            class="no-border no-bg no-hover"/>
         </div>
       </div>
     </div>

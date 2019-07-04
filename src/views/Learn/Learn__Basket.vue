@@ -10,9 +10,9 @@
 <script>
 import CartIcon from '@/components/Icons/CartIcon'
 export default {
-  name: 'Learn__Basket',
-  props: ['count'],
-  components: { CartIcon }
+  name: 'LearnBasket',
+  components: { CartIcon },
+  props: ['count']
 }
 </script>
 

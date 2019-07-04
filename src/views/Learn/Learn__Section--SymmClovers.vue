@@ -28,7 +28,8 @@ import { abbrvNum } from '@/utils'
 import { fromWei } from 'web3-utils'
 const reversi = new Reversi()
 export default {
-  name: 'Learn__Section--SymmClovers',
+  name: 'LearnSectionSymmClovers',
+  components: { LearnFrame, SymmetryIcons, DownArrowBtn },
   data () {
     return {
       no: 0,
@@ -47,6 +48,10 @@ export default {
     rewardInUSD () {
       return this.reward && abbrvNum(this.$store.getters.clubTokenInUSD.toFormat(2) * this.cleanReward)
     }
+  },
+  created () {
+    this.setReward()
+    this.$store.dispatch('getOrders')
   },
   methods: {
     step () {
@@ -67,12 +72,7 @@ export default {
         this.reward = wei
       })
     }
-  },
-  created () {
-    this.setReward()
-    this.$store.dispatch('getOrders')
-  },
-  components: { LearnFrame, SymmetryIcons, DownArrowBtn }
+  }
 }
 </script>
 

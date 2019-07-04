@@ -24,6 +24,7 @@ import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 
 export default {
   name: 'PickListItem',
+  components: { SymmetryIcons },
   props: {
     pick: {
       type: Object,
@@ -56,7 +57,6 @@ export default {
     removeClover () {
       this.$store.commit('REMOVE_SAVED_CLOVER', this.pick)
     }
-  },
-  components: { SymmetryIcons }
+  }
 }
 </script>

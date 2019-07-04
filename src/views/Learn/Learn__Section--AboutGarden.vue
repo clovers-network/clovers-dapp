@@ -7,7 +7,7 @@
 <script>
 import About from './Learn__Section--AboutACloverPage'
 export default {
-  name: 'Learn__Section--AboutGarden',
+  name: 'LearnSectionAboutGarden',
   components: { About }
 }
 </script>

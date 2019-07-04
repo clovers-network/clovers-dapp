@@ -6,43 +6,43 @@
       <div class="center underline my4 py2">The Basics of Clover</div>
       <div class="my4">Clovers employs the game of Reversi to generate a unique Visual Digital Asset consisting of the moves played to reach a final game.</div>
       <div><clv
+        id="heart"
         :auto-play="true"
         :speed="120"
         :no-moves="true"
         class=" bg-green no-hover  no-border"
-        id="heart"
         move-string="D3E3F4G5F3F2G3D2E6C4C3C2B4D6F5G2C5B5C6B3G4E7D7E8G6H3H4H5F6F7"/></div>
       <div class="my4 pt3">A valid Clover must possess one or more symmetries</div>
       <div class="flex justify-around h5">
         <div>
           <clv
-            class="hover-flip-h small-clover "
             :speed="120"
             :no-moves="true"
+            class="hover-flip-h small-clover "
             move-string="F5D6C3D3C4F4F6F3E6E7D7G6D8C5C6C7C8F7G8B6A5B5B4A4A3A6A7C2H6B3G5B7A2E8F8G4H3H5E2E3H4F1F2G3C1D2E1D1G1G2H1H2A8B2A1B1B8G7H8H7"/>
           <div class="mt2">Horizontal</div>
         </div>
         <div>
           <clv
-            class="hover-flip-v small-clover "
             :speed="120"
             :no-moves="true"
+            class="hover-flip-v small-clover "
             move-string="F5F6E6F4E3C5C4C3D3F2B4A4E2F3D2C1D1E1G5H5F1G1C2B1D6C6G4H4B3A2A3G2A1B2H1B5A5A6B6H2G3H3A7B7H6G6H7G7G8H8F8E8F7E7D8C8B8A8C7D7"/>
           <div class="mt2">Vertical</div>
         </div>
         <div>
           <clv
-            class="hover-flip-diag small-clover "
             :speed="120"
             :no-moves="true"
+            class="hover-flip-diag small-clover "
             move-string="F5F6E6F4E3C5C4D3C3F2E2D7G3D6B5F3G4E1D2C6E7E8G5G6F7H6F8D8D1C7B6G8H5H4C8B8G7A4A6B3B4A7A8H8F1H7A2C1B1C2B7A3A5B2H3H2G1H1G2"/>
           <div class="mt2">Diagonal</div>
         </div>
         <div>
           <clv
-            class="hover-flip-rotate small-clover "
             :speed="120"
             :no-moves="true"
+            class="hover-flip-rotate small-clover "
             move-string="F5D6C5F4E3C4E6B6D3E2C2F2C3B3D2E1D1F7G4F3G3G6G5C1C6C7E7F8D7H6E8F6H4D8C8H3G8H5B4A5B8B5G1F1B1B2A2A3A1G7H8A6B7H7A7A8G2H2H1A4"/>
           <div class="mt2">Rotational</div>
         </div>
@@ -51,15 +51,15 @@
       <div class="flex pt2 items-center justify-center h5">
         <div class="mx4 ">300 ♧</div>
         <div class="mt2"><clv
-          class=" small-clover "
           :speed="120"
           :no-moves="true"
+          class=" small-clover "
           move-string="F5F6E6F4E3D6C4D3C3D2E2C2F3F2D1C1B1B5E1B3A4A3A2B2C5B4A5B6A6A7B7C8B8A8C7C6A1F1G1D7E7D8F8F7E8G8G7G2G6G3"/><div class="mt2">Horizontal</div></div>
         <div class="mx4 ">vs</div>
         <div class="mt2"><clv
-          class=" small-clover "
           :speed="120"
           :no-moves="true"
+          class=" small-clover "
           move-string="F5D6C3F4F6D3F3B3C6B6D7E8C4C5B5B4C7D8A5E3C8B8E7A4A6F7F2E6E2D2A3G6C2G5H5D1E1B2A1B1C1B7A8H4H3G4F8A2H6G3G2G1F1G8H8A7H1H2G7H7"/><div class="mt2">Horizontal + Vertical</div></div>
         <div class="mx4 ">600 ♧</div>
       </div>
@@ -70,9 +70,9 @@
       <div class="max-width-3 mx-auto flex justify-around">
         <div>
           <clv
-            class="small-clover mt1 bg-green no-hover no-border"
             :speed="120"
             :no-moves="true"
+            class="small-clover mt1 bg-green no-hover no-border"
             move-string="D3E3F4G5F3F2G3D2E6C4C3C2B4D6F5G2C5B5C6B3G4E7D7E8G6H3H4H5F6F7"/>
         </div>
         <img
@@ -99,17 +99,17 @@
         <template v-if="showMore">Less Details!</template>
       </div>
       <div
-        @click="showMore = !showMore"
-        class="white absolute bg-orange pointer circle h1 toggle-history ">
+        class="white absolute bg-orange pointer circle h1 toggle-history "
+        @click="showMore = !showMore">
         <span
-          class="material-icons"
-          :class="{'rotate-180': !showMore}">keyboard_arrow_down</span>
+          :class="{'rotate-180': !showMore}"
+          class="material-icons">keyboard_arrow_down</span>
       </div>
       <div class="py1">&nbsp;</div>
       <div
-        id='showMore'
-        class='bg-silver expandable'
-        :class="{'expanded-2000': showMore}">
+        id="showMore"
+        :class="{'expanded-2000': showMore}"
+        class="bg-silver expandable">
         <div class="max-width-2 py2 mx-auto">
           <div class="h2 pt4">
             The Contract</div>
@@ -150,13 +150,13 @@ import Clv from './Clv'
 export default {
 
   name: 'About',
+  components: {Clv},
 
   data () {
     return {
       showMore: false
     }
-  },
-  components: {Clv}
+  }
 }
 </script>
 

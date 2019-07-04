@@ -412,15 +412,6 @@ export default {
     const { board } = to.params
     store.dispatch('getClover', board.toLowerCase()).then(next)
   },
-  created () {
-    if (this.clover) return this.updateMetaTitle(this.clover.name)
-  },
-  mounted () {
-    this.setFormName(this.clover)
-    setTimeout(() => {
-      this.canGetComments = true
-    }, 500)
-  },
   watch: {
     'orders.length' () {
       this.checkShares()
@@ -431,6 +422,15 @@ export default {
     isRFT () {
       this.checkShares()
     }
+  },
+  created () {
+    if (this.clover) return this.updateMetaTitle(this.clover.name)
+  },
+  mounted () {
+    this.setFormName(this.clover)
+    setTimeout(() => {
+      this.canGetComments = true
+    }, 500)
   },
   components: { SymmetryIcons, WaveyMenu, Clv, Trade, CloverNameEditable, Comments }
 }

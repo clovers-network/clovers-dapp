@@ -58,13 +58,13 @@ export default {
       }, 100)
     }
   },
-  mounted () {
-    this.setName(this.clover)
-  },
   watch: {
     clover (clover) {
       this.setName(clover)
     }
+  },
+  mounted () {
+    this.setName(this.clover)
   }
 }
 </script>
