@@ -71,12 +71,12 @@
 
           <ul class="m0 p0 list-reset">
             <!-- log item -->
-            <li v-for="log in activity" :key="log.id || log.transactionHash" class="border-top">
+            <li v-for="log in activity" :key="log.id || log.transactionHash" class="border border-dashed rounded mb2">
               <activity-item :item="log"/>
             </li>
           </ul>
 
-          <nav v-if="prevPossible || nextPossible" class="list-reset border-top border-green flex h5 green">
+          <nav v-if="prevPossible || nextPossible" class="list-reset flex h5 green">
             <li v-if="prevPossible" @click="filters.page--" class="col-6 flex-grow pointer px2 py4 center">
               <span>&larr; Previous</span>
             </li>
@@ -85,7 +85,7 @@
             </li>
           </nav>
 
-          <div v-else class="center h5 font-mono border-top border-green h-bttm-bar px2 py3">
+          <div v-else class="center h5 font-mono h-bttm-bar px2 py3">
             <span class="light-green">End of results</span>
           </div>
         </div>

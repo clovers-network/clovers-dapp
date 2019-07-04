@@ -1,92 +1,76 @@
 <template lang="pug">
   .green.fixed.z3.flex.modal(@click.self="cancel")
-    .m-auto.col-11.md-col-8.lg-col-4.bg-white.flex.flex-column.justify-between.border.border-dashed.rounded
+    .m-auto.bg-white.flex.flex-column.justify-between.border.border-dashed.rounded
       header
         .h-header.flex.justify-between.items-center
           .col-4.pl3.pt1
-            button.pointer(@click="cancel") Cancel
+            button.pointer.h5(@click="cancel") Cancel
           h1.col-4.font-exp.center.nowrap {{invalidClover ? 'Not Found' : ''}}
           .green.mt3.mr3(v-if="clover.symmetrical")
             symmetry-icons(:board="clover")
       div.flex-auto.relative.p2.center
         //- image
-        img(:src="cloverImage(clover, 290)" width="290" height="290")
-        //- .keep__figure__img.absolute.bg-contain.bg-no-repeat.bg-center(role="img", v-if="clover && !invalidClover", :style="'background-image:url(' + cloverImage(clover) + ')'")
-        //- .keep__figure__img.absolute.flex.items-center.justify-center.h1(v-else)
-        //-   .h1 :-(
-        //- fav btn
-        //- .absolute.bottom-0.right-0.p2(@click="saveClover(clover)", v-if="!invalidClover")
-        //-   heart-icon.green.h1(:active="isSaved")
+        img(:src="cloverImage(clover, 196)" width="196" height="196")
 
       //- stats
-      .flex.flex-wrap.pt3.pb2
-        .col-6.align-right Your balance
-        .col-6.pl2
-          span.bold &cent; &nbsp; {{ prettyUserBalance }}
-          span.light-green &nbsp; ({{ userBalanceInETH }} <sup>ETH</sup>)
-        .col-6.align-right Cost to keep
-        .col-6.pl2(v-if="unavailable")
-          span.red.opacity-50 &times; Already registered
-        .col-6.pl2(v-else)
-          span.bold &cent; &nbsp; {{ keepValue }}
-          span.light-green &nbsp; ({{ keepValueInETH }} <sup>ETH</sup>)
-        template(v-if="_reversi.symmetrical")
-          .col-6.align-right Reward
-          .col-6.pl2
-            span.bold &cent; &nbsp; {{ sellValue }}
-            span.light-green &nbsp; ({{ sellValueInETH }} <sup>ETH</sup>)
+      .flex.justify-center(v-if="unavailable")
+        p.m0.red.opacity-50 &times; Already registered
 
-      //- invalid clover
-      footer(v-if="invalidClover").bg-green.white
-        router-link(:to="{name: 'Field'}")
-          button.col-12.h-bttm-bar.font-exp.pointer Find More
+      .options.px3.pt2.mx3(v-else)
+        div
+          label.radio.block.pointer.border.rounded.py1.px2.mb1.flex.items-center(:active="mode === 'keep'")
+            input(v-model="mode" type="radio" value="keep")
+            .dot.mr2
+            span.flex-auto.mr3 Keep Clover
+            .bold - {{ keepValue }} <coin-icon/>
+          label.radio.block.pointer.border.rounded.py1.px2.mb1.flex.items-center(v-if="_reversi.symmetrical" :active="mode === 'sell'")
+            input(v-model="mode" type="radio" value="sell")
+            .dot.mr2
+            span.flex-auto.mr3 Claim Reward
+            .bold + {{ sellValue }} <coin-icon/>
+
+        p.center.h6.underline.mb0.mt3.help(@click="showMore = true" v-if="!showMore") More information
+        p.center.h6.mb0.mt3.pointer(v-if="showMore" @click="showMore = false")
+          span(v-if="mode === 'keep'") Register this clover on the network. A base fee of 10 <coin-icon :width="14" :height="14"/> is charged
+          span(v-else) Claim a reward for this rare clover. This requires a verification before payout and can take a few minutes
 
       //- keep / sell actions
-      footer(v-else-if="!submitted")
-        //- small.border-top.center.p2.block.h6.bg-white(v-if="sellValue > 0") You found a symmetrical clover! Keep it or claim a reward.
-        //- .flex.border-top
-        //-   .col-6.flex-grow.p3.relative.pointer(@click="action = 'keep'")
-        //-     div(:class="{'opacity-25': action !== 'keep'}")
-        //-       small.block.lh1 Keep for
-        //-       .font-exp.mt1.truncate {{ keepValue }} Coins
-        //-   .col-6.flex-grow.p3.relative.pointer.border-left(v-if="sellValue > 0", @click="action = 'sell'")
-        //-     div(:class="{'opacity-25': action !== 'sell'}")
-        //-       small.block.lh1 Claim reward
-        //-       .font-exp.mt1.truncate {{ sellValue }} Coins
-
-        //- confirm btn
+      footer.flex.justify-center(v-if="!submitted")
         .m3.rounded.white.trans-bg(:class="cancelled ? 'bg-red' : 'bg-green'")
-          button.col-12.pointer.p2(@click="btnClick", :class="{'pointer-events-none': submitting}")
-            span.block.m-auto.capitalize(v-show="!submitting") {{ buttonText }}
-            template(v-if="submitting")
-              .p1
-              wavey-menu.m-auto(:isWhite="true")
-          .p2.center.font-mono(v-if="submitting")
-            p {{ infoText }}
-      //- submitting
+          button.pointer.py2.px3(@click="btnClick", :class="{'pointer-events-none': submitting}")
+            span.block.m-auto(v-show="!submitting") {{ buttonText }}
+            span.block.m-auto(v-if="submitting") Submitting . . .
+
+      //- submitted
       footer(v-else)
         .m3.rounded.white.bg-green.center
-          router-link.col-12.pointer.p2.inline-block(:to="('/clovers/' + clover.board)")
-            p.m0.m-auto Complete! Click here to view ↗
+          router-link.col-12.pointer.p2.inline-block(:to="cloverLink")
+            p.m0.m-auto Done!
 </template>
 
 <script>
-import Vue from 'vue'
-import WaveyMenu from '@/components/Icons/WaveyMenu'
-import HeartIcon from '@/components/Icons/HeartIcon'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
-import { cloverImage, fetchCloudImage, prettyBigNumber, abbrvNum } from '@/utils'
+import {
+  cloverImage,
+  fetchCloudImage,
+  prettyBigNumber,
+  abbrvNum,
+  abbrvAddr,
+  pad0x,
+  formatFoundClover
+} from '@/utils'
 import { fromWei } from 'web3-utils'
 import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
+import CoinIcon from '@/components/Icons/CoinIcon'
 
 const reversi = new Reversi()
 let lastRt = null
 const actions = {
   keep: 'Keep Clover',
   sell: 'Claim Reward',
-  view: 'View ↗'
+  view: 'View Clover'
 }
 
 export default {
@@ -97,19 +81,22 @@ export default {
   head: {
     meta () {
       if (lastRt || !this.clover.board) return
-      const img = fetchCloudImage(cloverImage({board: this.clover.board}, 640))
+      const img = fetchCloudImage(cloverImage({ board: this.clover.board }, 640))
       return [{ p: 'og:image', c: img, id: 'og-img' }]
     }
   },
   data () {
     return {
+      id: null,
       unavailable: false,
       action: 'keep',
+      mode: 'keep', // || 'sell'
       value: null,
       reward: null,
       submitting: false,
       submitted: false,
-      cancelled: false
+      cancelled: false,
+      showMore: false
     }
   },
   watch: {
@@ -129,9 +116,8 @@ export default {
       return reversi.playGameMovesString(this.movesString)
     },
     clover () {
-      const id = `0x${this._reversi.byteBoard}`
-      const saved = this.picks.find(b => b.board === id)
-      return saved || this._reversi
+      const saved = this.picks.find(b => b.board === this.id)
+      return saved || formatFoundClover(this._reversi)
     },
     invalidClover () {
       return this._reversi && this._reversi.error
@@ -165,7 +151,15 @@ export default {
       return new BigNumber(this.$store.state.clubTokenPrice)
     },
     buttonText () {
-      return this.cancelled ? 'Transaction cancelled' : actions[this.action]
+      if (this.cancelled) {
+        return 'Transaction cancelled'
+      } else if (this.unavailable) {
+        return 'View Clover'
+      }
+      return 'Confirm'
+    },
+    cloverLink () {
+      return this.clover && `/clovers/${this.id}`
     },
 
     ...mapGetters(['picks', 'prettyUserBalance', 'userBalanceInETH'])
@@ -179,9 +173,16 @@ export default {
     },
     btnClick () {
       if (this.cancelled || this.submitting) return
-      if (this.action === 'keep') this.keep()
-      if (this.action === 'sell') this.sellToBank()
-      if (this.action === 'view') this.viewClover()
+      if (this.action === 'view') {
+        this.viewClover()
+        return
+      }
+
+      if (this.mode === 'keep') {
+        this.keep()
+      } else {
+        this.sellToBank()
+      }
     },
     async keep () {
       this.submitting = true
@@ -189,14 +190,14 @@ export default {
         const tx = await this.buy(this.clover)
         this.submitting = false
         this.handleSuccess(
-          `Success! You kept ${this.clover.board}`,
+          `Success! You kept ${abbrvAddr(this.id)}`,
           this.clover
         )
       } catch (err) {
+        // probably cancelled...
+        // this.handleError(err)
         this.submitting = false
         this.cancelled = true
-        // notification
-        this.handleError(err)
       }
     },
     async sellToBank () {
@@ -205,24 +206,26 @@ export default {
         const tx = await this.sell({ clover: this.clover })
         this.submitting = false
         this.handleSuccess(
-          `Success! You sold ${this.clover.board} to the bank`,
+          `Success! You sold ${abbrvAddr(this.id)} to the bank`,
           this.clover
         )
       } catch (err) {
+        // probably cancelled...
+        // this.handleError(err)
         this.submitting = false
-        this.handleError(err)
+        this.cancelled = true
       }
     },
     checkClover () {
       if (!this.clover) return null
-      this.cloverExists('0x' + this._reversi.byteBoard).then((exists) => {
+      this.cloverExists(this.id).then((exists) => {
         if (!exists) {
           this.unavailable = false
           this.action = this._reversi.symmetrical ? 'sell' : 'keep'
           return
         }
         this.unavailable = true
-        this.action = this._reversi.symmetrical ? 'sell' : 'keep'
+        this.action = 'view'
       })
       const syms = this._reversi.returnSymmetriesAsBN()
       this.$store.dispatch('getReward', syms).then(wei => {
@@ -232,29 +235,26 @@ export default {
       })
     },
     viewClover () {
-      this.$router.push(`/clovers/0x${this._reversi.byteBoard}`)
+      this.$router.push(this.cloverLink)
     },
 
     handleError ({ message }) {
-      this.selfDestructMsg({
+      this.addMessage({
         msg: message.replace('Error: ', ''),
         type: 'error'
       })
     },
     handleSuccess (msg, clover) {
-      this.selfDestructMsg({msg, type: 'success'})
+      this.addMessage({ msg, type: 'success' })
       this.$store.commit('REMOVE_SAVED_CLOVER', this.clover)
       this.submitted = true
     },
 
-    ...mapMutations({
-      saveClover: 'SAVE_CLOVER'
-    }),
     ...mapActions([
       'buy',
       'sell',
       'addMessage',
-      'selfDestructMsg',
+      'addMessage',
       'cloverExists',
       'getClubTokenPrice'
     ])
@@ -264,10 +264,11 @@ export default {
     next()
   },
   mounted () {
+    this.id = pad0x(this._reversi.byteBoard)
     this.checkClover()
     this.getClubTokenPrice()
   },
-  components: { WaveyMenu, HeartIcon, SymmetryIcons }
+  components: { SymmetryIcons, CoinIcon }
 }
 </script>
 

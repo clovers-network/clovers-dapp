@@ -9,6 +9,8 @@
 
 .h7 { font-size: .94rem; }
 .h8 { font-size: .75rem; }
+.wrap-word { word-break: break-word; }
+
 .w-100{width:100%;}
 .w-1em{width:1em;}
 .h-100{height:100%;}
@@ -18,6 +20,7 @@
 .h-100vw{height:100vw;}
 .min-h-100vh{min-height: 100vh}
 
+.o-0 { opacity: 0; }
 .opacity-50 { opacity:.5; }
 .opacity-30 { opacity: .3; }
 .opacity-25 { opacity:.25; }
@@ -38,7 +41,9 @@
 .mt-deduct-header{margin-top: calc(-1 * var(--height-header));}
 
 .pb-100 { padding-bottom: 100%; }
+.pb-120 { padding-bottom: 120%; }
 .pb-bttm-bar { padding-bottom: var(--height-bttm-bar); }
+.pb-full-height { padding-bottom: calc(100vh - 375px); }
 
 .overlay {top:0;left:0;bottom:0;right:0;}
 
@@ -50,6 +55,38 @@
   right: 0;
   bottom: 0;
   overflow-y: auto;
+
+  & > div {
+    box-shadow: var(--green-shadow);
+    width: 100%;
+    max-width: var(--width-1);
+  }
+}
+
+.shadow {
+  box-shadow: var(--green-shadow);
+
+  &.red { box-shadow: 4px 4px 4px rgba(255, 65, 54, .08); }
+  &.orange { box-shadow: 4px 4px 4px rgba(255, 133, 27, .08); }
+}
+
+.radio {
+  background-color: var(--white);
+  transition: background var(--anim-timing-medium);
+
+  & .dot {
+    background: url('./assets/icons/radio.svg');
+    width: 16px;
+    height: 16px;
+  }
+
+  &[active] {
+    background-color: var(--lightest-green);
+
+    & .dot {
+      background: url('./assets/icons/radio-filled.svg');
+    }
+  }
 }
 
 .overflow-x-scroll{overflow-x:scroll;}
@@ -93,6 +130,7 @@
 .border-right-dotted{border-right-style:dotted;}
 .outline-none { outline: 0;}
 .outline{ outline:1px solid var(--green); }
+.border-dashed { border-style: dashed; }
 
 .pointer { cursor: pointer;}
 .no-pointer { cursor: default;}
@@ -100,6 +138,8 @@
 .pointer-events-none{ pointer-events: none }
 .pointer-events-auto{pointer-events: auto}
 .not-allowed { cursor: not-allowed; }
+.crosshair { cursor: crosshair; }
+.help { cursor: help; }
 
 .hover-underline:hover { text-decoration: underline; }
 

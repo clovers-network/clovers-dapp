@@ -36,6 +36,7 @@ export default {
   line-height: 0;
   padding: 0.8em;
   width: 1em;
+
   & + .symmetry-type {
     margin-left: .25em;
   }

@@ -57,9 +57,9 @@ export function isHex (foobar) {
 //           : undefined
 // }
 
-export function cloverImage (clover, size = 200) {
+export function cloverImage (clover = '0', size = 200) {
   let board = clover.byteBoard || clover.board || clover
-  return `${apiBase}/clovers/svg/${board}/${size}`
+  return `${apiBase}/clovers/svg/${encodeURIComponent(board)}/${size}`
 }
 
 export function fetchCloudImage (src, transforms = 'f_png') {
@@ -132,5 +132,38 @@ export function abbrvNum (n, decimals = 2) {
     return f ? parseFloat(f.toFixed(decimals)).toLocaleString(...args) : n
   } else {
     return n
+  }
+}
+
+// from prettyBigNumber (string,)
+export function concatPrice (value) {
+  const suffixes = ['', 'K', 'M', 'B', 'T']
+
+  let newValue = typeof value === 'string'
+    ? parseFloat(value.split(',').join(''))
+    : value
+  let suffixNum = 0
+  while (newValue >= 1000) {
+    newValue /= 1000
+    suffixNum++
+  }
+
+  newValue = parseFloat(newValue.toPrecision(3))
+
+  newValue += suffixes[suffixNum]
+  return newValue
+}
+
+export function formatFoundClover (clover) {
+  return {
+    board: pad0x(clover.byteBoard),
+    movesString: clover.movesString,
+    symmetrical: clover.symmetrical,
+    X0Sym: clover.X0Sym,
+    XYSym: clover.XYSym,
+    XnYSym: clover.XnYSym,
+    Y0Sym: clover.Y0Sym,
+    RotSym: clover.RotSym,
+    createdAt: new Date()
   }
 }

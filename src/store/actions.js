@@ -366,7 +366,7 @@ export default {
     if (msg.type === 'success') {
       setTimeout(() => {
         commit('REMOVE_MSG', msgId)
-      }, 3000)
+      }, 5000)
     }
     return msg.id
   },

@@ -22,7 +22,7 @@
 import ToggleBtn from '@/components/ToggleBtn'
 import {mapActions, mapGetters, mapState} from 'vuex'
 export default {
-  name: 'AcountMenu',
+  name: 'PigMenu',
   data () {
     return {
       found: []
@@ -49,6 +49,7 @@ export default {
   components: { ToggleBtn }
 }
 </script>
+
 <style lang="css" scoped>
  #pigMenu {
     top: 65px;

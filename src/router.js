@@ -1,25 +1,18 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Welcome from '@/views/Welcome'
-import Field from '@/views/Field'
-import Feed from '@/views/Feed'
-import Account from '@/views/Account'
-import Picks from '@/views/Picks'
-import Trade from '@/views/Trade'
-import About from '@/views/About'
-import Clover from '@/views/Clover'
-import MyClovers from '@/views/MyClovers'
-import KeepClover from '@/views/KeepClover'
-import User from '@/views/User'
 
-import Activity from '@/views/Activity.vue'
+const Field = () => import(/* webpackChunkName: 'clovers' */ '@/views/Field')
+const Feed = () => import(/* webpackChunkName: 'clovers' */ '@/views/Feed')
+const User = () => import(/* webpackChunkName: 'clovers' */ '@/views/User')
 
-// Old routes
-// import Home from '@/components/Home'
-// import Clover from '@/components/Clover'
-// import User from '@/components/User'
-// import Users from '@/components/Users'
-// import CloverList from '@/components/archive/0.1.0/CloverList'
+const Account = () => import(/* webpackChunkName: 'user' */ '@/views/Account')
+const Picks = () => import(/* webpackChunkName: 'user' */ '@/views/Picks')
+const Trade = () => import(/* webpackChunkName: 'user' */ '@/views/Trade')
+const About = () => import(/* webpackChunkName: 'user' */ '@/views/About')
+const Clover = () => import(/* webpackChunkName: 'user' */ '@/views/Clover')
+
+const Activity = () => import(/* webpackChunkName: 'activity' */ '@/views/Activity.vue')
 
 Vue.use(Router)
 
@@ -36,16 +29,7 @@ export default new Router({
       path: '/field',
       name: 'Field',
       component: Field,
-      meta: { title: 'Pick Clovers' },
-      children: [
-        {
-          path: '/keep/:movesString',
-          name: 'Keep',
-          component: KeepClover,
-          meta: { title: 'Keep' },
-          props: true
-        }
-      ]
+      meta: { title: 'Pick Clovers' }
     },
     {
       path: '/market',
@@ -59,6 +43,11 @@ export default new Router({
       name: 'Trade',
       component: Trade
     },
+    {
+      path: '/learn',
+      name: 'Learn',
+      template: '<div>Learn</div>'
+    },
 
     // account dashboard
     {
@@ -71,68 +60,14 @@ export default new Router({
       path: '/account/picks',
       name: 'Picks',
       component: Picks,
-      meta: { title: 'Picks' },
-      children: [
-        {
-          path: ':movesString',
-          name: 'Account/Keep',
-          component: KeepClover,
-          meta: { title: 'Keep' },
-          props: true
-        }
-      ]
+      meta: { title: 'Picks' }
     },
     {
       path: '/account/clovers',
       name: 'Account/Clovers',
-      component: MyClovers,
+      component: User,
       meta: { title: 'My Clovers' }
     },
-
-    // {
-    //   path: '/account/activity',
-    //   name: 'Account/Activity',
-    //   name: MyActivity
-    // },
-    // {
-    //   path: '/account',
-    //   component: Account,
-    //   children: [
-    //     {
-    //       // default
-    //       path: '/',
-    //       name: 'Account',
-    //       component: Picks,
-    //       meta: { title: 'Account', group: 'account' },
-    //       children: [
-    //         {
-    //           path: 'picks/:movesString',
-    //           name: 'Account/Keep',
-    //           component: KeepClover,
-    //           meta: { title: 'Keep' },
-    //           props: true
-    //         }
-    //       ]
-    //     },
-    //     {
-    //       path: 'clovers',
-    //       name: 'Account/Clovers',
-    //       component: MyClovers,
-    //       meta: { title: 'Account', group: 'account' }
-    //     },
-    //     {
-    //       path: 'trade',
-    //       name: 'Account/Trade',
-    //       component: Trade,
-    //       meta: {title: 'Trade', group: 'account'}
-    //     },
-    //     {
-    //       path: 'picks',
-    //       name: 'Picks',
-    //       redirect: {name: 'Account'}
-    //     }
-    //   ]
-    // },
 
     {
       path: '/about',
@@ -166,56 +101,6 @@ export default new Router({
       meta: {title: 'Collector'},
       props: true
     }
-
-    //
-    // =======================================
-    // Old Paths
-    // =======================================
-    //
-    // {
-    //   path: '/home', // formerly "/"
-    //   name: 'Home',
-    //   component: Home
-    // },
-    /*
-    {
-      path: '/about',
-      name: 'About',
-      component: AboutOld,
-      meta: {
-        hideMainCloverList: true
-      }
-    },
-    */
-    // {
-    //   path: '/clovers/:board',
-    //   name: 'Clover',
-    //   component: Clover
-    // },
-    // {
-    //   path: '/activity',
-    //   name: 'Activity',
-    //   component: Activity
-    // },
-    // {
-    //   path: '/users/',
-    //   name: 'Users',
-    //   component: Users
-    // },
-    // {
-    //   path: '/users/:address',
-    //   name: 'User',
-    //   component: User,
-    //   meta: {
-    //     hideMainCloverList: true
-    //   }
-    // },
-    // add on for reference
-    // {
-    //   path: '/cloverlist',
-    //   name: 'CloverList',
-    //   component: CloverList
-    // }
   ],
   scrollBehavior (to, from, savedPosition) {
     if (savedPosition || to.name === from.name) {
@@ -225,5 +110,3 @@ export default new Router({
     }
   }
 })
-
-Vue.use(Router)

@@ -24,6 +24,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+#app { overflow-x: hidden; }
+
 img {
   height: auto;
   max-width: 100%;
@@ -81,6 +83,10 @@ input::-webkit-inner-spin-button {
     /* display: none; <- Crashes Chrome on hover */
     -webkit-appearance: none;
     margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+.input:focus {
+  background-color: var(--lightest-green);
 }
 
 h1 {
@@ -187,6 +193,7 @@ hr {
 
 
 /* #APP STUFF */
+
 .white {
   &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
     color: var(--white);
@@ -226,57 +233,60 @@ hr {
   }
 }
 
+.claimed { opacity: .5; }
 
-.gridItem {
-  max-width:12em;
+.clover-item-border {
+  border: 1px dashed;
+  box-shadow: none;
+  transition: all var(--anim-timing-medium);
+
+  &:hover {
+    border: 1px solid;
+    box-shadow: var(--green-shadow);
+  }
 }
 
-.claimed {
-  opacity: .5;
+[data-expand] {
+  transition-property: all;
+  animation-duration: 800ms;
+}
+[data-appear='0'] {
+  animation-name: appear0;
+}
+[data-appear='1'] {
+  animation-name: appear1;
+}
+[data-appear='2'] {
+  animation-name: appear2;
 }
 
-.zig-zag, .zig-zag-white {
-
-  &:not(.zig-zag-white)::before {
-    background: linear-gradient(-150deg, var(--black) 16px, transparent 0), linear-gradient(150deg, var(--black) 16px, transparent 0);
+@keyframes appear0 {
+  from {
+    opacity: 0;
+    transform: translate(8%, 3%);
   }
-  &.zig-zag-white::before {
-    background: linear-gradient(-150deg, var(--white) 16px, transparent 0), linear-gradient(150deg, var(--white) 16px, transparent 0);
+  to {
+    opacity: 1;
+    transform: none;
   }
-
-  &::before {
-    background-position: bottom left !important;
-    background-repeat: repeat-x !important;
-    background-size: 32px 32px !important;
-    content: " ";
-    display: block;
-    height: 32px;
-    left: 0;
-    position: absolute;
-    top: 0;
-    width: 100%;
+}
+@keyframes appear1 {
+  from {
+    opacity: 0;
+    transform: translate(-3%, 8%);
   }
-
-
-
-  &:not(.zig-zag-white)::after {
-    background: linear-gradient(-30deg, var(--black) 16px, transparent 0), linear-gradient(30deg, var(--black) 16px, transparent 0);
+  to {
+    opacity: 1;
   }
-  &.zig-zag-white::after {
-    background: linear-gradient(-30deg, var(--white) 16px, transparent 0), linear-gradient(30deg, var(--white) 16px, transparent 0);
+}
+@keyframes appear2 {
+  from {
+    opacity: 0;
+    transform: translate(-8%, 3%);
   }
-  &::after {
-
-    background-position: bottom left !important;
-    background-repeat: repeat-x !important;
-    background-size: 32px 32px !important;
-    bottom: 0;
-    content: " ";
-    display: block;
-    height: 32px;
-    left: 0;
-    position: absolute;
-    width: 100%;
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
@@ -329,6 +339,9 @@ textarea {
 .select {
   display: block;
   position: relative;
+  border: 1px solid currentColor;
+  border-radius: var(--border-radius);
+  transition: all var(--anim-timing-medium);
 
   & select {
     background: transparent;
@@ -337,7 +350,7 @@ textarea {
     font: inherit;
     height: 39px;
     outline: none;
-    padding: 0 var(--space-2);
+    padding: 0 var(--space-4) 0 var(--space-2);
     width: 100%;
   }
 
@@ -354,9 +367,16 @@ textarea {
     top: var(--space-1);
     transform: translateY(7px);
   }
-  &.active:after {
-    transform: rotate(180DEG);
-  }
+
+  &.active:after { transform: rotate(180DEG); }
+
+  &:hover { background-color: var(--lightest-green); }
+}
+
+.hover-bg-l-green {
+  transition: all var(--anim-timing-medium);
+
+  &:hover { background-color: var(--lightest-green); }
 }
 
 .textarea {
@@ -383,7 +403,6 @@ button {
 .bg-currentColor {
   background-color: currentColor;
 }
-
 
 .currency {
   position: relative;

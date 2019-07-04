@@ -1,22 +1,15 @@
-<template>
-  <div class="fixed top-0 left-0 col-12 z3 pointer-events-none" style="max-height:100vh;overflow-y:auto; overflow-x: hidden;">
-    <div class="max-width-3 mt-header-h m-auto pointer-events-auto">
-      <ul class="list-reset pt1" v-if="messages.length > 0">
-        <li
-          v-for="msg in messages"
-          :class="msgClass(msg)"
-          class="relative pt1 px2 pb2 h6 mx1 mb1 rounded border"
-          :key="msg.id"
-          >
-            <h6 class="h2 mb1" v-if="msg.title" :class="{'anim--msg-strobe': msg.type === 'progress'}" v-html="escape(msg.title)"></h6>
-            <small class="block" :class="msg.link ? 'pointer' : ''" @click="clickMessage(msg)" v-html="escape(msg.msg)"/>
-            <button class="absolute top-0 right-0 pt1 pr1 pb2 pl2 pointer" @click="removeMessage(msg.id)">
-              <svg-x style="width:7px;height:7px" />
-            </button>
-        </li>
-      </ul>
-    </div>
-  </div>
+<template lang="pug">
+  .fixed.top-0.left-0.ml2.z3.pointer-events-none.col-12(style="max-height:100vh;overflow-y:auto;")
+    .max-width-1.pointer-events-auto
+      ul.list-reset(v-if="messages.length > 0")
+        li.relative.pt2.px3.pb2.mb2.h4.rounded.border.shadow.border-dashed.bg-white(v-for="msg in messages", :class="msgClass(msg)" :key="msg.id")
+          .flex.items-center.justify-between.wrap-word
+            div
+              h6.h2.mb1(v-if="msg.title", :class="{'anim--msg-strobe': msg.type === 'progress'}" v-html="escape(msg.title)")
+              p.block.m0(:class="msg.link ? 'pointer' : ''" @click="clickMessage(msg)" v-html="escape(msg.msg)")
+
+            button.pointer.pl3(@click="removeMessage(msg.id)")
+              svg-x(width="12" height="12")
 </template>
 
 <script>
@@ -26,16 +19,6 @@ import svgX from '@/components/Icons/SVG-X'
 
 export default {
   name: 'Messages',
-  components: { svgX },
-  data () {
-    return {}
-  },
-  mounted () {
-    window.addEventListener('keyup', this.checkEsc)
-  },
-  destroyed () {
-    window.removeEventListener('keyup', this.checkEsc)
-  },
   computed: {
     messages () {
       return this.$store.state.messages
@@ -58,18 +41,22 @@ export default {
     },
     msgClass (msg) {
       switch (msg.type) {
-        case 'success': return 'bg-green white border-white'
-        case 'info': return 'bg-white orange '
-        case 'progress': return 'bg-white green '
-        case 'error': return 'bg-red white border-white'
-        default: return 'bg-white green '
+        case 'info': return 'orange'
+        case 'error': return 'red'
+        default: return 'green'
       }
     },
     ...mapMutations({
-      removeMessage: 'REMOVE_MSG',
-      addMessage: 'ADD_MSG'
+      removeMessage: 'REMOVE_MSG'
     })
-  }
+  },
+  mounted () {
+    window.addEventListener('keyup', this.checkEsc)
+  },
+  destroyed () {
+    window.removeEventListener('keyup', this.checkEsc)
+  },
+  components: { svgX }
 }
 </script>
 
