@@ -135,11 +135,6 @@ export default {
     currencies () {
       return this.currentToken === 'Share' ? 'Shares' : 'Coins (♣︎)'
     },
-    priceInCollateral () {
-      if (!this.orders.length) return new BigNumber(0)
-      let recent = this.orders[0]
-      return new BigNumber(recent.value).div(new BigNumber(recent.tokens))
-    },
     priceInEth () {
       if (this.marketContract === 'CurationMarket') {
         return this.priceInCollateral.div(new BigNumber(utils.fromWei(this.clubTokenPrice)))
@@ -176,7 +171,7 @@ export default {
     },
 
     ...mapState(['ethPrice', 'clubTokenPrice', 'orders']),
-    ...mapGetters(['userBalance', 'prettyUserBalance'])
+    ...mapGetters(['userBalance', 'prettyUserBalance', 'priceInCollateral'])
   },
   methods: {
     switchMax () {
