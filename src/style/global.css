@@ -29,7 +29,6 @@ body {
 img {
   height: auto;
   max-width: 100%;
-  vertical-align: middle;
   transition: all var(--anim-timing);
 }
 

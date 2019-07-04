@@ -20,7 +20,7 @@
 @import 'basscss-position';
 @import 'basscss-border';
 @import 'basscss-hide';
-
+@import 'basscss-responsive-states';
 
 @import 'basscss-addons/modules/responsive-margin';
 @import 'basscss-addons/modules/responsive-padding';

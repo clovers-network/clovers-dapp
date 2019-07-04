@@ -12,6 +12,7 @@
 .wrap-word { word-break: break-word; }
 
 .w-100{width:100%;}
+.w-100vw{width: 100vw;}
 .w-1em{width:1em;}
 .h-100{height:100%;}
 .h-header{height:var(--height-header);}
@@ -44,6 +45,8 @@
 .pb-120 { padding-bottom: 120%; }
 .pb-bttm-bar { padding-bottom: var(--height-bttm-bar); }
 .pb-full-height { padding-bottom: calc(100vh - 375px); }
+
+.content-box{ box-sizing: content-box; }
 
 .overlay {top:0;left:0;bottom:0;right:0;}
 
@@ -90,6 +93,7 @@
 }
 
 .overflow-x-scroll{overflow-x:scroll;}
+.overflow-y-scroll{overflow-y:scroll;}
 .invisible-scrollbar::-webkit-scrollbar {display: none;}
 
 .flex-grow{flex-grow: 1;}
@@ -145,6 +149,7 @@
 
 .rotate-180 { transform: Rotate(180DEG); }
 .transl-x-100 { transform: translateX(100%); }
+.transl-x-50{transform: translateX(50%);}
 .flip-x { transform:scaleX(-1); }
 
 .trans-transform { transition: transform var(--anim-timing-medium); }
@@ -154,6 +159,8 @@
 .pre {white-space: pre;}
 
 .object-contain{object-fit: contain}
+
+.shadow-1{box-shadow:0 3px 4px currentColor;}
 
 /* #APP */
 .asc:after {
