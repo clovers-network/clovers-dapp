@@ -5,7 +5,7 @@
         router-link(:to="to")
           img.pointer(:src="image" width="160" height="160")
 
-      .green.absolute.top-0.right-0(v-if="pick.symmetrical")
+      .green.absolute.top-0.right-0.m1(v-if="pick.symmetrical")
         symmetry-icons.h7(:board="pick")
 
       //- .col-3.pr2.h7.font-mono {{ date }}

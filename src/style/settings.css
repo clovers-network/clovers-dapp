@@ -42,6 +42,8 @@
   --border-radius: 8px;
   --border-radius-2: 8px;
 
+  --green-shadow: 4px 4px 4px rgba(1, 180, 99, 0.08);
+
   /* animations */
   --anim-timing: .08s;
   --anim-timing-medium: .18s;

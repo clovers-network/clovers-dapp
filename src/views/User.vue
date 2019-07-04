@@ -86,6 +86,7 @@ export default {
   },
   computed: {
     user () {
+      if (this.$route.name === 'Account/Clovers') return this.$store.getters.user
       return this.$store.state.otherUser
     },
     results () {

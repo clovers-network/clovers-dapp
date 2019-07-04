@@ -1,46 +1,60 @@
 <template lang="pug">
-  article.relative(v-if="clover.board", :class="{'red': isRFT}")
-    .absolute.top-0.right-0.p2(v-if="isRFT", style="line-height:0")
-      span.red.font-mono.h6.line-height-1 RFT
-    .absolute.bottom-0.right-0.p2
-      chat-icon.block(
-        :color="isRFT ? '#FF4136' : '#01B463'"
-        v-if="clover.commentCount != 0"
-        :count="clover.commentCount"
-        :size="15"
-        :blank="true"
-        :invert="false")
-    figure.pb-100.relative
-      .absolute.top-0.left-0.col-12.h-100.flex.items-center.justify-center
-        img.block.col-6(:src="cloverImage(clover, 128)")
-    div.relative
-      .absolute.top-0.left-0.col-12.h-10.flex.items-center.justify-center.mtn2
+  router-link.block.clover-item-border.rounded(:to="cloverLink(clover)", :class="{'red': isRFT}")
+    .relative(v-if="clover.board")
+      .absolute.top-0.left-0.p2(v-if="isRFT", style="line-height:0")
+        span.red.font-mono.h6.line-height-1 RFT
+      .absolute.top-0.right-0.p2
         symmetry-icons(v-if="clover", :board="clover.symmetries", style="font-size:8px")
-    header.px1.pb2
-      .px1
-        h3.h4.font-mono.truncate
-          span(v-if="clover.name !== clover.board") {{clover.name}}
-          span &nbsp;
-      .mt2.flex
-        .px1.col-6
-          h6.h7 {{isRFT ? 'Market Cap' : 'Owner'}}
-          h4.h6.font-mono.truncate
-            span(v-if="isRFT") ${{ marketCapInUSD.toFormat(2) }}
-            span(v-else) {{ userName(clover.user) }}
-        .px1.col-6(v-if="isRFT || clover.price.toString(10) !== '0'")
-          .pl1
-            h6.h7 {{ isRFT ? '&clubs; / Share' : 'Price &clubs;' }}
-            h4.h6.font-mono.truncate
+      figure.pb-120.relative
+        .absolute.top-0.left-0.col-12.h-100.flex.items-center.justify-center
+          img.block.col-7(:src="cloverImage(clover, 128)")
+      .relative
+        .absolute.left-0.mtn2.col-12.flex.justify-center
+          chat-icon.block(
+            :color="isRFT ? '#FF4136' : '#01B463'"
+            v-if="clover.commentCount != 0"
+            :count="clover.commentCount"
+            :size="16"
+            :blank="true"
+            :invert="false")
+
+      //- .px1
+        p.m0.h6 Owner 0x098hhi8hf98379874
+      .px1.pb2
+        .mt2.flex.items-end.nowrap
+          .px2.col-7
+            h3.h4.truncate {{ clover.name }}
+          .px2.col-5.right-align
+            h4.h4(v-if="isRFT || clover.price.toString(10) !== '0'")
               span(v-if="isRFT") {{ priceInCollateral.toFormat(4) }}
-              span(v-else) {{ prettyBigNumber(clover.price, 0) }}
+              span(v-else) {{ displayPrice }}
+              coin-icon.ml1
+
+        //- .px1
+        //-   h3.h4.truncate
+        //-     span {{ clover.name }}
+        //-     span &nbsp;
+        //- .mt2.flex
+        //-   .px1.col-6
+        //-     h6.h7 {{isRFT ? 'Market Cap' : 'Owner'}}
+        //-     h4.h6.font-mono.truncate
+        //-       span(v-if="isRFT") ${{ marketCapInUSD.toFormat(2) }}
+        //-       span(v-else) {{ userName(clover.user) }}
+        //-   .px1.col-6(v-if="isRFT || clover.price.toString(10) !== '0'")
+        //-     .pl1
+        //-       h6.h7 {{ isRFT ? '&clubs; / Share' : 'Price &clubs;' }}
+        //-       h4.h6.font-mono.truncate
+        //-         span(v-if="isRFT") {{ priceInCollateral.toFormat(4) }}
+        //-         span(v-else) {{ prettyBigNumber(clover.price, 0) }}
 </template>
 
 <script>
 import utils from 'web3-utils'
-import { cloverImage, prettyBigNumber, abbrvAddr } from '@/utils'
+import { cloverLink, cloverImage, prettyBigNumber, abbrvAddr, concatPrice } from '@/utils'
 import { mapState, mapGetters } from 'vuex'
 import BigNumber from 'bignumber.js'
 import ChatIcon from '@/components/Icons/ChatIcon'
+import CoinIcon from '@/components/Icons/CoinIcon'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 
 export default {
@@ -52,9 +66,6 @@ export default {
   computed: {
     marketContract () {
       return this.isRFT ? 'CurationMarket' : 'ClubTokenController'
-    },
-    collateral () {
-      return this.isRFT ? '♣︎' : 'ETH'
     },
     isRFT () {
       // inCurationMarket
@@ -95,34 +106,17 @@ export default {
     marketCapInUSD () {
       return this.totalSupply.times(this.priceInUSD)
     },
+    cloverPrice () {
+      return prettyBigNumber(this.clover.price, 0)
+    },
+    displayPrice () {
+      return concatPrice(this.cloverPrice)
+    },
 
     ...mapState(['ethPrice', 'clubTokenPrice']),
     ...mapGetters(['curationMarketAddress', 'userName'])
   },
-  methods: { cloverImage, prettyBigNumber },
-  components: { ChatIcon, SymmetryIcons }
+  methods: { cloverLink, cloverImage, prettyBigNumber },
+  components: { ChatIcon, CoinIcon, SymmetryIcons }
 }
 </script>
-
-<style scoped>
-/* white dots to cover the intersections */
-article{
-  &:before,
-  &:after{
-    content:'';
-    display: block;
-    width:4px;
-    height:4px;
-    background:white;
-    position: absolute;
-  }
-  &:before{
-    top:-2px;
-    left:-2px;
-  }
-  &:after{
-    bottom:-2px;
-    right:-2px;
-  }
-}
-</style>

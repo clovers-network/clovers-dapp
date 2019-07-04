@@ -38,7 +38,7 @@
           cart-icon.mx1
           span {{pickCount}}
         router-link.flex.pr1.items-center.border-top.border-bottom(:to="{name: 'Trade'}")
-          coin-icon.mx1
+          coin-icon.mx1(style="padding-bottom:2px")
           span(style='') {{prettyUserBalance}}
         #personToggle.mr3.flex.items-center.p1.pointer.border.rounded-right(@click="accountMenuToggle")
           person-icon(:class="!authHeader && 'red'")

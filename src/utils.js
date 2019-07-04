@@ -135,6 +135,25 @@ export function abbrvNum (n, decimals = 2) {
   }
 }
 
+// from prettyBigNumber (string,)
+export function concatPrice (value) {
+  const suffixes = ['', 'K', 'M', 'B', 'T']
+
+  let newValue = typeof value === 'string'
+    ? parseFloat(value.split(',').join(''))
+    : value
+  let suffixNum = 0
+  while (newValue >= 1000) {
+    newValue /= 1000
+    suffixNum++
+  }
+
+  newValue = parseFloat(newValue.toPrecision(3))
+
+  newValue += suffixes[suffixNum]
+  return newValue
+}
+
 export function formatFoundClover (clover) {
   return {
     board: pad0x(clover.byteBoard),

@@ -22,16 +22,16 @@
             input(v-model="mode" type="radio" value="keep")
             .dot.mr2
             span.flex-auto.mr3 Keep Clover
-            .bold - {{ keepValue }} &cent;
+            .bold - {{ keepValue }} <coin-icon/>
           label.radio.block.pointer.border.rounded.py1.px2.mb1.flex.items-center(v-if="_reversi.symmetrical" :active="mode === 'sell'")
             input(v-model="mode" type="radio" value="sell")
             .dot.mr2
             span.flex-auto.mr3 Claim Reward
-            .bold + {{ sellValue }} &cent;
+            .bold + {{ sellValue }} <coin-icon/>
 
         p.center.h6.underline.mb0.mt3.help(@click="showMore = true" v-if="!showMore") More information
         p.center.h6.mb0.mt3.pointer(v-if="showMore" @click="showMore = false")
-          span(v-if="mode === 'keep'") Register this clover on the network. A base fee of 10 &cent; is charged
+          span(v-if="mode === 'keep'") Register this clover on the network. A base fee of 10 <coin-icon :width="14" :height="14"/> is charged
           span(v-else) Claim a reward for this rare clover. This requires a verification before payout and can take a few minutes
 
       //- keep / sell actions
@@ -39,8 +39,7 @@
         .m3.rounded.white.trans-bg(:class="cancelled ? 'bg-red' : 'bg-green'")
           button.pointer.py2.px3(@click="btnClick", :class="{'pointer-events-none': submitting}")
             span.block.m-auto(v-show="!submitting") {{ buttonText }}
-            template(v-if="submitting")
-              span.block.m-auto Submitting ...
+            span.block.m-auto(v-if="submitting") Submitting . . .
 
       //- submitted
       footer(v-else)
@@ -64,6 +63,7 @@ import { fromWei } from 'web3-utils'
 import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
+import CoinIcon from '@/components/Icons/CoinIcon'
 
 const reversi = new Reversi()
 let lastRt = null
@@ -268,7 +268,7 @@ export default {
     this.checkClover()
     this.getClubTokenPrice()
   },
-  components: { SymmetryIcons }
+  components: { SymmetryIcons, CoinIcon }
 }
 </script>
 

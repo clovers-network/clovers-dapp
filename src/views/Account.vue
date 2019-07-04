@@ -50,7 +50,7 @@
       div(v-if="cloversCount")
         p.m0 You have <strong>{{ cloversCount }}</strong> registered {{ pluralize('Clover', cloversCount) }}
 
-        .border-top.border-top-dotted.mxn3.mt3.mb2
+        .mt3
           clover-list-cards(:clovers="clovers")
 
         .py3

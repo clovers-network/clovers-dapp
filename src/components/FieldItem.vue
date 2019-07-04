@@ -70,7 +70,7 @@ export default {
     color: #01B463;
 
     & .icon {
-      opacity: .3;
+      opacity: .4;
     }
   }
 }

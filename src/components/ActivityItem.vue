@@ -45,7 +45,7 @@
         </div>
         <div v-else>
           <span class="opacity-50">Price is now&ensp;</span>
-          <span>{{ price(item.data.price) }} &clubs;&#xfe0e;</span>
+          <span>{{ price(item.data.price) }} <coin-icon/></span>
         </div>
       </template>
 
@@ -146,6 +146,7 @@
 import { mapGetters } from 'vuex'
 import { cloverImage, cloverLink, makeBn, prettyBigNumber } from '@/utils'
 import ChatIcon from '@/components/Icons/ChatIcon'
+import CoinIcon from '@/components/Icons/CoinIcon'
 
 export default {
   name: 'ActivityItem',
@@ -198,7 +199,7 @@ export default {
       return {name: 'User', params: {addr: addr}}
     }
   },
-  components: { ChatIcon }
+  components: { ChatIcon, CoinIcon }
 }
 </script>
 
