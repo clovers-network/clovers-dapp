@@ -837,10 +837,11 @@ async function getLowestPrice (
 }
 
 async function claimClover ({ keep, account, clover }) {
+  console.log({clover})
   let reversi = new Reversi()
   reversi.playGameMovesString(clover.movesString)
   let moves = reversi.returnByteMoves().map(m => '0x' + padRight(m, 56))
-  let _tokenId = clover.byteBoard
+  let _tokenId = clover.board
   let _symmetries = reversi.returnSymmetriesAsBN().toString(10)
   let _keep = keep
   let from = account

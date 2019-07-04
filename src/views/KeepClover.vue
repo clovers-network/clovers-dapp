@@ -4,7 +4,7 @@
       header
         .h-header.flex.justify-between.items-center
           .col-4.pl3.pt1
-            button.pointer.h5(@click="cancel") Cancel
+            button.pointer.h5(@click="cancel") Close
           h1.col-4.font-exp.center.nowrap {{invalidClover ? 'Not Found' : ''}}
           .green.mt3.mr3(v-if="clover.symmetrical")
             symmetry-icons(:board="clover")
