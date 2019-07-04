@@ -17,6 +17,7 @@ Vue.use(Vuex)
 const debug = false
 
 const state = {
+  web3Enabled: false,
   // stored signin tokens
   tokens: getTokens(),
 

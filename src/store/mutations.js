@@ -3,6 +3,9 @@ import BigNumber from 'bignumber.js'
 import { formatClover } from '@/utils'
 
 export default {
+  UPDATE_WEB3 (state, value) {
+    state.web3Enabled = value
+  },
   ADD_MINER (state, miner) {
     state.miners.push(miner)
   },
@@ -173,7 +176,9 @@ export default {
   },
 
   SET_USER (state, data) {
-    state.accountData = data
+    if (typeof data.name !== 'undefined') {
+      state.accountData = data
+    }
   },
   SET_OTHER_USER (state, data) {
     state.otherUser = data

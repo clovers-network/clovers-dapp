@@ -6,7 +6,10 @@ import BigNumber from 'bignumber.js'
 
 export default {
   user ({ account, accountData }) {
-    if (!account) return { address: null, name: 'anon', clovers: [], balance: '0' }
+    console.log('get user')
+    console.log({account})
+    console.log({accountData})
+    if (!account) return { address: null, name: 'anon', clovers: [], balance: '0', image: '' }
     return accountData || {
       address: account,
       name: account,
@@ -44,6 +47,7 @@ export default {
     return name
   },
   userImage: (_, { userName }) => (user, size = 200) => {
+    console.log(user)
     if (typeof user === 'string') {
       return cloverImage(user || '0', size)
     }

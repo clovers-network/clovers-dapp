@@ -36,6 +36,7 @@ const anonUser = {
 let miner
 
 export default {
+
   mine ({dispatch, commit, state}) {
     console.log('mine')
     if (state.miners.length === 0) {
@@ -117,8 +118,8 @@ export default {
       }
     }())
   },
-  async poll ({ dispatch, commit }) {
-    if (!global.web3.currentProvider.isPortis) {
+  async poll ({ state, dispatch, commit }) {
+    if (state.web3Enabled) {
       await dispatch('checkWeb3')
       setTimeout(() => {
         dispatch('poll')
@@ -137,12 +138,17 @@ export default {
     }, 60 * 1000 * 5)
   },
   // web3 stuff
-  async checkWeb3 ({ dispatch }) {
+  async checkWeb3 ({ state, dispatch, commit }) {
+    if (!state.web3Enabled) {
+      dispatch('signIn')
+      return
+    }
     try {
       await dispatch('approve')
       await dispatch('getAccount')
       return true
     } catch (error) {
+      commit('UPDATE_WEB3', false)
       await dispatch('handleWeb3Error', error)
       return false
     }
@@ -153,7 +159,7 @@ export default {
         await global.ethereum.enable()
         commit('SET_ENABLED', true)
       } catch (error) {
-        console.error(error)
+        console.log(error)
       }
     }
   },
@@ -457,42 +463,49 @@ export default {
   },
   signOut ({ commit, dispatch }) {
     commit('SIGN_OUT')
+    commit('UPDATE_WEB3', false)
     dispatch('selfDestructMsg', {
       type: 'success',
       msg: 'Succesfully signed out'
     })
   },
   async signIn ({ state, commit, dispatch }) {
-    if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
-    const { account } = state
-    if (!account) {
-      dispatch('selfDestructMsg', {
-        type: 'error',
-        msg: 'No ETH account to sign in with'
-      })
-      return
-    }
-    global.web3.currentProvider.sendAsync(
-      {
-        method: 'eth_signTypedData',
-        params: [signingParams, account],
-        from: account
-      },
-      (err, { error, result }) => {
-        if (error || err) {
-          dispatch('selfDestructMsg', {
-            type: 'error',
-            msg: 'Could not sign in'
-          })
-          return
-        }
+    if (!state.web3Enabled) {
+      global.web3Connect.toggleModal() // open modal on button click
+    } else {
+      if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
+      const { account } = state
+      if (!account) {
         dispatch('selfDestructMsg', {
-          type: 'success',
-          msg: 'Successfully signed in'
+          type: 'error',
+          msg: 'No ETH account to sign in with'
         })
-        commit('SIGN_IN', { account, signature: result })
+        commit('UPDATE_WEB3', false)
+        return
       }
-    )
+      global.web3.currentProvider.sendAsync(
+        {
+          method: 'eth_signTypedData',
+          params: [signingParams, account],
+          from: account
+        },
+        (err, { error, result }) => {
+          if (error || err) {
+            commit('UPDATE_WEB3', false)
+            dispatch('selfDestructMsg', {
+              type: 'error',
+              msg: 'Could not sign in'
+            })
+            return
+          }
+          dispatch('selfDestructMsg', {
+            type: 'success',
+            msg: 'Successfully signed in'
+          })
+          commit('SIGN_IN', { account, signature: result })
+        }
+      )
+    }
   },
 
   updateCloverName ({ getters, commit, dispatch }, clover) {

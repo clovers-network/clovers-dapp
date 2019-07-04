@@ -46,6 +46,9 @@ export default {
   @import './style/fonts';
   @import './style/global';
   @import './style/imports';
+  #WEB3_CONNECT_MODAL_ID > div {
+    z-index:4;
+  }
   .intro-screen {
     & .clover {
       display: inline-block;

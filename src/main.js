@@ -16,9 +16,13 @@ import BN from 'bignumber.js'
 import Clv from '@/components/Clv'
 // import CloverGridItem from '@/components/CloverGridItem'
 // import './registerServiceWorker'
-import ZeroClientProvider from 'web3-provider-engine/zero.js'
+// import ZeroClientProvider from 'web3-provider-engine/zero.js'
 
 import autofocus from 'vue-autofocus-directive'
+
+// global.ens = new ENS(global.web3.currentProvider)
+import Web3Connect from 'web3connect'
+
 const networks = {
   4: 'rinkeby',
   5777: 'ganache',
@@ -33,8 +37,29 @@ if (global.ethereum) {
   const portis = new Portis(process.env.VUE_APP_PORTIS_DAPP, networks[store.state.correctNetwork])
   global.web3 = new Web3(portis.provider)
 }
+global.web3Connect = new Web3Connect.Core({
+  providerOptions: {
+    portis: !global.web3.currentProvider.isPortis && {
+      id: process.env.VUE_APP_PORTIS_DAPP, // required
+      network: networks[store.state.correctNetwork]
+    },
+    fortmatic: {
+      key: store.state.correctNetwork === 1 ? process.env.VUE_APP_FORTMATIC_MAIN : process.env.VUE_APP_FORTMATIC_TEST // required
+    }
+  }
+})
 
-global.ens = new ENS(global.web3.currentProvider)
+// subscibe to connect
+global.web3Connect.on('connect', (provider) => {
+  global.web3 = new Web3(provider) // add provider to web3
+  store.commit('UPDATE_WEB3', true)
+  store.dispatch('signIn')
+})
+
+// subscibe to close
+global.web3Connect.on('close', () => {
+  console.log('Web3Connect Modal Closed') // modal has closed
+})
 
 router.beforeEach((to, from, next) => {
   to.meta.fromName = from.name
