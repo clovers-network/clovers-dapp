@@ -17,23 +17,23 @@ export default {
   },
   data () {
     return {
-      smallOuter: ["sm-height"],
+      smallOuter: ['sm-height'],
       normalOuter: [],
-      smallMiddle: ["sm-height", "mtn1"],
+      smallMiddle: ['sm-height', 'mtn1'],
       normalMiddle: [],
       smallInner: ['h4', 'sm-height'],
-      normalInner: [],
+      normalInner: []
     }
   },
   computed: {
     outerClass () {
-      return [this.theme == "white" ? 'bg-dots-white' :  'bg-dots-green', ...(this.small ? this.smallOuter : this.normalOuter)]
+      return [this.theme === 'white' ? 'bg-dots-white' : 'bg-dots-green', ...(this.small ? this.smallOuter : this.normalOuter)]
     },
     middleClass () {
-      return [this.theme == "white" ? 'bg-dots-white' :  'bg-dots-green', ...(this.small ? this.smallMiddle : this.normalMiddle)]
+      return [this.theme === 'white' ? 'bg-dots-white' : 'bg-dots-green', ...(this.small ? this.smallMiddle : this.normalMiddle)]
     },
     innerClass () {
-      return [(this.theme == "white" ? 'green' :  'white'), ...(this.small ? this.smallInner : this.normalInner)]
+      return [(this.theme === 'white' ? 'green' : 'white'), ...(this.small ? this.smallInner : this.normalInner)]
     }
   }
 }
