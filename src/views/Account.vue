@@ -6,12 +6,12 @@
           img(:src="userImage(user, 87)" width="87" height="87")
         div
           h2.h3.md-h2.mt3.mb0.font-exp
-            router-link(:to="profileLink") {{ name }}
+            span.pointer(@click="signOrEdit") {{ name }}
           small.h6(v-if="user.created") Member since block # {{ user.created.toLocaleString() }}
           .mt2.mb3
             span.flex.items-center
-              img(src="../assets/icons/coin.svg" width="16" height="16")
-              span.pl1 {{ prettyUserBalance }}
+              coin-icon
+              span.pl1.bold {{ prettyUserBalance }}
       .absolute.top-0.right-0
         a.p2.block.h4.pointer(@click="signOrEdit" style="transform:scale(-1, 1)") ✎
 
@@ -81,6 +81,7 @@ import KeepClover from '@/views/KeepClover'
 import PickListItem from '@/components/PickListItem'
 import CloverListCards from '@/components/CloverList--Cards'
 import EditUser from '@/components/EditUser'
+import CoinIcon from '@/components/Icons/CoinIcon'
 
 export default {
   name: 'Account',
@@ -195,7 +196,7 @@ export default {
     if (!this.user) return
     this.form.name = this.user.name
   },
-  components: { KeepClover, PickListItem, CloverListCards, EditUser }
+  components: { KeepClover, PickListItem, CloverListCards, EditUser, CoinIcon }
 }
 </script>
 

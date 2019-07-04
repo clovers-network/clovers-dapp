@@ -29,7 +29,7 @@ export default {
     let ctp = new BigNumber(clubTokenPrice)
     return abbrvNum(userBalanceWei.div(ctp).toString(10))
   },
-  userName: ({ nullAddress }, { cloversBankAddress, curationMarketAddress }) => (user) => {
+  userName: ({ nullAddress }, { cloversBankAddress, curationMarketAddress }) => (user, truncate = true) => {
     let { address } = user
     let name = address === cloversBankAddress ? 'Clovers'
       : address === curationMarketAddress ? 'Curation Mrkt.'
@@ -38,7 +38,7 @@ export default {
     name = user.name && user.name.trim() !== '' ? user.name
       : user.ens ? user.ens : address
 
-    if (utils.isAddress(name)) {
+    if (utils.isAddress(name) && truncate) {
       name = abbrvAddr(name)
     }
     return name
@@ -47,7 +47,7 @@ export default {
     if (typeof user === 'string') {
       return cloverImage(user || '0', size)
     }
-    const str = user.image || userName(user)
+    const str = user.image || userName(user, false)
     return cloverImage(str || '0', size)
   },
   sortedClovers ({ sortBy, feedFilter, allClovers }, { curationMarketAddress }) {

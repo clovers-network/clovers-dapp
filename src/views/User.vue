@@ -1,62 +1,55 @@
 <template lang="pug">
-  article.green.relative(v-if="user")
-    header.sticky.top-header-h.left-0.bg-white.z1.border-bottom.md-py1
-      h1.block.m-auto.py2.font-mono.h-header.flex
-        span.block.m-auto {{ userName(user) }}
-        // span.block.m-auto {{ prettyBigNumber(user.balance) }} ♣&#xFE0E;
-      .border-top.green.font-mono.bg-white
-        .transition-delay.center.col-12(:class="filtersColors")
-          .relative
-            .h-header.col-12.flex.items-center.justify-center.pointer(@click.stop="toggleFilters")
-              div
-                span.h5 {{ filtersVisible ? 'Close' : feedFilterName }}
-                span.h5.opacity-50.pl1(v-if="!filtersVisible") {{ filters.page }} of {{ maxPage }}
-              .absolute.top-0.right-0.h-100.flex.items-center.justify-center(v-show="!filtersVisible", style="width:40px")
-                img.block(src="~../assets/icons/sort-arrows.svg", width="20")
-            .absolute.top-0.right-0.h-100.flex.items-center.justify-center.pointer(v-show="showFilters", style="width:40px" @click.stop="addNew")
-              svg-x(width="14", height="14")
+  .green.relative(v-if="user")
+    section.border.rounded.px2.md-px3.max-width-2.my4.relative(name="My profile")
+      .flex.items-center
+        .mr3
+          img(:src="userImage(user, 87)" width="87" height="87")
+        div
+          h2.h3.md-h2.mt3.mb0.font-exp
+            span {{ name }}
+          small.h6(v-if="user.created") Member since block # {{ user.created.toLocaleString() }}
+          small.h5(v-else-if="user.modified") Last active, block # {{ user.modified.toLocaleString() }}
+          .mt2.mb3
+            span.flex.items-center
+              coin-icon
+              span.pl1.bold {{ prettyUserBalance }}
 
-          transition(name="fade")
-            .absolute.top-100.left-0.right-0.border-bottom.bg-inherit(v-if="filtersVisible" @click.stop)
-              .flex.left-align.items-end
-                .col-6.pt1.pb2.pl2.pr1
-                  .flex.flex-column
-                    p.h5.mb1.font-reg Type
-                    .border.center.h3.select
-                      select(v-model="filters.filter")
-                        option(:value="undefined") All
-                        option(value="forsale") For sale
+    .mt4
+      .mb2
+        .flex.left-align.justify-end
+          .pt1.pb2.pl2.pr1
+            .center.h4.select
+              select(v-model="filters.filter")
+                option(:value="undefined") All Clovers
+                option(value="forsale") Clovers for Sale
+                option(value="Sym") Symmetrical Clovers
 
-                .col-5.pt1.pb2.pr2.pl1
-                  .flex.flex-column
-                    p.h5.mb1.font-reg Sort
-                    .border.center.h3.select
-                      select(v-model="filters.sort")
-                        option(:value="undefined") Date
-                        option(value="price") Price
+          .pt1.pb2.pr2.pl1
+            .center.h4.select
+              select(v-model='filters.sort')
+                option(:value='undefined') Sort by Date
+                option(value='price') Sort by Price
+          .pt1.pb2.center(style="min-width:140px")
+            .center.h4.border.rounded.h-100.px2.flex.items-center.justify-between.hover-bg-l-green
+              span.pr2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !prevPossible }", @click="back")
+                img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
+              span {{ filters.page }} of {{ maxPage }}
+              span.pl2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !nextPossible }", @click="forward")
+                img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
 
-                .col-1.pb2.pr1
-                  span(v-if="!filters.asc")
-                    button.pointer.p2.h3(@click="filters.asc = true") &darr;
-                  span(v-else)
-                    button.pointer.p2.h3(@click="filters.asc = false") &uarr;
     section
-      nav.list-reset.border-bottom.flex.h5.green(v-if="prevPossible || nextPossible")
-        li.col-6.flex-grow.pointer.px2.py3.center(v-if="prevPossible" @click="back")
-          span &larr; Previous
-        li.col-6.flex-grow.pointer.px2.py3.center(v-if="nextPossible" @click="forward")
-          span Next &rarr;
-
       .fade-enter-active(v-if="hasResults", :class="{'opacity-50':loading}")
         clover-list-cards(v-if="clovers.length", :clovers="clovers")
       div(v-else)
         p.center.p2.m0 Nothing to show
 
-      nav.list-reset.flex.h5.green(v-if="(prevPossible || nextPossible) && hasResults")
-        li.col-6.flex-grow.pointer.px2.py4.center(v-if="prevPossible" @click="back")
-          span &larr; Previous
-        li.col-6.flex-grow.pointer.px2.py4.center(v-if="nextPossible" @click="forward")
-          span Next &rarr;
+      nav.list-reset.flex.h5.green.items-center.justify-center.my3.pb4(v-if='(prevPossible || nextPossible) && hasResults')
+        li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'o-0': !prevPossible }", @click="back")
+          img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
+          span.pl1 Previous
+        li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'o-0': !nextPossible }", @click="forward")
+          span.pr1 Next
+          img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
 
 </template>
 
@@ -66,6 +59,7 @@ import { mapGetters } from 'vuex'
 import CloverListCards from '@/components/CloverList--Cards'
 import { prettyBigNumber, cleanObj } from '@/utils'
 import svgX from '@/components/Icons/SVG-X'
+import CoinIcon from '@/components/Icons/CoinIcon'
 
 export default {
   name: 'User',
@@ -85,6 +79,9 @@ export default {
     }
   },
   computed: {
+    name () {
+      return this.userName(this.user)
+    },
     user () {
       if (this.$route.name === 'Account/Clovers') return this.$store.getters.user
       return this.$store.state.otherUser
@@ -137,8 +134,11 @@ export default {
       if (!this.hasResults) return false
       return !!this.filters.filter || this.filters.asc || !!this.filters.sort
     },
+    prettyUserBalance () {
+      return prettyBigNumber(this.user.balance || '0')
+    },
 
-    ...mapGetters(['userName'])
+    ...mapGetters(['userName', 'userImage'])
   },
   methods: {
     prettyBigNumber,
@@ -218,6 +218,6 @@ export default {
     const { addr } = to.params
     store.dispatch('getUser', addr).then(next)
   },
-  components: { CloverListCards, svgX }
+  components: { CloverListCards, svgX, CoinIcon }
 }
 </script>
