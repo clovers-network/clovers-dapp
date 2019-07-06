@@ -34,25 +34,25 @@
         div(v-else='')
           span.opacity-50 Price is now&ensp;
           span
-            | {{ price(item.data.price) }}&ensp;
+            | {{ newPrice }}&ensp;
             coin-icon
       //- Bought Tokens
       template(v-else-if="item.name === 'ClubTokenController_Buy'")
         .h1.mr2.sm-mx3.center.black.border.circle(v-if='!noImg' style='flex:0 0 50px;height:50px') &clubs;&#xFE0E;
-        .activity-itm__icon.mr2.sm-mr3.h3.line-height-1 &amp;nearr;
+        .activity-itm__icon.mr2.sm-mr3.h3.line-height-1 &nearr;
         .font-mono.truncate
           router-link.hover-underline(:to="'/users/' + item.data.buyer") {{ userName }}
         .nowrap.pl1
           span.opacity-50 bought&ensp;
-          span {{ price(item.data.tokens) }} &clubs;&#xFE0E;
+          span {{ price(item.data.tokens) }} <coin-icon/>
       //- Sold Tokens
       template(v-else-if="item.name === 'ClubTokenController_Sell'")
         .h1.mr2.sm-mx3.center.black.border.circle(v-if='!noImg' style='width:50px;height:50px') &clubs;&#xFE0E;
-        .activity-itm__icon.mr2.sm-mr3.h3.line-height-1 &amp;searr;
+        .activity-itm__icon.mr2.sm-mr3.h3.line-height-1 &searr;
         router-link.font-mono.truncate.hover-underline(:to='userRt(item.userAddress)') {{ userName }}
         .nowrap.pl1
           span.opacity-50 sold&ensp;
-          span {{ price(item.data.tokens) }} &clubs;&#xFE0E;
+          span {{ price(item.data.tokens) }} <coin-icon/>
       //- Bought RFT Shares
       template(v-else-if="item.name === 'CurationMarket_Buy'")
         .mr2.sm-mx3.flex-none(v-if='!noImg')
@@ -93,7 +93,7 @@
         div
           span.opacity-50 Renamed&ensp;
           router-link.hover-underline(:to="{name: 'Clover', params:{board:item.data.board}}") {{ item.data.newName }}
-      div(v-else='')
+      div(v-else)
         pre.
           \n{{ item }}
 
@@ -124,6 +124,10 @@ export default {
     },
     userName () {
       return this.parseUser(this.item.user || {})
+    },
+    newPrice () {
+      const p = parseFloat(fromWei(this.item.data.price))
+      return p.toLocaleString()
     },
 
     ...mapGetters({
