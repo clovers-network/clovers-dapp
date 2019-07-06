@@ -140,7 +140,7 @@ export default {
         { lbl: 'Owned', value: 'Account/Clovers' },
         {
           lbl: '<span class=font-mono>' + this.prettyUserBalance + ' ♣&#xFE0E;</span>',
-          value: 'Account/Trade'
+          value: 'Trade'
         }
       ]
     },

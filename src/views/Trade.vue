@@ -1,12 +1,13 @@
 <template lang="pug">
   section
-    header.flex.border-bottom(v-if="!isRFT")
+    header.flex(v-if="!isRFT")
       .col-6.p2
         small.lh2.block.h6 My Balance
         .font-exp.mt1.truncate {{prettyUserBalance}} &clubs;&#xfe0e;
       .col-6.p2.border-left(v-if="!isRFT")
         small.lh2.block.h6 Total Value
         .font-exp.mt1.truncate ${{userBalanceInUSD.toFixed(2)}}
+
     section
       .flex.flex-column
         //- chart
@@ -15,18 +16,18 @@
           span.block.absolute.right-0.top-0.p2.h6.pointer(@click="switchMax") Last {{orders.slice(0, max).length}} trades
           chart.border-bottom(:market="market", :orders="orders.slice(0,max)")
         //- details
-        .col-12.flex.flex-wrap(:class="{'flex-order_-1': isRFT}")
+        .col-12.flex.flex-wrap.justify-around.bg-light-green.green.rounded.py2.center(:class="{'flex-order_-1': isRFT}")
           //- price
-          .col-12.md-col-4.p2.border-bottom.md-border-right
+          .col-12.md-col-4.p2.md-border-right
             small.lh2.block.h6 {{isRFT ? 'Share Price' : '&clubs;&#xfe0e; Value in USD'}}
             .font-exp.mt1.truncate(v-if="isRFT") ${{ priceInUSD.toFormat(4) }}
             .font-exp.mt1.truncate(v-else) ${{ priceInUSD.toFormat(2) }} <span class="opacity-50 font-reg"> / <span v-html="currentToken" /></span>
           //- supply
-          .col-6.md-col-4.p2.border-bottom
+          .col-6.md-col-4.p2
             small.lh2.block.h6 Total {{currentTokenPlural}}
             .font-exp.mt1.truncate {{ totalSupply.toFormat(0) }}
           //- market cap
-          .col-6.md-col-4.p2.border-left.border-bottom
+          .col-6.md-col-4.p2.border-left
             small.lh2.block.h6 Market Cap
             .font-exp.mt1.truncate(v-if="isRFT") ${{ marketCapInUSD.toFormat(2) }}
             .font-exp.mt1.truncate(v-else) ${{ marketCapInUSD.toFormat(2) }}

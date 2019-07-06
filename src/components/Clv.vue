@@ -154,7 +154,6 @@ export default {
   methods: {
     activate () {
       if (this.isActive) return
-      console.log('activate')
       this.isActive = true
       setTimeout(() => {
         this.isActive = false

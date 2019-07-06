@@ -17,7 +17,6 @@ import Clv from '@/components/Clv'
 // import './registerServiceWorker'
 import ZeroClientProvider from 'web3-provider-engine/zero.js'
 
-import autofocus from 'vue-autofocus-directive'
 const networks = {
   4: 'rinkeby',
   5777: 'ganache',
@@ -57,7 +56,16 @@ Vue.use(VueTouch, {name: 'v-touch'})
 
 Vue.component('clv', Clv)
 
-Vue.directive('autofocus', autofocus)
+Vue.directive('autofocus', {
+  inserted (el, { value }) {
+    el.focus()
+    if (value) {
+      setTimeout(() => {
+        el.select()
+      }, 1)
+    }
+  }
+})
 
 new Vue({
   router,

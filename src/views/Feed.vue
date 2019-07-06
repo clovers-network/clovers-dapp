@@ -1,43 +1,42 @@
 <template lang="pug">
   .green
-    .mt4
-      .mb2
-        .flex.left-align.justify-end
-          .pt1.pb2.pl2.pr1
-            .center.h4.select
-              select(v-model="filters.filter")
-                option(:value="undefined") All Clovers
-                option(value="forsale") Clovers for Sale
-                option(value="Sym") Symmetrical Clovers
-                option(value="RotSym") Sym. Rotational
-                option(value="X0Sym") Sym. Vertical
-                option(value="Y0Sym") Sym. Horizontal
-                option(value="XYSym") Sym. Diagonal Up
-                option(value="XnYSym") Sym. Diagonal Down
-                option(value="rft") RFT
+    .mt4.mb2
+      .flex.left-align.justify-end
+        .pt1.pb2.pl2.pr1
+          .center.h4.select
+            select(v-model="filters.filter")
+              option(:value="undefined") All Clovers
+              option(value="forsale") Clovers for Sale
+              option(value="Sym") Symmetrical Clovers
+              option(value="RotSym") Sym. Rotational
+              option(value="X0Sym") Sym. Vertical
+              option(value="Y0Sym") Sym. Horizontal
+              option(value="XYSym") Sym. Diagonal Up
+              option(value="XnYSym") Sym. Diagonal Down
+              option(value="rft") RFT
 
-          .pt1.pb2.pr2.pl1
-            .center.h4.select
-              select(v-model='filters.sort')
-                option(:value='undefined') Sort by Date
-                option(value='price') Sort by Price
-          .pt1.pb2.center(style="min-width:140px")
-            .center.h4.border.rounded.h-100.px2.flex.items-center.justify-between.hover-bg-l-green
-              span.pr2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !prevPossible }", @click="back")
-                img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
-              span {{ filters.page }} of {{ maxPage }}
-              span.pl2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !nextPossible }", @click="forward")
-                img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
+        .pt1.pb2.pr2.pl1
+          .center.h4.select
+            select(v-model='filters.sort')
+              option(:value='undefined') Sort by Date
+              option(value='price') Sort by Price
+        .pt1.pb2.center(style="min-width:140px")
+          .center.h4.border.rounded.h-100.px2.flex.items-center.justify-between.hover-bg-l-green
+            span.pr2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !prevPossible }", @click="back")
+              img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
+            span {{ filters.page }} of {{ maxPage }}
+            span.pl2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !nextPossible }", @click="forward")
+              img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
 
     //- Clover List
     .fade-enter-active(v-if="hasResults", :class="{'opacity-50': loading}")
       clover-list-cards(:clovers='clovers')
 
     nav.list-reset.flex.h5.green.items-center.justify-center.my3.pb4(v-if='(prevPossible || nextPossible) && hasResults')
-      li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'o-0': !prevPossible }", @click="back")
+      li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !prevPossible }", @click="back")
         img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
         span.pl1 Previous
-      li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'o-0': !nextPossible }", @click="forward")
+      li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !nextPossible }", @click="forward")
         span.pr1 Next
         img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
 

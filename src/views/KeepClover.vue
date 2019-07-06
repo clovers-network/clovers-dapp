@@ -187,7 +187,7 @@ export default {
     async keep () {
       this.submitting = true
       try {
-        const tx = await this.buy(this.clover)
+        await this.buy(this.clover)
         this.submitting = false
         this.handleSuccess(
           `Success! You kept ${abbrvAddr(this.id)}`,
@@ -203,7 +203,7 @@ export default {
     async sellToBank () {
       this.submitting = true
       try {
-        const tx = await this.sell({ clover: this.clover })
+        await this.sell({ clover: this.clover })
         this.submitting = false
         this.handleSuccess(
           `Success! You sold ${abbrvAddr(this.id)} to the bank`,

@@ -44,10 +44,10 @@
         p.center.p2.m0 Nothing to show
 
       nav.list-reset.flex.h5.green.items-center.justify-center.my3.pb4(v-if='(prevPossible || nextPossible) && hasResults')
-        li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'o-0': !prevPossible }", @click="back")
+        li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !prevPossible }", @click="back")
           img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
           span.pl1 Previous
-        li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'o-0': !nextPossible }", @click="forward")
+        li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !nextPossible }", @click="forward")
           span.pr1 Next
           img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
 

@@ -1,81 +1,76 @@
 <template lang="pug">
-  div
-    //- toggle button
-    .pointer(@click="toggleChat")
-      chat-icon.block(:invert="commentCount > 0" :count="commentCount")
+  section(name="comments")
+    //- h1.center.h1.font-exp.mb3 Activity / Comments
+    .flex.flex-column.chat-scroll
 
-    //- comments view
-    transition(name="fade")
-      section(v-if="showChat", @click.stop.prevent, name="comments").mh.fixed-center-max-width.top-0.bottom-0.bg-green.white.z4.overflow-hidden
-        .flex.flex-column.chat-scroll
-          .relative.white.p1.border-bottom
-            .flex.items-center.justify-start.p2
-              img(:src="img" width="64" height="64")
-              p.font-exp.h2.m0.px3.flex-auto.truncate {{ name }}
-              span(@click="toggleChat").pointer.h1 &times;
+      .overflow-auto.touch.flex-auto.px3(ref="chat")
+        view-nav.sticky.top-0.z1.h2.font-ext.bg-white(:items="[{lbl: 'Comments', value:'chat'}, {lbl: 'Activity', value:'logs'}]", @change="view = $event", :thick="false")
 
-          .overflow-auto.touch.flex-auto(ref="chat")
-            view-nav.bg-green.white.sticky.top-0.z1(:items="[{lbl: 'Comments', value:'chat'}, {lbl: 'Activity', value:'logs'}]", @change="view = $event", :thick="false")
+        div(v-if="view === 'chat'")
+          ul.list-reset.m0
+            li(v-if="loading || moreCommentsToLoad").p3.h6.opacity-50 Loading...
+            li(v-else).p3.h6.opacity-50 Start of chat
+            //- li(v-else).p3.white.h6 nothing here yet
+            li.px2.pb2(v-for="comment in comments", :key="comment.id", ref="comment", :class="{ 'right-align': commentOwner(comment) }")
+              .py1.px2.msg.rounded.inline-block.bg-lightest-green
+                .mb1.relative
+                  template(v-if="comment.deleted")
+                    span(v-text="comment.userName").font-mono.pr2.nowrap
+                    span.pr2.light-green.h5 [Deleted]
+                  template(v-else-if="comment.flagged")
+                    span.pr2.light-green.h5 [Flagged]
+                  template(v-else)
+                    router-link(:to="'/users/' + comment.userAddress")
+                      span(v-text="comment.userName").font-mono.pr2.nowrap
+                    span(v-text="comment.comment").bold.pr2.break-word
+                    span.hvr.h6.orange.pointer.absolute.right-0.px2.py1.bg-white.rounded(v-if="owner && !commentOwner(comment)", @click="flagOrDeleteComment(comment.id)") Flag
+                    span.hvr.h6.red.pointer.absolute.right-0.px2.py1.bg-white.rounded(v-if="commentOwner(comment)", @click="flagOrDeleteComment(comment.id)") Delete
+                  span.block.sm-inline
+                  span(v-text="commentDate(comment.created)").h6.pr2.light-green
 
-            div(v-if="view === 'chat'")
-              ul.list-reset.m0
-                li(v-if="loading || moreCommentsToLoad").p3.white.h6.opacity-50 Loading...
-                li(v-else).p3.white.h6.opacity-50 Start of chat
-                //- li(v-else).p3.white.h6 nothing here yet
-                li(v-for="comment in comments", :key="comment.id", ref="comment").px2.pb2
-                  .px2.msg
-                    .mb1
-                      template(v-if="comment.deleted")
-                        span(v-text="comment.userName").font-mono.pr2.nowrap
-                        span.pr2.light-gray.h5 [Deleted]
-                      template(v-else-if="comment.flagged")
-                        span.pr2.light-gray.h5 [Flagged]
-                      template(v-else)
-                        router-link(:to="'/users/' + comment.userAddress")
-                          span(v-text="comment.userName").font-mono.pr2.nowrap
-                        span(v-text="comment.comment").bold.pr2.break-word
-                        span(v-if="owner && !commentOwner(comment)", @click="flagOrDeleteComment(comment.id)").hvr.pr2.h6.red.pointer Flag
-                        span(v-if="commentOwner(comment)", @click="flagOrDeleteComment(comment.id)").hvr.pr2.h6.red.pointer Delete
-                      span.block.sm-inline
-                      span(v-text="commentDate(comment.created)").hvr.h6.lighten-4.pr2
+        div(v-else)
+          .fade-enter-active(v-if="hasResults", :class="{'opacity-50': loading}")
+            .mx-auto
+              .flex.justify-end.items-center
+                router-link.block.h5.pt2.mr3.light-green.hover-underline(to="/activity") view all logs
+                .pt3.pb2.center(style="min-width:140px")
+                  .center.h4.border.rounded.h-100.px2.py1.flex.items-center.justify-between.hover-bg-l-green
+                    span.pr2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !prevPossible }", @click="back")
+                      img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
+                    span {{ filters.page }} of {{ maxPage }}
+                    span.pl2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !nextPossible }", @click="forward")
+                      img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
 
-            div(v-else)
-              .fade-enter-active(v-if="hasResults", :class="{'opacity-50': loading}")
-                .mx-auto.bg-green.white
-                  nav(v-if="prevPossible || nextPossible").list-reset.border-bottom.flex.h5.white
-                    li(v-if="prevPossible" @click="filters.page--").col-6.flex-grow.pointer.px2.py3.center
-                      span &larr; Previous
-                    li(v-if="nextPossible" @click="filters.page++").col-6.flex-grow.pointer.px2.py3.center
-                      span Next &rarr;
+              ul.m0.p0.list-reset.mt2
+                //- log item
+                li.border.border-dashed.rounded.mb2(v-for="log in activity" :key="log.id || log.transactionHash")
+                  activity-item(:item="log", :no-img="true")
 
-                  ul.m0.p0.list-reset
-                    //- log item
-                    li(v-for="log in activity" :key="log.id || log.transactionHash").border-bottom
-                      activity-item(:item="log", :no-img="true")
+              nav.list-reset.flex.h5.green.items-center.justify-center.my3.pb2(v-if='(prevPossible || nextPossible) && hasResults')
+                li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !prevPossible }", @click="back")
+                  img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
+                  span.pl1 Previous
+                li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !nextPossible }", @click="forward")
+                  span.pr1 Next
+                  img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
 
-                  nav(v-if="prevPossible || nextPossible").list-reset.flex.h5.white
-                    li(v-if="prevPossible" @click="filters.page--").col-6.flex-grow.pointer.px2.py4.center
-                      span &larr; Previous
-                    li(v-if="nextPossible" @click="filters.page++").col-6.flex-grow.pointer.px2.py4.center
-                      span Next &rarr;
+              .center.h5.font-mono.h-bttm-bar.px2.py3(v-else)
+                span.opacity-50 End of results
 
-                  .center.h5.font-mono.border-top.border-green.h-bttm-bar.px2.py3(v-else)
-                    span.opacity-50 End of results
+          div(v-else)
+            .center.h5.font-mono.px2.py4
+              span.opacity-50 {{ loading ? 'Loading...' : 'No results' }}
 
-              div(v-else)
-                .center.h5.font-mono.px2.py4
-                  span.opacity-50 {{ loading ? 'Loading...' : 'No results' }}
-
-          .sticky.left-0.right-0.bottom-0.bg-green(v-if="view === 'chat'")
-            div(v-if="signedIn").border-top
-              form(@submit.prevent="postComment")
-                input(v-model="newComment", ref="input" type="text", placeholder="Comment...").p3.col-12.h4.border-none.bg-green.font-exp.white
-                //- .right-align.mt2.hide
-                //-   button(type="submit", :disabled="posting", v-text="buttonTxt").px3.py2.bg-green.white.font-exp
-            div(v-else).border-top
-              p.font-exp.p3.mb0
-                span(@click="signIn").pointer.underline Sign in
-                span  to comment
+      .sticky.left-0.right-0.bottom-0.pb3(v-if="view === 'chat'")
+        div(v-if="signedIn")
+          form(@submit.prevent="postComment")
+            input.p3.col-12.h4.border.border-white.bg-lightest-green.font-ext.rounded.focus-light-green(v-model="newComment", ref="input", type="text", placeholder="Comment...")
+            //- .right-align.mt2.hide
+            //-   button(type="submit", :disabled="posting", v-text="buttonTxt").px3.py2.bg-green.white.font-exp
+        .border-top(v-else)
+          p.font-exp.p3.mb0
+            span(@click="signIn").pointer.underline Sign in
+            span  to comment
 </template>
 
 <script>
@@ -99,7 +94,7 @@ export default {
   data () {
     return {
       socket: null,
-      showChat: this.$route.name === 'Clover/Comments',
+      showChat: true,
       comments: [],
       newComment: '',
       posting: false,
@@ -140,7 +135,7 @@ export default {
     },
     maxPage () {
       if (!this.logs.allResults) return 0
-      return Math.ceil(this.logs.allResults / 24)
+      return Math.ceil(this.logs.allResults / 12)
     },
     hasResults () {
       return this.logs.results && !!this.logs.results.length
@@ -151,19 +146,6 @@ export default {
     }
   },
   methods: {
-    toggleChat () {
-      this.showChat = !this.showChat
-      const rtName = this.showChat ? 'Clover/Comments' : 'Clover'
-      this.board && this.$router.replace({name: rtName, params: {board: this.board}})
-      this.$nextTick(() => {
-        this.showChat && this.scrollDown()
-        if (this.moreCommentsToLoad && this.showChat) {
-          this.$refs.chat.addEventListener('scroll', this.scrollListen)
-        }
-        if (this.$refs.input) this.$refs.input.focus()
-      })
-      if (!this.showChat) this.view = 'chat'
-    },
     scrollListen ({ target }) {
       if (this.view !== 'chat') return
       if (target.scrollTop < 10 && !this.loading) {
@@ -221,13 +203,13 @@ export default {
             chat.scrollTop = newTop
           })
         }
-        if (this.$refs.input) this.$refs.input.focus()
+        // if (this.$refs.input) this.$refs.input.focus()
       }).catch(() => {
         this.moreCommentsToLoad = false
       })
     },
     loadActivity () {
-      axios.get(`${apiBase}/clovers/${this.board}/activity`, {
+      return axios.get(`${apiBase}/clovers/${this.board}/activity`, {
         params: { page: this.filters.page }
       }).then(({ data }) => {
         this.logs = data
@@ -238,9 +220,7 @@ export default {
       const { chat } = this.$refs
       chat.scrollTop = 0
     },
-    scrollDown (behavior = 'auto', block = 'end') {
-      if (!this.showChat) return
-
+    scrollDown (behavior = 'auto', block = 'start') {
       const { chat } = this.$refs
       if (behavior === 'auto') {
         this.$nextTick(() => {
@@ -250,6 +230,20 @@ export default {
         let newOne = this.$refs.comment[this.comments.length - 1]
         newOne.scrollIntoView({ behavior, block })
       }
+    },
+    forward () {
+      if (!this.nextPossible) return
+      this.filters.page++
+    },
+    back () {
+      if (!this.prevPossible) return
+      this.filters.page--
+    },
+    focusActivity () {
+      this.$refs.chat.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      })
     },
 
     ...mapActions([
@@ -263,8 +257,9 @@ export default {
     view (newVal) {
       if (newVal === 'chat') {
         this.scrollDown()
+        setTimeout(this.focusActivity, 30)
       } else {
-        this.loadActivity()
+        this.loadActivity().then(this.focusActivity)
       }
     },
     filters: {
@@ -321,7 +316,8 @@ function atBottom (el) {
 
 .chat-scroll {
   max-height: 100%;
-  min-height: 100%;
+  height: 100vh;
+  overflow: auto;
   /*padding-bottom: 67px;*/
 }
 
@@ -345,6 +341,4 @@ function atBottom (el) {
   overflow-wrap: break-word;
   hyphens: auto;
 }
-
-.lighten-4 { color: var(--lighten-4); }
 </style>

@@ -42,12 +42,12 @@
             bg="green")
       hr
       router-link.block.mb3(
-        :to="{ name: 'Account/Trade' }")
+        :to="{ name: 'Trade' }")
         h2.h2.green.font-exp Coins
         img.p3(src="/img/club.svg")
         .px3.py2.black Earn Coins by finding or selling Clovers. <br> Redeem Coins for Ether straight from your account page.
       router-link.block.mb3(
-        :to="{ name: 'Account/Trade' }")
+        :to="{ name: 'Trade' }")
           dot-btn.mb3(
             label="Get Coins"
             text="white"
