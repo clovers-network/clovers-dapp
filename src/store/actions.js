@@ -4,9 +4,7 @@ import BigNumber from 'bignumber.js'
 import io from 'socket.io-client'
 import utils from 'web3-utils'
 import axios from 'axios'
-import Web3 from 'web3'
 import { pad0x, makeBn, padRight, isHex, cloverIsMonochrome } from '@/utils'
-import { assert } from 'tcomb'
 import CloverWorker from 'worker-loader!../assets/clover-worker'
 import confetti from 'canvas-confetti'
 
@@ -651,22 +649,25 @@ export default {
       .balanceOf(new BigNumber(market, 16).toString(10), state.account)
       .call()
   },
-  async transferClover ({ state }, {clover, address}) {
+  async transferClover ({ state, dispatch }, { clover, address }) {
     try {
       let ENSaddress = await global.ens.resolver(address).addr()
       address = ENSaddress
     } catch (error) {
       console.log('no ens')
     }
-    assert(isHex(address), 'Not a valid address')
-    assert(address.replace('0x', '').length === 40, 'Not a valid address')
+    if (!isHex(address) || address.replace('0x', '').length !== 40) {
+      throw new Error('Not a valid address')
+    }
 
     let currentPrice = await contracts.SimpleCloversMarket.instance.methods
       .sellPrice(clover.board)
       .call()
     currentPrice = makeBn(currentPrice)
     // if 0 then it's not actually for sale
-    assert(currentPrice.eq(0), 'Can\'t transfer a Clover that is currently for sale')
+    if (!currentPrice.eq(0)) {
+      throw new Error('Can\'t transfer a Clover that is currently for sale')
+    }
     return contracts.Clovers.instance.methods
       .transferFrom(state.account, address, clover.board)
       .send({
@@ -685,11 +686,11 @@ export default {
         .sellPrice(clover.board)
         .call()
       currentPrice = makeBn(currentPrice)
-      console.log('currentPrice', utils.fromWei(currentPrice.toString(10)))
+      // console.log('currentPrice', utils.fromWei(currentPrice.toString(10)))
       // if 0 then it's not actually for sale
       if (currentPrice.eq(0)) {
         dispatch('syncClover', clover)
-        throw new Error('cant-buy-not-for-sale')
+        throw new Error('Clover not for sale')
       }
 
       // get balance of user in ClubToken

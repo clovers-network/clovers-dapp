@@ -16,6 +16,7 @@
   --teal:  #39CCCC;
   --green: rgb(0, 180, 100); /* #01B463 */
   --light-green: rgba(0, 180, 100, .4); /* #01B463 */
+  --lighter-green: rgba(0, 180, 100, .16); /* #01B463 */
   --lightest-green: rgba(0, 180, 100, .1); /* #01B463 */
   --olive: #3D9970;
   --lime:  #01FF70;
@@ -40,7 +41,7 @@
   --darken-4: rgba(0, 0, 0, .5);
 
   --border-radius: 8px;
-  --border-radius-2: 8px;
+  --border-radius-2: 12px;
 
   --green-shadow: 4px 4px 4px rgba(1, 180, 99, 0.08);
 

@@ -21,8 +21,7 @@
               .found-badge.border.border-green.bounceIn.animated(v-if='showBadge')
                 span.block
                   | {{ symms }}
-        //- back btn
-        button.pointer.left-align(v-else='' @click='$router.go(-1)') Back
+
       //- title
       h1.font-exp.h3.col-4.py1.center
         span.nowrap.pointer(@click='showMenu = showBackButton ? showMenu : !showMenu')
@@ -43,7 +42,7 @@
         #personToggle.mr3.flex.items-center.p1.pointer.border.rounded-right(@click="accountMenuToggle")
           person-icon(:class="!authHeader && 'red'")
           .chevron
-        account-menu(@closeaccountmenu="closeAccountMenu" v-click-outside="closeAccountMenu" v-if="accountMenu")
+        account-menu(@close-account-menu="closeAccountMenu" v-click-outside="closeAccountMenu" v-if="accountMenu")
         pig-menu(@closePigMenu="closePigMenu" v-click-outside="closePigMenu" v-if="pigMenu" )
     //- nav
     .absolute.z1.h-100vh.col-12.bg-green.top-0.left-0.flex.flex-column.justify-between.center(v-show='showMenu')

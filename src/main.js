@@ -84,7 +84,16 @@ Vue.use(VueScrollTo)
 
 Vue.component('clv', Clv)
 
-Vue.directive('autofocus', autofocus)
+Vue.directive('autofocus', {
+  inserted (el, { value }) {
+    el.focus()
+    if (value) {
+      setTimeout(() => {
+        el.select()
+      }, 1)
+    }
+  }
+})
 
 new Vue({
   router,

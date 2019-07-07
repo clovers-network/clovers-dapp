@@ -24,39 +24,6 @@ export function isHex (foobar) {
   return re.test(foobar.replace('0x', ''))
 }
 
-// export function addrToUser (address) {
-//   /*
-//   * @return {string} Username or ENS name or 0x addr
-//   * --- PROBABLY DONT USE ON LIST VIEWS !!!! ---- (use getUsername)
-//   */
-//   const allUsers = store.state.allUsers
-//   let userIndex = allUsers.findIndex(
-//     u => u.address.toLowerCase() === address.toLowerCase()
-//   )
-//   return userIndex > -1 && (allUsers[userIndex].name || (() => {
-//     if (typeof allUsers[userIndex].ens === 'undefined') {
-//       store.dispatch('updateUserENS', allUsers[userIndex])
-//     } else if (allUsers[userIndex].ens !== false) {
-//       return allUsers[userIndex].ens
-//     }
-//     return address
-//   })())
-// }
-
-// export function getUsername (addr = '') {
-//   /**
-//   * Lighter function than addrToUser (doesn't call ENS system)
-//   * @return {(string|undefined)} Username, ENS name, undefined
-//   **/
-//   addr = addr.toLowerCase()
-//   const user = store.state.allUsers.filter(user => user.address.toLowerCase() === addr)[0]
-//   return addr === store.getters.cloversBankAddress ? 'Clovers'
-//     : addr === store.getters.curationMarketAddress ? 'Curation Mrkt.'
-//       : user.name && user.name.trim() !== '' ? user.name
-//         : user.ens ? user.ens
-//           : undefined
-// }
-
 export function cloverImage (clover = '0', size = 200) {
   let board = clover.byteBoard || clover.board || clover
   return `${apiBase}/clovers/svg/${encodeURIComponent(board)}/${size}`

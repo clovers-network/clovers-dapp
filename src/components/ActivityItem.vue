@@ -1,225 +1,108 @@
-<template>
-  <div
-    :class="isMyLog"
-    class="h5 sm-h4 p2">
-    <div
-      :class="{'opacity-50': isBurned(item)}"
-      class="flex justify-start items-center">
-      <div
-        :class="{mr3: noImg}"
-        class="font-mono opacity-50 h6 xs-hide">#{{ item.blockNumber }}</div>
+<template lang="pug">
+  .h5.sm-h4.p2(:class='isMyLog')
+    .flex.justify-start.items-center(:class="{'opacity-50': isBurned(item)}")
+      .font-mono.opacity-50.h6.xs-hide(:class='{mr3: noImg}') \#{{ item.blockNumber }}
+      //- Clover Transfered
+      template(v-if="item.name === 'Clovers_Transfer'")
+        .mr2.sm-mx3.flex-none(v-if='!noImg')
+          router-link(:to="isBurned(item) ? '' : cloverLink(item.data._tokenId)")
+            img.block(:src='cloverImage(item.data._tokenId, 50)' style='width:50px;height:50px')
+        //- <div class="pr3 h6">bought by</div>
+        template(v-if='isBurned(item)')
+          .activity-itm__icon.mr2.sm-mr3.h2.line-height-1 &times;
+          .pr1 Clover burned (invalid)
+        template(v-else-if='isFromClovers(item)')
+          .activity-itm__icon.mr2.sm-mr3.h2 &xodot;
+          .pr1.opacity-50 Sent to
+          router-link.block.font-mono.truncate.hover-underline(:to='userRt(item.data._to)') {{ userName }}
+        template(v-else-if='isBorn(item)')
+          .activity-itm__icon.mr2.sm-mr3.h2 &xodot;
+          .pr1.opacity-50 Was born &#x2618;&#xFE0F;
+        template(v-else='')
+          .activity-itm__icon.mr2.sm-mr3.h2 &xodot;
+          router-link.block.font-mono.truncate.hover-underline(:to='userRt(item.data._to)') {{ userName }}
+          .opacity-50.nowrap &ensp;bought Clover from&ensp;
+          router-link.block.font-mono.truncate.hover-underline(:to='userRt(item.data._from)') {{ parseUser({ address: item.data._from }) }}
+      //- Clover price updated
+      template(v-else-if="item.name === 'SimpleCloversMarket_updatePrice'")
+        .mr2.sm-mx3.flex-none(v-if='!noImg')
+          router-link(:to='cloverLink(item.data._tokenId)')
+            img.block(:src='cloverImage(item.data._tokenId, 50)' style='width:50px;height:50px')
+        .activity-itm__icon.mr2.sm-mr3.h2.line-height-1 &clubs;&#xFE0E;
+        div(v-if="item.data.price === '0'")
+          span.opacity-50 Removed from Market
+        div(v-else='')
+          span.opacity-50 Price is now&ensp;
+          span
+            | {{ newPrice }}&ensp;
+            coin-icon
+      //- Bought Tokens
+      template(v-else-if="item.name === 'ClubTokenController_Buy'")
+        .h1.mr2.sm-mx3.center.black.border.circle(v-if='!noImg' style='flex:0 0 50px;height:50px') &clubs;&#xFE0E;
+        .activity-itm__icon.mr2.sm-mr3.h3.line-height-1 &nearr;
+        .font-mono.truncate
+          router-link.hover-underline(:to="'/users/' + item.data.buyer") {{ userName }}
+        .nowrap.pl1
+          span.opacity-50 bought&ensp;
+          span {{ price(item.data.tokens) }} <coin-icon/>
+      //- Sold Tokens
+      template(v-else-if="item.name === 'ClubTokenController_Sell'")
+        .h1.mr2.sm-mx3.center.black.border.circle(v-if='!noImg' style='width:50px;height:50px') &clubs;&#xFE0E;
+        .activity-itm__icon.mr2.sm-mr3.h3.line-height-1 &searr;
+        router-link.font-mono.truncate.hover-underline(:to='userRt(item.userAddress)') {{ userName }}
+        .nowrap.pl1
+          span.opacity-50 sold&ensp;
+          span {{ price(item.data.tokens) }} <coin-icon/>
+      //- Bought RFT Shares
+      template(v-else-if="item.name === 'CurationMarket_Buy'")
+        .mr2.sm-mx3.flex-none(v-if='!noImg')
+          router-link(:to='cloverLink(item.data._tokenId)')
+            img.block(:src='cloverImage(item.data._tokenId, 50)' style='width:50px;height:50px')
+        .activity-itm__icon.mr2.sm-mr3.h6(:class='{ red: !noImg }') RFT
+        .font-mono.truncate(:class='{ red: !noImg }')
+          router-link.hover-underline(:to='userRt(item.userAddress)') {{ userName }}
+        .pl1(:class='{ red: !noImg }')
+          span.opacity-50 bought&ensp;
+          span {{ price(item.data.tokens) }} shares
+      //- Sold RFT Shares
+      template(v-else-if="item.name === 'CurationMarket_Sell'")
+        .mr2.sm-mx3.flex-none(v-if='!noImg')
+          router-link(:to='cloverLink(item.data._tokenId)')
+            img.block(:src='cloverImage(item.data._tokenId, 50)' style='width:50px;height:50px')
+        .activity-itm__icon.mr2.sm-mr3.h6(:class='{ red: !noImg }') RFT
+        .font-mono.truncate(:class='{ red: !noImg }')
+          router-link.hover-underline(:to='userRt(item.userAddress)') {{ userName }}
+        .pl1(:class='{ red: !noImg }')
+          span.opacity-50 sold&ensp;
+          span {{ price(item.data.tokens) }} shares
+      //- New Comment
+      template(v-else-if="item.name === 'Comment_Added'")
+        .mr2.sm-mx3.flex-none(v-if='!noImg')
+          router-link(:to="{name: 'Clover', params: {board: item.data.board}}")
+            img.block(:src='cloverImage(item.data.board, 50)' style='width:50px;height:50px')
+        .activity-itm__icon.mr2.sm-mr3.h3
+          chat-icon(:size='15' :blank='true' :invert='false')
+        .opacity-50.nowrap Comment by&ensp;
+        router-link.block.font-mono.truncate.hover-underline(:to='userRt(item.data.userAddress)') {{ item.data.userName }}
+      //- Renamed
+      template(v-else-if="item.name === 'CloverName_Changed'")
+        .mr2.sm-mx3.flex-none(v-if='!noImg')
+          router-link(:to='cloverLink(item.data.board)')
+            img.block(:src='cloverImage(item.data.board, 50)' style='width:50px;height:50px')
+        .activity-itm__icon.mr2.sm-mr3.h3 &#x270E;
+        div
+          span.opacity-50 Renamed&ensp;
+          router-link.hover-underline(:to="{name: 'Clover', params:{board:item.data.board}}") {{ item.data.newName }}
+      div(v-else)
+        pre.
+          \n{{ item }}
 
-      <!-- Clover Transfered -->
-      <template v-if="item.name === 'Clovers_Transfer'">
-        <div
-          v-if="!noImg"
-          class="mr2 sm-mx3 flex-none">
-          <router-link :to="isBurned(item) ? '' : cloverLink(item.data._tokenId)">
-            <img
-              :src="cloverImage(item.data._tokenId, 50)"
-              style="width:50px;height:50px"
-              class="block">
-          </router-link>
-        </div>
-        <!-- <div class="pr3 h6">bought by</div> -->
-        <template v-if="isBurned(item)">
-          <div class="activity-itm__icon mr2 sm-mr3 h2 line-height-1">&times;</div>
-          <div class="pr1">Clover burned (invalid)</div>
-        </template>
-        <template v-else-if="isFromClovers(item)">
-          <div class="activity-itm__icon mr2 sm-mr3 h2">&xodot;</div>
-          <div class="pr1 opacity-50">Sent to</div>
-          <router-link
-            :to="userRt(item.data._to)"
-            class="block font-mono truncate hover-underline">{{ userName }}</router-link>
-        </template>
-        <template v-else-if="isBorn(item)">
-          <div class="activity-itm__icon mr2 sm-mr3 h2">&xodot;</div>
-          <div class="pr1 opacity-50">Was born ☘️</div>
-        </template>
-        <template v-else>
-          <div class="activity-itm__icon mr2 sm-mr3 h2">&xodot;</div>
-          <router-link
-            :to="userRt(item.data._from)"
-            class="block font-mono truncate hover-underline">{{ userName }}</router-link>
-          <div class="opacity-50 nowrap">&ensp;sent to&ensp;</div>
-          <router-link
-            :to="userRt(item.data._to)"
-            class="block font-mono truncate hover-underline">{{ userName }}</router-link>
-        </template>
-      </template>
-
-      <!-- Clover price updated -->
-      <template v-else-if="item.name === 'SimpleCloversMarket_updatePrice'">
-        <div
-          v-if="!noImg"
-          class="mr2 sm-mx3 flex-none">
-          <router-link :to="cloverLink(item.data._tokenId)">
-            <img
-              :src="cloverImage(item.data._tokenId, 50)"
-              style="width:50px;height:50px"
-              class="block">
-          </router-link>
-        </div>
-        <div class="activity-itm__icon mr2 sm-mr3 h2 line-height-1">&clubs;&#xfe0e;</div>
-        <div v-if="item.data.price === '0'">
-          <span class="opacity-50">Removed from Market</span>
-        </div>
-        <div v-else>
-          <span class="opacity-50">Price is now&ensp;</span>
-          <span>{{ price(item.data.price) }} <coin-icon/></span>
-        </div>
-      </template>
-
-      <!-- Bought Tokens -->
-      <template v-else-if="item.name === 'ClubTokenController_Buy'">
-        <div
-          v-if="!noImg"
-          class="h1 mr2 sm-mx3 center black border circle"
-          style="flex:0 0 50px;height:50px">&clubs;&#xfe0e;</div>
-        <div class="activity-itm__icon mr2 sm-mr3 h3 line-height-1">&nearr;</div>
-        <div class="font-mono truncate">
-          <router-link
-            :to="'/users/' + item.data.buyer"
-            class="hover-underline">{{ userName }}</router-link>
-        </div>
-        <div class="nowrap pl1">
-          <span class="opacity-50">bought&ensp;</span>
-          <span>{{ price(item.data.tokens) }} &clubs;&#xfe0e;</span>
-        </div>
-      </template>
-
-      <!-- Sold Tokens -->
-      <template v-else-if="item.name === 'ClubTokenController_Sell'">
-        <div
-          v-if="!noImg"
-          class="h1 mr2 sm-mx3 center black border circle"
-          style="width:50px;height:50px">&clubs;&#xfe0e;</div>
-        <div class="activity-itm__icon mr2 sm-mr3 h3 line-height-1">&searr;</div>
-        <router-link
-          :to="userRt(item.userAddress)"
-          class="font-mono truncate hover-underline">{{ userName }}</router-link>
-        <div class="nowrap pl1">
-          <span class="opacity-50">sold&ensp;</span>
-          <span>{{ price(item.data.tokens) }} &clubs;&#xfe0e;</span>
-        </div>
-      </template>
-
-      <!-- Bought RFT Shares -->
-      <template v-else-if="item.name === 'CurationMarket_Buy'">
-        <div
-          v-if="!noImg"
-          class="mr2 sm-mx3 flex-none">
-          <router-link :to="cloverLink(item.data._tokenId)">
-            <img
-              :src="cloverImage(item.data._tokenId, 50)"
-              style="width:50px;height:50px"
-              class="block">
-          </router-link>
-        </div>
-        <div
-          :class="{ red: !noImg }"
-          class="activity-itm__icon mr2 sm-mr3 h6">RFT</div>
-        <div
-          :class="{ red: !noImg }"
-          class="font-mono truncate">
-          <router-link
-            :to="userRt(item.userAddress)"
-            class="hover-underline">{{ userName }}</router-link>
-        </div>
-        <div
-          :class="{ red: !noImg }"
-          class="pl1">
-          <span class="opacity-50">bought&ensp;</span>
-          <span>{{ price(item.data.tokens) }} shares</span>
-        </div>
-      </template>
-
-      <!-- Sold RFT Shares -->
-      <template v-else-if="item.name === 'CurationMarket_Sell'">
-        <div
-          v-if="!noImg"
-          class="mr2 sm-mx3 flex-none">
-          <router-link :to="cloverLink(item.data._tokenId)">
-            <img
-              :src="cloverImage(item.data._tokenId, 50)"
-              style="width:50px;height:50px"
-              class="block">
-          </router-link>
-        </div>
-        <div
-          :class="{ red: !noImg }"
-          class="activity-itm__icon mr2 sm-mr3 h6">RFT</div>
-        <div
-          :class="{ red: !noImg }"
-          class="font-mono truncate">
-          <router-link
-            :to="userRt(item.userAddress)"
-            class="hover-underline">{{ userName }}</router-link>
-        </div>
-        <div
-          :class="{ red: !noImg }"
-          class="pl1">
-          <span class="opacity-50">sold&ensp;</span>
-          <span>{{ price(item.data.tokens) }} shares</span>
-        </div>
-      </template>
-
-      <!-- New Comment -->
-      <template v-else-if="item.name === 'Comment_Added'">
-        <div
-          v-if="!noImg"
-          class="mr2 sm-mx3 flex-none">
-          <router-link :to="{name: 'Clover/Comments', params: {board: item.data.board}}">
-            <img
-              :src="cloverImage(item.data.board, 50)"
-              style="width:50px;height:50px"
-              class="block">
-          </router-link>
-        </div>
-        <div class="activity-itm__icon mr2 sm-mr3 h3">
-          <chat-icon
-            :size="15"
-            :blank="true"
-            :invert="false"/>
-        </div>
-        <div class="opacity-50 nowrap">Comment by&ensp;</div>
-        <router-link
-          :to="userRt(item.data.userAddress)"
-          class="block font-mono truncate hover-underline">{{ item.data.userName }}</router-link>
-      </template>
-
-      <!-- Renamed -->
-      <template v-else-if="item.name === 'CloverName_Changed'">
-        <div
-          v-if="!noImg"
-          class="mr2 sm-mx3 flex-none">
-          <router-link :to="cloverLink(item.data.board)">
-            <img
-              :src="cloverImage(item.data.board, 50)"
-              style="width:50px;height:50px"
-              class="block">
-          </router-link>
-        </div>
-        <div class="activity-itm__icon mr2 sm-mr3 h3">✎</div>
-        <div>
-          <span class="opacity-50">Renamed&ensp;</span>
-          <router-link
-            :to="{name: 'Clover', params:{board:item.data.board}}"
-            class="hover-underline">{{ item.data.newName }}</router-link>
-        </div>
-      </template>
-
-      <div v-else>
-        <pre>{{ item }}</pre>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { cloverImage, cloverLink, makeBn, prettyBigNumber } from '@/utils'
+import { fromWei } from 'web3-utils'
 import ChatIcon from '@/components/Icons/ChatIcon'
 import CoinIcon from '@/components/Icons/CoinIcon'
 
@@ -237,10 +120,14 @@ export default {
       const me = this.$store.state.account
       const u = this.item.data.userAddress || this.item.userAddress
       const isMine = me && u && (me.toLowerCase() === u.toLowerCase())
-      return !isMine ? '' : this.noImg ? 'bg-lighten-2' : 'bg-lightest-green'
+      return !isMine ? '' : 'bg-lightest-green'
     },
     userName () {
       return this.parseUser(this.item.user || {})
+    },
+    newPrice () {
+      const p = parseFloat(fromWei(this.item.data.price))
+      return p.toLocaleString()
     },
 
     ...mapGetters({
@@ -266,6 +153,7 @@ export default {
       return name === 'Clovers_Transfer' && this.cloversBankAddress === data._from.toLowerCase()
     },
     price (string, decimals) {
+      // let n = fromWei(string || '0')
       let n = makeBn(string)
       // get rid of trailing zeros
       return parseFloat(prettyBigNumber(n, decimals))

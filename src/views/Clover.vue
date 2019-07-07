@@ -1,6 +1,6 @@
 <template lang="pug">
-  article.mt-deduct-header(v-if="board")
-    header
+  .mt4(v-if="clover.board")
+    //- header
       .mt-header-h.border-bottom
         //- if owner: editable name
         clover-name-editable(v-if="signedIn && isMyClover", :board="board", :clover="clover")
@@ -16,118 +16,88 @@
             small.block.lh1.h6.mb1 Owner
             .font-exp.mt1.truncate.overflow-hidden
               router-link(v-if="clover && clover.owner", :to="{name: 'User', params:{addr: clover.owner}}") {{ currentOwner }}
-              span(v-else) {{currentOwner}}
+              span(v-else) {{ currentOwner }}
         //- price / value
         .col-6.px3.py2.flex
           .col-12.m-auto
             small.block.lh1.h6 {{ isRFT ? 'My Shares' : showSalePrice ? 'For Sale' : 'Original Reward'}}
             .font-exp.mt1 {{ isRFT ? sharesOwned: (showSalePrice ? prettyPrice : originalPrice) + ' ♣&#xFE0E;' }}
+
     //- clover image
-    figure.relative.p3.md-p4.h-100vw.flex.items-center.justify-center.overflow-hidden.touch(@click="view = false", :class="{'border-bottom': isRFT}", style="max-height:48vh")
-      //- image
-      .absolute.overlay.flex.items-center.justify-center.p3
-        clv.col-10.sm-col-6.mx-auto(:moveString="cloverMovesString", :byteBoard="board", :isRFT="isRFT", style="max-width:36vh")
-      //- symm icons
-      .absolute.px2.z1.top-0.left-0.flex.items-center(style="height:58px")
-        symmetry-icons(v-if="clover", :board="clover.symmetries", style="font-size:16px")
-      //- comments / icon
-      .absolute.top-0.right-0.flex.items-center.px2(style="height:58px")
-        transition(name="fade")
-          comments(v-if="canGetComments", :board="board", :name="cloverName", :owner="isMyClover")
+    figure.relative.touch.max-width-1.mx-auto(@click="view = false")
+
+      clv(:moveString="cloverMovesString", :byteBoard="board", :isRFT="isRFT")
+
+      .absolute.z1.top--2.right--2.flex.items-center
+        symmetry-icons(v-if="clover", :board="clover.symmetries", style="font-size:14px")
+
+    .center.mt3.mb2.md-mb3
+      h1.h1.font-exp.m0.ws-pl
+        span {{ cloverName }}
+        span.pr3.font-reg.light-green.pointer.absolute.flip-x(v-if="signedIn && isMyClover", @click="currentAction = 'change'") ✎
+
+      .h3.font-reg.mt2
+        span.pr1 Owner:
+        router-link.py1.px2.rounded.white.bg-green(v-if="clover && clover.owner", :to="{name: 'User', params:{addr: clover.owner}}") {{ currentOwner }}
+        span.py1.px2.rounded.white.bg-green(v-else) {{ currentOwner }}
+        span.pl2.light-green.pointer.absolute(v-if="isMyClover && !showSalePrice", @click="currentAction='transfer'") &rlarr; Transfer
+
     //- Trade
     template(v-if="isRFT")
-      Trade(:market="board", :sharesOwnedWei="sharesOwnedWei", @trade="checkShares")
-    //- Actions
-    template(v-else)
-      .h-bttm-bar
-      footer.fixed-center-max-width.bottom-0
-        //- Owner Options
-        div(v-if="isMyClover", )
-          //- Sell / RFT Options
-          //- small.border-top.center.p2.block.h6.bg-white(v-show="!view") You own this Clover
-          small.border-top.center.p2.block.h6.bg-white.pointer(v-show="!view && showSalePrice" @click="makeSell(true)")
-            span(v-if="!loading") Remove From Market
-            wavey-menu.m-auto(v-else :isWhite="false")
-          small.border-top.center.p2.block.h6.bg-white.pointer(v-show="!view" @click="view='transfer'") Transfer
-          .bg-green.flex.white.font-exp.h-bttm-bar.justify-center(v-show="!view")
-            button.col-6.flex.border-right.pointer(@click="view = 'sell'")
-              span.block.m-auto {{showSalePrice ? 'Change Price' : 'Sell'}}
-            button.col-6.flex.pointer(@click="view = 'RFT'")
-              span.block.m-auto RFT
-          //- transferView
-          .bg-green.white(v-show="view === 'transfer'")
-            .pt2.pb3.px3
-              .mt1.mb2.font-exp.center Transfer
-              label.h6.lh1.block To
-              .relative
-                input.block.col-12.mt1.border-bottom.font-exp.py1.pr3.white.font-mono(@keyup.enter="transferTo" v-model="transferToAddress" placeholder="Address")
-            button(@click="transferTo").h-bttm-bar.flex.col-12.border-top.pointer
-              span(v-if="!loading").block.m-auto.font-exp Confirm
-              wavey-menu.m-auto(v-else :isWhite="true")
-          //- sellView
-          .bg-green.white(v-show="view === 'sell'")
-            .pt2.pb3.px3
-              .mt1.mb2.font-exp.center Sell
-              label.h6.lh1.block List for
-              .relative
-                input.block.col-12.mt1.border-bottom.font-exp.py1.pr3(type="number", v-model="sellPrice", min="0")
-                span.absolute.top-0.right-0.h-100.opacity-50.flex
-                  span.block.m-auto ♣&#xFE0E;
-            button(@click="makeSell()").h-bttm-bar.flex.col-12.border-top.pointer
-              span(v-if="!loading").block.m-auto.font-exp Confirm
-              wavey-menu.m-auto(v-else :isWhite="true")
-          //- make RFT view
-          .bg-green.white(v-show="view === 'RFT'")
-            .p3
-              .pb3.font-exp.center Make Public
-              p.mb3.h5(:class="{center: showSalePrice}") Relinquish ownership and convert this clover into a publicly tradable asset.
-              template(v-if="!showSalePrice")
-                label.block.h6 Your initial invesment&nbsp; <span class="opacity-50">(optional)</span>
-                .relative.pb1
-                  input.block.col-12.mt1.border-bottom.font-exp.py1.pr3(type="number", v-model="invesment", min="0")
-                  span.absolute.top-0.right-0.h-100.opacity-50.flex
-                    span.block.m-auto ♣&#xFE0E;
-            .p3.md-p2.bg-orange.p2.center.h5
-              span(v-if="!showSalePrice") This action cannot be undone!
-              span.pointer(v-else @click="makeSell(true)") First, remove from market
-            button.h-bttm-bar.flex.col-12.pointer(v-if="!showSalePrice" @click="makeRFT")
-              span(v-if="!loading").block.m-auto.font-exp Confirm
-              wavey-menu.m-auto(v-else :isWhite="true")
+      trade(:market="board", :sharesOwnedWei="sharesOwnedWei", @trade="checkShares")
 
-        //- Buy
-        .bg-green(v-else-if="canBuy")
-          button.h-bttm-bar.white.flex.col-12.pointer(@click="view = 'buy'")
-            span.block.m-auto.font-exp Buy for {{prettyPrice}} ♣&#xFE0E;
-          transition(name="confirm")
-            section.white(v-show="view === 'buy'")
-              .border-top.flex
-                .col-6.p3.border-right
-                  small.block.lh1.h6 Your Balance
-                  .font-exp.mt2 {{ prettyUserBalance }} ♣&#xFE0E;
-                .col-6.relative.p3
-                  template(v-if="canAfford")
-                    small.block.lh1.h6 Balance After
-                    .font-exp.mt2 {{ balanceAfter }} ♣&#xFE0E;
-                  template(v-else)
-                    router-link.absolute.overlay.col-12.flex.items-center.justify-center.pointer(:to="{name: 'Account/Trade'}")
-                      span.block.font-exp Add
-              //- confirm, if can buy
-              button(@click="makeBuy", v-if="canAfford").h-bttm-bar.white.border-top.flex.col-12.pointer
-                span(v-if="!loading").block.m-auto.font-exp Confirm
-                wavey-menu.m-auto(v-else :isWhite="true")
-              //- can't buy
-              div(v-else).h-bttm-bar.white.border-top.flex.col-12.pointer
-                span.block.m-auto.font-exp.opacity-50 Insufficient Funds
-        //- Unavailable
-        .bg-green(v-else)
-          .h-bttm-bar.white.flex.col-12
-            span.block.m-auto.font-exp Unavailable
+    template(v-else)
+      .flex.flex-wrap.justify-center.my4
+        .mx1.mb2
+          .inline-block.py2.px3.border.rounded(v-if="showSalePrice")
+            span.pr2 Price:
+            span.inline-block.font-exp {{ prettyPrice }} <coin-icon/>
+          .inline-block.py2.px3.border.rounded(v-else)
+            span.pr2 Original price:
+            span.inline-block.font-exp ~{{ originalPrice }} <coin-icon/>
+
+        .mx1.mb2.rounded.white.bg-green(v-if="isMyClover")
+          button.line-height-4.pointer.py2.px3.font-exp(@click="currentAction = 'sell'") {{ sellButton }}
+        .mx1.mb2.rounded.white.bg-green(v-else-if="showSalePrice")
+          button.line-height-4.pointer.py2.px3.font-exp(@click="currentAction = 'buy'") BUY
+        .mx1.mb2.rounded.light-green.border(v-else)
+          button.line-height-4.py2.px3.font-exp Unavailable
+
+    comments.mt4(:board="board", :name="cloverName", :owner="isMyClover")
+
+    //- ACTION MODAL
+    transition(name="fade")
+      .green.fixed.z3.flex.modal(v-if="currentAction", @click.self="cancelAction")
+        .m-auto.bg-white.flex.flex-column.justify-between.border.border-dashed.rounded
+          header
+            .h-header.flex.justify-between.items-center
+              .col-4.pl3.pt1
+                button.pointer.h5(@click="cancelAction") Cancel
+              .green.mt3.mr3(v-if="clover.symmetrical")
+                symmetry-icons(:board="clover")
+          .flex-auto.relative.p2.center
+            //- image
+            img(:src="cloverImage(clover, 196)" width="196" height="196")
+
+          template(v-if="currentAction === 'change'")
+            edit-clover-name(@cancel="cancelAction")
+
+          template(v-if="currentAction === 'transfer'")
+            transfer-clover(@cancel="cancelAction")
+
+          template(v-if="currentAction === 'sell'")
+            sell-clover(@cancel="cancelAction")
+
+          template(v-if="currentAction === 'buy'")
+            buy-clover(@cancel="cancelAction", :price="prettyPrice")
+
+  not-found(v-else)
+
 </template>
 
 <script>
 import store from '@/store'
-import utils from 'web3-utils'
-import WaveyMenu from '@/components/Icons/WaveyMenu'
+import { toWei } from 'web3-utils'
 import { mapState, mapActions, mapGetters } from 'vuex'
 import {
   cloverImage,
@@ -137,12 +107,18 @@ import {
   makeBn,
   abbrvAddr
 } from '@/utils'
+import Reversi from 'clovers-reversi'
+
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 import Clv from '@/components/Clv'
-import CloverNameEditable from '@/components/CloverNameEditable'
 import Trade from '@/views/Trade'
-import Reversi from 'clovers-reversi'
 import Comments from '@/components/Comments'
+import CoinIcon from '@/components/Icons/CoinIcon'
+import EditCloverName from '@/components/EditCloverName'
+import TransferClover from '@/components/TransferClover'
+import SellClover from '@/components/SellClover'
+import BuyClover from '@/components/BuyClover'
+import NotFound from '@/views/404'
 
 const reversi = new Reversi()
 let lastRt = null
@@ -164,11 +140,8 @@ export default {
   },
   data () {
     return {
-      transferToAddress: null,
-      formFocussed: false,
-      form: { name: null },
+      currentAction: false,
       view: null,
-      sellPrice: 0,
       invesment: 0,
       loading: false,
       sharesOwnedWei: null,
@@ -189,9 +162,6 @@ export default {
     showSalePrice () {
       return this.price.gt(0)
     },
-    sellPriceWei () {
-      return this.sellPrice ? utils.toWei(this.sellPrice) : '0'
-    },
     sharesOwned () {
       return (
         (this.sharesOwnedWei && prettyBigNumber(this.sharesOwnedWei, 0)) ||
@@ -208,15 +178,12 @@ export default {
       return this.clover.price
     },
     investmentInWei () {
-      return this.invesment ? utils.toWei(this.invesment) : '0'
+      return this.invesment ? toWei(this.invesment) : '0'
     },
     originalPrice () {
-      return (
-        (this.clover &&
-          this.clover.reward &&
-          prettyBigNumber(this.clover.reward, 2)) ||
-        '---'
-      )
+      if (!this.clover || !this.clover.reward) return '10'
+      let r = makeBn(this.clover.reward).add(toWei('10'))
+      return parseFloat(prettyBigNumber(r, 2))
     },
     balanceAfterBn () {
       if (!this.userBalance) return new this.$BN('0')
@@ -238,6 +205,7 @@ export default {
     isRFT () {
       return (
         this.clover &&
+        this.clover.owner &&
         this.clover.owner.toLowerCase() === this.curationMarketAddress
       )
     },
@@ -264,7 +232,14 @@ export default {
       return this.canBuy && this.balanceAfterBn.gte(0)
     },
     cloverName () {
-      return this.clover && this.clover.name || this.board
+      if (!this.clover) return ''
+      let { name, board } = this.clover
+      const condensed = abbrvAddr(board)
+      if (name === board) return condensed
+      return name
+    },
+    sellButton () {
+      return this.price > 0 ? 'Change price' : 'Sell Clover'
     },
 
     ...mapState(['account', 'orders']),
@@ -282,42 +257,6 @@ export default {
     cloverImage,
     prettyBigNumber,
 
-    async transferTo () {
-      if (this.loading) return
-      try {
-        this.loading = true
-        await this.transferClover({
-          clover: this.clover,
-          address: this.transferToAddress
-        })
-      } catch (err) {
-        this.handleError(err)
-      }
-      this.loading = false
-    },
-    async makeBuy () {
-      if (this.loading) return
-      try {
-        this.loading = true
-        await this.buy(this.clover)
-      } catch (error) {
-        console.log(error)
-      }
-      this.view = false
-      this.loading = false
-    },
-    async makeSell (remove = false) {
-      if (this.loading) return
-      try {
-        this.loading = true
-        await this.sell({ clover: this.clover, price: remove ? '0' : this.sellPriceWei })
-      } catch (error) {
-        console.log(error)
-      }
-      this.view = false
-      this.loading = false
-      this.sellPrice = 0
-    },
     async makeRFT () {
       if (this.loading) return
       try {
@@ -332,24 +271,9 @@ export default {
       this.view = false
       this.loading = false
     },
-    focusCloverName () {
-      setTimeout(() => {
-        this.formFocussed = true
-      }, 100)
-    },
-    blurCloverName () {
-      setTimeout(() => {
-        this.formFocussed = false
-      }, 50)
-    },
-    updateName () {
-      if (!this.form.name.length) return
-      this.$refs.nameInput.blur()
-      let clv = {
-        board: this.clover.board,
-        name: this.form.name
-      }
-      this.updateCloverName(clv)
+
+    cancelAction () {
+      this.currentAction = false
     },
     // buyStake () {
     //   this.loading = true
@@ -380,9 +304,6 @@ export default {
         type: 'success'
       })
     },
-    setFormName (clover) {
-      if (clover) this.form.name = clover.name || clover.board
-    },
     updateMetaTitle (name) {
       if (!name || name === this.board) return
       this.metaTitle = name
@@ -395,9 +316,6 @@ export default {
     },
 
     ...mapActions([
-      'buy',
-      'sell',
-      'transferClover',
       'makeCloverRFT',
       'signIn',
       'invest',
@@ -412,26 +330,22 @@ export default {
     const { board } = to.params
     store.dispatch('getClover', board.toLowerCase()).then(next)
   },
+  created () {
+    if (this.clover) return this.updateMetaTitle(this.clover.name)
+  },
+  mounted () {
+    setTimeout(() => {
+      this.canGetComments = true
+    }, 500)
+  },
   watch: {
     'orders.length' () {
       this.checkShares()
-    },
-    clover (clvr) {
-      this.setFormName(clvr)
     },
     isRFT () {
       this.checkShares()
     }
   },
-  created () {
-    if (this.clover) return this.updateMetaTitle(this.clover.name)
-  },
-  mounted () {
-    this.setFormName(this.clover)
-    setTimeout(() => {
-      this.canGetComments = true
-    }, 500)
-  },
-  components: { SymmetryIcons, WaveyMenu, Clv, Trade, CloverNameEditable, Comments }
+  components: { SymmetryIcons, Clv, Trade, Comments, CoinIcon, EditCloverName, TransferClover, SellClover, BuyClover, NotFound }
 }
 </script>

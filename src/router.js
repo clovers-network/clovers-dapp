@@ -1,17 +1,18 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Welcome from '@/views/Welcome'
+import NotFound from '@/views/404'
 import Learn from '@/views/Learn/Learn'
 
-const Field = () => import(/* webpackChunkName: 'clovers' */ '@/views/Field')
+const Clover = () => import(/* webpackChunkName: 'clovers' */ '@/views/Clover')
 const Feed = () => import(/* webpackChunkName: 'clovers' */ '@/views/Feed')
+const Field = () => import(/* webpackChunkName: 'clovers' */ '@/views/Field')
 const User = () => import(/* webpackChunkName: 'clovers' */ '@/views/User')
 
 const Account = () => import(/* webpackChunkName: 'user' */ '@/views/Account')
 const Picks = () => import(/* webpackChunkName: 'user' */ '@/views/Picks')
 const Trade = () => import(/* webpackChunkName: 'user' */ '@/views/Trade')
 const About = () => import(/* webpackChunkName: 'user' */ '@/views/About')
-const Clover = () => import(/* webpackChunkName: 'user' */ '@/views/Clover')
 
 const Activity = () => import(/* webpackChunkName: 'activity' */ '@/views/Activity.vue')
 
@@ -85,14 +86,7 @@ export default new Router({
       name: 'Clover',
       component: Clover,
       props: true,
-      meta: {title: 'Buy'},
-      children: [
-        {
-          path: 'comments',
-          name: 'Clover/Comments',
-          component: Clover
-        }
-      ]
+      meta: { title: 'Clover' }
     },
 
     {
@@ -105,10 +99,17 @@ export default new Router({
       path: '/users/:addr',
       name: 'User',
       component: User,
-      meta: {title: 'Collector'},
+      meta: { title: 'Collector' },
       props: true
+    },
+
+    {
+      path: '*',
+      name: 'NotFound',
+      component: NotFound
     }
   ],
+
   scrollBehavior (to, from, savedPosition) {
     if (savedPosition || to.name === from.name) {
       return savedPosition

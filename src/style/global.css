@@ -430,16 +430,20 @@ input:disabled,
   appearance: none;
 }
 
-.green::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+.green::-webkit-input-placeholder,
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
   color: var(--light-green);
 }
-.green::-moz-placeholder { /* Firefox 19+ */
+.green::-moz-placeholder,
+::-moz-placeholder { /* Firefox 19+ */
   color: var(--light-green);
 }
-.green:-ms-input-placeholder { /* IE 10+ */
+.green:-ms-input-placeholder,
+:-ms-input-placeholder { /* IE 10+ */
   color: var(--light-green);
 }
-.green:-moz-placeholder { /* Firefox 18- */
+.green:-moz-placeholder,
+:-moz-placeholder { /* Firefox 18- */
   color: var(--light-green);
 }
 
