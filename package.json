@@ -16,8 +16,10 @@
     "axios": "^0.18.0",
     "basscss": "^8.1.0",
     "basscss-addons": "https://github.com/n-kort/addons.git",
+    "basscss-responsive-states": "^1.0.6",
     "bignumber.js": "^4.1.0",
     "bottleneck": "^2.6.0",
+    "canvas-confetti": "^0.3.0",
     "chart.js": "^2.7.2",
     "clovers-contracts": "^1.0.19",
     "clovers-reversi": "^1.0.14",
@@ -45,10 +47,12 @@
     "vue-click-outside": "^1.0.7",
     "vue-head": "^2.1.0",
     "vue-router": "^3.0.1",
+    "vue-scrollto": "^2.15.0",
     "vue-touch": "^2.0.0-beta.4",
     "vuex": "^3.0.1",
     "web3": "^1.0.0-beta.18",
     "web3-provider-engine": "^13.6.6",
+    "web3connect": "^1.0.0-beta.12",
     "ws": "^3.3.3",
     "xss": "^0.3.7"
   },
@@ -89,8 +93,11 @@
       "no-new": 0
     },
     "root": false,
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
     "extends": [
-      "plugin:vue/essential",
+      "plugin:vue/base",
       "standard"
     ],
     "globals": {
@@ -99,7 +106,8 @@
       "global": true,
       "module": true,
       "web3": true,
-      "ga": true
+      "ga": true,
+      "import": true
     }
   },
   "browserslist": [

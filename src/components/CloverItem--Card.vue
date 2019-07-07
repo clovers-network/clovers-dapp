@@ -58,7 +58,7 @@ import CoinIcon from '@/components/Icons/CoinIcon'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 
 export default {
-  name: 'CloverItem--Card',
+  name: 'CloverItemCard',
   props: {
     clover: {type: Object, default: () => {}, required: true},
     borderLeft: false

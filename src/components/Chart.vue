@@ -1,9 +1,11 @@
 <template>
-  <article class="relative minh-200" :style="{'padding-top': (market === 'ClubToken' ? 'calc(100vh - 524px)' : 'calc(100vh - 900px)')}">
+  <article
+    :style="{'padding-top': (market === 'ClubToken' ? 'calc(100vh - 524px)' : 'calc(100vh - 900px)')}"
+    class="relative minh-200">
     <price-chart
-      class="price-chart absolute left-0 right-0 bottom-0 bg-dots-green"
       :chart-data="chartData"
-      :options="options"/>
+      :options="options"
+      class="price-chart absolute left-0 right-0 bottom-0 bg-dots-green"/>
   </article>
 </template>
 
@@ -13,6 +15,7 @@ import PriceChart from '@/components/PriceChart'
 
 export default {
   name: 'ChartTest',
+  components: { PriceChart },
   props: {
     market: {
       type: String,
@@ -72,8 +75,7 @@ export default {
         ]
       }
     }
-  },
-  components: { PriceChart }
+  }
 }
 </script>
 

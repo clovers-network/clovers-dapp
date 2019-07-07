@@ -4,9 +4,9 @@ import BigNumber from 'bignumber.js'
 import io from 'socket.io-client'
 import utils from 'web3-utils'
 import axios from 'axios'
-import Web3 from 'web3'
-import { pad0x, makeBn, padRight, isHex } from '@/utils'
-// import { assert } from 'tcomb'
+import { pad0x, makeBn, padRight, isHex, cloverIsMonochrome } from '@/utils'
+import CloverWorker from 'worker-loader!../assets/clover-worker'
+import confetti from 'canvas-confetti'
 
 window.contracts = contracts
 
@@ -31,9 +31,93 @@ const anonUser = {
   modified: null
 }
 
+let miner
+
 export default {
-  async poll ({ dispatch, commit }) {
-    if (!global.web3.currentProvider.isPortis) {
+
+  mine ({dispatch, commit, state}) {
+    console.log('mine')
+    if (state.miners.length === 0) {
+      commit('RESET_MINED')
+    }
+    commit('CLEAR_NEW_SYMS')
+    miner = new CloverWorker()
+    const dispatchMinerEvent = async (event) => {
+      let { data } = event
+      if ('hashRate' in data) {
+        commit('UPDATE_HASHRATE', data.hashRate)
+      }
+      if ('symmetrical' in data) {
+        try {
+          const exists = await dispatch('cloverExists', '0x' + data.byteBoard)
+          const isMono = cloverIsMonochrome(data)
+          if (!exists && !isMono) {
+            const clvr = await dispatch('formatFoundClover', data)
+            dispatch('newSymFound')
+            commit('SAVE_NEW_SYM', clvr)
+            commit('SAVE_CLOVER', clvr)
+          }
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    }
+    miner.onmessage = dispatchMinerEvent
+    miner.postMessage('start')
+    commit('ADD_MINER', miner)
+  },
+  stop ({state, commit}) {
+    console.log('stop')
+    if (state.miners.length) {
+      let last = state.miners.length - 1
+      let removed = state.miners[last]
+      removed.postMessage('stop')
+      commit('REMOVE_MINER', last)
+    }
+    if (!state.miners.length) {
+      commit('UPDATE_HASHRATE', 0)
+    }
+  },
+  stopAll ({state, dispatch}) {
+    dispatch('stop')
+    while (state.miners.length > 0) {
+      dispatch('stop')
+    }
+  },
+  newSymFound (_) {
+    // alert('new sym!!!!')
+    var end = Date.now() + (1 * 1000)
+
+    // go Buckeyes!
+    var colors = ['#01B463', '#FF4136', '#FFDC00', '#0074D9'];
+
+    (function frame () {
+      confetti({
+        particleCount: 4,
+        angle: 60,
+        spread: 65,
+        origin: {
+          x: 0
+        },
+        colors: colors
+      })
+      confetti({
+        particleCount: 4,
+        angle: 120,
+        spread: 65,
+        origin: {
+          x: 1
+        },
+        colors: colors
+      })
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame)
+      }
+    }())
+  },
+  async poll ({ state, dispatch, commit }) {
+    if (state.web3Enabled) {
       await dispatch('checkWeb3')
       setTimeout(() => {
         dispatch('poll')
@@ -52,12 +136,17 @@ export default {
     }, 60 * 1000 * 5)
   },
   // web3 stuff
-  async checkWeb3 ({ dispatch }) {
+  async checkWeb3 ({ state, dispatch, commit }) {
+    if (!state.web3Enabled) {
+      dispatch('signIn')
+      return
+    }
     try {
       await dispatch('approve')
       await dispatch('getAccount')
       return true
     } catch (error) {
+      commit('UPDATE_WEB3', false)
       await dispatch('handleWeb3Error', error)
       return false
     }
@@ -68,7 +157,7 @@ export default {
         await global.ethereum.enable()
         commit('SET_ENABLED', true)
       } catch (error) {
-        console.error(error)
+        console.log(error)
       }
     }
   },
@@ -372,42 +461,49 @@ export default {
   },
   signOut ({ commit, dispatch }) {
     commit('SIGN_OUT')
+    commit('UPDATE_WEB3', false)
     dispatch('selfDestructMsg', {
       type: 'success',
       msg: 'Succesfully signed out'
     })
   },
   async signIn ({ state, commit, dispatch }) {
-    if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
-    const { account } = state
-    if (!account) {
-      dispatch('selfDestructMsg', {
-        type: 'error',
-        msg: 'No ETH account to sign in with'
-      })
-      return
-    }
-    global.web3.currentProvider.sendAsync(
-      {
-        method: 'eth_signTypedData',
-        params: [signingParams, account],
-        from: account
-      },
-      (err, { error, result }) => {
-        if (error || err) {
-          dispatch('selfDestructMsg', {
-            type: 'error',
-            msg: 'Could not sign in'
-          })
-          return
-        }
+    if (!state.web3Enabled) {
+      global.web3Connect.toggleModal() // open modal on button click
+    } else {
+      if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
+      const { account } = state
+      if (!account) {
         dispatch('selfDestructMsg', {
-          type: 'success',
-          msg: 'Successfully signed in'
+          type: 'error',
+          msg: 'No ETH account to sign in with'
         })
-        commit('SIGN_IN', { account, signature: result })
+        commit('UPDATE_WEB3', false)
+        return
       }
-    )
+      global.web3.currentProvider.sendAsync(
+        {
+          method: 'eth_signTypedData',
+          params: [signingParams, account],
+          from: account
+        },
+        (err, { error, result }) => {
+          if (error || err) {
+            commit('UPDATE_WEB3', false)
+            dispatch('selfDestructMsg', {
+              type: 'error',
+              msg: 'Could not sign in'
+            })
+            return
+          }
+          dispatch('selfDestructMsg', {
+            type: 'success',
+            msg: 'Successfully signed in'
+          })
+          commit('SIGN_IN', { account, signature: result })
+        }
+      )
+    }
   },
 
   updateCloverName ({ getters, commit, dispatch }, clover) {
@@ -755,6 +851,7 @@ async function getLowestPrice (
 }
 
 async function claimClover ({ keep, account, clover }) {
+  console.log({clover})
   let reversi = new Reversi()
   reversi.playGameMovesString(clover.movesString)
   let moves = reversi.returnByteMoves().map(m => '0x' + padRight(m, 56))

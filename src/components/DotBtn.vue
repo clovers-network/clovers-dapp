@@ -1,10 +1,12 @@
 <template>
-  <button class="block border pointer m-auto"
+  <button
     :class="'bg-dots-' + bg"
+    class="block border pointer m-auto"
     @click="$emit('click')">
-      <div class="block font-ext h2 m-auto border p2 px3"
-        :class="['bg-' + bg, text, 'border-' + bg]">
-        {{label}}</div>
+    <div
+      :class="['bg-' + bg, text, 'border-' + bg]"
+      class="block font-ext h2 m-auto border p2 px3">
+      {{ label }}</div>
   </button>
 </template>
 

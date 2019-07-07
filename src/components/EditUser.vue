@@ -4,7 +4,7 @@
       header
         .h-header.flex.justify-between.items-center
           .col-4.pl3.pt1
-            button.pointer.h5(@click="cancel") Cancel
+            button.pointer.h5(@click="cancel") Close
 
       .px3.pb3
         .mb3.center

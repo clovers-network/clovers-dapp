@@ -6,8 +6,8 @@
         @click="toggleMenu()"><i class="material-icons">menu</i></div>
       <ul
         id="menu-list"
-        class="bg-purple list-reset px2 py1 my0 flex-auto"
-        :class="{showMenu:showMenu}">
+        :class="{showMenu:showMenu}"
+        class="bg-purple list-reset px2 py1 my0 flex-auto">
         <li class="inline-block mr2">
           <router-link
             to="/"
@@ -31,7 +31,7 @@
       </ul>
       <p class="m0 pr3">
 
-        <span class='relative'>
+        <span class="relative">
           {{ cloversFound }}</span>
         <clover-icon
           width="14"
@@ -43,19 +43,19 @@
           :class="{white: balance !== '0', white: balance === '0'}">{{ balanceString }}</span> {{ clubTokenSymbol }}
       </p>
       <p
-        @click="toggleMinePanel"
-        class="relative m0 py2 px3 pointer no-select bg-black white">
+        class="relative m0 py2 px3 pointer no-select bg-black white"
+        @click="toggleMinePanel">
         {{ mineText }}
         <span
-          class='mt1 top-0 absolute  bg-red px1 py0 h4 left-0 mln2-5 circle py1'
-          v-if="symmsSinceOpened" >{{ symmsSinceOpened }}&nbsp;<clover-icon
+          v-if="symmsSinceOpened"
+          class="mt1 top-0 absolute  bg-red px1 py0 h4 left-0 mln2-5 circle py1" >{{ symmsSinceOpened }}&nbsp;<clover-icon
             width="14"
             height="14"/></span>
       </p>
     </header>
     <miner
-      :show-miner="showMiner"
       v-show="showMiner"
+      :show-miner="showMiner"
       @close="toggleMinePanel"/>
   </div>
 </template>
@@ -73,12 +73,6 @@ export default {
       showMenu: false
     }
   },
-  mounted () {
-    window.addEventListener('keyup', this.checkEsc)
-  },
-  destroyed () {
-    window.removeEventListener('keyup', this.checkEsc)
-  },
   watch: {
     '$route.fullPath': function () {
       this.showMiner = false
@@ -91,6 +85,12 @@ export default {
     showMiner () {
       this.symmsSinceOpened = 0
     }
+  },
+  mounted () {
+    window.addEventListener('keyup', this.checkEsc)
+  },
+  destroyed () {
+    window.removeEventListener('keyup', this.checkEsc)
   },
   methods: {
     toggleMenu () {

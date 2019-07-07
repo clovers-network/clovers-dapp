@@ -29,18 +29,18 @@
         <div class="px1 flex-auto flex justify-end items-stretch self-stretch">
           <template v-if="!mining">
             <button
-              @click="mine"
-              class="py1 px2 border bg-black white h4 bold pointer no-select">Mine Clover</button>
+              class="py1 px2 border bg-black white h4 bold pointer no-select"
+              @click="mine">Mine Clover</button>
           </template>
           <template v-else>
             <div class="mr2 border flex items-center">
               <div class="flex flex-column justify-stretch">
                 <div
-                  @click="mine"
-                  class="pointer no-select py1 px2 lh1">&plus;</div>
+                  class="pointer no-select py1 px2 lh1"
+                  @click="mine">&plus;</div>
                 <div
-                  @click="stop"
-                  class="pointer no-select border-top py1 px2 lh1">&minus;</div>
+                  class="pointer no-select border-top py1 px2 lh1"
+                  @click="stop">&minus;</div>
               </div>
               <div
                 class="border-left flex flex-column justify-center p1 center"
@@ -50,8 +50,8 @@
               </div>
             </div>
             <button
-              @click="stopAll"
-              class="py1 px3 border bg-black white h4 bold pointer no-select">Stop</button>
+              class="py1 px3 border bg-black white h4 bold pointer no-select"
+              @click="stopAll">Stop</button>
           </template>
         </div>
       </header>
@@ -60,7 +60,7 @@
         class="relative">
         <div class="h4 absolute top-0 left-0 mx0 z3 pointer px2 pt3">
           <a
-            class='p2 lh1'
+            class="p2 lh1"
             @click="deselect">❌</a>
         </div>
         <claim-clover
@@ -81,52 +81,52 @@
             ref="cloverList"
             class="list-reset mb0 flex mxn1 nowrap overflow-auto items-center">
             <li
-              ref="clover"
-              @click="select(board)"
               v-for="(board, i) in newClovers"
+              ref="clover"
               :key="'a' + i"
+              :class="isFocus(board)"
               class="relative py1 px2 pointer h6 newClover"
-              :class="isFocus(board)">
+              @click="select(board)">
               <clv
                 :compact="true"
                 :show-flags="true"
-                :no-click='true'
+                :no-click="true"
                 :key="board.movesString"
                 :byte-board="board.byteBoard"/>
               <symmetry
                 :absolute="false"
-                class="relative my1"
                 :horizontal="true"
-                :board="board"/>
+                :board="board"
+                class="relative my1"/>
             </li>
             <li
-              ref="clover"
-              @click="select(board)"
               v-for="(board, i) in claimedClovers"
+              ref="clover"
               :key="'b' + i"
+              :class="isFocus(board)"
               class="relative py1 px2 pointer h6 claimed"
-              :class="isFocus(board)">
+              @click="select(board)">
               <clv
                 :compact="true"
                 :show-flags="true"
-                :no-click='true'
+                :no-click="true"
                 :key="board.movesString"
                 :byte-board="board.byteBoard"/>
               <symmetry
                 :absolute="false"
-                class="relative my1"
                 :horizontal="true"
-                :board="board"/>
+                :board="board"
+                class="relative my1"/>
             </li>
             <li>
               <p
                 v-if="this.limit && this.claimedClovers.length > 4"
-                @click="limit = false"
-                class="mx3 m0 pointer">👁 more</p>
+                class="mx3 m0 pointer"
+                @click="limit = false">👁 more</p>
               <p
                 v-if="!this.limit && this.claimedClovers.length > 5"
-                @click="limit = true"
-                class="mx3 m0 pointer">🗃 collapse</p>
+                class="mx3 m0 pointer"
+                @click="limit = true">🗃 collapse</p>
             </li>
           </ul>
         </div>
@@ -147,6 +147,12 @@ let reversi = new Reversi()
 
 export default {
   name: 'Miner',
+  props: {
+    showMiner: {
+      type: Boolean,
+      default: false
+    }
+  },
   data () {
     return {
       enterManually: false,
@@ -165,12 +171,6 @@ export default {
     },
     showMiner () {
       if (!this.showMiner) this.selectedClover = null
-    }
-  },
-  props: {
-    showMiner: {
-      type: Boolean,
-      default: false
     }
   },
   computed: {

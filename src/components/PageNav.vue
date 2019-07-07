@@ -1,9 +1,17 @@
 <template>
-  <nav v-if="nextRt || prevRt" class="flex justify-between items-center h5 green">
-    <router-link :to="prevRt" v-if="prevRt" class="block col-6 flex-grow py4 flex">
+  <nav
+    v-if="nextRt || prevRt"
+    class="flex justify-between items-center h5 green">
+    <router-link
+      v-if="prevRt"
+      :to="prevRt"
+      class="block col-6 flex-grow py4 flex">
       <span class="block m-auto">&larr; Previous</span>
     </router-link>
-    <router-link :to="nextRt" v-if="nextRt" class="block col-6 flex-grow py4 flex">
+    <router-link
+      v-if="nextRt"
+      :to="nextRt"
+      class="block col-6 flex-grow py4 flex">
       <span class="block m-auto">Next &rarr;</span>
     </router-link>
   </nav>

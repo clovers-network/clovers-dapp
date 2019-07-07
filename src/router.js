@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Welcome from '@/views/Welcome'
 import NotFound from '@/views/404'
+import Learn from '@/views/Learn/Learn'
 
 const Clover = () => import(/* webpackChunkName: 'clovers' */ '@/views/Clover')
 const Feed = () => import(/* webpackChunkName: 'clovers' */ '@/views/Feed')
@@ -48,6 +49,12 @@ export default new Router({
       path: '/learn',
       name: 'Learn',
       template: '<div>Learn</div>'
+    },
+
+    {
+      path: '/learn',
+      name: 'Learn',
+      component: Learn
     },
 
     // account dashboard

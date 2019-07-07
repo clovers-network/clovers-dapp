@@ -9,8 +9,8 @@
 <script>
 export default {
   name: 'ViewNav',
-  props: ['items', 'initial', 'thick'],
   inheritAttrs: false,
+  props: ['items', 'initial', 'thick'],
   data () {
     return {
       active: 0
@@ -32,6 +32,9 @@ export default {
       }
     }
   },
+  created () {
+    this.setActive()
+  },
   methods: {
     onClick (item, index) {
       this.active = index
@@ -43,9 +46,6 @@ export default {
         if (val === item.value) this.active = index
       })
     }
-  },
-  created () {
-    this.setActive()
   }
 }
 </script>

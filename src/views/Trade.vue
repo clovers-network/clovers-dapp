@@ -84,6 +84,13 @@ import WaveyMenu from '@/components/Icons/WaveyMenu'
 
 export default {
   name: 'Trade',
+  props: {
+    market: {
+      type: String,
+      default: 'ClubToken'
+    },
+    sharesOwnedWei: String
+  },
   data () {
     return {
       max: 100,
@@ -98,13 +105,6 @@ export default {
   head: {
     title: { inner: 'Trade' },
     meta: [{ name: 'description', content: 'Exchange Ether for Clovers Coins', id: 'meta-desc' }]
-  },
-  props: {
-    market: {
-      type: String,
-      default: 'ClubToken'
-    },
-    sharesOwnedWei: String
   },
   watch: {
     'orders.length' () {
@@ -135,11 +135,6 @@ export default {
     },
     currencies () {
       return this.currentToken === 'Share' ? 'Shares' : 'Coins (♣︎)'
-    },
-    priceInCollateral () {
-      if (!this.orders.length) return new BigNumber(0)
-      let recent = this.orders[0]
-      return new BigNumber(recent.value).div(new BigNumber(recent.tokens))
     },
     priceInEth () {
       if (this.marketContract === 'CurationMarket') {
@@ -177,7 +172,7 @@ export default {
     },
 
     ...mapState(['ethPrice', 'clubTokenPrice', 'orders']),
-    ...mapGetters(['userBalance', 'prettyUserBalance'])
+    ...mapGetters(['userBalance', 'prettyUserBalance', 'priceInCollateral'])
   },
   methods: {
     switchMax () {

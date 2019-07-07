@@ -8,8 +8,8 @@
 import CloverItem from '@/components/CloverItem--Card'
 
 export default {
-  name: 'CloverList--Cards',
-  props: ['clovers'],
-  components: { CloverItem }
+  name: 'CloverListCards',
+  components: { CloverItem },
+  props: ['clovers']
 }
 </script>

@@ -84,6 +84,7 @@ import NewsletterSignup from '@/components/NewsletterSignup'
 
 export default {
   name: 'Welcome',
+  components: { DotBtn, NewsletterSignup },
   data () {
     return {
       interval: null,
@@ -176,8 +177,7 @@ export default {
     scrollTo () {
       this.$refs.wide.scrollLeft = this.$refs.wide.scrollWidth / 2 - this.$el.offsetWidth / 2
     }
-  },
-  components: { DotBtn, NewsletterSignup }
+  }
 }
 /**
  * Shuffles array in place. ES6 version

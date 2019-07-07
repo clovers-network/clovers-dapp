@@ -4,27 +4,27 @@
       <div class="max-width-3 mx-auto">
         <a
           :class="{small: address.length > 35}"
+          :href="'https://rinkeby.etherscan.io/token/0xcc0604514f71b8d39e13315d59f4115702b42646?a=' + address"
           class="  white underline"
-          target="_blank"
-          :href="'https://rinkeby.etherscan.io/token/0xcc0604514f71b8d39e13315d59f4115702b42646?a=' + address">{{ address }}</a>
-        <div class='h1 right'>{{ balanceFormatted }} ♧</div>
+          target="_blank">{{ address }}</a>
+        <div class="h1 right">{{ balanceFormatted }} ♧</div>
       </div>
     </div>
     <div class="p3 max-width-3 mx-auto">
       <template v-if="mine">
         <form
-          class='border-bottom fit'
+          class="border-bottom fit"
           @submit.prevent="changeName()">
           <input
-            class='input big fit'
+            v-model="name"
+            class="input big fit"
             type="text"
-            placeholder="Name"
-            v-model="name">
+            placeholder="Name">
         </form>
       </template>
       <template v-else>
         <p
-          class='h1'
+          class="h1"
           v-html="name"/>
       </template>
     </div>

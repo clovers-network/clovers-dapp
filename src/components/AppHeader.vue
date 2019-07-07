@@ -1,7 +1,7 @@
-<template lang="pug">
+ <template lang="pug">
   header.sticky.top-0.z2(:class="{'bg-white green': !showMenu, 'white': showMenu}")
     //- top bar
-    .relative.z2.h-header.flex.items-center
+    .relative.z2.h-header.flex.items-center(:class="{'border-bottom': !showMenu}")
       //- left col
       .col-4.flex.pl2.items-center
         //- desktop menu
@@ -43,7 +43,7 @@
           person-icon(:class="!authHeader && 'red'")
           .chevron
         account-menu(@close-account-menu="closeAccountMenu" v-click-outside="closeAccountMenu" v-if="accountMenu")
-        pig-menu(@closepigmenu="closePigMenu" v-click-outside="closePigMenu" v-if="pigMenu" :mining="mining" @triggerpig="triggerPig")
+        pig-menu(@closePigMenu="closePigMenu" v-click-outside="closePigMenu" v-if="pigMenu" )
     //- nav
     .absolute.z1.h-100vh.col-12.bg-green.top-0.left-0.flex.flex-column.justify-between.center(v-show='showMenu')
       .h-header
@@ -60,7 +60,7 @@
                 span Log
                 span.circle.bg-orange.absolute(v-if="newLogs" style="width:14px;height:14px")
         .px2
-          pig(@minerstatus="mining = $event" @viewpicks="viewPicks" ref="pig")
+          pig
 </template>
 
 <script>
@@ -78,7 +78,6 @@ export default {
   name: 'AppHeader',
   data () {
     return {
-      mining: false,
       showMenu: false,
       pigMenu: false,
       accountMenu: false,
@@ -86,6 +85,9 @@ export default {
     }
   },
   computed: {
+    mining () {
+      return this.miners.length > 0
+    },
     title () {
       return this.$route.meta.title || 'Clovers'
     },
@@ -102,6 +104,7 @@ export default {
     prettyUserBalance () {
       return this.user.address ? toDec(this.userBalance) : '-'
     },
+    ...mapState(['miners']),
     ...mapGetters(['user', 'userBalance', 'pickCount', 'authHeader'])
   },
   watch: {
@@ -119,9 +122,6 @@ export default {
     window.removeEventListener('keyup', this.checkEsc)
   },
   methods: {
-    triggerPig () {
-      this.$refs.pig.togglePig()
-    },
     pigMenuToggle () {
       this.pigMenu = !this.pigMenu
     },

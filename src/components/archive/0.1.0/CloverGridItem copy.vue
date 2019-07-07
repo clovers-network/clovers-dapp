@@ -29,9 +29,6 @@ import { mapState, mapGetters } from 'vuex'
 import moment from 'moment'
 export default {
   name: 'CloverGridItem',
-  data () {
-    return {}
-  },
   props: {
     board: {
       type: Object,
@@ -41,6 +38,9 @@ export default {
       type: Boolean,
       default: false
     }
+  },
+  data () {
+    return {}
   },
   computed: {
     boardName () {
