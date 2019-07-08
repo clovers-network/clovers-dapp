@@ -8,11 +8,12 @@
 
       .px3.pb3
         .mb3.center
-          .inline-block.circle.shadow
+          .inline-block.circle
             img(:src="displayImage" width="196" height="196")
 
         form.m0(@submit.prevent="updateName")
-          input#uname.border.py2.px2.rounded.col-12.input(v-model="form.name" autocomplete="off" placeholder="Edit username")
+          label.block.mb2.h5.center Change user name
+          input#uname.border.py2.px2.rounded.col-12.input(v-model="form.name" autocomplete="off" placeholder="Edit username" v-autofocus="true")
 
           .pt3.center
             input.pointer.py2.px3.rounded.bg-green.white(type="submit" value="Save" :disabled="!changed")

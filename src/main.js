@@ -18,8 +18,6 @@ import Clv from '@/components/Clv'
 // import './registerServiceWorker'
 // import ZeroClientProvider from 'web3-provider-engine/zero.js'
 
-import autofocus from 'vue-autofocus-directive'
-
 // global.ens = new ENS(global.web3.currentProvider)
 import Web3Connect from 'web3connect'
 
