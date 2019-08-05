@@ -13,7 +13,7 @@
   "dependencies": {
     "@portis/web3": "^2.0.0-beta.24",
     "animate.css": "^3.7.0",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "basscss-addons": "^1.0.0",
     "basscss-align": "^1.0.2",
     "basscss-border": "^4.0.2",
