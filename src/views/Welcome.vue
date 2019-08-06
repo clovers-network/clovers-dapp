@@ -33,7 +33,7 @@
         :to="{ name: 'Market' }")
         h2.h2.green.font-exp The Market
         img.p3(src="/img/feed.svg")
-        .px3.py2.black This is where Clovers are bought & sold for Club Token.
+        .px3.py2.black This is where Clovers are bought & sold for Clover Coins.
       router-link.block.mb3(
         :to="{ name: 'Market' }")
           dot-btn.mb3(
@@ -43,13 +43,13 @@
       hr
       router-link.block.mb3(
         :to="{ name: 'Account/Trade' }")
-        h2.h2.green.font-exp Club Tokens
+        h2.h2.green.font-exp Clover Coins
         img.p3(src="/img/club.svg")
-        .px3.py2.black Earn Club Tokens by finding or selling Clovers. <br> Redeem Club Tokens for Ether straight from your account page.
+        .px3.py2.black Earn Clover Coins by finding or selling Clovers. <br> Redeem Clover Coins for Ether straight from your account page.
       router-link.block.mb3(
         :to="{ name: 'Account/Trade' }")
           dot-btn.mb3(
-            label="Get Club Tokens"
+            label="Get Clover Coins"
             text="white"
             bg="green")
       hr

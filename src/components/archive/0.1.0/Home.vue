@@ -15,7 +15,7 @@
               target="_blank">Reversi</a> as Proof-of-Work and rewarded in ERC20 <a
                 href="https://rinkeby.etherscan.io/token/0xcc0604514f71b8d39e13315d59f4115702b42646"
                 target="_blank"
-                class="white underline">Club Tokens</a>.
+                class="white underline">Clover Coins</a>.
           <br><small>(V2 with <a
             class="white underline"
             target="_blank"

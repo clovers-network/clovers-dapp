@@ -50,9 +50,9 @@
             wavey-menu.m-auto(v-else :isWhite="false")
           small.border-top.center.p2.block.h6.bg-white.pointer(v-show="!view" @click="view='transfer'") Transfer
           .bg-green.flex.white.font-exp.h-bttm-bar.justify-center(v-show="!view")
-            button.col-6.flex.border-right.pointer(@click="view = 'sell'")
+            button.col-12.flex.border-right.pointer(@click="view = 'sell'")
               span.block.m-auto {{showSalePrice ? 'Change Price' : 'Sell'}}
-            button.col-6.flex.pointer(@click="view = 'RFT'")
+            //- button.col-6.flex.pointer(@click="view = 'RFT'")
               span.block.m-auto RFT
           //- transferView
           .bg-green.white(v-show="view === 'transfer'")
@@ -77,7 +77,7 @@
               span(v-if="!loading").block.m-auto.font-exp Confirm
               wavey-menu.m-auto(v-else :isWhite="true")
           //- make RFT view
-          .bg-green.white(v-show="view === 'RFT'")
+          //- .bg-green.white(v-show="view === 'RFT'")
             .p3
               .pb3.font-exp.center Make Public
               p.mb3.h5(:class="{center: showSalePrice}") Relinquish ownership and convert this clover into a publicly tradable asset.

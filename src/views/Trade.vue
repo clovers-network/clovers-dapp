@@ -96,7 +96,7 @@ export default {
   },
   head: {
     title: { inner: 'Trade' },
-    meta: [{ name: 'description', content: 'Exchange Ether for Clovers Club Tokens', id: 'meta-desc' }]
+    meta: [{ name: 'description', content: 'Exchange Ether for Clovers Coins', id: 'meta-desc' }]
   },
   props: {
     market: {
@@ -133,7 +133,7 @@ export default {
       return this.currentToken === 'Share' ? 'Shares' : '♣︎'
     },
     currencies () {
-      return this.currentToken === 'Share' ? 'Shares' : 'Club Tokens (♣︎)'
+      return this.currentToken === 'Share' ? 'Shares' : 'Clover Coins'
     },
     priceInCollateral () {
       if (!this.orders.length) return new BigNumber(0)

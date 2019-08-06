@@ -63,7 +63,7 @@
           move-string="F5D6C3F4F6D3F3B3C6B6D7E8C4C5B5B4C7D8A5E3C8B8E7A4A6F7F2E6E2D2A3G6C2G5H5D1E1B2A1B1C1B7A8H4H3G4F8A2H6G3G2G1F1G8H8A7H1H2G7H7"/><div class="mt2">Horizontal + Vertical</div></div>
         <div class="mx4 ">600 ♧</div>
       </div>
-      <div class="my4 pb4">When you have successfuly mined a Clover, you can claim it on the blockchain and you will be compensated Club Tokens based on its rarity.</div>
+      <div class="my4 pb4">When you have successfuly mined a Clover, you can claim it on the blockchain and you will be compensated Clover Coin based on its rarity.</div>
       <div class="my4">When claiming your Clover, you can also choose its starting price on the <span class="underline">Flip Market</span></div>
     </div>
     <div class="bg-dark-gray white px2 py4 zig-zag-white relative ">

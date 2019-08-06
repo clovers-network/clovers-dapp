@@ -96,17 +96,17 @@ export default {
       return this._reversi && this._reversi.error
     },
     keepValue () {
-      // in club tokens
+      // in clover coins
       return this.value ? toDec(fromWei(this.value.toString(10))) : '...'
     },
     sellValue () {
-      // in club tokens
+      // in clover coins
       return this.reward ? toDec(fromWei(this.reward.toString(10))) : '...'
     },
     infoText () {
       return this.action === 'keep'
         ? 'Your Clover is being submitted to the Contract. Once the Clover is verified by our Oracle, you will be confirmed as the owner.'
-        : 'This reward is based on the rarity of the Clover. The Contract will buy this from you with Club Token (♣). Once the Oracle has verified the Clover you will receive the payout.'
+        : 'This reward is based on the rarity of the Clover. The Contract will buy this from you with Clover Coins. Once the Oracle has verified the Clover you will receive the payout.'
     },
     isSaved () {
       if (!this.picks.length) return false
