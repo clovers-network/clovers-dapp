@@ -63,7 +63,7 @@ export default {
 .sm-height {
   line-height: 2.6rem;
   height: 2.6rem;
-  max-width: 9rem;
+  max-width: 10rem;
 }
 .mtn1 {
   margin-top:-1px;

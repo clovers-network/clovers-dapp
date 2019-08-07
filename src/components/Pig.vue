@@ -1,18 +1,18 @@
-\
 <template lang="pug">
-  div
-    .py3
-      nav
-        h6.center.h3 Clover Pig
-        toggle-btn.mx-auto.my3(:active="minerOn"  theme="white"  @click="togglePig" @swiperight="togglePig()" @swipeleft="togglePig()")
-        .flex.justify-between.items-center
-          .col-6.px2.h3
-            div Speed
-            .font-exp.mt1 {{ hashrate }}/s
-          .col-6.px2.h3(:class="mined !== 0 ? 'pointer' : ''" @click="$emit('viewPicks')")
-            .nowrap Rare Clovers
-            .font-exp.mt1 {{ symms }}
-            .h7.pt1 ~ {{ mined.toLocaleString() }} mined
+  nav
+    h6.center.h4 Pig
+    toggle-btn.mx-auto.my3(:small="true", :active="minerOn"  theme="white"  @click="togglePig" @swiperight="togglePig()" @swipeleft="togglePig()")
+    .flex
+      .col-4.px2
+        .h6 Speed
+        .h5.font-exp.mt1 {{ hashrate }}/s
+      .col-4.px2
+        .h6 Searched
+        .h5.font-exp.mt1 {{ mined.toLocaleString() }}
+      .col-4.px2(:class="mined !== 0 ? 'pointer' : ''" @click="$emit('viewPicks')")
+        .h6.nowrap Found
+        .h5.font-exp.mt1 {{ newSyms.length }}
+          //- .h7.pt1 ~ {{ mined.toLocaleString() }} mined
 </template>
 
 <script>
@@ -29,12 +29,9 @@ export default {
     return {}
   },
   computed: {
-    ...mapState(['hashrate', 'miners', 'mined']),
+    ...mapState(['hashrate', 'miners', 'mined', 'newSyms']),
     minerOn () {
       return this.miners.length > 0
-    },
-    symms () {
-      return this.$store.state.miningStats.symms
     }
   },
   methods: {

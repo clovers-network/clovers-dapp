@@ -55,20 +55,22 @@
     //- nav
     .absolute.z1.h-100vh.col-12.bg-green.top-0.left-0.flex.flex-column.justify-between.center(v-show='showMenu')
       .h-header
-        nav.flex-auto.flex.items-center.justify-center(@click="showMenu = !showMenu")
-          ul.h1.list-reset
-            li.mt1
-              router-link(:to="{ name: 'Welcome' }" exact) Welcome
-            li.mt1
-              router-link(:to="{ name: 'Market' }") Feed
-            li.mt1
-              router-link(:to="{ name: 'Field' }") Garden
-            li.mt1
-              router-link.relative(:to="{ name: 'Activity' }")
-                span Log
-                span.circle.bg-orange.absolute(v-if="newLogs" style="width:14px;height:14px")
-        .px2
-          pig
+      nav.flex-auto.flex.items-center.justify-center(@click="showMenu = !showMenu")
+        ul.h2.list-reset
+          li.mt1
+            //- router-link(:to="{ name: 'Welcome' }" exact) Welcome
+            router-link(:to="{name: 'Account'}") Dashboard
+          li.mt1
+            router-link(:to="{ name: 'Market' }") Feed
+          li.mt1
+            router-link(:to="{ name: 'Field' }") Garden
+          //- li.mt1
+            router-link(:to="{name: 'Learn'}") Learn
+          li.mt1
+            router-link.relative(:to="{ name: 'Activity' }")
+              span Log <sup v-if="newLogs">{{newLogs}}</sup>
+              //- span.circle.bg-orange.absolute(v-if="newLogs" style="width:8px;height:8px")
+      pig.mt3.pb4(@viewPicks="$router.push({name: 'Picks'})")
 </template>
 
 <script>
@@ -116,6 +118,9 @@ export default {
     ...mapGetters(['user', 'userBalance', 'pickCount', 'authHeader'])
   },
   watch: {
+    '$route' () {
+      this.showMenu = false
+    },
     symms () {
       this.showBadge = true
     },
@@ -174,12 +179,12 @@ export default {
     color: white;
     font-size: var(--small-font-size);
   }
-  nav {
+/*  nav {
     & .router-link-active,
     & .nav__account-link--active{
       text-decoration: underline;
     }
-  }
+  }*/
   #personToggle.select:after {
     top:0px;
   }
