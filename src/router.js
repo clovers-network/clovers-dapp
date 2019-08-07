@@ -35,7 +35,7 @@ export default new Router({
       path: '/garden',
       name: 'Garden',
       component: Field,
-      meta: { title: 'Your Garden' }
+      meta: { title: 'Garden' }
     },
     {
       path: '/feed',

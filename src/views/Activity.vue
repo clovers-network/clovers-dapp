@@ -1,5 +1,5 @@
 <template lang="pug">
-  div
+  .mx2.sm-mx3
     .mt4.mb2
       .flex.left-align.justify-end
         .pt2.pb2.flex-auto.left-align
