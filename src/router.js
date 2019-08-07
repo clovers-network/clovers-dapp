@@ -48,12 +48,6 @@ export default new Router({
     {
       path: '/learn',
       name: 'Learn',
-      template: '<div>Learn</div>'
-    },
-
-    {
-      path: '/learn',
-      name: 'Learn',
       component: Learn
     },
 

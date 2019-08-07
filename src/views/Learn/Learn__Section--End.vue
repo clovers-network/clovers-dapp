@@ -17,14 +17,12 @@ export default {
     DownArrowBtn
   },
   mounted () {
-    console.log('mounted')
     updateLocal()
   }
 }
 
 function updateLocal (key = 'first-visit', value = true) {
   if (!window.localStorage) return
-  console.log({key, value})
   window.localStorage.setItem(key, JSON.stringify(value))
 }
 
