@@ -1,5 +1,5 @@
 <template lang="pug">
-  .div.pt4.overflow-hidden
+  .div.pt4.overflow-hidden.border-right.border-left
     h1.h1.center.green.font-exp.strong.pb3.flex
       //- span.col-6.align-right.cloverVerb.relative
         transition(
@@ -21,19 +21,31 @@
               :noMoves="true"
               :autoPlay="i == 2"
               :moveString="c")
-      .px3.py2.h2.black Discover, collect & trade cryptographic icons
-      //- router-link.block.my3(
-        :to="{ name: 'Activity' }")
+      .px3.py2.h2 Discover, collect & trade cryptographic icons
+      router-link.block.my3(
+        :to="{ name: 'Learn' }")
           dot-btn.mb3(
-            label="See the Latest Activity"
+            label="Get Started"
+            text="white"
+            bg="green")
+      hr
+      router-link.block.mb3(
+        :to="{ name: 'Garden' }")
+        h2.h2.green.font-exp The Garden
+        img.p3(src="/img/cloud-face-animated.svg")
+        .px3.py2 This is where Clovers grow.<br>(Super-charge your search with the Clover Pig)
+      router-link.block.mb3(
+        :to="{ name: 'Garden' }")
+          dot-btn.mb3(
+            label="Pick Some Clovers!"
             text="white"
             bg="green")
       hr
       router-link.block.mb3(
         :to="{ name: 'Feed' }")
-        h2.h2.green.font-exp The Market
+        h2.h2.green.font-exp The Feed
         img.p3(src="/img/feed.svg")
-        .px3.py2.black This is where Clovers are bought & sold for Coin.
+        .px3.py2 Buy, Sell & Browse other peoples Clovers
       router-link.block.mb3(
         :to="{ name: 'Feed' }")
           dot-btn.mb3(
@@ -41,41 +53,31 @@
             text="white"
             bg="green")
       hr
-      router-link.block.mb3(
-        :to="{ name: 'Trade' }")
-        h2.h2.green.font-exp Coins
-        img.p3(src="/img/club.svg")
-        .px3.py2.black Earn Coins by finding or selling Clovers. <br> Redeem Coins for Ether straight from your account page.
-      router-link.block.mb3(
-        :to="{ name: 'Trade' }")
-          dot-btn.mb3(
-            label="Get Coins"
-            text="white"
-            bg="green")
-      hr
-      router-link.block.mb3(
-        :to="{ name: 'Field' }")
-        h2.h2.green.font-exp The Field
-        img.p3(src="/img/cloud-face-animated.svg")
-        .px3.py2.black This is where Clovers grow.<br>(Super-charge your search with the Clover Pig)
-      router-link.block.mb3(
-        :to="{ name: 'Field' }")
-          dot-btn.mb3(
-            label="Pick Some Clovers"
-            text="white"
-            bg="green")
-      hr
+      //- router-link.block.mb3(
+      //-   :to="{ name: 'Trade' }")
+      //-   h2.h2.green.font-exp Coins
+      //-   img.p3(src="/img/club.svg")
+      //-   .px3.py2 Earn Coins by finding or selling Clovers. <br> Redeem Coins for Ether straight from your account page.
+      //- router-link.block.mb3(
+      //-   :to="{ name: 'Trade' }")
+      //-     dot-btn.mb3(
+      //-       label="Get Coins"
+      //-       text="white"
+      //-       bg="green")
+      //- hr
       h2.h2.green.font-exp Newsletter
       img.p3(src="/img/letter.svg")
-      .px3.py2.black Sign up for our newsletter or email us at #[u #[a(target="_blank" href="mailto:info@clovers.network") info@clovers.network]].
+      .px3.py2 Sign up for our newsletter or email us at #[u #[a(target="_blank" href="mailto:hello@clovers.network") hello@clovers.network]].
       newsletter-signup
       hr
       h2.h2.green.font-exp Community
       img.p3(src="/img/github.svg")
-      .px3.py2.black
-        | Clovers is an open source project by #[u #[a(target="_blank" href="//bin.am") Bin Studio]].<br>
-        | You can #[u #[a(target="_blank" href="//github.com/clovers-network") find us on Github]].<br>
-    h1.bg-green.white.h1.center.py4 #[a(target="_blank" href="//rinkeby.etherscan.io/token/0x8a0011ccb1850e18a9d2d4b15bd7f9e9e423c11b") ♣&#xFE0E;]
+      .px3.py2
+        | Clovers is an open source project built by #[u #[a(target="_blank" href="//bin.am") Bin Studio]].<br>
+        | You can find us on #[u #[a(target="_blank" href="//github.com/clovers-network") Github]],
+        | our #[u #[a(target="_blank" href="//forum.clovers.network") Forum]],
+        | our #[u #[a(target="_blank" href="//twitter.com/cloversnetwork") Twitter]] and
+        | #[u #[a(target="_blank" href="//t.me/cloversnetwork") Telegram]],
 </template>
 
 <script>

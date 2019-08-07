@@ -4,7 +4,7 @@
     header.absolute.overlay.flex.items-center.justify-center
       h2.font-exp.h2 Have Fun!
     footer.absolute.bottom-0.left-0.w-100.flex.justify-center(style='padding-bottom:18vh')
-      router-link.block.border.rounded.h4.font-ext.px4.flex.items-center(:to="{name: 'Field'}", style="height:2.7em") Go to Garden
+      router-link.block.border.rounded.h4.font-ext.px4.flex.items-center(:to="{name: 'Garden'}", style="height:2.7em") Go to Garden
 </template>
 
 <script>

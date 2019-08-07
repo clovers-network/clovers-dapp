@@ -22,7 +22,7 @@ const clover = new Reversi()
 const scrollEl = document.scrollingElement
 
 export default {
-  name: 'Field',
+  name: 'Garden',
   data () {
     return {
       limiter: new Bottleneck({

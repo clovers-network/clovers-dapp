@@ -21,23 +21,27 @@ Vue.use(Router)
 export default new Router({
   mode: 'history',
   routes: [
-    // {
-    //   path: '/',
-    //   name: 'Welcome',
-    //   component: Welcome,
-    //   meta: { title: '' }
-    // },
-    {
-      path: '/field',
-      name: 'Field',
-      component: Field,
-      meta: { title: 'Pick Clovers' }
-    },
     {
       path: '/',
+      name: 'Welcome',
+      component: Welcome,
+      meta: { title: '' }
+    },
+    {
+      path: '/welcome',
+      redirect: '/'
+    },
+    {
+      path: '/garden',
+      name: 'Garden',
+      component: Field,
+      meta: { title: 'Your Garden' }
+    },
+    {
+      path: '/feed',
       name: 'Feed',
       component: Feed,
-      meta: { title: 'Feed' }
+      meta: { title: 'The Feed' }
     },
 
     {
@@ -59,7 +63,7 @@ export default new Router({
       meta: { title: 'Account' }
     },
     {
-      path: '/account/picks',
+      path: '/account/basket',
       name: 'Picks',
       component: Picks,
       meta: { title: 'Your Basket' }
@@ -68,7 +72,7 @@ export default new Router({
       path: '/account/clovers',
       name: 'Account/Clovers',
       component: User,
-      meta: { title: 'My Clovers' }
+      meta: { title: 'Your Clovers' }
     },
 
     {

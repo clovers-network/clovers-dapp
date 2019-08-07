@@ -61,7 +61,7 @@ export default {
           this.text = 'Clovers with symmetry are rare. <br class="hide sm-show">If you find one, you can claim a reward!'
           break
         case 2:
-          this.text = 'This clover is worth <b>' + this.cleanReward + ' clover coins</b>.<br class="hide sm-show">You can use these coins to buy clovers, or exchange them for Ether (ETH).'
+          this.text = 'This clover is currently worth <b>' + this.cleanReward + ' clover coins</b>.<br class="hide sm-show">You can use these coins to buy other clovers, or exchange them for Ether (ETH).'
           break
       }
     },

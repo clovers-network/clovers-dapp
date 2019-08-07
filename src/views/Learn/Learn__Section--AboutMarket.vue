@@ -1,6 +1,6 @@
 <template lang="pug">
   about(v-on="$listeners")
-    h3(slot="header") And you can sell them in the <b>Market</b>
+    h3(slot="header") Now you could sell it in the <b>Market</b>
     img.block(slot="graphic", src="./imgs/market.svg", style="height:70vh;max-height:80vw;max-width:none")
 </template>
 

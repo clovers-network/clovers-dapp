@@ -3,9 +3,11 @@
     img.absolute.top-0.left-0.h-100.w-100(src="./learn-bg-clovers.svg", style="object-fit:cover")
     header.absolute.overlay.flex.items-center.justify-center
       .center
-        h1.font-exp.h1.mb3 Clovers
-        h6.font-reg.h3 Discover, collect and trade<br>computer-generated pictographs
-        router-link.h6.mt4(:to="{name:'Feed'}" @click="setVisited") (or click here to skip the tutorial)
+        h1.font-exp.h1.mb3 Clovers is a game
+        h6.font-reg.h3 You're job is to search 🔎<br>With luck, you'll find fame 😎 glory 🙌 and riches 💰
+        br
+        br
+        router-link(:to="{name:'Feed'}" @click="setVisited") If you'd like to <u>skip this intro</u> you can always come back
     down-arrow-btn(v-on="$listeners")
 </template>
 
