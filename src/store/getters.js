@@ -47,7 +47,7 @@ export default {
     if (typeof user === 'string') {
       return cloverImage(user || '0', size)
     }
-    const str = user.image || userName(user, false)
+    const str = user.image || user.address // || userName(user, false)
     return cloverImage(str || '0', size)
   },
   sortedClovers ({ sortBy, feedFilter, allClovers }, { curationMarketAddress }) {

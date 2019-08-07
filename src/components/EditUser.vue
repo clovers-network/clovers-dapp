@@ -13,7 +13,8 @@
 
         form.m0(@submit.prevent="updateName")
           label.block.mb2.h5.center Change user name
-          input#uname.border.py2.px2.rounded.col-12.input(v-model="form.name" autocomplete="off" placeholder="Edit username" v-autofocus="true")
+          input.border.p2.rounded.col-12.input(v-model="form.name" autocomplete="off" placeholder="Edit username" v-autofocus="true")
+          input.mt2.border.p2.rounded.col-12.input(v-model="form.image" autocomplete="off" placeholder="Type to edit image")
 
           .pt3.center
             input.pointer.py2.px3.rounded.bg-green.white(type="submit" value="Save" :disabled="!changed")
@@ -28,7 +29,11 @@ export default {
   data () {
     return {
       saving: false,
-      form: { name: null }
+      form: {
+        address: null,
+        name: null,
+        image: null
+      }
     }
   },
   computed: {
@@ -39,10 +44,11 @@ export default {
       return !!this.$store.getters.authHeader
     },
     displayImage () {
-      return this.userImage(this.form.name, 196)
+      return this.userImage(this.form, 196)
     },
     changed () {
-      return this.form.name !== this.userName(this.user)
+      return this.form.name !== this.userName(this.user) ||
+        this.form.image !== this.user.image
     },
 
     ...mapGetters(['user', 'userName', 'userImage'])
@@ -58,7 +64,8 @@ export default {
       if (!this.changed) return
       this.changeUsername({
         address: this.user.address,
-        name: this.form.name
+        name: this.form.name,
+        image: this.form.image
       }).then(() => {
         this.cancel()
       })
@@ -70,7 +77,9 @@ export default {
     ...mapActions(['changeUsername'])
   },
   beforeMount () {
+    this.form.address = this.user.address
     this.form.name = this.userName(this.user)
+    this.form.image = this.user.image || null
   },
   mounted () {
     window.addEventListener('keyup', this.checkEsc)
