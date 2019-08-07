@@ -1,5 +1,5 @@
 <template lang="pug">
-  .green
+  .mx3.green
     more-information(title="?" content="<u>The Feed</u> is where all registerd Clovers can be found. You can use filters to see all the different types of symmetry, which Clovers are popular and have lots of comments or which ones are currently for sale and for how much.")
     .mt4.mb2
       .flex.left-align.justify-end

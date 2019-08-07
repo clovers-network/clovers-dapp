@@ -1,7 +1,7 @@
  <template lang="pug">
   header.sticky.top-0.z2(:class="{'bg-white green': !showMenu, 'white': showMenu}")
     //- top bar
-    .relative.z2.h-header.flex.items-center(:class="{'border-bottom': !showMenu}")
+    .relative.z2.h-header.flex.items-center.justify-between(:class="{'md-border-bottom': !showMenu}")
       //- left col
       .col-4.flex.pl2.items-center
         //- desktop menu
@@ -12,9 +12,9 @@
           router-link.pr2(:to="{name: 'Learn'}") Learn
           router-link.pr2(:to="{name: 'Activity'}") Activity
         //- menu btn
-        button#mobileMenu.menu-btn.pointer.relative.py2.pr2(v-if='!showBackButton' @click='showMenu = !showMenu' aria-label='Toggle Menu')
-          wavey-btn(v-show='mining' :is-white='showMenu')
-          img.block(v-show='!mining' :src="showMenu\
+        button#mobileMenu.menu-btn.pointer.relative.py2.pr2(@click='showMenu = !showMenu' aria-label='Toggle Menu')
+          wavey-btn(v-show='mining', :is-white='showMenu')
+          img.block(v-show='!mining', :src="showMenu\
             ? require('../assets/icons/hamburger-white.svg')\
             : require('../assets/icons/hamburger.svg')")
           span(@click.stop='')
@@ -24,48 +24,58 @@
                   | {{ symms }}
 
       //- title
-      h1.font-exp.h3.col-4.py1.center
+      h1.hidden.md-block.font-exp.h3.col-4.py1.center
         span.nowrap.pointer(@click='showMenu = showBackButton ? showMenu : !showMenu')
           | {{showMenu ? &apos;Clovers&apos; : $route.meta.title}}
       //- right col
-      #accountHeader.col-4.flex.justify-end.items-center
-        //- account btn
-        .flex.items-center.pointer.px1.border.rounded-left.lh1(@click='pigMenuToggle')
-          span.border.mr1.inline-block(style='border-radius:100%; width:13px; height:13px;')
-            span.block(:class="mining && 'bg-currentColor throb'" style='border-radius:100%; width: 13px; height: 13px; margin-top: -1px; margin-left: -1px;')
-          span PIG
-        router-link.block.flex.items-center.pointer.pr1.border-top.border-bottom.border-right(:to="{name: 'Picks'}")
-          cart-icon.mx1
-          span {{pickCount}}
-        router-link.flex.pr1.items-center.border-top.border-bottom(:to="{name: 'Trade'}")
-          coin-icon.mx1(style="padding-bottom:2px")
-          span(style='') {{prettyUserBalance}}
-        #personToggle.mr3.flex.items-center.p1.pointer.border.rounded-right(@click="accountMenuToggle")
-          person-icon(:class="!authHeader && 'red'")
-          .chevron
-        account-menu(@close-account-menu="closeAccountMenu" v-click-outside="closeAccountMenu" v-if="accountMenu")
-        pig-menu(@closePigMenu="closePigMenu" v-click-outside="closePigMenu" v-if="pigMenu" )
-    //- nav
+      #accountHeader.col-4.flex.justify-end
+        .border.rounded.flex.items-center.mr2.md-mr3
+          //- btn: pig
+          .relative.border-right.hidden.sm-block
+            .h-nav-btn.h6.sm-h5.px2.flex.items-center.pointer.lh1(@click='pigMenuToggle')
+              //- dot
+              span.border.mr1.inline-block(style='border-radius:100%; width:13px; height:13px;')
+                span.block(:class="mining && 'bg-currentColor throb'" style='border-radius:100%; width: 13px; height: 13px; margin-top: -1px; margin-left: -1px;')
+              span PIG
+            //- menu dropdown
+            pig-menu(@closePigMenu="closePigMenu" v-click-outside="closePigMenu" v-if="pigMenu" )
+          //- btn: picks
+          router-link.h-nav-btn.h6.sm-h5.px2.flex.items-center.pointer(:to="{name: 'Picks'}")
+            cart-icon.mr1
+            span {{pickCount}}
+          //- btn: tokens
+          router-link.h-nav-btn.h6.sm-h5.flex.px1.items-center.border-left(:to="{name: 'Trade'}", v-show="prettyUserBalance !== '-'")
+            coin-icon.mr1(style="padding-bottom:4px")
+            span {{prettyUserBalance}}
+          //- bnt: account
+          .relative
+            #personToggle.h-nav-btn.h6.sm-h5.pl2.pr1.flex.items-center.pointer.border-left(@click="accountMenuToggle")
+              person-icon(:class="!authHeader && 'red'")
+              .chevron
+            account-menu(@close-account-menu="closeAccountMenu" v-click-outside="closeAccountMenu" v-if="accountMenu")
+    //- (mobile page title)
+    h1.md-hide.h1.font-exp.mt3.pl2(v-if="$route.meta.title") {{$route.meta.title}}
+    //- nav overlay
     .absolute.z1.h-100vh.col-12.bg-green.top-0.left-0.flex.flex-column.justify-between.center(v-show='showMenu')
       .h-header
-        nav.flex-auto.flex.items-center.justify-center(@click="showMenu = !showMenu")
-          ul.h1.list-reset
-            li.mt1
-              router-link(:to="{ name: 'Welcome' }" exact) Welcome
-            li.mt1
-              router-link(:to="{ name: 'Dashboard' }" exact) Dashboard
-            li.mt1
-              router-link(:to="{ name: 'Feed' }") Feed
-            li.mt1
-              router-link(:to="{ name: 'Garden' }") Garden
-            li.mt1
-              router-link(:to="{ name: 'Learn' }") Learn
-            li.mt1
-              router-link.relative(:to="{ name: 'Activity' }")
-                span Activity
-                span.circle.bg-orange.absolute(v-if="newLogs" style="width:14px;height:14px")
-        .px2
-          pig
+      nav.flex-auto.flex.items-center.justify-center.pb1
+        ul.h2.list-reset
+          li
+            router-link.inline-block.p1(:to="{ name: 'Welcome' }" exact) Welcome
+          li
+            router-link.inline-block.p1(:to="{ name: 'Feed' }") Feed
+          li
+            router-link.inline-block.p1(:to="{ name: 'Garden' }") Garden
+          li
+            router-link.inline-block.p1(:to="{name: 'Learn'}") Learn
+          li
+            router-link.inline-block.p1.relative(:to="{ name: 'Activity' }")
+              span Activity <sup v-if="newLogs">{{newLogs}}</sup>
+              //- span.circle.bg-orange.absolute(v-if="newLogs" style="width:8px;height:8px")
+          //- li
+            router-link.inline-block.p1(:to="{name: 'Account'}") Dashboard
+      .sm-hide.border.rounded.m2
+        pig.py3.mb1(@viewPicks="$router.push({name: 'Picks'})")
 </template>
 
 <script>
@@ -113,6 +123,9 @@ export default {
     ...mapGetters(['user', 'userBalance', 'pickCount', 'authHeader'])
   },
   watch: {
+    '$route' () {
+      this.showMenu = false
+    },
     symms () {
       this.showBadge = true
     },
@@ -122,6 +135,7 @@ export default {
   },
   mounted () {
     window.addEventListener('keyup', this.checkEsc)
+    window.addEventListener('resize', () => { this.showMenu = false })
   },
   destroyed () {
     window.removeEventListener('keyup', this.checkEsc)
@@ -171,19 +185,19 @@ export default {
     color: white;
     font-size: var(--small-font-size);
   }
-  nav {
+/*  nav {
     & .router-link-active,
     & .nav__account-link--active{
       text-decoration: underline;
     }
-  }
+  }*/
   #personToggle.select:after {
     top:0px;
   }
-  #accountHeader > div:not(#accountMenu):not(#pigMenu),
+  /*#accountHeader > div:not(#accountMenu):not(#pigMenu),
   #accountHeader > a {
-    height: 30px;
-  }
+    height: 25px;
+  }*/
   .chevron {
     width:10px;
     height:10px;

@@ -63,23 +63,23 @@ export default {
 </script>
 <style lang="css" scoped>
  #accountMenu {
-    top: 65px;
-    right: 20px;
+    top: 50px;
+    right: 0px;
     width: 200px;
   }
   #accountMenu:before,
   #accountMenu:after {
-        content: '';
-        width:0px;
-        height:0px;
-        border:13px solid transparent;
-        border-bottom: 10px solid var(--green);
-        position:absolute;
-        top:-23px;
-        right:15px;
+    content: '';
+    width:0px;
+    height:0px;
+    border:13px solid transparent;
+    border-bottom: 10px solid var(--green);
+    position:absolute;
+    top:-23px;
+    right:15px;
   }
   #accountMenu:after {
-      border-bottom: 10px solid var(--white);
-      top: -22px;
+    border-bottom: 10px solid var(--white);
+    top: -22px;
   }
 </style>
