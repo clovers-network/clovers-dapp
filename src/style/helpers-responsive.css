@@ -3,8 +3,8 @@
 @media (--breakpoint-xs) {
   .xs-border-right-transp{border-right-color:transparent}
 }
-@media (--breakpoint-sm) and (--breakpoint-sm-only) {
-  .sm-border-right-transp{border-right-color:transparent}
+@media (--breakpoint-sm) {
+  .sm-block{ display: block }
 }
 @media (--breakpoint-md) {
   .md-block{ display: block }

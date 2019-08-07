@@ -31,8 +31,8 @@
       #accountHeader.col-4.flex.justify-end
         .border.rounded.flex.items-center.mr2.md-mr3
           //- btn: pig
-          .relative.border-right.hidden.md-block
-            .h-nav-btn.h6.md-h5.px2.flex.items-center.pointer.lh1(@click='pigMenuToggle')
+          .relative.border-right.hidden.sm-block
+            .h-nav-btn.h6.sm-h5.px2.flex.items-center.pointer.lh1(@click='pigMenuToggle')
               //- dot
               span.border.mr1.inline-block(style='border-radius:100%; width:13px; height:13px;')
                 span.block(:class="mining && 'bg-currentColor throb'" style='border-radius:100%; width: 13px; height: 13px; margin-top: -1px; margin-left: -1px;')
@@ -40,16 +40,16 @@
             //- menu dropdown
             pig-menu(@closePigMenu="closePigMenu" v-click-outside="closePigMenu" v-if="pigMenu" )
           //- btn: picks
-          router-link.h-nav-btn.h6.md-h5.px2.flex.items-center.pointer(:to="{name: 'Picks'}")
+          router-link.h-nav-btn.h6.sm-h5.px2.flex.items-center.pointer(:to="{name: 'Picks'}")
             cart-icon.mr1
             span {{pickCount}}
           //- btn: tokens
-          router-link.h-nav-btn.h6.md-h5.flex.px1.items-center.border-left(:to="{name: 'Trade'}", v-show="prettyUserBalance !== '-'")
+          router-link.h-nav-btn.h6.sm-h5.flex.px1.items-center.border-left(:to="{name: 'Trade'}", v-show="prettyUserBalance !== '-'")
             coin-icon.mr1(style="padding-bottom:4px")
             span {{prettyUserBalance}}
           //- bnt: account
           .relative
-            #personToggle.h-nav-btn.h6.md-h5.pl2.pr1.flex.items-center.pointer.border-left(@click="accountMenuToggle")
+            #personToggle.h-nav-btn.h6.sm-h5.pl2.pr1.flex.items-center.pointer.border-left(@click="accountMenuToggle")
               person-icon(:class="!authHeader && 'red'")
               .chevron
             account-menu(@close-account-menu="closeAccountMenu" v-click-outside="closeAccountMenu" v-if="accountMenu")
@@ -74,7 +74,7 @@
               //- span.circle.bg-orange.absolute(v-if="newLogs" style="width:8px;height:8px")
           //- li
             router-link.inline-block.p1(:to="{name: 'Account'}") Dashboard
-      .border.rounded.m2
+      .sm-hide.border.rounded.m2
         pig.py3.mb1(@viewPicks="$router.push({name: 'Picks'})")
 </template>
 
