@@ -1,8 +1,8 @@
 <template lang="pug">
   nav
-    h6.center.h4 Pig
+    h6.center.h4.pb1 Pig
     toggle-btn.mx-auto.my3(:small="true", :active="minerOn"  theme="white"  @click="togglePig" @swiperight="togglePig()" @swipeleft="togglePig()")
-    .flex
+    .flex.pt1
       .col-4.px2
         .h6 Speed
         .h5.font-exp.mt1 {{ hashrate }}/s
@@ -50,7 +50,7 @@ export default {
 
 <style lang="css">
 #miner {
-  max-height: calc(100vh - 56px);
-  overflow: auto;
+  /*max-height: calc(100vh - 56px);*/
+  /*overflow: auto;*/
 }
 </style>

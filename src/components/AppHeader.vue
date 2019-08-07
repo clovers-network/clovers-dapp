@@ -57,22 +57,23 @@
     //- nav overlay
     .absolute.z1.h-100vh.col-12.bg-green.top-0.left-0.flex.flex-column.justify-between.center(v-show='showMenu')
       .h-header
-      nav.flex-auto.flex.items-center.justify-center
+      nav.flex-auto.flex.items-center.justify-center.pb2
         ul.h2.list-reset
-          li.mt1
+          li.my2
             //- router-link(:to="{ name: 'Welcome' }" exact) Welcome
             router-link(:to="{name: 'Account'}") Dashboard
-          li.mt1
-            router-link(:to="{ name: 'Market' }") Market
-          li.mt1
+          li.my2
+            router-link(:to="{ name: 'Market' }") Feed
+          li.my2
             router-link(:to="{ name: 'Field' }") Garden
-          //- li.mt1
+          //- li.my2
             router-link(:to="{name: 'Learn'}") Learn
-          li.mt1
+          li.my2
             router-link.relative(:to="{ name: 'Activity' }")
               span Log <sup v-if="newLogs">{{newLogs}}</sup>
               //- span.circle.bg-orange.absolute(v-if="newLogs" style="width:8px;height:8px")
-      pig.mt3.pb4(@viewPicks="$router.push({name: 'Picks'})")
+      .border.rounded.m2
+        pig.py3.mb2(@viewPicks="$router.push({name: 'Picks'})")
 </template>
 
 <script>
@@ -132,6 +133,7 @@ export default {
   },
   mounted () {
     window.addEventListener('keyup', this.checkEsc)
+    window.addEventListener('resize', () => { this.showMenu = false })
   },
   destroyed () {
     window.removeEventListener('keyup', this.checkEsc)
