@@ -4,7 +4,7 @@
     header.absolute.overlay.flex.items-center.justify-center
       .center
         h1.font-exp.h1.mb3 Clovers is a game
-        h6.font-reg.h3 You're job is to search 🔎<br>With luck, you'll find fame 😎 glory 🙌 and riches 💰
+        h6.font-reg.h3 You're job is to search 🔎<br>With luck you'll find fame 😎 glory 🙌 and riches 💰
         br
         br
         router-link(:to="{name:'Feed'}" @click="setVisited") If you'd like to <u>skip this intro</u> you can always come back

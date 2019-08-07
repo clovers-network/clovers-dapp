@@ -1,5 +1,6 @@
 <template lang="pug">
   .mt3.pb-full-height
+    more-information(title="?" content="<u>The Garden</u> is where you can grow new Clovers and pick the ones you like. They'll go into your basket until they get registered. If you'd like to register the Clover to keep it, you'll be charged 10 Clover Coins. If the Clover is symmetrical however, you can exchange it for a reward! Use your Pig to search quickly for only symmetrical Clovers and begin earning Clover Coins.")
     ul.list-reset.flex.flex-wrap.mxn2.mt0.mb3.px2.pb-full-height
       field-item(v-for='(clover, i) in generated' :key='i' data-expand='-50' :data-appear='i % 3' :clover="clover" :in-field="true")
 
@@ -13,6 +14,7 @@
 import { mapActions } from 'vuex'
 import KeepClover from '@/views/KeepClover'
 import FieldItem from '@/components/FieldItem'
+import MoreInformation from '@/components/MoreInformation'
 import Bottleneck from 'bottleneck'
 import Reversi from 'clovers-reversi'
 import { cloverIsMonochrome } from '@/utils'
@@ -89,6 +91,6 @@ export default {
     this.limiter.stop({ dropWaitingJobs: true })
     next()
   },
-  components: { KeepClover, FieldItem }
+  components: { KeepClover, FieldItem, MoreInformation }
 }
 </script>

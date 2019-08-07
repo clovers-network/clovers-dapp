@@ -61,7 +61,7 @@ export default new Router({
       path: '/account',
       name: 'Account',
       component: Account,
-      meta: { title: 'Account' }
+      meta: { title: 'Dashboard' }
     },
     {
       path: '/account/basket',

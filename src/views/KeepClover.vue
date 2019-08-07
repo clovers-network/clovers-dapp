@@ -28,7 +28,10 @@
             .dot.mr2
             span.flex-auto.mr3 Claim Reward
             .bold + {{ sellValue }} <coin-icon/>
-        more-information.center.mt3(:content="keepContent")
+        p.center.h6.underline.mb0.mt3.help(@click="showMore = true" v-if="!showMore") More information
+        p.center.h6.mb0.mt3.pointer(v-if="showMore" @click="showMore = false")
+          span(v-if="mode === 'keep'") Register this clover on the network. A base fee of 10 <coin-icon :width="14" :height="14"/> is charged
+          span(v-else) Claim a reward for this rare clover. This requires a verification before payout and can take a few minutes
 
       //- keep / sell actions
       footer.flex.justify-center(v-if="!submitted")
@@ -109,13 +112,6 @@ export default {
     }
   },
   computed: {
-    keepContent () {
-      if (this.mode === 'keep') {
-        return '<span>Register this clover on the network. A base fee of 10 <coin-icon :width="14" :height="14"/> is charged</span>'
-      } else {
-        return '<span>Claim a reward for this rare clover. This requires a verification before payout and can take a few minutes</span>'
-      }
-    },
     _reversi () {
       return reversi.playGameMovesString(this.movesString)
     },
