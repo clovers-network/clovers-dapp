@@ -13,7 +13,10 @@
               option(value="Y0Sym") Sym. Horizontal
               option(value="XYSym") Sym. Diagonal Up
               option(value="XnYSym") Sym. Diagonal Down
-              option(value="rft") RFT
+              option(value="public") Human owned
+              option(value="contract") Contract owned
+              option(value="commented") With Comments
+              //- option(value="rft") RFT
 
         .pt1.pb2.pr2.pl1
           .center.h4.select
