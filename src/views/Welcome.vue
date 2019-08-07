@@ -192,7 +192,7 @@ function shuffle (a) {
 }
 </script>
 
-<style lang="scss" scoped>
+<style  scoped>
   @import '../style/custom-animate.min.css';
   img {
     max-width: 380px;

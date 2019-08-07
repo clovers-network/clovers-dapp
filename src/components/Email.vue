@@ -124,8 +124,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-@import '../style/animate.scss';
+<style lang="css" scoped>
 ::-webkit-input-placeholder {
   /* Chrome/Opera/Safari */
   color: white;
@@ -146,7 +145,7 @@ export default {
 .sticky {
   position: sticky;
   top: calc(100vh - 5rem);
-  > div {
+  & > div {
     width: 100%;
   }
 }
