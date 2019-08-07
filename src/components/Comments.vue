@@ -65,7 +65,7 @@
     .sticky.left-0.right-0.bottom-0.pb3.chat-hover.bg-white.lg-px3(v-if="view === 'chat'")
       div(v-if="signedIn")
         form(@submit.prevent="postComment")
-          input.p3.col-12.h4.border.border-white.bg-lightest-green.font-ext.rounded.line-height-2.focus-light-green(@focus="scrollDown('smooth')" v-model="newComment", ref="input", type="text", placeholder="Comment...")
+          input.p3.col-12.h4.border.border-white.bg-lightest-green.font-ext.rounded.line-height-2.focus-light-green(@focus="focusActivity()" v-model="newComment", ref="input", type="text", placeholder="Comment...")
           //- .right-align.mt2.hide
           //-   button(type="submit", :disabled="posting", v-text="buttonTxt").px3.py2.bg-green.white.font-exp
       div(v-else)
@@ -236,7 +236,9 @@ export default {
           chat.scrollTop = chat.scrollHeight - chat.clientHeight
         })
       } else {
-        if (!this.hasComments) return
+        // if (this.noComments) {
+        //   return this.focusActivity()
+        // }
         let newOne = this.$refs.comment[this.comments.length - 1]
         newOne.scrollIntoView({ behavior, block })
       }
@@ -258,7 +260,7 @@ export default {
     maybeScroll () {
       this.$nextTick(() => {
         if (this.view === 'chat') {
-          this.scrollDown('smooth')
+          this.focusActivity()
         }
       })
     },
