@@ -104,7 +104,7 @@ export function abbrvNum (n, decimals = 2) {
 
 // from prettyBigNumber (string,)
 export function concatPrice (value) {
-  const suffixes = ['', 'K', 'M', 'B', 'T']
+  const suffixes = ['', 'K', 'M', 'B', 'T', 'P', 'E', 'Z', 'Y']
 
   let newValue = typeof value === 'string'
     ? parseFloat(value.split(',').join(''))
