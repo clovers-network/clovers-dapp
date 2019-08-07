@@ -11,7 +11,7 @@
         </template>
         <template v-else>
           <router-link
-            :to="'/users/' + account"
+            to="/account"
             class="block p2">{{ userName(user) }}</router-link>
         </template>
       </div>
