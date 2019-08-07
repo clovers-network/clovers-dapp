@@ -42,7 +42,7 @@
         span.pr1 Next
         img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
 
-    .sticky.bottom-0.bg-green.white.p2.center.h-bttm-bar.flex.pointer(v-if='newCloversCount' @click='addNew')
+    //- .sticky.bottom-0.bg-green.white.p2.center.h-bttm-bar.flex.pointer(v-if='newCloversCount' @click='addNew')
       span.block.m-auto.font-exp Show {{ newCloversCount }} new {{ pluralize(&apos;Clover&apos;, newCloversCount) }}
 </template>
 

@@ -5,6 +5,7 @@
       .center
         h1.font-exp.h1.mb3 Clovers
         h6.font-reg.h3 Discover, collect and trade<br>computer-generated pictographs
+        router-link.h6.mt4(:to="{name:'Feed'}" @click="setVisited") (or click here to skip the tutorial)
     down-arrow-btn(v-on="$listeners")
 </template>
 
@@ -16,7 +17,17 @@ export default {
   components: {
     LearnFrame,
     DownArrowBtn
+  },
+  methods: {
+    setVisited () {
+      updateLocal()
+    }
   }
+}
+
+function updateLocal (key = 'first-visit', value = true) {
+  if (!window.localStorage) return
+  window.localStorage.setItem(key, JSON.stringify(value))
 }
 
 </script>
