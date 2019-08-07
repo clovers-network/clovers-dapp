@@ -6,7 +6,6 @@
       .col-4.flex.pl2.items-center
         //- desktop menu
         #desktopMenu.flex.flex-center.ml3
-          router-link.pr2(:to="{name: 'Account'}") Dashboard
           router-link.pr2(:to="{name: 'Feed'}") Feed
           router-link.pr2(:to="{name: 'Garden'}") Garden
           router-link.pr2(:to="{name: 'Learn'}") Learn
@@ -25,7 +24,7 @@
 
       //- title
       h1.hidden.md-block.font-exp.h3.col-4.py1.center
-        span.nowrap.pointer(@click='showMenu = showBackButton ? showMenu : !showMenu')
+        span.nowrap
           | {{showMenu ? &apos;Clovers&apos; : $route.meta.title}}
       //- right col
       #accountHeader.col-4.flex.justify-end
