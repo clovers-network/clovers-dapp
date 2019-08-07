@@ -1,7 +1,7 @@
  <template lang="pug">
   header.sticky.top-0.z2(:class="{'bg-white green': !showMenu, 'white': showMenu}")
     //- top bar
-    .relative.z2.h-header.flex.items-center(:class="{'border-bottom': !showMenu}")
+    .relative.z2.h-header.flex.items-center.justify-between(:class="{'md-border-bottom': !showMenu}")
       //- left col
       .col-4.flex.pl2.items-center
         //- desktop menu
@@ -23,34 +23,35 @@
                   | {{ symms }}
 
       //- title
-      h1.font-exp.h3.col-4.py1.center
+      h1.hidden.md-block.font-exp.h3.col-4.py1.center
         span.nowrap.pointer(@click='showMenu = showBackButton ? showMenu : !showMenu')
           | {{showMenu ? &apos;Clovers&apos; : $route.meta.title}}
       //- right col
-      #accountHeader.col-4.flex.justify-end.items-center
-        //- btn: pig
-        .relative
-          .h-nav-btn.h5.px2.flex.items-center.pointer.border.rounded-left.lh1(@click='pigMenuToggle')
-            //- dot
-            span.border.mr1.inline-block(style='border-radius:100%; width:13px; height:13px;')
-              span.block(:class="mining && 'bg-currentColor throb'" style='border-radius:100%; width: 13px; height: 13px; margin-top: -1px; margin-left: -1px;')
-            span PIG
-          //- menu dropdown
-          pig-menu(@closePigMenu="closePigMenu" v-click-outside="closePigMenu" v-if="pigMenu" )
-        //- btn: picks
-        router-link.h-nav-btn.h5.px2.flex.items-center.pointer.border-top.border-bottom(:to="{name: 'Picks'}")
-          cart-icon.mr1
-          span {{pickCount}}
-        //- btn: tokens
-        router-link.h-nav-btn.h5.flex.px1.items-center.border-top.border-left.border-bottom(:to="{name: 'Trade'}", v-show="prettyUserBalance !== '-'")
-          coin-icon.mr1(style="padding-bottom:4px")
-          span {{prettyUserBalance}}
-        //- bnt: account
-        .relative.mr3
-          #personToggle.h-nav-btn.h5.pl2.pr1.flex.items-center.border.pointer.rounded-right(@click="accountMenuToggle")
-            person-icon(:class="!authHeader && 'red'")
-            .chevron
-          account-menu(@close-account-menu="closeAccountMenu" v-click-outside="closeAccountMenu" v-if="accountMenu")
+      #accountHeader.col-4.flex.justify-end
+        .border.rounded.flex.items-center.mr2.md-mr3
+          //- btn: pig
+          .relative.border-right.hidden.md-block
+            .h-nav-btn.h6.md-h5.px2.flex.items-center.pointer.lh1(@click='pigMenuToggle')
+              //- dot
+              span.border.mr1.inline-block(style='border-radius:100%; width:13px; height:13px;')
+                span.block(:class="mining && 'bg-currentColor throb'" style='border-radius:100%; width: 13px; height: 13px; margin-top: -1px; margin-left: -1px;')
+              span PIG
+            //- menu dropdown
+            pig-menu(@closePigMenu="closePigMenu" v-click-outside="closePigMenu" v-if="pigMenu" )
+          //- btn: picks
+          router-link.h-nav-btn.h6.md-h5.px2.flex.items-center.pointer(:to="{name: 'Picks'}")
+            cart-icon.mr1
+            span {{pickCount}}
+          //- btn: tokens
+          router-link.h-nav-btn.h6.md-h5.flex.px1.items-center.border-left(:to="{name: 'Trade'}", v-show="prettyUserBalance !== '-'")
+            coin-icon.mr1(style="padding-bottom:4px")
+            span {{prettyUserBalance}}
+          //- bnt: account
+          .relative
+            #personToggle.h-nav-btn.h6.md-h5.pl2.pr1.flex.items-center.pointer.border-left(@click="accountMenuToggle")
+              person-icon(:class="!authHeader && 'red'")
+              .chevron
+            account-menu(@close-account-menu="closeAccountMenu" v-click-outside="closeAccountMenu" v-if="accountMenu")
     //- nav
     .absolute.z1.h-100vh.col-12.bg-green.top-0.left-0.flex.flex-column.justify-between.center(v-show='showMenu')
       .h-header
