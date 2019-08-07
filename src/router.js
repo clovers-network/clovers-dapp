@@ -31,7 +31,7 @@ export default new Router({
       path: '/field',
       name: 'Field',
       component: Field,
-      meta: { title: 'Pick Clovers' }
+      meta: { title: 'Garden' }
     },
     {
       path: '/market',
@@ -43,7 +43,8 @@ export default new Router({
     {
       path: '/trade',
       name: 'Trade',
-      component: Trade
+      component: Trade,
+      meta: { title: 'Trade' }
     },
 
     {
@@ -80,8 +81,8 @@ export default new Router({
       path: '/clovers/:board',
       name: 'Clover',
       component: Clover,
-      props: true,
-      meta: { title: 'Clover' }
+      props: true
+      // meta: { title: 'Clover' }
     },
 
     {

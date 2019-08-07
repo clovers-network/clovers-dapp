@@ -11,7 +11,7 @@
           router-link.pr2(:to="{name: 'Field'}") Garden
           router-link.pr2(:to="{name: 'Learn'}") Learn
         //- menu btn
-        button#mobileMenu.menu-btn.pointer.relative.py2.pr2(v-if='!showBackButton' @click='showMenu = !showMenu' aria-label='Toggle Menu')
+        button#mobileMenu.menu-btn.pointer.relative.py2.pr2(@click='showMenu = !showMenu' aria-label='Toggle Menu')
           wavey-btn(v-show='mining', :is-white='showMenu')
           img.block(v-show='!mining', :src="showMenu\
             ? require('../assets/icons/hamburger-white.svg')\
@@ -52,16 +52,18 @@
               person-icon(:class="!authHeader && 'red'")
               .chevron
             account-menu(@close-account-menu="closeAccountMenu" v-click-outside="closeAccountMenu" v-if="accountMenu")
-    //- nav
+    //- (mobile page title)
+    h1.md-hide.h1.font-exp.mt3.pl2(v-if="$route.meta.title") {{$route.meta.title}}
+    //- nav overlay
     .absolute.z1.h-100vh.col-12.bg-green.top-0.left-0.flex.flex-column.justify-between.center(v-show='showMenu')
       .h-header
-      nav.flex-auto.flex.items-center.justify-center(@click="showMenu = !showMenu")
+      nav.flex-auto.flex.items-center.justify-center
         ul.h2.list-reset
           li.mt1
             //- router-link(:to="{ name: 'Welcome' }" exact) Welcome
             router-link(:to="{name: 'Account'}") Dashboard
           li.mt1
-            router-link(:to="{ name: 'Market' }") Feed
+            router-link(:to="{ name: 'Market' }") Market
           li.mt1
             router-link(:to="{ name: 'Field' }") Garden
           //- li.mt1
