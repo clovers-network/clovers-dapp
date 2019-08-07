@@ -62,7 +62,7 @@ export default new Router({
       path: '/account/picks',
       name: 'Picks',
       component: Picks,
-      meta: { title: 'Picks' }
+      meta: { title: 'Your Basket' }
     },
     {
       path: '/account/clovers',
