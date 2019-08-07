@@ -24,7 +24,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-#app { overflow-x: hidden; }
+/*#app { overflow-x: hidden; }*/
 
 img {
   height: auto;

@@ -1,7 +1,7 @@
 <template lang="pug">
-  #app.relative.min-h-100vh
+  #app.relative
     app-header
-    main.mx3.md-mx-auto.md-col-10.lg-col-8
+    main.mx3.md-mx-auto.md-col-10.lg-col-8.min-height-app
       router-view
     foot
     messages
@@ -42,7 +42,7 @@ export default {
 }
 </script>
 
-<style lang="css">
+<style>
   @import './style/fonts';
   @import './style/global';
   @import './style/imports';
@@ -68,5 +68,10 @@ export default {
       right: -2.6em;
       top: -2.6em;
     }
+  }
+
+  .min-height-app {
+    padding-top: 1px;
+    min-height: calc(100vh - 95px);
   }
 </style>

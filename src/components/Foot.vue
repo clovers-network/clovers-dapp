@@ -1,5 +1,5 @@
 <template lang="pug">
- .absolute.bottom-0.left-0.right-0.bg-green
+ .bg-green
   .max-width-4.flex.justify-center.mx-auto.white.align-middle
      a.p2.flex.align-middle(target="_blank" href="https://forum.clovers.network")
       DiscourseIcon
