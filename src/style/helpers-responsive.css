@@ -5,6 +5,9 @@
 }
 @media (--breakpoint-sm) {
   .sm-block{ display: block }
+  .sm-flex-no-wrap{ flex-wrap: nowrap }
+  .sm-flex-none{ flex:none; }
+  .sm-col-auto{ width:auto; }
 }
 @media (--breakpoint-md) {
   .md-block{ display: block }

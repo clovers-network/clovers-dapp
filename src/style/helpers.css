@@ -16,6 +16,7 @@
 .w-1em{width:1em;}
 .h-100{height:100%;}
 .h-nav-btn{height:2.7rem;}
+.h-select{height:3.9rem;}
 .h-header{height:var(--height-header);}
 .h-bttm-bar{height:var(--height-bttm-bar);}
 .h-100vh{height:100vh}
@@ -141,6 +142,7 @@
 .outline-none { outline: 0;}
 .outline{ outline:1px solid var(--green); }
 .border-dashed { border-style: dashed; }
+.hover-border-solid:hover { border-style:solid; }
 
 .rounded-2 { border-radius: var(--border-radius-2); }
 

@@ -54,7 +54,7 @@
               .chevron
             account-menu(@close-account-menu="closeAccountMenu" v-click-outside="closeAccountMenu" v-if="accountMenu")
     //- (mobile page title)
-    h1.md-hide.h1.font-exp.mt3.pl2(v-if="$route.meta.title") {{$route.meta.title}}
+    h1.md-hide.h1.font-exp.mt3.pt1.pl2(v-if="$route.meta.title") {{$route.meta.title}}
     //- nav overlay
     .absolute.z1.h-100vh.col-12.bg-green.top-0.left-0.flex.flex-column.justify-between.center(v-show='showMenu')
       .h-header
