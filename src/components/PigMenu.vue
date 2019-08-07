@@ -1,19 +1,18 @@
 <template lang="pug">
     #pigMenu.border.green.bg-white.absolute
-      .justify-between.align-left.bold.border-bottom.pointer.flex.py2.pl2
+      .justify-between.items-end.border-bottom.flex.pt1.pb2.px2
         .col-3
-          .h6 Speed
-          .h4 {{hashrate}}/s
+          .h4.bold {{mined.toLocaleString()}}
+          .h7.lh1 Searched
         .col-3
-          .h6 Searched
-          .h4 {{mined.toLocaleString()}}
+          .h4.bold {{hashrate}}/s
+          .h7.lh1 Speed
         .col-6
-          #pig-toggle
-            toggle-btn.mx-auto( :small="true" :theme="'green'" :active="mining" @click="togglePig" @swiperight="togglePig()" @swipeleft="togglePig()")
-      .p3.h4.lh3.center
-        template(v-if="newSyms.length == 0") Your Pig {{mining ? 'is sniffing' : 'can sniff'}} out rare Clovers. They'll be added to your basket automatically.
+          toggle-btn.ml-auto( :small="true" :theme="'green'" :active="mining" @click="togglePig" @swiperight="togglePig()" @swipeleft="togglePig()")
+      .p2.h5.lh3.center
+        template(v-if="newSyms.length == 0") Your Pig {{mining ? 'is sniffing' : 'can sniff'}} out rare Clovers. They'll be added to your <router-link :to="{name: 'Picks'}" class="bold">Basket</router-link> automatically.
         template(v-else) Your Pig has found <br><b>{{newSyms.length}}</b> rare clover{{newSyms.length > 1 ? 's' : ''}}!
-          .m3.rounded.white.bg-green.center
+          .my2.mx3.rounded.white.bg-green.center
             router-link.col-12.pointer.p1.inline-block(:to="{name: 'Picks'}")
               p.m0.m-auto Go to your Basket
 </template>
@@ -52,8 +51,8 @@ export default {
 
 <style lang="css" scoped>
  #pigMenu {
-    top: 65px;
-    right: 180px;
+    top: 50px;
+    right: 0;
     width: 260px;
   }
   #pigMenu:before,

@@ -47,7 +47,8 @@ export default new Router({
     {
       path: '/trade',
       name: 'Trade',
-      component: Trade
+      component: Trade,
+      meta: { title: 'Trade' }
     },
     {
       path: '/learn',
@@ -83,8 +84,8 @@ export default new Router({
       path: '/clovers/:board',
       name: 'Clover',
       component: Clover,
-      props: true,
-      meta: { title: 'Clover' }
+      props: true
+      // meta: { title: 'Clover' }
     },
 
     {

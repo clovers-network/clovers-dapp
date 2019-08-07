@@ -1,3 +1,5 @@
+.hidden{ display:none; }
+
 @media (--breakpoint-xs) {
   .xs-border-right-transp{border-right-color:transparent}
 }
@@ -5,6 +7,8 @@
   .sm-border-right-transp{border-right-color:transparent}
 }
 @media (--breakpoint-md) {
+  .md-block{ display: block }
   .md-border-right-transp{border-right-color:transparent;}
   .md-border-right{border-right-style:solid;}
+  .md-border-bottom{border-bottom-style: solid}
 }
