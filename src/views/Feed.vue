@@ -1,6 +1,6 @@
 <template lang="pug">
   .green
-    //- more-information.bg-white.p2.md-col-6.bg-white.mx-auto.align-left.absolute.right-0.top-0.mt4(title="?" content="This is where all registerd Clovers exist. You can filter them to see all the different types of Symmetry, which Clovers are popular with lots of comments or which ones are currently for sale and for how much.")
+    more-information(title="?" content="<u>The Feed</u> is where all registerd Clovers can be found. You can use filters to see all the different types of symmetry, which Clovers are popular and have lots of comments or which ones are currently for sale and for how much.")
     .mt4.mb2
       .flex.left-align.justify-end
         .pt1.pb2.pl2.pr1

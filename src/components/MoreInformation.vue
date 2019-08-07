@@ -1,7 +1,7 @@
 <template lang="pug">
     div
-        p.center.h6.underline.mb0.help(@click="showMore = true" v-if="!showMore") {{title}}
-        p.h6.mb0.mt3.pointer(v-if="showMore" @click="showMore = false" v-html="content")
+        .absolute.right-0.top-0.mt4.help.p2.mr1(@click="show") {{title}}
+        .pt2.h3.mb0.mt3.pointer(v-if="showMore" @click="show" v-html="content")
 </template>
 <script>
 export default {
@@ -9,6 +9,15 @@ export default {
   data () {
     return {
       showMore: false
+    }
+  },
+  methods: {
+    show () {
+      if (this.showMore) {
+        this.showMore = false
+      } else {
+        this.showMore = true
+      }
     }
   },
   props: {
