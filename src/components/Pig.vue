@@ -51,7 +51,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="css">
 #miner {
   max-height: calc(100vh - 56px);
   overflow: auto;
