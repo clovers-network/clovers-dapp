@@ -5,7 +5,7 @@
     .absolute.bottom-0.right-0.p2
       chat-icon.block(
         :color="isRFT ? '#FF4136' : '#01B463'"
-        v-if="clover.commentCount != 0"
+        v-if="clover.commentCount !== 0"
         :count="clover.commentCount"
         :size="15"
         :blank="true"
