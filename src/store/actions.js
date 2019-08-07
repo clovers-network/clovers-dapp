@@ -626,7 +626,7 @@ export default {
       } else {
         // sell clover (update price)
         return contracts.SimpleCloversMarket.instance.methods
-          .sell(clover.board, price)
+          .sell(clover.board, price.toString(10))
           .send({
             from: state.account
           })
@@ -667,7 +667,7 @@ export default {
     investmentInWei = investmentInWei < 0 ? 0 : investmentInWei
     // have enough tokens ?
     let value = '0'
-    // check balance of user in club token
+    // check balance of user in clover coin
     let userBalance = await contracts.ClubToken.instance.methods
       .balanceOf(state.account)
       .call()
@@ -681,7 +681,7 @@ export default {
     console.log(value)
     // go !
     await contracts.CurationMarket.instance.methods
-      .addCloverToMarket(board, investmentInWei)
+      .addCloverToMarket(board, investmentInWei.toString(10))
       .send({ from: state.account, value })
   },
 
@@ -712,7 +712,6 @@ async function getLowestPrice (
     new BigNumber(utils.toWei('0.005'))
   ]
   currentPrice = currentPrice.add(increments[incrementLevel])
-  console.log(currentPrice.toString(10))
   let resultOfSpend = await contract.instance.methods
     .getBuy(currentPrice)
     .call()
