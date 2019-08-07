@@ -30,12 +30,12 @@
             bg="green")
       hr
       router-link.block.mb3(
-        :to="{ name: 'Market' }")
+        :to="{ name: 'Feed' }")
         h2.h2.green.font-exp The Market
         img.p3(src="/img/feed.svg")
         .px3.py2.black This is where Clovers are bought & sold for Coin.
       router-link.block.mb3(
-        :to="{ name: 'Market' }")
+        :to="{ name: 'Feed' }")
           dot-btn.mb3(
             label="Buy, Sell & Browse "
             text="white"

@@ -481,6 +481,9 @@ export default {
         commit('UPDATE_WEB3', false)
         return
       }
+      if (state.tokens[account]) {
+        return
+      }
       global.web3.currentProvider.sendAsync(
         {
           method: 'eth_signTypedData',

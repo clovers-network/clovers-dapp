@@ -143,7 +143,7 @@ export default {
         if (cf !== filter) {
           delete q.page
         }
-        this.$router.push({ name: 'Market', query: { ...q } })
+        this.$router.push({ name: 'Feed', query: { ...q } })
       }
     },
     $route () {
@@ -191,7 +191,7 @@ export default {
     },
     addNew () {
       if (this.isFiltered) {
-        this.$router.push({ name: 'Market' })
+        this.$router.push({ name: 'Feed' })
       } else {
         this.results.results.unshift(...this.newClovers)
         this.$store.commit('CLEAR_NEW_CLOVERS')

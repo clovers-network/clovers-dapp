@@ -21,12 +21,12 @@ Vue.use(Router)
 export default new Router({
   mode: 'history',
   routes: [
-    {
-      path: '/',
-      name: 'Welcome',
-      component: Welcome,
-      meta: { title: '' }
-    },
+    // {
+    //   path: '/',
+    //   name: 'Welcome',
+    //   component: Welcome,
+    //   meta: { title: '' }
+    // },
     {
       path: '/field',
       name: 'Field',
@@ -34,10 +34,10 @@ export default new Router({
       meta: { title: 'Pick Clovers' }
     },
     {
-      path: '/market',
-      name: 'Market',
+      path: '/',
+      name: 'Feed',
       component: Feed,
-      meta: { title: 'Market' }
+      meta: { title: 'Feed' }
     },
 
     {
