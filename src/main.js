@@ -62,11 +62,11 @@ global.web3Connect.on('close', () => {
 router.beforeEach((to, from, next) => {
   to.meta.fromName = from.name
 
-  if (!alreadyVisited() && to.name !== 'Learn') {
-    next('/learn')
-  } else {
-    next()
-  }
+  // if (!alreadyVisited() && to.name !== 'Learn') {
+  //   next('/learn')
+  // } else {
+  next()
+  // }
 })
 
 router.afterEach(() => {

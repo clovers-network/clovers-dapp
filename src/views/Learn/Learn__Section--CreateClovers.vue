@@ -3,7 +3,7 @@
     .absolute.top-0.left-0.w-100.h-100.flex.items-center
       //- basket
       basket(:count="clovers.length", v-show="showBasket")
-        h6.mr2.right-align.h6.sm-h5 Your clovers are saved to your <b>Basket</b> &rarr;
+        h6.mr2.right-align.h6.sm-h5 These clovers have been saved to your <b>Basket</b> &rarr;
       //- clovers
       row-of-clovers(ref="cloverList", :clovers="clovers", :canCreate="canCreate", @create="create", @endPlayMoves="step")
     //- text

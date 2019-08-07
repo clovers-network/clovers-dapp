@@ -34,6 +34,7 @@ export default {
       return xss(msg)
     },
     clickMessage (msg) {
+      console.log({msg})
       if (msg.link) {
         this.$router.push(msg.link)
       }

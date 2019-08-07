@@ -8,8 +8,9 @@
         #desktopMenu.flex.flex-center.ml3
           router-link.pr2(:to="{name: 'Account'}") Dashboard
           router-link.pr2(:to="{name: 'Feed'}") Feed
-          router-link.pr2(:to="{name: 'Field'}") Garden
+          router-link.pr2(:to="{name: 'Garden'}") Garden
           router-link.pr2(:to="{name: 'Learn'}") Learn
+          router-link.pr2(:to="{name: 'Activity'}") Activity
         //- menu btn
         button#mobileMenu.menu-btn.pointer.relative.py2.pr2(v-if='!showBackButton' @click='showMenu = !showMenu' aria-label='Toggle Menu')
           wavey-btn(v-show='mining' :is-white='showMenu')
@@ -52,12 +53,16 @@
             li.mt1
               router-link(:to="{ name: 'Welcome' }" exact) Welcome
             li.mt1
+              router-link(:to="{ name: 'Dashboard' }" exact) Dashboard
+            li.mt1
               router-link(:to="{ name: 'Feed' }") Feed
             li.mt1
-              router-link(:to="{ name: 'Field' }") Garden
+              router-link(:to="{ name: 'Garden' }") Garden
+            li.mt1
+              router-link(:to="{ name: 'Learn' }") Learn
             li.mt1
               router-link.relative(:to="{ name: 'Activity' }")
-                span Log
+                span Activity
                 span.circle.bg-orange.absolute(v-if="newLogs" style="width:14px;height:14px")
         .px2
           pig

@@ -1,6 +1,6 @@
 <template lang="pug">
   about(v-on="$listeners")
-    h3(slot="header") Once claimed, they’ll appear on your public <b>Profile</b>
+    h3(slot="header") Once registerd, it'll appear on your public <b>Profile</b>
     img.block(slot="graphic", src="./imgs/profile.svg", style="height:70vh;max-height:80vw;max-width:none")
 </template>
 

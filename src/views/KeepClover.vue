@@ -28,11 +28,7 @@
             .dot.mr2
             span.flex-auto.mr3 Claim Reward
             .bold + {{ sellValue }} <coin-icon/>
-
-        p.center.h6.underline.mb0.mt3.help(@click="showMore = true" v-if="!showMore") More information
-        p.center.h6.mb0.mt3.pointer(v-if="showMore" @click="showMore = false")
-          span(v-if="mode === 'keep'") Register this clover on the network. A base fee of 10 <coin-icon :width="14" :height="14"/> is charged
-          span(v-else) Claim a reward for this rare clover. This requires a verification before payout and can take a few minutes
+        more-information.center.mt3(:content="keepContent")
 
       //- keep / sell actions
       footer.flex.justify-center(v-if="!submitted")
@@ -64,6 +60,7 @@ import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 import CoinIcon from '@/components/Icons/CoinIcon'
+import MoreInformation from '@/components/MoreInformation'
 
 const reversi = new Reversi()
 let lastRt = null
@@ -112,6 +109,13 @@ export default {
     }
   },
   computed: {
+    keepContent () {
+      if (this.mode === 'keep') {
+        return '<span>Register this clover on the network. A base fee of 10 <coin-icon :width="14" :height="14"/> is charged</span>'
+      } else {
+        return '<span>Claim a reward for this rare clover. This requires a verification before payout and can take a few minutes</span>'
+      }
+    },
     _reversi () {
       return reversi.playGameMovesString(this.movesString)
     },
@@ -245,7 +249,7 @@ export default {
       })
     },
     handleSuccess (msg, clover) {
-      this.addMessage({ msg, type: 'success' })
+      this.addMessage({ msg, type: 'success', link: '/clovers/' + clover.byteBoard })
       this.$store.commit('REMOVE_SAVED_CLOVER', this.clover)
       this.submitted = true
     },
@@ -268,7 +272,7 @@ export default {
     this.checkClover()
     this.getClubTokenPrice()
   },
-  components: { SymmetryIcons, CoinIcon }
+  components: { SymmetryIcons, CoinIcon, MoreInformation }
 }
 </script>
 

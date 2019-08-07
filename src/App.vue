@@ -1,5 +1,5 @@
 <template lang="pug">
-  #app.relative.min-h-100vh
+  #app.relative.min-h-100vh.pb4
     app-header
     main.mx3.md-mx-auto.md-col-10.lg-col-8
       router-view
@@ -49,14 +49,6 @@ export default {
   #WEB3_CONNECT_MODAL_ID > div {
     z-index:4;
     position: fixed;
-  }
- #WEB3_CONNECT_MODAL_ID {
-    /* position: fixed;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
-    z-index: 999; */
   }
   .intro-screen {
     & .clover {

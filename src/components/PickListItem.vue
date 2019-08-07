@@ -47,7 +47,7 @@ export default {
     },
     to () {
       if (!this.pick.movesString) {
-        return { name: 'Field' }
+        return { name: 'Garden' }
       } else {
         return { query: { pick: this.pick.movesString } }
       }

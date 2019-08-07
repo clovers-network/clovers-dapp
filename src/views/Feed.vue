@@ -1,5 +1,6 @@
 <template lang="pug">
   .green
+    //- more-information.bg-white.p2.md-col-6.bg-white.mx-auto.align-left.absolute.right-0.top-0.mt4(title="?" content="This is where all registerd Clovers exist. You can filter them to see all the different types of Symmetry, which Clovers are popular with lots of comments or which ones are currently for sale and for how much.")
     .mt4.mb2
       .flex.left-align.justify-end
         .pt1.pb2.pl2.pr1
@@ -56,6 +57,7 @@ import { pluralize, cleanObj } from '@/utils'
 import CloverListCards from '@/components/CloverList--Cards'
 import PageNav from '@/components/PageNav'
 import svgX from '@/components/Icons/SVG-X'
+import MoreInformation from '@/components/MoreInformation'
 
 const apiUrl = process.env.VUE_APP_API_URL + '/clovers'
 
@@ -215,7 +217,7 @@ export default {
       this.filters.page = this.results.nextPage
     }
   },
-  components: { CloverListCards, svgX, PageNav }
+  components: { CloverListCards, svgX, PageNav, MoreInformation }
 }
 </script>
 
