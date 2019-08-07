@@ -17,7 +17,7 @@
 
     section(name="My unregistered Clovers")
       h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
-        router-link(to="/account/picks") Basket
+        router-link(:to="{ name: 'Picks' }") Basket
 
       div(v-if="pickCount")
         div
@@ -28,7 +28,7 @@
 
         .py3
           p
-            router-link.bg-green.px3.py2.rounded.white(to="/account/picks")
+            router-link.bg-green.px3.py2.rounded.white(:to="{ name: 'Picks' }")
               span View all
 
       div(v-else)
@@ -107,9 +107,7 @@ export default {
       return `/users/${this.account}`
     },
     cloversUrl () {
-      if (!this.account) return
-
-      return `${process.env.VUE_APP_API_URL}/users/${this.account}/clovers`
+      return `${process.env.VUE_APP_API_URL}/users/${this.account || 'anon'}/clovers`
     },
 
     pickList () {
