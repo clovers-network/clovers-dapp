@@ -279,12 +279,12 @@ export default {
     user.ens = ensName === undefined ? false : ensName
     commit('UPDATE_USER', user)
   },
-  async changeUsername ({ commit, getters, dispatch }, { address, name }) {
+  async changeUsername ({ commit, getters, dispatch }, { address, name, image }) {
     if (!address) return
     return axios
       .put(
         apiUrl(`/users/${address}`),
-        { name },
+        { name, image },
         {
           headers: {
             Authorization: getters.authHeader
@@ -295,7 +295,7 @@ export default {
         commit('UPDATE_USER', data)
         dispatch('selfDestructMsg', {
           type: 'success',
-          msg: 'Username updated'
+          msg: 'User details updated'
         })
       })
       .catch(err => {
