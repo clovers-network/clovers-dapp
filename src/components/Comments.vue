@@ -8,7 +8,8 @@
 
         div(v-if="view === 'chat'")
           ul.list-reset.m0
-            li(v-if="loading || moreCommentsToLoad").p3.h6.opacity-50 Loading...
+            li(v-if="noComments").p3.h6.opacity-50 No comments yet
+            li(v-else-if="loading || moreCommentsToLoad").p3.h6.opacity-50 Loading...
             li(v-else).p3.h6.opacity-50 Start of chat
             //- li(v-else).p3.white.h6 nothing here yet
             li.px2.pb2(v-for="comment in comments", :key="comment.id", ref="comment", :class="{ 'right-align': commentOwner(comment) }")
@@ -143,6 +144,9 @@ export default {
     commentsBefore () {
       return this.comments.length ? this.comments[0].created
         : new Date().toISOString()
+    },
+    noComments () {
+      return !this.moreCommentsToLoad && !this.comments.length
     }
   },
   methods: {
@@ -232,6 +236,7 @@ export default {
           chat.scrollTop = chat.scrollHeight - chat.clientHeight
         })
       } else {
+        if (!this.hasComments) return
         let newOne = this.$refs.comment[this.comments.length - 1]
         newOne.scrollIntoView({ behavior, block })
       }
@@ -284,8 +289,11 @@ export default {
   },
   mounted () {
     this.loadComments().then(() => {
-      this.doneFirstLoad = true
       this.addListener()
+      if (!this.doneFirstLoad) {
+        this.doneFirstLoad = true
+        this.loadComments()
+      }
     })
 
     // listen for new comments and changes
