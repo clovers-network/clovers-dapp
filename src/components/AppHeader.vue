@@ -1,7 +1,7 @@
  <template lang="pug">
-  header.sticky.top-0.z2(:class="{'bg-white green': !showMenu, 'white': showMenu}")
+  header.top-0.z2(:class="{'bg-white green': !showMenu, 'white': showMenu}")
     //- top bar
-    .relative.z2.h-header.flex.items-center.justify-between(:class="{'md-border-bottom': !showMenu}")
+    .relative.z2.h-header.flex.items-center.justify-between
       //- left col
       .col-4.flex.pl2.items-center
         //- desktop menu
