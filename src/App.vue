@@ -72,6 +72,6 @@ export default {
 
   .min-height-app {
     padding-top: 1px;
-    min-height: calc(100vh - 95px);
+    min-height: calc(100vh - 94px);
   }
 </style>

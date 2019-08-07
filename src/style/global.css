@@ -8,9 +8,9 @@
   border-width:1px;
 }
 
-html{
+html {
   font-size:var(--rem);
-  background-color: var(--green)
+  /*background-color: var(--green)*/
 }
 
 body {

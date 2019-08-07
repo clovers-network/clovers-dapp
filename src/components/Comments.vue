@@ -1,10 +1,10 @@
 <template lang="pug">
   section(name="comments")
     //- h1.center.h1.font-exp.mb3 Activity / Comments
-    .flex.flex-column.chat-scroll
+    .flex.flex-column.chat-scroll(:class="{ chatpb: view === 'chat' }")
 
       .overflow-auto.touch.flex-auto.px3(ref="chat")
-        view-nav.sticky.top-0.z1.h2.font-ext.bg-white(:items="[{lbl: 'Comments', value:'chat'}, {lbl: 'Activity', value:'logs'}]", @change="view = $event", :thick="false")
+        view-nav.sticky.top-0.z1.h2.font-ext.bg-white(:items="[{lbl: 'Comments', value:'chat'}, {lbl: 'Activity', value:'logs'}]", @change="view = $event", @click.native="maybeScroll", :thick="false")
 
         div(v-if="view === 'chat'")
           ul.list-reset.m0
@@ -61,16 +61,16 @@
             .center.h5.font-mono.px2.py4
               span.opacity-50 {{ loading ? 'Loading...' : 'No results' }}
 
-      .sticky.left-0.right-0.bottom-0.pb3(v-if="view === 'chat'")
-        div(v-if="signedIn")
-          form(@submit.prevent="postComment")
-            input.p3.col-12.h4.border.border-white.bg-lightest-green.font-ext.rounded.focus-light-green(v-model="newComment", ref="input", type="text", placeholder="Comment...")
-            //- .right-align.mt2.hide
-            //-   button(type="submit", :disabled="posting", v-text="buttonTxt").px3.py2.bg-green.white.font-exp
-        .border-top(v-else)
-          p.font-exp.p3.mb0
-            span(@click="signIn").pointer.underline Sign in
-            span  to comment
+    .sticky.left-0.right-0.bottom-0.pb3.chat-hover.bg-white.lg-px3(v-if="view === 'chat'")
+      div(v-if="signedIn")
+        form(@submit.prevent="postComment")
+          input.p3.col-12.h4.border.border-white.bg-lightest-green.font-ext.rounded.line-height-2.focus-light-green(@focus="scrollDown('smooth')" v-model="newComment", ref="input", type="text", placeholder="Comment...")
+          //- .right-align.mt2.hide
+          //-   button(type="submit", :disabled="posting", v-text="buttonTxt").px3.py2.bg-green.white.font-exp
+      div(v-else)
+        p.font-exp.p3.mb0.border.border-white.bg-lightest-green.rounded.line-height-2
+          span(@click="signIn").pointer.underline Sign in
+          span  to comment
 </template>
 
 <script>
@@ -146,6 +146,11 @@ export default {
     }
   },
   methods: {
+    addListener () {
+      if (!this.moreCommentsToLoad) return
+      this.$refs.chat &&
+        this.$refs.chat.addEventListener('scroll', this.scrollListen)
+    },
     scrollListen ({ target }) {
       if (this.view !== 'chat') return
       if (target.scrollTop < 10 && !this.loading) {
@@ -181,7 +186,7 @@ export default {
       const params = { before: this.commentsBefore }
       return this.getComments({ board: this.board, params }).then(({ data }) => {
         this.commentCount = data.allResults
-        this.moreCommentsToLoad = data.allResults > data.pageResults
+        this.moreCommentsToLoad = data.pageResults !== 0
         const { chat } = this.$refs
         let prevBottom = 0
         if (chat) {
@@ -245,6 +250,13 @@ export default {
         block: 'start'
       })
     },
+    maybeScroll () {
+      this.$nextTick(() => {
+        if (this.view === 'chat') {
+          this.scrollDown('smooth')
+        }
+      })
+    },
 
     ...mapActions([
       'getComments',
@@ -257,6 +269,7 @@ export default {
     view (newVal) {
       if (newVal === 'chat') {
         this.scrollDown()
+        this.addListener()
         setTimeout(this.focusActivity, 30)
       } else {
         this.loadActivity().then(this.focusActivity)
@@ -272,6 +285,7 @@ export default {
   mounted () {
     this.loadComments().then(() => {
       this.doneFirstLoad = true
+      this.addListener()
     })
 
     // listen for new comments and changes
@@ -316,9 +330,12 @@ function atBottom (el) {
 
 .chat-scroll {
   max-height: 100%;
-  height: 100vh;
+  /*height: calc(100vh - 93px);*/
+  height: 76vh;
   overflow: auto;
   /*padding-bottom: 67px;*/
+
+  &.chatpb { height: calc(76vh - 92px); }
 }
 
 @media (--breakpoint-sm) {

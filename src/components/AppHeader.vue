@@ -49,7 +49,7 @@
       .h-header
         nav.flex-auto.flex.items-center.justify-center(@click="showMenu = !showMenu")
           ul.h1.list-reset
-            li.mt1
+            //- li.mt1
               router-link(:to="{ name: 'Welcome' }" exact) Welcome
             li.mt1
               router-link(:to="{ name: 'Feed' }") Feed
