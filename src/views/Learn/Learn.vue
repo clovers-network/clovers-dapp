@@ -2,7 +2,6 @@
   article#learn.fixed.top-0.left-0.right-0.bottom-0.bg-white.overflow-y-scroll(ref="body", style="z-index: 90")
     #learn_index_0.h-100vh.relative
       intro(@next="next(1)")
-    router-link.absolute.right-0.bottom-0.mr4(:to="{name:'Feed'}" @click="setVisited") (Skip Tutorial)
     #learn_index_1.h-100vh.relative(v-if="index > 0")
       create-clovers(:clovers="clovers", @addClover="addClover", @next="next(2)")
     #learn_index_2.h-100vh.relative(v-if="index > 1")
@@ -62,17 +61,10 @@ export default {
     addClover (clvr) {
       this.clovers.push(clvr)
       this.$store.commit('SAVE_CLOVER', clvr)
-    },
-    setVisited () {
-      updateLocal()
     }
   }
 }
 
-function updateLocal (key = 'first-visit', value = true) {
-  if (!window.localStorage) return
-  window.localStorage.setItem(key, JSON.stringify(value))
-}
 </script>
 
 <style>

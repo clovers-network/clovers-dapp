@@ -48,6 +48,15 @@ export default {
   @import './style/imports';
   #WEB3_CONNECT_MODAL_ID > div {
     z-index:4;
+    position: fixed;
+  }
+ #WEB3_CONNECT_MODAL_ID {
+    /* position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 999; */
   }
   .intro-screen {
     & .clover {
