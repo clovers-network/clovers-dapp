@@ -63,8 +63,6 @@
           li
             router-link.inline-block.p1(:to="{ name: 'Welcome' }" exact) Welcome
           li
-            router-link.inline-block.p1(:to="{name: 'Account'}") Dashboard
-          li
             router-link.inline-block.p1(:to="{ name: 'Feed' }") Feed
           li
             router-link.inline-block.p1(:to="{ name: 'Garden' }") Garden
@@ -74,6 +72,8 @@
             router-link.inline-block.p1.relative(:to="{ name: 'Activity' }")
               span Activity <sup v-if="newLogs">{{newLogs}}</sup>
               //- span.circle.bg-orange.absolute(v-if="newLogs" style="width:8px;height:8px")
+          //- li
+            router-link.inline-block.p1(:to="{name: 'Account'}") Dashboard
       .border.rounded.m2
         pig.py3.mb1(@viewPicks="$router.push({name: 'Picks'})")
 </template>
