@@ -21,12 +21,12 @@ Vue.use(Router)
 export default new Router({
   mode: 'history',
   routes: [
-    {
-      path: '/',
-      name: 'Welcome',
-      component: Welcome,
-      meta: { title: '' }
-    },
+    // {
+    //   path: '/',
+    //   name: 'Welcome',
+    //   component: Welcome,
+    //   meta: { title: '' }
+    // },
     {
       path: '/field',
       name: 'Field',
@@ -34,10 +34,10 @@ export default new Router({
       meta: { title: 'Pick Clovers' }
     },
     {
-      path: '/market',
-      name: 'Market',
+      path: '/',
+      name: 'Feed',
       component: Feed,
-      meta: { title: 'Market' }
+      meta: { title: 'Feed' }
     },
 
     {
@@ -45,12 +45,6 @@ export default new Router({
       name: 'Trade',
       component: Trade
     },
-    {
-      path: '/learn',
-      name: 'Learn',
-      template: '<div>Learn</div>'
-    },
-
     {
       path: '/learn',
       name: 'Learn',
@@ -68,7 +62,7 @@ export default new Router({
       path: '/account/picks',
       name: 'Picks',
       component: Picks,
-      meta: { title: 'Picks' }
+      meta: { title: 'Your Basket' }
     },
     {
       path: '/account/clovers',

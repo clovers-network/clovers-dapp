@@ -7,7 +7,7 @@
         //- desktop menu
         #desktopMenu.flex.flex-center.ml3
           router-link.pr2(:to="{name: 'Account'}") Dashboard
-          router-link.pr2(:to="{name: 'Market'}") Feed
+          router-link.pr2(:to="{name: 'Feed'}") Feed
           router-link.pr2(:to="{name: 'Field'}") Garden
           router-link.pr2(:to="{name: 'Learn'}") Learn
         //- menu btn
@@ -52,7 +52,7 @@
             li.mt1
               router-link(:to="{ name: 'Welcome' }" exact) Welcome
             li.mt1
-              router-link(:to="{ name: 'Market' }") Feed
+              router-link(:to="{ name: 'Feed' }") Feed
             li.mt1
               router-link(:to="{ name: 'Field' }") Garden
             li.mt1

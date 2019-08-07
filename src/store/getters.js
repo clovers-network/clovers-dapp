@@ -6,9 +6,6 @@ import BigNumber from 'bignumber.js'
 
 export default {
   user ({ account, accountData }) {
-    console.log('get user')
-    console.log({account})
-    console.log({accountData})
     if (!account) return { address: null, name: 'anon', clovers: [], balance: '0', image: '' }
     return accountData || {
       address: account,
@@ -47,7 +44,6 @@ export default {
     return name
   },
   userImage: (_, { userName }) => (user, size = 200) => {
-    console.log(user)
     if (typeof user === 'string') {
       return cloverImage(user || '0', size)
     }
@@ -105,6 +101,7 @@ export default {
   },
 
   authHeader ({ account, tokens }) {
+    console.log({tokens})
     if (!account || !tokens || !tokens[account]) return null
     return `Basic ${btoa(`${account}:${tokens[account]}`)}`
   },

@@ -31,6 +31,8 @@
     //- Clover List
     .fade-enter-active(v-if="hasResults", :class="{'opacity-50': loading}")
       clover-list-cards(:clovers='clovers')
+    .fade-enter-active(v-else, :class="{'opacity-50': true}")
+      clover-list-cards(:clovers='fakeClovers')
 
     nav.list-reset.flex.h5.green.items-center.justify-center.my3.pb4(v-if='(prevPossible || nextPossible) && hasResults')
       li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !prevPossible }", @click="back")
@@ -65,7 +67,11 @@ export default {
         filter: undefined,
         page: undefined,
         asc: undefined
-      }
+      },
+      fakeClovers: [{board: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', symmetries: {}, price: 0, commentCount: 0},
+        {board: '55555555555555555555555555555555', symmetries: {}, price: 0, commentCount: 0},
+        {board: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', symmetries: {}, price: 0, commentCount: 0},
+        {board: '0x55555555555555555555555555555555', symmetries: {}, price: 0, commentCount: 0}]
     }
   },
   head: {
@@ -143,7 +149,7 @@ export default {
         if (cf !== filter) {
           delete q.page
         }
-        this.$router.push({ name: 'Market', query: { ...q } })
+        this.$router.push({ name: 'Feed', query: { ...q } })
       }
     },
     $route () {
@@ -191,7 +197,7 @@ export default {
     },
     addNew () {
       if (this.isFiltered) {
-        this.$router.push({ name: 'Market' })
+        this.$router.push({ name: 'Feed' })
       } else {
         this.results.results.unshift(...this.newClovers)
         this.$store.commit('CLEAR_NEW_CLOVERS')
