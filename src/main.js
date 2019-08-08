@@ -65,7 +65,7 @@ router.beforeEach((to, from, next) => {
   // if (to.name !== 'Soon') {
   //   next('/soon')
   // } else {
-    next()
+  next()
   // }
 })
 
