@@ -66,4 +66,5 @@ export default {
     padding-top: 1px;
     min-height: calc(100vh - 94px);
   }
+
 </style>

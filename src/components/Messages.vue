@@ -1,5 +1,5 @@
 <template lang="pug">
-  .fixed.top-0.left-0.ml2.z3.pointer-events-none.col-12(style="max-height:100vh;overflow-y:auto;")
+  .fixed.top-0.left-0.px2.pointer-events-none.col-12.z5(style="max-height:100vh;overflow-y:auto;")
     .max-width-1.pointer-events-auto
       ul.list-reset(v-if="messages.length > 0")
         li.relative.pt2.px3.pb2.mb2.h4.rounded.border.shadow.border-dashed.bg-white(v-for="msg in messages", :class="msgClass(msg)" :key="msg.id")

@@ -4,7 +4,7 @@
     //- .green.border-bottom.py1.center
     //-   p.my0.md-my1 Your unregistered Clovers
 
-    ul.list-reset.flex.flex-wrap.mxn2.mt0.mb3.px2.pb-full-height(v-if="picks.length !== 0")
+    ul.list-reset.flex.flex-wrap.mt0.mb3.px2.pb-full-height(v-if="picks.length !== 0")
       field-item(v-for='(clover, i) in picks' :key='i' data-expand='-50' :data-appear='i % 3' :clover="clover")
     .h1.center.mt4.block(v-else) Go to <a href="/garden"><u>your Garden</u></a> to pick some Clovers...
     //- ul.list-reset.md-flex.flex-wrap.items-center.m0.md-px1.pb-bttm-bar

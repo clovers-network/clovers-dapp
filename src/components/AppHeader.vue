@@ -1,7 +1,7 @@
  <template lang="pug">
-  header.top-0.z2(:class="{'bg-white green': !showMenu, 'white': showMenu}")
+  header(:class="{'bg-white green': !showMenu, 'white': showMenu}")
     //- top bar
-    .relative.z2.h-header.flex.items-center.justify-between
+    .relative.z5.h-header.flex.items-center.justify-between
       //- left col
       .col-4.flex.pl2.items-center
         //- desktop menu
@@ -11,7 +11,7 @@
           router-link.pr2(:to="{name: 'Learn'}") Learn
           router-link.pr2(:to="{name: 'Activity'}") Activity
         //- menu btn
-        button#mobileMenu.menu-btn.pointer.relative.py2.pr2(@click='showMenu = !showMenu' aria-label='Toggle Menu')
+        button#mobileMenu.menu-btn.pointer.relative.py2.pr2(@click='clickMenu' aria-label='Toggle Menu')
           wavey-btn(v-show='mining', :is-white='showMenu')
           img.block(v-show='!mining', :src="showMenu\
             ? require('../assets/icons/hamburger-white.svg')\
@@ -55,7 +55,7 @@
     //- (mobile page title)
     h1.md-hide.h1.font-exp.mt3.pt1.pl2(v-if="$route.meta.title") {{$route.meta.title}}
     //- nav overlay
-    .absolute.z1.h-100vh.col-12.bg-green.top-0.left-0.flex.flex-column.justify-between.center(v-show='showMenu')
+    .fixed.z4.h-100vh.col-12.bg-green.top-0.left-0.flex.flex-column.justify-between.center(v-show='showMenu')
       .h-header
       nav.flex-auto.flex.items-center.justify-center.pb1
         ul.h2.list-reset
@@ -130,6 +130,11 @@ export default {
     },
     showMenu () {
       this.showBadge = false
+      if (this.showMenu) {
+        document.body.style.overflow = 'hidden'
+      } else {
+        document.body.style.overflow = null
+      }
     }
   },
   mounted () {
@@ -140,6 +145,9 @@ export default {
     window.removeEventListener('keyup', this.checkEsc)
   },
   methods: {
+    clickMenu () {
+      this.showMenu = !this.showMenu
+    },
     pigMenuToggle () {
       this.pigMenu = !this.pigMenu
     },
@@ -237,4 +245,5 @@ export default {
       display: none;
     }
   }
+
 </style>
