@@ -62,11 +62,11 @@ global.web3Connect.on('close', () => {
 router.beforeEach((to, from, next) => {
   to.meta.fromName = from.name
 
-  if (to.name !== 'Soon') {
-    next('/soon')
-  } else {
+  // if (to.name !== 'Soon') {
+  //   next('/soon')
+  // } else {
     next()
-  }
+  // }
 })
 
 router.afterEach(() => {

@@ -18,7 +18,7 @@
             :blank="true"
             :invert="false")
         .center
-          h3.h4.truncate.rounded.p1.px2.block.inline-block.mx-auto(:class="{border: clover.name !== clover.board}") {{ clover.name === clover.board ? '&nbsp;' : clover.name }}
+          h3.h4.truncate.rounded.p1.px2.block.inline-block.mx-auto(:class="{border: clover.name && clover.name !== clover.board}") {{ clover.name === clover.board ? '&nbsp;' : clover.name }}
 
       //- .px1
         p.m0.h6 Owner 0x098hhi8hf98379874
@@ -63,6 +63,9 @@ export default {
   name: 'CloverItemCard',
   props: {
     clover: { type: Object, default: () => {}, required: true }
+  },
+  mounted() {
+    console.log(this.clover.name)
   },
   computed: {
     marketContract () {
