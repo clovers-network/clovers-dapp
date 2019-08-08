@@ -64,7 +64,7 @@ export default {
   props: {
     clover: { type: Object, default: () => {}, required: true }
   },
-  mounted() {
+  mounted () {
     console.log(this.clover.name)
   },
   computed: {
