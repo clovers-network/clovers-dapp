@@ -8,9 +8,9 @@
   border-width:1px;
 }
 
-html{
+html {
   font-size:var(--rem);
-  background-color: var(--green)
+  /*background-color: var(--green)*/
 }
 
 body {
@@ -24,7 +24,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-#app { overflow-x: hidden; }
+/*#app { overflow-x: hidden; }*/
 
 img {
   height: auto;

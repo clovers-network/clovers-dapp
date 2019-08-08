@@ -1,5 +1,5 @@
 <template lang="pug">
- .absolute.bottom-0.left-0.right-0.bg-green
+ .bg-green(:class="{ hide: hideme }")
   .max-width-4.flex.justify-center.mx-auto.white.align-middle
      a.p2.flex.align-middle(target="_blank" href="https://github.com/clovers-network")
       GithubIcon
@@ -23,9 +23,10 @@ import TelegramIcon from '@/components/Icons/TelegramIcon'
 import TwitterIcon from '@/components/Icons/TwitterIcon'
 export default {
   name: 'Foot',
-
-  data () {
-    return {}
+  computed: {
+    hideme () {
+      return this.$route.name === 'Clover'
+    }
   },
   components: {
     GithubIcon,

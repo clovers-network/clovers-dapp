@@ -1,5 +1,6 @@
 <template lang="pug">
   .mx2.sm-mx3
+    more-information(title="?" content="<u>The Activity Log</u> is where you can get an overview of everything that's happening on the site in real time. You'll see activity for when a new Clover is registered, when one is bought or listed for sale, when users buy or sell Clover Coin and when they comment on someones Clover.")
     .mt4.mb2
       .flex.left-align.justify-end
         .pt2.pb2.flex-auto.left-align
@@ -51,6 +52,7 @@
 import store from '@/store'
 import { mapGetters, mapActions } from 'vuex'
 import ActivityItem from '@/components/ActivityItem'
+import MoreInformation from '@/components/MoreInformation'
 import svgX from '@/components/Icons/SVG-X'
 import xss from 'xss'
 import axios from 'axios'
@@ -203,6 +205,6 @@ export default {
   destroyed () {
     clearInterval(this.interval)
   },
-  components: { ActivityItem, svgX }
+  components: { ActivityItem, svgX, MoreInformation }
 }
 </script>
