@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import {mapActions, mapGetters, mapState} from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 export default {
   name: 'AcountMenu',
   props: ['visible'],

@@ -150,7 +150,7 @@ import Clv from './Clv'
 export default {
 
   name: 'About',
-  components: {Clv},
+  components: { Clv },
 
   data () {
     return {

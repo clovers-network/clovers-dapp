@@ -76,10 +76,10 @@ export default {
         page: undefined,
         asc: undefined
       },
-      fakeClovers: [{board: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', symmetries: {}, price: 0, commentCount: 0},
-        {board: '55555555555555555555555555555555', symmetries: {}, price: 0, commentCount: 0},
-        {board: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', symmetries: {}, price: 0, commentCount: 0},
-        {board: '0x55555555555555555555555555555555', symmetries: {}, price: 0, commentCount: 0}]
+      fakeClovers: [{ board: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', symmetries: {}, price: 0, commentCount: 0 },
+        { board: '55555555555555555555555555555555', symmetries: {}, price: 0, commentCount: 0 },
+        { board: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', symmetries: {}, price: 0, commentCount: 0 },
+        { board: '0x55555555555555555555555555555555', symmetries: {}, price: 0, commentCount: 0 }]
     }
   },
   head: {

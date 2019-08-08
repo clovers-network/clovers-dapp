@@ -62,7 +62,7 @@ import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 export default {
   name: 'CloverItemCard',
   props: {
-    clover: {type: Object, default: () => {}, required: true}
+    clover: { type: Object, default: () => {}, required: true }
   },
   computed: {
     marketContract () {

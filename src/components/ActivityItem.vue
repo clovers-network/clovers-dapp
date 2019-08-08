@@ -159,7 +159,7 @@ export default {
       return parseFloat(prettyBigNumber(n, decimals))
     },
     userRt (addr) {
-      return {name: 'User', params: {addr: addr}}
+      return { name: 'User', params: { addr: addr } }
     }
   },
   components: { ChatIcon, CoinIcon }

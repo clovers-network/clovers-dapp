@@ -73,7 +73,7 @@ import BigNumber from 'bignumber.js'
 export default {
   name: 'CloverItemRow',
   props: {
-    clover: {type: Object, default: () => {}, required: true},
+    clover: { type: Object, default: () => {}, required: true },
     hideOwner: false
   },
   computed: {

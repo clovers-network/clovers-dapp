@@ -76,7 +76,7 @@ const actions = {
 export default {
   name: 'KeepClover',
   props: {
-    movesString: {type: String, required: true}
+    movesString: { type: String, required: true }
   },
   head: {
     meta () {

@@ -106,7 +106,7 @@ export default {
       /* go BACK if didn't enter Picks via Keep */
       if (this.entryRt !== 'Account/Keep') return this.$router.go(-1)
       this.entryRt = null // clear, so always use BACK now
-      this.$router.push({name: 'Picks'})
+      this.$router.push({ name: 'Picks' })
     },
 
     ...mapActions(['formatFoundClover']),

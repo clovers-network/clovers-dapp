@@ -46,7 +46,7 @@
 <script>
 import DotBtn from '@/components/DotBtn'
 import NewsletterSignup from '@/components/NewsletterSignup'
-import {mapActions} from 'vuex'
+import { mapActions } from 'vuex'
 export default {
   name: 'Welcome',
   components: { DotBtn, NewsletterSignup },

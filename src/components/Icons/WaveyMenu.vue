@@ -6,7 +6,7 @@
 export default {
   name: 'WaveyMenu',
   props: {
-    isWhite: {type: Boolean, default: false}
+    isWhite: { type: Boolean, default: false }
   }
 }
 </script>

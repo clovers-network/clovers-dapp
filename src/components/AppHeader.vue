@@ -86,8 +86,8 @@ import Pig from '@/components/Pig'
 import PersonIcon from '@/components/Icons/PersonIcon'
 import CartIcon from '@/components/Icons/CartIcon'
 import CoinIcon from '@/components/Icons/CoinIcon'
-import {toDec} from '@/utils'
-import {mapActions, mapGetters, mapState} from 'vuex'
+import { toDec } from '@/utils'
+import { mapActions, mapGetters, mapState } from 'vuex'
 export default {
   name: 'AppHeader',
   data () {

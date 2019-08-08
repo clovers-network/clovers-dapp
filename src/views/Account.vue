@@ -192,7 +192,7 @@ export default {
   mounted () {
     this.query()
     if (!this.user.address) {
-      this.$router.push({name: 'Picks'})
+      this.$router.push({ name: 'Picks' })
     }
     this.form.name = this.user.name
   },

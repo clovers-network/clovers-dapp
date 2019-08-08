@@ -104,17 +104,17 @@ export default {
         })
         return
       }
-      this.addMessage({msg: 'Updating Name', type: 'progress'}).then((msgId) => {
+      this.addMessage({ msg: 'Updating Name', type: 'progress' }).then((msgId) => {
         this.clover.changeName(this.name).then(() => {
           this.removeMessage(msgId)
           this.selfDestructMsg({
             msg: 'Name Updated to ' + this.name,
             link: '/users/' + this.account,
-            type: 'success'})
+            type: 'success' })
         }).catch((err) => {
           console.error(err)
           this.removeMessage(msgId)
-          this.selfDestructMsg({msg: 'Error check logs', type: 'error'})
+          this.selfDestructMsg({ msg: 'Error check logs', type: 'error' })
           console.log(err)
         })
       })
@@ -129,7 +129,7 @@ export default {
       removeMessage: 'REMOVE_MSG'
     })
   },
-  components: {CloverList, Activity}
+  components: { CloverList, Activity }
 }
 </script>
 <style  lang="scss" scoped>

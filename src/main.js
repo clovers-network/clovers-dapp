@@ -62,11 +62,11 @@ global.web3Connect.on('close', () => {
 router.beforeEach((to, from, next) => {
   to.meta.fromName = from.name
 
-  // if (to.name !== 'Soon') {
-  //   next('/soon')
-  // } else {
-  next()
-  // }
+  if (to.name !== 'Soon') {
+    next('/soon')
+  } else {
+    next()
+  }
 })
 
 router.afterEach(() => {
@@ -80,8 +80,8 @@ Vue.config.productionTip = false
 Vue.config.devtools = true
 Vue.config.APIBaseUrl = process.env.VUE_APP_API_URL
 
-Vue.use(VueHead, {separator: '|', complement: 'Clovers'})
-Vue.use(VueTouch, {name: 'v-touch'})
+Vue.use(VueHead, { separator: '|', complement: 'Clovers' })
+Vue.use(VueTouch, { name: 'v-touch' })
 Vue.use(VueScrollTo)
 // Vue.use(VueChatScroll)
 

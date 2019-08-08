@@ -35,7 +35,7 @@ let miner
 
 export default {
 
-  mine ({dispatch, commit, state}) {
+  mine ({ dispatch, commit, state }) {
     console.log('mine')
     if (state.miners.length === 0) {
       commit('RESET_MINED')
@@ -66,7 +66,7 @@ export default {
     miner.postMessage('start')
     commit('ADD_MINER', miner)
   },
-  stop ({state, commit}) {
+  stop ({ state, commit }) {
     console.log('stop')
     if (state.miners.length) {
       let last = state.miners.length - 1
@@ -78,7 +78,7 @@ export default {
       commit('UPDATE_HASHRATE', 0)
     }
   },
-  stopAll ({state, dispatch}) {
+  stopAll ({ state, dispatch }) {
     dispatch('stop')
     while (state.miners.length > 0) {
       dispatch('stop')
@@ -152,7 +152,7 @@ export default {
       return false
     }
   },
-  async approve ({state, commit}) {
+  async approve ({ state, commit }) {
     if (!state.enabled && global.ethereum) {
       try {
         await global.ethereum.enable()
@@ -477,7 +477,7 @@ export default {
       if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
       console.log('after check web3')
       const { account } = state
-      console.log({account})
+      console.log({ account })
       if (!account) {
         dispatch('selfDestructMsg', {
           type: 'error',
@@ -862,7 +862,7 @@ async function getLowestPrice (
 }
 
 async function claimClover ({ keep, account, clover }) {
-  console.log({clover})
+  console.log({ clover })
   let reversi = new Reversi()
   reversi.playGameMovesString(clover.movesString)
   let moves = reversi.returnByteMoves().map(m => '0x' + padRight(m, 56))

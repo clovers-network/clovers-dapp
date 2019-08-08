@@ -19,7 +19,7 @@
 
 <script>
 import ToggleBtn from '@/components/ToggleBtn'
-import {mapActions, mapGetters, mapState} from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 export default {
   name: 'PigMenu',
   data () {
