@@ -24,8 +24,8 @@
                     router-link(:to="'/users/' + comment.userAddress")
                       span(v-text="comment.userName").font-mono.pr2.nowrap
                     span(v-text="comment.comment").bold.pr2.break-word
-                    span.hvr.h6.orange.pointer.absolute.right-0.px2.py1.bg-white.rounded(v-if="owner && !commentOwner(comment)", @click="flagOrDeleteComment(comment.id)") Flag
-                    span.hvr.h6.red.pointer.absolute.right-0.px2.py1.bg-white.rounded(v-if="commentOwner(comment)", @click="flagOrDeleteComment(comment.id)") Delete
+                    span.mobile-delete.hvr.h6.orange.pointer.absolute.right-0.px2.py1.bg-white.rounded(v-if="owner && !commentOwner(comment)", @click="flagOrDeleteComment(comment.id)") Flag
+                    span.mobile-delete.hvr.h6.red.pointer.absolute.right-0.px2.py1.bg-white.rounded(v-if="commentOwner(comment)", @click="flagOrDeleteComment(comment.id)") Delete
                   span.block.sm-inline
                   span(v-text="commentDate(comment.created)").h6.pr2.light-green
 
@@ -367,5 +367,10 @@ function atBottom (el) {
 .break-word {
   overflow-wrap: break-word;
   hyphens: auto;
+}
+
+.mobile-delete{
+  display:inline-block;
+  position: relative;
 }
 </style>

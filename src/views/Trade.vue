@@ -1,7 +1,7 @@
 <template lang="pug">
   section
     more-information(title="?" content="<u>Trade</u> is where you can buy or sell Clover Coin. This currency is used for registering new Clovers and as a reward for finding Symmetrical Clovers. It uses a Bonding Curve to buy and sell. To learn more about that concept check out this <u><a target='_blank' href='https://blog.relevant.community/how-to-make-bonding-curves-for-continuous-token-models-3784653f8b17'>article</a></u> or jump over to the <u><a href='https://forum.clovers.network'>Forum</a></u> to find out more details.")
-    header.flex(v-if="!isRFT")
+    //- header.flex(v-if="!isRFT")
       .col-6.p2
         small.lh2.block.h6 My Balance
         .font-exp.mt1.truncate {{prettyUserBalance}} &clubs;&#xfe0e;
@@ -17,51 +17,51 @@
           span.block.absolute.right-0.top-0.p2.h6.pointer(@click="switchMax") Last {{orders.slice(0, max).length}} trades
           chart.border-bottom(:market="market", :orders="orders.slice(0,max)")
         //- details
-        .col-12.flex.flex-wrap.justify-around.bg-light-green.green.rounded.py2.center(:class="{'flex-order_-1': isRFT}")
+        .col-12.flex.flex-wrap.justify-around.border-right.border-bottom.border-left.green.rounded-bottom.py2.center(:class="{'flex-order_-1': isRFT}")
           //- price
           .col-12.md-col-4.p2.md-border-right
-            small.lh2.block.h6 {{isRFT ? 'Share Price' : '&clubs;&#xfe0e; Value in USD'}}
-            .font-exp.mt1.truncate(v-if="isRFT") ${{ priceInUSD.toFormat(4) }}
-            .font-exp.mt1.truncate(v-else) ${{ priceInUSD.toFormat(2) }} <span class="opacity-50 font-reg"> / <span v-html="currentToken" /></span>
+            small.lh2.block.h6 {{isRFT ? 'Share Price' : '&clubs;&#xfe0e; Value in ' + displayIn}}
+            .font-exp.mt1.truncate(v-if="isRFT") {{denom}} {{ price.toFormat(4) }}
+            .font-exp.mt1.truncate(v-else) {{denom}} {{ price.toFormat(displayIn === 'ETH' ? 4 : 2) }} <span class="opacity-50 font-reg"> / <span v-html="currentToken" /></span>
           //- supply
           .col-6.md-col-4.p2
             small.lh2.block.h6 Total {{currentTokenPlural}}
-            .font-exp.mt1.truncate {{ totalSupply.toFormat(0) }}
+            .font-exp.mtborder1.truncate {{ totalSupply.toFormat(0) }}
           //- market cap
           .col-6.md-col-4.p2.border-left
-            small.lh2.block.h6 Market Cap
-            .font-exp.mt1.truncate(v-if="isRFT") ${{ marketCapInUSD.toFormat(2) }}
-            .font-exp.mt1.truncate(v-else) ${{ marketCapInUSD.toFormat(2) }}
+            small.lh2.block.h6 Market Cap in {{displayIn}}
+            .font-exp.mt1.truncate(v-if="isRFT") {{denom}} {{ marketCap.toFormat(2) }}
+            .font-exp.mt1.truncate(v-else) {{denom}} {{ marketCap.toFormat(displayIn === 'ETH' ? 4 : 2) }}
       //- TRADE
-      view-nav.bg-green.white(:items="[{lbl: 'Buy', value:'buy'}, {lbl: 'Sell', value:'sell'}]", @change="view = $event", :thick="true")
+      view-nav(:items="[{lbl: 'Buy', value:'buy'}, {lbl: 'Sell', value:'sell'}]", @change="view = $event", :thick="true")
       //- BUY
-      section.bg-green.white(v-if="view === 'buy'")
+      section(v-if="view === 'buy'")
         form(@submit.prevent="buyTokens")
           .p2
             p.h7.mb1
               span Spend
               span.opacity-50.pointer(v-if="isRFT", @click="spendAll") &emsp;(all)
             .relative
-              input.input.border.font-exp.white(v-model="buy", placeholder="0", type="number", min="0", step="any")
+              input.input.border.font-exp(v-model="buy", placeholder="0", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed {{collateral}}
           .p2.pb3
             p.h7.mb1 Receive
             .relative
               .pt1.pl2.pb2.border-bottom.font-exp {{clubReceive}}
               span.absolute.top-0.right-0.py1.claimed {{currencies}}
-          button(:disabled="working").h-bttm-bar.bg-green.white.bottom-0.col-12.pointer.border-top
+          button(:disabled="working").h-bttm-bar.col-12.pointer.border.rounded.mb3.bg-green.white
             span.font-exp(v-if="!working") Confirm
-            wavey-menu.m-auto(v-else, :is-white="true")
+            wavey-menu.m-auto(v-else, :is-white="false")
 
       //- SELL
-      section.bg-green.white(v-else)
+      section(v-else)
         form(@submit.prevent="sellTokens")
           .p2
             p.h7.mb1
               span Amount
               span.opacity-50.pointer(@click="sellAll") &emsp;(all)
             .relative
-              input.input.border.font-exp.white(v-model="sell", placeholder="0", type="number", min="0", step="any")
+              input.input.border.font-exp(v-model="sell", placeholder="0", type="number", min="0", step="any")
               span.absolute.top-0.right-0.p2.claimed {{currencies}}
           .p2.pb3
             p.h7.mb1 Receive
@@ -69,9 +69,9 @@
               //- input.input.border.font-exp(v-model="ethReceive", placeholder="ETH", disabled="true")
               .pt1.pl2.pb2.border-bottom.font-exp {{ethReceive}}
               span.absolute.top-0.right-0.py1.pr2.pb2.claimed {{collateral}}
-          button(:disabled="working").h-bttm-bar.bg-green.white.bottom-0.col-12.pointer.border-top.pointer
+          button(:disabled="working").h-bttm-bar.col-12.pointer.border.rounded.mb3.bg-green.white.pointer
             span.font-exp(v-if="!working") Confirm
-            wavey-menu.m-auto(v-else, :is-white="true")
+            wavey-menu.m-auto(v-else, :is-white="false")
 </template>
 
 <script>
@@ -101,7 +101,8 @@ export default {
       clubReceive: '1',
       sell: '10',
       ethReceive: '1',
-      working: false
+      working: false,
+      displayIn: 'ETH'
     }
   },
   head: {
@@ -120,6 +121,9 @@ export default {
     }
   },
   computed: {
+    denom () {
+      return this.displayIn === 'ETH' ? 'Ξ' : '$'
+    },
     isRFT () {
       return this.market !== 'ClubToken'
     },
@@ -137,6 +141,9 @@ export default {
     },
     currencies () {
       return this.currentToken === 'Share' ? 'Shares' : 'Coins (♣︎)'
+    },
+    price () {
+      return this.displayIn === 'ETH' ? this.priceInEth : this.priceInUSD
     },
     priceInEth () {
       if (this.marketContract === 'CurationMarket') {
@@ -171,6 +178,9 @@ export default {
     },
     marketCapInUSD () {
       return this.totalSupply.times(this.priceInUSD)
+    },
+    marketCap () {
+      return this.displayIn === 'ETH' ? this.marketCapInCollateral : this.marketCapInUSD
     },
 
     ...mapState(['ethPrice', 'clubTokenPrice', 'orders']),

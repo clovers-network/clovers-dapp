@@ -137,6 +137,7 @@ export default {
   },
   // web3 stuff
   async checkWeb3 ({ state, dispatch, commit }) {
+    console.log('check web3')
     if (!state.web3Enabled) {
       dispatch('signIn')
       return
@@ -205,6 +206,7 @@ export default {
     }
   },
   async getAccount ({ commit, dispatch, state }) {
+    console.log('get account')
     await dispatch('getNetwork')
     let accounts = await global.web3.eth.getAccounts()
     if (accounts.length && state.account !== accounts[0].toLowerCase()) {
@@ -368,9 +370,9 @@ export default {
     msg.id = msgId
     commit('ADD_MSG', msg)
     if (msg.type === 'success') {
-      setTimeout(() => {
-        commit('REMOVE_MSG', msgId)
-      }, 5000)
+      // setTimeout(() => {
+      //   commit('REMOVE_MSG', msgId)
+      // }, 5000)
     }
     return msg.id
   },
@@ -469,10 +471,13 @@ export default {
   },
   async signIn ({ state, commit, dispatch }) {
     if (!state.web3Enabled) {
+      console.log('toggle modal')
       global.web3Connect.toggleModal() // open modal on button click
     } else {
       if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
+      console.log('after check web3')
       const { account } = state
+      console.log({account})
       if (!account) {
         dispatch('selfDestructMsg', {
           type: 'error',
@@ -481,7 +486,10 @@ export default {
         commit('UPDATE_WEB3', false)
         return
       }
-      if (state.tokens[account]) {
+
+      console.log('here')
+      if (state.tokens && account in state.tokens && state.tokens[account]) {
+        console.log('token is present', state.tokens[account])
         return
       }
       global.web3.currentProvider.sendAsync(
