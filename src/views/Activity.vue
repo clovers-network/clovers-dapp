@@ -6,7 +6,7 @@
         .pt2.pb2.flex-auto.left-align
           .h6.sm-h5.font-mono.pt1
             span.xs-hide.sm-hide Block
-            span(v-text="` #${currentBlock}`")
+            span(v-text="` #${currentBlock || ''}`")
         .pt1.pb2.pl2.pr1
           .center.h4.select
             select(v-model='filters.filter')

@@ -30,6 +30,7 @@ export default {
     return abbrvNum(userBalanceWei.div(ctp).toString(10))
   },
   userName: ({ nullAddress }, { cloversBankAddress, curationMarketAddress }) => (user, truncate = true) => {
+    if (!user) return null
     let { address } = user
     let name = address === cloversBankAddress ? 'Clovers'
       : address === curationMarketAddress ? 'Curation Mrkt.'
@@ -101,7 +102,6 @@ export default {
   },
 
   authHeader ({ account, tokens }) {
-    console.log({tokens})
     if (!account || !tokens || !tokens[account]) return null
     return `Basic ${btoa(`${account}:${tokens[account]}`)}`
   },

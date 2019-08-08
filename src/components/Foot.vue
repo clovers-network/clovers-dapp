@@ -3,16 +3,16 @@
   .max-width-4.flex.justify-center.mx-auto.white.align-middle
      a.p2.flex.align-middle(target="_blank" href="https://github.com/clovers-network")
       GithubIcon
-      .ml1 Github
+      .ml1.xs-hide Github
      a.p2.flex.align-middle(target="_blank" href="https://forum.clovers.network")
       DiscourseIcon
-      .ml1 Discourse
+      .ml1.xs-hide Discourse
      a.p2.flex.align-middle(target="_blank" href="https://twitter.com/cloversnetwork")
       TwitterIcon
-      .ml1 Twitter
+      .ml1.xs-hide Twitter
      a.p2.flex.align-middle(target="_blank" href="https://t.me/cloversnetwork")
       TelegramIcon
-      .ml1 Telegram
+      .ml1.xs-hide Telegram
 
 </template>
 

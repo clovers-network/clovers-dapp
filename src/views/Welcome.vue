@@ -1,5 +1,5 @@
 <template lang="pug">
-  .div.pt4.overflow-hidden.border-right.border-left
+  .div.pt4.my3.overflow-hidden.border.rounded
     h1.h1.center.green.font-exp.strong.pb3.flex
       //- span.col-6.align-right.cloverVerb.relative
         transition(

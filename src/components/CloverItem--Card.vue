@@ -17,13 +17,15 @@
             :size="16"
             :blank="true"
             :invert="false")
+        .center
+          h3.h4.truncate.rounded.p1.px2.block.inline-block.mx-auto(:class="{border: clover.name !== clover.board}") {{ clover.name === clover.board ? '&nbsp;' : clover.name }}
 
       //- .px1
         p.m0.h6 Owner 0x098hhi8hf98379874
       .px1.pb2
         .mt2.flex.items-end.nowrap
           .px1.sm-px2.flex-auto
-            h3.h4.truncate {{ clover.name }}
+            h3.h4.truncate {{ userName(clover.user) }}
           .px1.sm-px2.col-6.sm-col-5.right-align(v-if="isRFT || clover.price.toString(10) !== '0'")
             h4.h4
               coin-icon.mr1
