@@ -370,9 +370,9 @@ export default {
     msg.id = msgId
     commit('ADD_MSG', msg)
     if (msg.type === 'success') {
-      // setTimeout(() => {
-      //   commit('REMOVE_MSG', msgId)
-      // }, 5000)
+      setTimeout(() => {
+        commit('REMOVE_MSG', msgId)
+      }, 5000)
     }
     return msg.id
   },
