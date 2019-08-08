@@ -44,7 +44,7 @@
       footer(v-else)
         .m3.rounded.white.bg-green.center
           router-link.col-12.pointer.p2.inline-block(:to="cloverLink")
-            p.m0.m-auto Done!
+            p.m0.m-auto View Clover
 </template>
 
 <script>

@@ -51,7 +51,7 @@
               span.absolute.top-0.right-0.py1.claimed {{currencies}}
           button(:disabled="working").h-bttm-bar.col-12.pointer.border.rounded.mb3.bg-green.white
             span.font-exp(v-if="!working") Confirm
-            wavey-menu.m-auto(v-else, :is-white="false")
+            wavey-menu.m-auto(v-else, :is-white="true")
 
       //- SELL
       section(v-else)
@@ -71,7 +71,7 @@
               span.absolute.top-0.right-0.py1.pr2.pb2.claimed {{collateral}}
           button(:disabled="working").h-bttm-bar.col-12.pointer.border.rounded.mb3.bg-green.white.pointer
             span.font-exp(v-if="!working") Confirm
-            wavey-menu.m-auto(v-else, :is-white="false")
+            wavey-menu.m-auto(v-else, :is-white="true")
 </template>
 
 <script>
