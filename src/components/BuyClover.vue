@@ -3,15 +3,15 @@
 
     .center
       .inline-block.py2.px3.border.rounded
-        span.inline-block.font-exp.h3 {{ cloverPrice }} <coin-icon style="padding-bottom:3px"/>
+        span.inline-block.font-exp.h3.wrap-word {{ cloverPrice }} <coin-icon style="padding-bottom:3px"/>
 
-    .flex.justify-around.my3.bg-light-green.green.rounded.py2.center
+    .flex.justify-around.my3.bg-light-green.green.rounded.py2.center.items-center
       .px2.col-6.border-right
         small.block.lh1.h6 Your Balance
         .font-exp {{ prettyUserBalance }} <coin-icon/>
       .px2.col-6
         small.block.lh1.h6 Balance After
-        .font-exp {{ balanceAfter }} <coin-icon/>
+        .font-exp.wrap-word {{ balanceAfter }} <coin-icon/>
 
     .font-ext.center(:class="{'pointer-events-none': submitting}")
       button.pointer.py2.px3.rounded.white.trans-bg(:class="cancelled ? 'bg-red' : 'bg-green'", type="submit", @click="confirm") {{ buttonText }}

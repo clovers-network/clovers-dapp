@@ -347,7 +347,7 @@ textarea {
     border: none;
     color: inherit;
     font: inherit;
-    height: 39px;
+    height: var(--height-select);
     outline: none;
     padding: 0 var(--space-4) 0 var(--space-2);
     width: 100%;

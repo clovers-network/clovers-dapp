@@ -1,36 +1,39 @@
 <template lang="pug">
   .mx3.green
-    more-information(title="?" content="<u>The Feed</u> is where all registerd Clovers can be found. You can use filters to see all the different types of symmetry, which Clovers are popular and have lots of comments or which ones are currently for sale and for how much.")
-    .mt4.mb2
-      .flex.left-align.justify-end
-        .pt1.pb2.pl2.pr1
-          .center.h4.select
-            select(v-model="filters.filter")
-              option(:value="undefined") All Clovers
-              option(value="forsale") Clovers for Sale
-              option(value="Sym") Symmetrical Clovers
-              option(value="RotSym") Sym. Rotational
-              option(value="X0Sym") Sym. Vertical
-              option(value="Y0Sym") Sym. Horizontal
-              option(value="XYSym") Sym. Diagonal Up
-              option(value="XnYSym") Sym. Diagonal Down
-              option(value="public") Human owned
-              option(value="contract") Contract owned
-              option(value="commented") With Comments
-              //- option(value="rft") RFT
+    more-information(title="?" content="<b>The Feed</b> is where all registerd Clovers can be found. You can filter by symmetry, popularity, comments, clovers for sale as well as sort by price or date.")
 
-        .pt1.pb2.pr2.pl1
-          .center.h4.select
-            select(v-model='filters.sort')
-              option(:value='undefined') Sort by Date
-              option(value='price') Sort by Price
-        .pt1.pb2.center(style="min-width:140px")
-          .center.h4.border.rounded.h-100.px2.flex.items-center.justify-between.hover-bg-l-green
-            span.pr2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !prevPossible }", @click="back")
-              img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
-            span {{ filters.page }} of {{ maxPage }}
-            span.pl2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !nextPossible }", @click="forward")
-              img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
+    //- filters
+    .mt3.mb3.pb1.sm-pb0.sm-mb2.flex.flex-wrap.sm-flex-no-wrap.left-align.sm-justify-end.mxn2.px3.sm-px1
+      //- filter
+      .col-6.sm-col-auto.my1.px1
+        .center.h4.select
+          select(v-model="filters.filter")
+            option(:value="undefined") All Clovers
+            option(value="forsale") Clovers for Sale
+            option(value="Sym") Symmetrical Clovers
+            option(value="RotSym") Sym. Rotational
+            option(value="X0Sym") Sym. Vertical
+            option(value="Y0Sym") Sym. Horizontal
+            option(value="XYSym") Sym. Diagonal Up
+            option(value="XnYSym") Sym. Diagonal Down
+            option(value="public") Human owned
+            option(value="contract") Contract owned
+            option(value="commented") With Comments
+            //- option(value="rft") RFT
+      //- sort
+      .col-6.sm-col-auto.my1.px1
+        .center.h4.select
+          select(v-model='filters.sort')
+            option(:value='undefined') Sort by Date
+            option(value='price') Sort by Price
+      //- page nav
+      .col-12.sm-col-auto.my1.px1
+        .center.h4.border.rounded.h-select.flex.items-center.justify-between.hover-bg-l-green.nowrap
+          span.p2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !prevPossible }", @click="back")
+            img.block(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
+          span {{ filters.page }} of {{ maxPage }}
+          span.p2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !nextPossible }", @click="forward")
+            img.block(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
 
     //- Clover List
     .fade-enter-active(v-if="hasResults", :class="{'opacity-50': loading}")
@@ -38,13 +41,13 @@
     .fade-enter-active(v-else, :class="{'opacity-50': true}")
       clover-list-cards(:clovers='fakeClovers')
 
-    nav.list-reset.flex.h5.green.items-center.justify-center.my3.pb4(v-if='(prevPossible || nextPossible) && hasResults')
-      li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !prevPossible }", @click="back")
-        img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
-        span.pl1 Previous
-      li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !nextPossible }", @click="forward")
-        span.pr1 Next
-        img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
+    nav.flex.h5.green.items-center.justify-center.my3.pb4(v-if='(prevPossible || nextPossible) && hasResults')
+      .col-6.flex.px1.sm-px2.justify-end
+        button.pointer.px3.py2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !prevPossible }", @click="back")
+          img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
+      .col-6.flex.px1.sm-px2
+        button.pointer.px3.py2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !nextPossible }", @click="forward")
+          img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
 
     //- .sticky.bottom-0.bg-green.white.p2.center.h-bttm-bar.flex.pointer(v-if='newCloversCount' @click='addNew')
       span.block.m-auto.font-exp Show {{ newCloversCount }} new {{ pluralize(&apos;Clover&apos;, newCloversCount) }}
@@ -158,6 +161,7 @@ export default {
       }
     },
     $route () {
+      window.scroll(0, 0)
       this.setFilters()
       this.query()
     }
