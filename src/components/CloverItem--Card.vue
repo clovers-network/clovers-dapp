@@ -64,9 +64,6 @@ export default {
   props: {
     clover: { type: Object, default: () => {}, required: true }
   },
-  mounted () {
-    console.log(this.clover.name)
-  },
   computed: {
     marketContract () {
       return this.isRFT ? 'CurationMarket' : 'ClubTokenController'

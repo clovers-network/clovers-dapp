@@ -45,8 +45,6 @@ export default {
     }
   },
   ADD_ORDER (state, order) {
-    console.log(order.market)
-    console.log(state.market)
     if (order.market === state.market) {
       state.orders.unshift(order)
     }
@@ -200,7 +198,6 @@ export default {
     if (!state.pagedClovers.results) return
     let inPage = state.pagedClovers.results.findIndex(c => c.board === board)
     if (inPage > -1) {
-      console.log('update in feed')
       state.pagedClovers.results.splice(inPage, 1, clover)
     }
   },

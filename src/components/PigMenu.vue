@@ -36,7 +36,6 @@ export default {
   },
   methods: {
     togglePig () {
-      console.log('mining', this.mining)
       if (!this.mining) {
         this.mine()
       } else {

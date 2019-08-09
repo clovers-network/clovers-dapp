@@ -55,9 +55,7 @@ global.web3Connect.on('connect', (provider) => {
 })
 
 // subscibe to close
-global.web3Connect.on('close', () => {
-  console.log('Web3Connect Modal Closed') // modal has closed
-})
+// global.web3Connect.on('close', () => {})
 
 router.beforeEach((to, from, next) => {
   to.meta.fromName = from.name

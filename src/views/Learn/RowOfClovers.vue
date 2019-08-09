@@ -7,7 +7,7 @@
           figure
             clv(:moveString="clover.movesString", :autoPlay="true", v-on="$listeners")
             //- @endPlayMoves="step")
-        .inline-block.px3.md-px2.content-box(v-show="canCreate && clovers.length < 5")
+        .inline-block.px3.md-px2.content-box(v-show="canCreate && clovers.length < 3")
           button.block.pointer(@click="$emit('create')")
             img.block(src="./learn-icon-add-clover.svg", style="vertical-align: auto")
         .inline-block.px3.md-px1

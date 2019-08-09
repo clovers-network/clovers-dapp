@@ -1,6 +1,7 @@
 import * as contracts from 'clovers-contracts'
 import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
+import Decimal from 'decimal.js'
 import io from 'socket.io-client'
 import utils from 'web3-utils'
 import axios from 'axios'
@@ -36,7 +37,6 @@ let miner
 export default {
 
   mine ({ dispatch, commit, state }) {
-    console.log('mine')
     if (state.miners.length === 0) {
       commit('RESET_MINED')
     }
@@ -67,7 +67,6 @@ export default {
     commit('ADD_MINER', miner)
   },
   stop ({ state, commit }) {
-    console.log('stop')
     if (state.miners.length) {
       let last = state.miners.length - 1
       let removed = state.miners[last]
@@ -137,7 +136,6 @@ export default {
   },
   // web3 stuff
   async checkWeb3 ({ state, dispatch, commit }) {
-    console.log('check web3')
     if (!state.web3Enabled) {
       dispatch('signIn')
       return
@@ -158,7 +156,7 @@ export default {
         await global.ethereum.enable()
         commit('SET_ENABLED', true)
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
   },
@@ -206,7 +204,6 @@ export default {
     }
   },
   async getAccount ({ commit, dispatch, state }) {
-    console.log('get account')
     await dispatch('getNetwork')
     let accounts = await global.web3.eth.getAccounts()
     if (accounts.length && state.account !== accounts[0].toLowerCase()) {
@@ -230,7 +227,6 @@ export default {
     })
   },
   async getContracts ({ dispatch, state, commit }) {
-    console.log('getContracts start')
     commit('CONTRACTS_DEPLOYED', false)
     for (var name in contracts) {
       if (!contracts.hasOwnProperty(name)) continue
@@ -240,16 +236,13 @@ export default {
           contract.abi,
           contract.networks[state.networkId].address
         )
-        console.log('instantiated ' + name)
       } else {
-        console.log(name + ' not deployed on this network')
         throw new Error('wrong-network')
       }
     }
     await dispatch('updateBasePrice')
     await dispatch('updateStakeAmount')
     commit('CONTRACTS_DEPLOYED', true)
-    console.log('getContracts ended')
   },
   async updateBasePrice ({ commit }) {
     let basePrice = await contracts.CloversController.instance.methods
@@ -471,13 +464,10 @@ export default {
   },
   async signIn ({ state, commit, dispatch }) {
     if (!state.web3Enabled) {
-      console.log('toggle modal')
       global.web3Connect.toggleModal() // open modal on button click
     } else {
       if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
-      console.log('after check web3')
       const { account } = state
-      console.log({ account })
       if (!account) {
         dispatch('selfDestructMsg', {
           type: 'error',
@@ -487,9 +477,7 @@ export default {
         return
       }
 
-      console.log('here')
       if (state.tokens && account in state.tokens && state.tokens[account]) {
-        console.log('token is present', state.tokens[account])
         return
       }
       global.web3.currentProvider.sendAsync(
@@ -549,7 +537,7 @@ export default {
       market: 'ClubToken',
       amount: '1'
     })
-    commit('SET_CLUB_TOKEN_PRICE', clubTokenPrice.toString(10))
+    commit('SET_CLUB_TOKEN_PRICE', clubTokenPrice)
   },
   // Contract Interactions
   async getBuy ({ dispatch }, { market, amount }) {
@@ -588,7 +576,7 @@ export default {
           .buy(state.account)
           .send({
             from: state.account,
-            value: amount
+            value: amount 
           })
       } else {
         throw new Error('insufficient-funds')
@@ -600,13 +588,13 @@ export default {
       balance = new BigNumber(balance)
       let value = '0'
       if (balance.lt(amount)) {
-        value = await getLowestPrice(contracts.ClubTokenController, amount)
+        value = await getLowestPrice(contracts, amount)
       }
       return contracts.CurationMarket.instance.methods
         .buy(state.account, market, amount)
         .send({
           from: state.account,
-          value
+          value: value 
         })
     }
   },
@@ -625,9 +613,9 @@ export default {
       if (balance.lt(amount)) {
         throw new Error(
           'balance too low: ' +
-            balance.toString(10) +
+            balance +
             ' < ' +
-            amount.toString(10)
+            amount
         )
       }
       return contracts.ClubTokenController.instance.methods.sell(amount).send({
@@ -639,7 +627,7 @@ export default {
         .call()
       balance = new BigNumber(balance)
       if (balance.lt(amount)) {
-        throw new Error('balance too low: ' + balance.toString(10))
+        throw new Error('balance too low: ' + balance)
       }
       return contracts.CurationMarket.instance.methods
         .sell(market, amount)
@@ -650,14 +638,13 @@ export default {
   },
   syncClover (_, clover) {
     axios.get(apiUrl(`/clovers/sync/${clover.board}`)).catch(error => {
-      console.log("sync broken clover didn't work")
-      console.log(error)
+      console.error(error)
     })
   },
   async getShares ({ state, dispatch }, market) {
     await dispatch('contractsDeployed')
     return contracts.CurationMarket.instance.methods
-      .balanceOf(new BigNumber(market, 16).toString(10), state.account)
+      .balanceOf(new BigNumber(market, 16), state.account)
       .call()
   },
   async transferClover ({ state, dispatch }, { clover, address }) {
@@ -665,7 +652,7 @@ export default {
       let ENSaddress = await global.ens.resolver(address).addr()
       address = ENSaddress
     } catch (error) {
-      console.log('no ens')
+      console.error('No ENS')
     }
     if (!isHex(address) || address.replace('0x', '').length !== 40) {
       throw new Error('Not a valid address')
@@ -697,7 +684,6 @@ export default {
         .sellPrice(clover.board)
         .call()
       currentPrice = makeBn(currentPrice)
-      // console.log('currentPrice', utils.fromWei(currentPrice.toString(10)))
       // if 0 then it's not actually for sale
       if (currentPrice.eq(0)) {
         dispatch('syncClover', clover)
@@ -713,7 +699,7 @@ export default {
       // if it's less than the price then find the Eth needed to buy enough
       if (balanceOf.lt(currentPrice)) {
         value = await getLowestPrice(
-          contracts.ClubTokenController,
+          contracts,
           currentPrice.sub(balanceOf)
         )
       }
@@ -721,7 +707,7 @@ export default {
         .buy(clover.board)
         .send({
           from: state.account,
-          value
+          value: value.toFixed()
         })
     } else {
       // claim clover w option _keep = true
@@ -755,7 +741,7 @@ export default {
       } else {
         // sell clover (update price)
         return contracts.SimpleCloversMarket.instance.methods
-          .sell(clover.board, price)
+          .sell(clover.board, price.toFixed())
           .send({
             from: state.account
           })
@@ -803,15 +789,14 @@ export default {
     userBalance = new BigNumber(userBalance)
     if (userBalance.lt(investmentInWei)) {
       value = await getLowestPrice(
-        contracts.ClubTokenController,
+        contracts,
         investmentInWei
       )
     }
-    console.log(value)
     // go !
     await contracts.CurationMarket.instance.methods
       .addCloverToMarket(board, investmentInWei)
-      .send({ from: state.account, value })
+      .send({ from: state.account, value: value })
   },
 
   // activity page
@@ -825,49 +810,111 @@ function apiUrl (path) {
 }
 
 async function getLowestPrice (
-  contract,
+  contracts,
   targetAmount,
   currentPrice = new BigNumber('0'),
-  incrementLevel = 0
+  incrementLevel = 0,
+  supply = false,
+  balance = false,
+  rr = false
 ) {
-  console.log('calc' + incrementLevel)
+  if (!rr || !supply || !balance) {
+    supply = await contracts.ClubToken.instance.methods
+    .totalSupply()
+    .call()
+    var virtualSupply = await contracts.ClubTokenController.instance.methods.virtualSupply().call()
+
+    supply = supply + virtualSupply
+    rr = await contracts.ClubTokenController.instance.methods.reserveRatio().call()
+
+    balance =await contracts.ClubTokenController.instance.methods.poolBalance().call()
+    var virtualBalance = await contracts.ClubTokenController.instance.methods.virtualBalance().call()
+    balance = balance + virtualBalance
+  }
   if (typeof targetAmount !== 'object') {
     targetAmount = new BigNumber(targetAmount)
   }
   const increments = [
+    new BigNumber(utils.toWei('1000000000000000000000')),
+    new BigNumber(utils.toWei('100000000000000000000')),
+    new BigNumber(utils.toWei('10000000000000000000')),
+    new BigNumber(utils.toWei('1000000000000000000')),
+    new BigNumber(utils.toWei('100000000000000000')),
+    new BigNumber(utils.toWei('10000000000000000')),
+    new BigNumber(utils.toWei('1000000000000000')),
+    new BigNumber(utils.toWei('100000000000000')),
+    new BigNumber(utils.toWei('10000000000000')),
+    new BigNumber(utils.toWei('1000000000000')),
+    new BigNumber(utils.toWei('100000000000')),
+    new BigNumber(utils.toWei('10000000000')),
+    new BigNumber(utils.toWei('1000000000')),
+    new BigNumber(utils.toWei('100000000')),
+    new BigNumber(utils.toWei('10000000')),
+    new BigNumber(utils.toWei('1000000')),
+    new BigNumber(utils.toWei('100000')),
+    new BigNumber(utils.toWei('10000')),
+    new BigNumber(utils.toWei('1000')),
+    new BigNumber(utils.toWei('100')),
+    new BigNumber(utils.toWei('10')),
     new BigNumber(utils.toWei('1')),
     new BigNumber(utils.toWei('0.5')),
     new BigNumber(utils.toWei('0.01')),
     new BigNumber(utils.toWei('0.005'))
   ]
   currentPrice = currentPrice.add(increments[incrementLevel])
-  console.log(currentPrice.toString(10))
-  let resultOfSpend = await contract.instance.methods
-    .getBuy(currentPrice)
-    .call()
-  resultOfSpend = new BigNumber(resultOfSpend)
+  let resultOfSpend = getBuy(currentPrice, supply, balance, rr)
+
+  // let contractResult = await contracts.ClubTokenController.instance.methods.getBuy(currentPrice.toFixed()).call()
+  // console.log({contractResult: contractResult})
+  resultOfSpend = new BigNumber(resultOfSpend.toFixed())
   if (resultOfSpend.gt(targetAmount)) {
     if (incrementLevel === increments.length - 1) {
       return currentPrice
     } else {
       return getLowestPrice(
-        contract,
+        contracts,
         targetAmount,
         currentPrice.sub(increments[incrementLevel]),
-        incrementLevel + 1
+        incrementLevel + 1,
+        supply,
+        balance,
+        rr
       )
     }
   }
-  return getLowestPrice(contract, targetAmount, currentPrice, incrementLevel)
+  return getLowestPrice(contracts, targetAmount, currentPrice, incrementLevel, supply, balance, rr)
 }
 
+// def calculatePurchaseReturn(s, market_settings, amount):
+//     totalSupply = s['bc-totalSupply'] + market_settings["bc-virtualSupply"]
+//     collateral = s['bc-balance'] + market_settings["bc-virtualBalance"]
+//     CW = market_settings["bc-reserveRatio"]
+//     if (s['bc-balance'] <= 0):
+//         return 0
+//     return totalSupply * ((1 + amount / collateral)**CW-1)
+
+function getBuy(spendAmount, supply, balance, rr) {
+  supply = new Decimal(supply)
+  spendAmount = new Decimal(spendAmount.toFixed())
+  balance = new Decimal(balance)
+  rr = new Decimal(rr)
+  let result = supply.mul(
+    (
+      spendAmount.div(balance).add(1)
+    ).pow(
+      rr.div(1000000)
+    ).sub(1)
+  )
+  return result
+}
+
+
 async function claimClover ({ keep, account, clover }) {
-  console.log({ clover })
   let reversi = new Reversi()
   reversi.playGameMovesString(clover.movesString)
   let moves = reversi.returnByteMoves().map(m => '0x' + padRight(m, 56))
   let _tokenId = clover.board
-  let _symmetries = reversi.returnSymmetriesAsBN().toString(10)
+  let _symmetries = reversi.returnSymmetriesAsBN()
   let _keep = keep
   let from = account
   let value = new BigNumber('0')
@@ -892,13 +939,6 @@ async function claimClover ({ keep, account, clover }) {
     .call()
   value = new BigNumber(value)
   value = value.plus(stakeAmount)
-  console.log(
-    moves,
-    _tokenId,
-    _symmetries,
-    _keep,
-    utils.fromWei(value.toString(10))
-  )
   return contracts.CloversController.instance.methods
     .claimClover(moves, _tokenId, _symmetries, _keep)
     .send({ from, value })

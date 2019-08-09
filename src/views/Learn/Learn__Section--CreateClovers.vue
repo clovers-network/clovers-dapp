@@ -28,7 +28,7 @@ export default {
   data () {
     return {
       no: 0,
-      text: 'You can create clovers in your browser.',
+      text: 'One way to find Clovers is by creating them with your browser.',
       canCreate: true,
       noLimit: false,
       showBasket: false,

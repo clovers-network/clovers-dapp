@@ -275,23 +275,6 @@ export default {
     cancelAction () {
       this.currentAction = false
     },
-    // buyStake () {
-    //   this.loading = true
-    //   this.invest({
-    //     market: 'CurationMarket',
-    //     clover: this.clover.board,
-    //     amount: '1'
-    //   })
-    //     .then(res => {
-    //       this.loading = false
-    //       this.handleSuccess(`Success! You bought a stake!`)
-    //       console.log(res)
-    //     })
-    //     .catch(err => {
-    //       this.loading = false
-    //       this.handleError(err)
-    //     })
-    // },
     handleError ({ message }) {
       this.selfDestructMsg({
         msg: message.replace('Error: ', '').replace('[tcomb] ', ''),
