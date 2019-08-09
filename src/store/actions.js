@@ -576,7 +576,7 @@ export default {
           .buy(state.account)
           .send({
             from: state.account,
-            value: amount 
+            value: amount
           })
       } else {
         throw new Error('insufficient-funds')
@@ -594,7 +594,7 @@ export default {
         .buy(state.account, market, amount)
         .send({
           from: state.account,
-          value: value 
+          value: value
         })
     }
   },
@@ -820,14 +820,14 @@ async function getLowestPrice (
 ) {
   if (!rr || !supply || !balance) {
     supply = await contracts.ClubToken.instance.methods
-    .totalSupply()
-    .call()
+      .totalSupply()
+      .call()
     var virtualSupply = await contracts.ClubTokenController.instance.methods.virtualSupply().call()
 
     supply = supply + virtualSupply
     rr = await contracts.ClubTokenController.instance.methods.reserveRatio().call()
 
-    balance =await contracts.ClubTokenController.instance.methods.poolBalance().call()
+    balance = await contracts.ClubTokenController.instance.methods.poolBalance().call()
     var virtualBalance = await contracts.ClubTokenController.instance.methods.virtualBalance().call()
     balance = balance + virtualBalance
   }
@@ -893,7 +893,7 @@ async function getLowestPrice (
 //         return 0
 //     return totalSupply * ((1 + amount / collateral)**CW-1)
 
-function getBuy(spendAmount, supply, balance, rr) {
+function getBuy (spendAmount, supply, balance, rr) {
   supply = new Decimal(supply)
   spendAmount = new Decimal(spendAmount.toFixed())
   balance = new Decimal(balance)
@@ -907,7 +907,6 @@ function getBuy(spendAmount, supply, balance, rr) {
   )
   return result
 }
-
 
 async function claimClover ({ keep, account, clover }) {
   let reversi = new Reversi()
