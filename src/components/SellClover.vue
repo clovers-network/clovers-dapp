@@ -1,7 +1,7 @@
 <template lang="pug">
   form.mx3.mb3.mt2(@submit.prevent="confirm")
     label.block.mb2.h5.center Sale price
-    input.border.py2.px2.rounded.col-12.input(v-model="form.price" autocomplete="off" placeholder="Edit Clover price" step="any" type="number" min="0" required v-autofocus="true")
+    input.border.py2.px2.rounded.col-12.input(v-model="form.price" autocomplete="off" placeholder="Edit Clover price" step="any" type="number" min="0" max="1000000" required v-autofocus="true")
 
     p.center.h6.mb2.mt3.pointer(@click="form.price = '0'")
       span Set to <span class="font-mono">0</span> to remove from marketplace
@@ -36,6 +36,9 @@ export default {
     },
     changed () {
       if (this.form.price === '') return false
+      if (this.form.price > 1000000) {
+        this.form.price = 1000000
+      }
       return this.form.price !== this.cloverPrice
     },
     buttonText () {

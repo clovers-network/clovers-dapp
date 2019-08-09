@@ -13,9 +13,9 @@
       .flex.flex-column
         //- chart
         .col-12.relative
-          span.block.absolute.left-0.top-0.p2.h6 Price Graph in {{collateral}} per <span v-html="currentToken" />
-          span.block.absolute.right-0.top-0.p2.h6.pointer(@click="switchMax") Last {{orders.slice(0, max).length}} trades
-          chart.border-bottom(:market="market", :orders="orders.slice(0,max)")
+          //- span.block.absolute.left-0.top-0.p2.h6 Price Graph in {{collateral}} per <span v-html="currentToken" />
+          //- span.block.absolute.right-0.top-0.p2.h6.pointer(@click="switchMax") Last {{paddedOrders.length}} trades
+          chart.border-bottom(:market="market", :orders="paddedOrders")
         //- details
         .col-12.flex.flex-wrap.justify-around.border-right.border-bottom.border-left.green.rounded-bottom.py2.center(:class="{'flex-order_-1': isRFT}")
           //- price
@@ -95,7 +95,7 @@ export default {
   },
   data () {
     return {
-      max: 100,
+      max: 250,
       view: 'buy',
       buy: '1',
       clubReceive: '1',
@@ -121,6 +121,11 @@ export default {
     }
   },
   computed: {
+    paddedOrders () {
+      if (!this.orders || this.orders.length === 0) return []
+      let firstOrder = this.orders[0]
+      return ([firstOrder, ...this.orders]).slice(0, this.max)
+    },
     denom () {
       return this.displayIn === 'ETH' ? 'Ξ' : '$'
     },

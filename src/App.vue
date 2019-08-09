@@ -47,7 +47,7 @@ export default {
   @import './style/global';
   @import './style/imports';
   #WEB3_CONNECT_MODAL_ID > div {
-    z-index:4;
+    z-index:5;
     position: fixed;
   }
   .intro-screen {

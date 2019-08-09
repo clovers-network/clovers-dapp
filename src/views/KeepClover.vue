@@ -187,7 +187,7 @@ export default {
     async keep () {
       this.submitting = true
       try {
-        await this.buy(this.clover)
+        let foo = await this.buy(this.clover)
         this.submitting = false
         this.handleSuccess(
           `Success! You kept ${abbrvAddr(this.id)}`,

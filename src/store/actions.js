@@ -835,25 +835,6 @@ async function getLowestPrice (
     targetAmount = new BigNumber(targetAmount)
   }
   const increments = [
-    new BigNumber(utils.toWei('1000000000000000000000')),
-    new BigNumber(utils.toWei('100000000000000000000')),
-    new BigNumber(utils.toWei('10000000000000000000')),
-    new BigNumber(utils.toWei('1000000000000000000')),
-    new BigNumber(utils.toWei('100000000000000000')),
-    new BigNumber(utils.toWei('10000000000000000')),
-    new BigNumber(utils.toWei('1000000000000000')),
-    new BigNumber(utils.toWei('100000000000000')),
-    new BigNumber(utils.toWei('10000000000000')),
-    new BigNumber(utils.toWei('1000000000000')),
-    new BigNumber(utils.toWei('100000000000')),
-    new BigNumber(utils.toWei('10000000000')),
-    new BigNumber(utils.toWei('1000000000')),
-    new BigNumber(utils.toWei('100000000')),
-    new BigNumber(utils.toWei('10000000')),
-    new BigNumber(utils.toWei('1000000')),
-    new BigNumber(utils.toWei('100000')),
-    new BigNumber(utils.toWei('10000')),
-    new BigNumber(utils.toWei('1000')),
     new BigNumber(utils.toWei('100')),
     new BigNumber(utils.toWei('10')),
     new BigNumber(utils.toWei('1')),
@@ -862,11 +843,9 @@ async function getLowestPrice (
     new BigNumber(utils.toWei('0.005'))
   ]
   currentPrice = currentPrice.add(increments[incrementLevel])
-  let resultOfSpend = getBuy(currentPrice, supply, balance, rr)
-
-  // let contractResult = await contracts.ClubTokenController.instance.methods.getBuy(currentPrice.toFixed()).call()
-  // console.log({contractResult: contractResult})
-  resultOfSpend = new BigNumber(resultOfSpend.toFixed())
+  // let resultOfSpend = getBuy(currentPrice, supply, balance, rr)
+  let resultOfSpend = await contracts.ClubTokenController.instance.methods.getBuy(currentPrice.toFixed()).call()
+  resultOfSpend = new BigNumber(resultOfSpend.toString())
   if (resultOfSpend.gt(targetAmount)) {
     if (incrementLevel === increments.length - 1) {
       return currentPrice
@@ -898,13 +877,21 @@ function getBuy (spendAmount, supply, balance, rr) {
   spendAmount = new Decimal(spendAmount.toFixed())
   balance = new Decimal(balance)
   rr = new Decimal(rr)
-  let result = supply.mul(
-    (
-      spendAmount.div(balance).add(1)
-    ).pow(
-      rr.div(1000000)
-    ).sub(1)
+
+  // let result = supply.mul(
+  //   (
+  //     spendAmount.div(balance).add(1)
+  //   ).pow(
+  //     rr.div(1000000)
+  //   ).sub(1)
+  // )
+  const result = supply.mul(
+    new Decimal(1)
+      .plus(spendAmount.div(balance))
+      .pow(rr.div(1000000))
+      .sub(1)
   )
+
   return result
 }
 
@@ -917,10 +904,8 @@ async function claimClover ({ keep, account, clover }) {
   let _keep = keep
   let from = account
   let value = new BigNumber('0')
-
   if (keep) {
     let mintPrice = await getMintPrice({ _symmetries })
-
     let balance = await contracts.ClubToken.instance.methods
       .balanceOf(account)
       .call()
@@ -928,7 +913,7 @@ async function claimClover ({ keep, account, clover }) {
     if (balance.lt(mintPrice)) {
       let clubTokenToBuy = mintPrice.sub(balance)
       value = await getLowestPrice(
-        contracts.ClubTokenController,
+        contracts,
         clubTokenToBuy
       )
     }
@@ -937,20 +922,26 @@ async function claimClover ({ keep, account, clover }) {
     .stakeAmount()
     .call()
   value = new BigNumber(value)
+
   value = value.plus(stakeAmount)
   return contracts.CloversController.instance.methods
-    .claimClover(moves, _tokenId, _symmetries, _keep)
-    .send({ from, value })
-  // .on('transactionHash', hash => {})
+    .claimClover(moves, _tokenId, _symmetries.toString(10), _keep)
+    .send({ from, value: value.toFixed() })
 }
 
 async function getMintPrice ({ _symmetries }) {
-  let reward = await contracts.CloversController.instance.methods
-    .calculateReward(_symmetries)
-    .call()
+  let reward
+  if (_symmetries.eq(0)) {
+    reward = '0'
+  } else {
+    reward = await contracts.CloversController.instance.methods
+      .calculateReward(_symmetries.toString(10))
+      .call()
+  }
+
   let basePrice = await contracts.CloversController.instance.methods
     .basePrice()
     .call()
   reward = new BigNumber(reward)
-  return reward.plus(basePrice)
+  return reward.add(basePrice)
 }
