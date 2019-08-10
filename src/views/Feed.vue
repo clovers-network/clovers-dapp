@@ -3,7 +3,8 @@
     more-information(title="?" content="<b>The Feed</b> is where all registerd Clovers can be found. You can filter by symmetry, popularity, comments, clovers for sale as well as sort by price or date.")
 
     //- filters
-    .mt3.mb3.pb1.sm-pb0.sm-mb2.flex.flex-wrap.sm-flex-no-wrap.left-align.sm-justify-end.mxn2.px3.sm-px1
+    filters-nav
+      //- .mt3.mb3.pb1.sm-pb0.sm-mb2.flex.flex-wrap.sm-flex-no-wrap.left-align.sm-justify-end.mxn2.px3.sm-px1
       //- filter
       .col-6.sm-col-auto.my1.px1
         .center.h4.select
@@ -61,6 +62,7 @@ import CloverListCards from '@/components/CloverList--Cards'
 import PageNav from '@/components/PageNav'
 import svgX from '@/components/Icons/SVG-X'
 import MoreInformation from '@/components/MoreInformation'
+import FiltersNav from '@/components/FiltersNav'
 
 const apiUrl = process.env.VUE_APP_API_URL + '/clovers'
 
@@ -221,7 +223,7 @@ export default {
       this.filters.page = this.results.nextPage
     }
   },
-  components: { CloverListCards, svgX, PageNav, MoreInformation }
+  components: { CloverListCards, svgX, PageNav, MoreInformation, FiltersNav }
 }
 </script>
 
