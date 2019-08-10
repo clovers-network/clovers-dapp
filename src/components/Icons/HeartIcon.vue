@@ -27,11 +27,11 @@ export default {
 @media (hover:hover) {
   .heart-icon{
     &.heart-icon--invisible{
-      opacity:0;  
+      opacity:0;
     }
     &:hover{
       opacity:1;
     }
-  }  
+  }
 }
 </style>

@@ -4,26 +4,26 @@
       header
         .h-header.flex.justify-between.items-center.px2
           //- btn: close
-          button.p1.pointer(@click="close") 
+          button.p1.pointer(@click="close")
             svgX(style="width:1.2rem;height:1.2rem", thickness="1.1")
           //- btn: pick / remove
           button.px1.h5(v-if="$route.name === 'Picks'", @click="remove") Remove
           button.px1.pt1(v-else, @click="$store.commit('SAVE_CLOVER', clover)")
             heart-icon(:active="isSaved", :invisible="false")
-      
+
       //- image
       figure.flex-auto.px2.mt1
         img.block.mx-auto(:src="cloverImage(clover, 196)" width="196" height="196")
         //- symm icons ?
         .green.mt3.h6(v-if="clover.symmetrical")
           symmetry-icons(:board="clover")
-      
+
       //- errors ?
       template(v-if="unavailable || invalidClover")
         h3.my3.font-exp.center.nowrap.red.opacity-50
           span(v-if="invalidClover") Invalid Clover :(
           span(v-else-if="unavailable") Already registered :(
-      
+
       //- actions
       template(v-else)
         .options.px3.pt3.mx2.md-mx3

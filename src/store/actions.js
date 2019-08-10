@@ -809,7 +809,7 @@ export default {
     if (!yes) return false
     commit('REMOVE_SAVED_CLOVER', clover)
     return true
-  },
+  }
 }
 
 function apiUrl (path) {

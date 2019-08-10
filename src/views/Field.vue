@@ -1,10 +1,10 @@
 <template lang="pug">
   .mt1.mx3.md-mt3.pb-full-height
     more-information(title="?" content="<u>The Garden</u> is where you can grow new Clovers and pick the ones you like. They'll go into your basket until they get registered. If you'd like to register the Clover to keep it, you'll be charged 10 Clover Coins. If the Clover is symmetrical however, you can exchange it for a reward! Use your Pig to search quickly for only symmetrical Clovers and begin earning Clover Coins.")
-    
+
     .arrow-up.center.bg-green.fixed.bottom-0.right-0.mb4.mr4.block.pointer.z3(@click="scrollUp")
       img(:src="require('../assets/icons/arrow-up.svg')")
-    
+
     section.flex.flex-wrap.mxn2.mb4.md-px2
       field-item(v-for='(clover, i) in generated' :key='i' data-expand='-50' :data-appear='i % 3' :clover="clover" :in-field="true")
 

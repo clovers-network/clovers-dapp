@@ -3,7 +3,7 @@
     more-information(title="?" content="<u>Your Basket</u> is where Clovers that you've picked are stored. If you'd like to register them publicly you'll need to pay 10 Clover Coins. Afterwards they'll show up on your Profile and in the Feed where you can give them names, add comments or sell them to other players.")
     //- .green.border-bottom.py1.center
     //-   p.my0.md-my1 Your unregistered Clovers
-    
+
     //- has picks:
     section.flex.flex-wrap.mxn2.mb4.md-px2(v-if="picks.length !== 0")
       field-item(v-for='(clover, i) in picks', :key='i' data-expand='-50', :data-appear='i % 3', :clover="clover")
