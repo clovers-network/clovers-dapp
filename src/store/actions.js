@@ -802,6 +802,13 @@ export default {
   // activity page
   checkBlock () {
     return global.web3.eth.getBlockNumber()
+  },
+
+  async confirmRemoveSavedClover ({ commit }, clover) {
+    const yes = window.confirm('Are you sure? This can\'t be undone...')
+    if (!yes) return false
+    commit('REMOVE_SAVED_CLOVER', clover)
+    return true
   }
 }
 
