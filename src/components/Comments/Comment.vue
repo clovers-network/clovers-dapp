@@ -3,10 +3,10 @@
     .comment__msg.rounded.bg-lightest-green.pt2.px2.pb1
       .mr1
         template(v-if="comment.deleted")
-          span(v-text="comment.userName").font-mono.pr2.nowrap
-          span.pr2.light-green.h5.font-mono [Deleted]
+          span(v-text="comment.userName").pr2.nowrap.h5
+          span.pr2.light-green.h5 [Deleted]
         template(v-else-if="comment.flagged")
-          span.pr2.light-green.h5.font-mono [Flagged]
+          span.pr2.light-green.h5 [Flagged]
         template(v-else)
           //- username
           router-link(:to="'/users/' + comment.userAddress")
