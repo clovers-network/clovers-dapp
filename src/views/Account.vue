@@ -1,54 +1,48 @@
 <template lang="pug">
-  .green
+  article
     header
       user-card(:user="user", :editable="true", @edit="signOrEdit")
 
-    section(name="My unregistered Clovers")
-      h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
-        router-link(:to="{ name: 'Picks' }") Basket
-
-      div(v-if="pickCount")
-        div
-          p You have <strong>{{ pickCount }}</strong> unregistered {{ pluralize('Clover', pickCount) }}
-        .mxn2
-          ul.list-reset.items-center.m0.nowrap.overflow-visible
-            pick-list-item.inline-block(v-for="(pick, i) in pickList" :key="pick.byteBoard" :pick="pick" :data-key="pick.board" :style="fadeOut(i)")
-
-        .py3
-          p
-            router-link.bg-green.px3.py2.rounded.white(:to="{ name: 'Picks' }")
+    section.mx2.sm-mx3.md-mx0
+      //- Basket
+      section.my4.sm-mt0(name="My unregistered Clovers")
+        h2.h2.md-h2.mt2.md-mt3.mb1.font-exp
+          router-link(:to="{ name: 'Picks' }") Basket
+        //- (picks)
+        div(v-if="pickCount")
+          p.h5 You have <strong>{{ pickCount }}</strong> unregistered {{ pluralize('Clover', pickCount) }}
+          .mxn2.mt3
+            ul.list-reset.items-center.m0.nowrap.overflow-visible
+              pick-list-item.inline-block(v-for="(pick, i) in pickList" :key="pick.byteBoard" :pick="pick" :data-key="pick.board" :style="fadeOut(i)", :diameter="128")
+          nav.mt3
+            router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(:to="{ name: 'Picks' }")
               span View all
-
-      div(v-else)
-        div
+        //- (empty)
+        div(v-else)
           p.max-width-1 Your basket contains unregistered Clovers that you picked from the <strong>Field</strong>, or symmetrical Clovers mined by the <strong>Clover Pig</strong>
-        .mxn2
-          ul.list-reset.items-start.m0.nowrap.overflow-hidden
-            pick-list-item.inline-block
-
-        div
+          .mxn2
+            ul.list-reset.items-start.m0.nowrap.overflow-hidden
+              pick-list-item.inline-block
           p
             router-link(to="/field")
               span.underline Pick some now
               span.font-mono.bold &nbsp;&rarr;
 
-    section(name="My Clovers")
-      h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
-        router-link(to="/account/clovers") My Clovers
-      div(v-if="cloversCount")
-        p.m0 You have <strong>{{ cloversCount }}</strong> registered {{ pluralize('Clover', cloversCount) }}
-
-        .mt3
-          clover-list-cards(:clovers="clovers")
-
-        .py3
-          p
-            router-link.bg-green.px3.py2.rounded.white(to="/account/clovers")
+      //- Clovers
+      section.my4.sm-mt0(name="My Clovers")
+        h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
+          router-link(to="/account/clovers") Collection
+        template(v-if="cloversCount")
+          p.h5 You have <strong>{{ cloversCount }}</strong> registered {{ pluralize('Clover', cloversCount) }}
+          .mt3.px1.sm-px0
+            clover-list-cards(:clovers="clovers")
+          nav.mt2.md-mt0.flex.justify-center.sm-block
+            router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(to="/account/clovers")
               span View all
-      div(v-else)
-        p.max-width-1 Clovers that are registered to your account (wallet address). Save some from your basket and they will show up here.
+        template(v-else)
+          p.max-width-1 Clovers that are registered to your account (wallet address). Save some from your basket and they will show up here.
 
-    .py2.center
+    footer.py2.center
       p.h1(style="filter:hue-rotate(292deg)") ☘️
 
     transition(name="fade")

@@ -32,16 +32,17 @@
               input(v-model="mode" type="radio" value="keep")
               .dot.mr2
               span.flex-auto.mr3 Keep Clover
-              .bold - {{ keepValue }} <coin-icon/>
-            label.radio.block.pointer.border.rounded.py1.px2.mb1.flex.items-center(v-if="_reversi.symmetrical" :active="mode === 'sell'")
+              .bold.flex.items-center
+                | <span v-if="_reversi.symmetrical">-&#32;</span>{{ keepValue }} <coin-icon class="ml1"/>
+            label.radio.block.pointer.border.rounded.py1.px2.mb1.flex.items-center(v-if="_reversi.symmetrical", :active="mode === 'sell'")
               input(v-model="mode" type="radio" value="sell")
               .dot.mr2
               span.flex-auto.mr3 Claim Reward
-              .bold + {{ sellValue }} <coin-icon/>
+              .bold.flex.items-center + {{ sellValue }} <coin-icon class="ml1"/>
           p.center.h6.underline.mb0.mt3.help(@click="showMore = true" v-if="!showMore") More Information
-          p.center.h6.mb0.mt3.pointer(v-if="showMore" @click="showMore = false")
-            span(v-if="mode === 'keep'") Register this clover on the network. A base fee of 10 <coin-icon :width="14" :height="14"/> is charged
-            span(v-else) Claim a reward for this rare clover. This requires a verification before payout and can take a few minutes
+          p.center.h6.mb0.mt3.pointer.mx-auto.col-10(v-if="showMore" @click="showMore = false")
+            span(v-if="mode === 'keep'") To register this clover on the network,<br>a base fee of <span class="nowrap">10&nbsp;<coin-icon :width="10" class="inline-block"/></span> is charged
+            span(v-else) Claim a reward for this rare clover.<br>This requires a verification before payout and can take a few minutes
 
         //- confirm
         footer.flex.justify-center(v-if="!submitted")

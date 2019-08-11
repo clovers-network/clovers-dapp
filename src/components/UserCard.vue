@@ -3,10 +3,11 @@
     .relative.sm-border.rounded.py2.sm-py1.px3.max-width-2.flex.items-center.justify-between.sm-justify-start
       //- info
       .pt2.pb3
-        h2.h3.md-h2.mb1.font-exp {{ userName(user) }}
+        h2.h3.md-h2.mb1.font-exp
+          router-link(:to="{name: 'User', params: {addr: user.address}}") {{ userName(user) }}
         small.block.h7
-          span(v-if="user.created") Member since Block # {{ user.created.toLocaleString() }}
-          span(v-else-if="user.modified") Last active, Block # {{ user.modified.toLocaleString() }}
+          span(v-if="user.created") Member since block # {{ user.created.toLocaleString() }}
+          span(v-else-if="user.modified") Last active, block # {{ user.modified.toLocaleString() }}
         .mt3.flex.items-center.h5.lh1
           .flex.items-center.mr3(v-if="user.clovers && user.clovers.length")
             img.block.mr1(src="@/assets/icons/clover-icon-1.svg")
