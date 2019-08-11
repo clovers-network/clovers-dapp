@@ -14,4 +14,8 @@
   .md-border-right-transp{border-right-color:transparent;}
   .md-border-right{border-right-style:solid;}
   .md-border-bottom{border-bottom-style: solid}
+  .md-border{border-style:solid;}
+  .md-bg-none{background:none;}
+  .md-flex-first{order:-99;}
+  .md-justify-start{justify-content: flex-start;}
 }

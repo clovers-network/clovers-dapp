@@ -1,49 +1,53 @@
 <template lang="pug">
   .green.relative(v-if="user")
-    section.border.rounded.px2.md-px3.max-width-2.my4.relative(name="My profile")
-      .flex.items-center
-        .mr3
-          img(:src="userImage(user, 87)" width="87" height="87")
-        div
-          h2.h3.md-h2.mt3.mb0.font-exp
-            span {{ name }}
-          small.h6(v-if="user.created") Member since block # {{ user.created.toLocaleString() }}
-          small.h5(v-else-if="user.modified") Last active, block # {{ user.modified.toLocaleString() }}
-          .mt2.mb3
-            span.flex.items-center
-              coin-icon
-              span.pl1.bold {{ prettyUserBalance }}
+    //- profile
+    header.my3.md-my4.md-mx3.bg-lightest-green.md-bg-none
+      .md-border.rounded.py2.md-py1.px3.max-width-2.flex.items-center.justify-between.md-justify-start
+        .pt2.pb3
+          h2.h3.md-h2.mb1.font-exp {{ name }}
+          small.block.h7
+            span(v-if="user.created") Member since Block # {{ user.created.toLocaleString() }}
+            span(v-else-if="user.modified") Last active, Block # {{ user.modified.toLocaleString() }}
+          .mt3.flex.items-center.h5.lh1
+            .flex.items-center.mr3(v-if="user.clovers && user.clovers.length")
+              img.block.mr1(src="@/assets/icons/clover-icon-1.svg")
+              span.block {{ user.clovers.length }}
+            .flex.items-center(v-if="Number(user.balance)")
+              coin-icon.mr1
+              span.block {{ prettyUserBalance }}
+        figure.py2.md-pr1.md-mr3.md-flex-first
+          img(:src="userImage(user, 87)" width="87" height="87", alt="User Avatar")
+    section.mx3
+      .mt4
+        .mb2
+          .flex.left-align.justify-end
+            .pt1.pb2.pl2.pr1
+              .center.h4.select
+                select(v-model="filters.filter")
+                  option(:value="undefined") All Clovers
+                  option(value="forsale") Clovers for Sale
+                  option(value="Sym") Symmetrical Clovers
 
-    .mt4
-      .mb2
-        .flex.left-align.justify-end
-          .pt1.pb2.pl2.pr1
-            .center.h4.select
-              select(v-model="filters.filter")
-                option(:value="undefined") All Clovers
-                option(value="forsale") Clovers for Sale
-                option(value="Sym") Symmetrical Clovers
+            .pt1.pb2.pr2.pl1
+              .center.h4.select
+                select(v-model='filters.sort')
+                  option(:value='undefined') Sort by Date
+                  option(value='price') Sort by Price
+            .pt1.pb2.center(style="min-width:140px")
+              .center.h4.border.rounded.h-100.px2.flex.items-center.justify-between.hover-bg-l-green
+                span.pr2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !prevPossible }", @click="back")
+                  img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
+                span {{ filters.page }} of {{ maxPage }}
+                span.pl2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !nextPossible }", @click="forward")
+                  img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
 
-          .pt1.pb2.pr2.pl1
-            .center.h4.select
-              select(v-model='filters.sort')
-                option(:value='undefined') Sort by Date
-                option(value='price') Sort by Price
-          .pt1.pb2.center(style="min-width:140px")
-            .center.h4.border.rounded.h-100.px2.flex.items-center.justify-between.hover-bg-l-green
-              span.pr2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !prevPossible }", @click="back")
-                img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
-              span {{ filters.page }} of {{ maxPage }}
-              span.pl2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !nextPossible }", @click="forward")
-                img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
+      section
+        .fade-enter-active(v-if="hasResults", :class="{'opacity-50':loading}")
+          clover-list-cards(v-if="clovers.length", :clovers="clovers")
+        div(v-else)
+          p.center.p2.m0 Nothing to show
 
-    section
-      .fade-enter-active(v-if="hasResults", :class="{'opacity-50':loading}")
-        clover-list-cards(v-if="clovers.length", :clovers="clovers")
-      div(v-else)
-        p.center.p2.m0 Nothing to show
-
-      page-nav(:hasResults="hasResults", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
+        page-nav(:hasResults="hasResults", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
 
 </template>
 
