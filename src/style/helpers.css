@@ -134,6 +134,13 @@
   border-color: 'black';
 }
 
+@media (hover:hover) {
+  .hover-bg-l-green {
+    transition: all var(--anim-timing-medium);
+    &:hover, &:active { background-color: var(--lightest-green); }
+  }  
+}
+
 .border-green { border-color: var(--green); }
 .border-dark-gray { border-color: var(--dark-gray);}
 .border-top-dotted { border-top-style: dotted; }

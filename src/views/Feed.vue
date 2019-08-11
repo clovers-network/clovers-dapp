@@ -42,13 +42,7 @@
     .fade-enter-active(v-else, :class="{'opacity-50': true}")
       clover-list-cards(:clovers='fakeClovers')
 
-    nav.flex.h5.green.items-center.justify-center.my3.pb4(v-if='(prevPossible || nextPossible) && hasResults')
-      .col-6.flex.px1.sm-px2.justify-end
-        button.pointer.px3.py2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !prevPossible }", @click="back")
-          img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
-      .col-6.flex.px1.sm-px2
-        button.pointer.px3.py2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !nextPossible }", @click="forward")
-          img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
+    page-nav(:canPrev="prevPossible", :canNext="nextPossible", :hasResults="hasResults", @prev="back", @next="forward")
 
     //- .sticky.bottom-0.bg-green.white.p2.center.h-bttm-bar.flex.pointer(v-if='newCloversCount' @click='addNew')
       span.block.m-auto.font-exp Show {{ newCloversCount }} new {{ pluralize(&apos;Clover&apos;, newCloversCount) }}
@@ -226,15 +220,3 @@ export default {
   components: { CloverListCards, svgX, PageNav, MoreInformation, FiltersNav }
 }
 </script>
-
-<style>
-.filters-btn {
-  bottom: 0;
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  right: 0;
-  top: 0;
-  transition: border 0.18s ease-in-out;
-}
-</style>

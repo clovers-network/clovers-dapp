@@ -377,12 +377,6 @@ textarea {
   &:hover { background-color: var(--lightest-green); }
 }
 
-.hover-bg-l-green {
-  transition: all var(--anim-timing-medium);
-
-  &:hover { background-color: var(--lightest-green); }
-}
-
 .textarea {
   border-style: none;
   display: block;

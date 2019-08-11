@@ -38,15 +38,7 @@
             li.border.border-dashed.rounded.mb2(v-for='log in activity', :key='log.id || log.transactionHash')
               activity-item(:item='log')
           //- btns: next / prev
-          nav.list-reset.flex.h5.green.items-center.justify-center.my3.pb4(v-if='(prevPossible || nextPossible) && hasResults')
-            li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !prevPossible }", @click="back")
-              img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
-              span.pl1 Previous
-            li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !nextPossible }", @click="forward")
-              span.pr1 Next
-              img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
-          .center.h5.font-mono.h-bttm-bar.px2.py3(v-else)
-            span.light-green End of results
+          page-nav(:hasResults="hasResults", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
 
     div(v-else)
       .center.h5.font-mono.px2.py4
@@ -60,6 +52,7 @@ import { mapGetters, mapActions } from 'vuex'
 import ActivityItem from '@/components/ActivityItem'
 import MoreInformation from '@/components/MoreInformation'
 import FiltersNav from '@/components/FiltersNav'
+import PageNav from '@/components/PageNav'
 import svgX from '@/components/Icons/SVG-X'
 import xss from 'xss'
 import axios from 'axios'
@@ -212,6 +205,6 @@ export default {
   destroyed () {
     clearInterval(this.interval)
   },
-  components: { ActivityItem, svgX, MoreInformation, FiltersNav }
+  components: { ActivityItem, svgX, MoreInformation, FiltersNav, PageNav }
 }
 </script>
