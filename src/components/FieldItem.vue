@@ -57,8 +57,10 @@ export default {
     opacity:0;
     transition: opacity 300ms;
   }
+}
 
-  &:hover {
+@media (hover:hover) {
+  .pick-border:hover {
     border-color: #01B463;
     & .icon:not(.heart-icon--active) {
       opacity:0.4;
