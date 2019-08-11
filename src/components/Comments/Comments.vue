@@ -6,7 +6,7 @@
           .rounded-2.overflow-hidden.pt2.mx2
             view-nav.font-ext.h3.rounded-2(:items="[{lbl: 'Comments', value:'chat'}, {lbl: 'Activity', value:'logs'}]", @change="view = $event", @click.native="maybeScroll", :thick="false")
 
-        //- chat
+        //- tab: comments
         .px2.mb3(v-if="view === 'chat'")
           h6.my2.h6.opacity-50.center
             span(v-if="noComments") No comments yet
@@ -15,25 +15,9 @@
           ul.list-reset.m0
             //- li(v-else).p3.white.h6 nothing here yet
             li(v-for="comment in comments", :key="comment.id", ref="comment", style="margin:5px 0")
-              .flex.col-12(:class="{ 'justify-end right-align': commentOwner(comment) }")
-                .flex.msg.rounded.bg-lightest-green
-                  .relative.pt2.px2.pb2.mr1
-                    template(v-if="comment.deleted")
-                      span(v-text="comment.userName").font-mono.pr2.nowrap
-                      span.pr2.light-green.h5 [Deleted]
-                    template(v-else-if="comment.flagged")
-                      span.pr2.light-green.h5 [Flagged]
-                    template(v-else)
-                      //- username
-                      router-link(:to="'/users/' + comment.userAddress")
-                        span(v-text="comment.userName").font-reg.mr2.nowrap.h5
-                      //- comment
-                      span(v-text="comment.comment").break-word.font-exp.h5
-                      //- span.mobile-delete.hvr.h6.orange.pointer.absolute.right-0.px2.py1.bg-white.rounded(v-if="owner && !commentOwner(comment)", @click="flagOrDeleteComment(comment.id)") Flag
-                      //- span.mobile-delete.hvr.h6.red.pointer.absolute.right-0.px2.py1.bg-white.rounded(v-if="commentOwner(comment)", @click="flagOrDeleteComment(comment.id)") Delete
-                    //- span.block.sm-inline
-                    div(v-text="commentDate(comment.created)", style="margin-top:0.125em").font-mono.h7.light-green.nowrap
-        //- activity
+              comment(:comment="comment", :owner="owner")
+
+        //- tab: activity
         .px2(v-else)
           .fade-enter-active(v-if="hasResults", :class="{'opacity-50': loading}")
             .mx-auto
@@ -42,10 +26,10 @@
                 .pt3.pb2.center(style="min-width:140px")
                   .center.h4.border.rounded.h-100.px2.py1.flex.items-center.justify-between.hover-bg-l-green
                     span.pr2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !prevPossible }", @click="back")
-                      img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
+                      img(src="@/assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
                     span {{ filters.page }} of {{ maxPage }}
                     span.pl2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !nextPossible }", @click="forward")
-                      img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
+                      img(src="@/assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
 
               ul.m0.p0.list-reset.mt2
                 //- log item
@@ -54,11 +38,11 @@
 
               nav.list-reset.flex.h5.green.items-center.justify-center.my3.pb2(v-if='(prevPossible || nextPossible) && hasResults')
                 li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !prevPossible }", @click="back")
-                  img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
+                  img(src="@/assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
                   span.pl1 Previous
                 li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !nextPossible }", @click="forward")
                   span.pr1 Next
-                  img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
+                  img(src="@/assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
 
               .center.h5.font-mono.h-bttm-bar.px2.py3(v-else)
                 span.opacity-50 End of results
@@ -81,7 +65,7 @@
 <script>
 import io from 'socket.io-client'
 import axios from 'axios'
-import moment from 'moment'
+import Comment from './Comment'
 import ChatIcon from '@/components/Icons/ChatIcon'
 import ViewNav from '@/components/ViewNav'
 import ActivityItem from '@/components/ActivityItem'
@@ -125,9 +109,6 @@ export default {
     img () {
       return cloverImage({ board: this.board }, 64)
     },
-    user () {
-      return this.$store.state.account
-    },
     activity () {
       if (!this.logs.results) return []
       return this.logs.results
@@ -170,9 +151,6 @@ export default {
         })
       }
     },
-    commentDate (d) {
-      return moment(d).fromNow()
-    },
     postComment () {
       if (!this.newComment || !this.newComment.length) return
 
@@ -185,9 +163,6 @@ export default {
         this.newComment = ''
         this.posting = false
       })
-    },
-    commentOwner ({ userAddress }) {
-      return this.user === userAddress
     },
     loadComments () {
       if (!this.moreCommentsToLoad) return Promise.resolve()
@@ -272,7 +247,6 @@ export default {
     ...mapActions([
       'getComments',
       'addComment',
-      'flagOrDeleteComment',
       'signIn'
     ])
   },
@@ -330,7 +304,7 @@ export default {
   destroyed () {
     this.socket.destroy()
   },
-  components: { ChatIcon, ViewNav, ActivityItem }
+  components: { Comment, ChatIcon, ViewNav, ActivityItem }
 }
 
 function atBottom (el) {
@@ -340,7 +314,7 @@ function atBottom (el) {
 </script>
 
 <style>
-@import '../style/settings.css';
+@import '../../style/settings.css';
 
 .chat-scroll {
   /*max-height: 100%;*/
@@ -350,22 +324,6 @@ function atBottom (el) {
   /*padding-bottom: 67px;*/
 
   /*&.chatpb { height: calc(76vh - 92px); }*/
-}
-
-.msg{
-  max-width: 93%;
-}
-
-@media (--breakpoint-sm) {
-  .msg {
-    max-width:75%;
-    & .hvr {
-      opacity: 0;
-      transition: opacity .1s;
-    }
-
-    &:hover .hvr { opacity: 1; }
-  }
 }
 
 .touch {
