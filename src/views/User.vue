@@ -43,13 +43,7 @@
       div(v-else)
         p.center.p2.m0 Nothing to show
 
-      nav.list-reset.flex.h5.green.items-center.justify-center.my3.pb4(v-if='(prevPossible || nextPossible) && hasResults')
-        li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !prevPossible }", @click="back")
-          img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
-          span.pl1 Previous
-        li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !nextPossible }", @click="forward")
-          span.pr1 Next
-          img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
+      page-nav(:hasResults="hasResults", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
 
 </template>
 
@@ -57,6 +51,7 @@
 import store from '@/store'
 import { mapGetters } from 'vuex'
 import CloverListCards from '@/components/CloverList--Cards'
+import PageNav from '@/components/PageNav'
 import { prettyBigNumber, cleanObj } from '@/utils'
 import svgX from '@/components/Icons/SVG-X'
 import CoinIcon from '@/components/Icons/CoinIcon'
@@ -218,6 +213,6 @@ export default {
     const { addr } = to.params
     store.dispatch('getUser', addr).then(next)
   },
-  components: { CloverListCards, svgX, CoinIcon }
+  components: { CloverListCards, svgX, CoinIcon, PageNav }
 }
 </script>
