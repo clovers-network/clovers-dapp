@@ -22,7 +22,7 @@
           .list-reset.font-mono.center.mb2(v-if='liveLogs.length' style='top:93px')
             span.pl2.pointer.h5(@click.self='addNew') ✨ Show {{ liveLogs.length }} new log(s)
           //- logs
-          ul.m0.p0.list-reset
+          ul.m0.p0.list-reset.mb3
             li.border.border-dashed.rounded.mb2(v-for='log in activity', :key='log.id || log.transactionHash')
               activity-item(:item='log')
           //- btns: next / prev

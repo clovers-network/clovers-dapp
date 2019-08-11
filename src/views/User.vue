@@ -35,7 +35,7 @@
         //- (empty)
         div(v-else)
           p.center.p2.m0 Nothing to show
-        
+
         page-nav(:hasResults="hasResults", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
 
 </template>
