@@ -24,10 +24,12 @@
 .min-h-100vh{min-height: 100vh}
 
 .o-0 { opacity: 0; }
+.opacity-75 { opacity: .75 }
 .opacity-50 { opacity:.5; }
 .opacity-40 { opacity:.4; }
 .opacity-30 { opacity: .3; }
 .opacity-25 { opacity:.25; }
+@media (hover:hover) { .hover-opacity-100:hover{ opacity:1; transition: var(--anim-timing-medium); } }
 
 .lh0 { line-height: 0 }
 .lh1 { line-height: 1;}
