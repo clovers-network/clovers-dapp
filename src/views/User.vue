@@ -1,22 +1,8 @@
 <template lang="pug">
   .green.relative(v-if="user")
     //- profile
-    header.my3.md-my4.md-mx3.bg-lightest-green.md-bg-none
-      .md-border.rounded.py2.md-py1.px3.max-width-2.flex.items-center.justify-between.md-justify-start
-        .pt2.pb3
-          h2.h3.md-h2.mb1.font-exp {{ name }}
-          small.block.h7
-            span(v-if="user.created") Member since Block # {{ user.created.toLocaleString() }}
-            span(v-else-if="user.modified") Last active, Block # {{ user.modified.toLocaleString() }}
-          .mt3.flex.items-center.h5.lh1
-            .flex.items-center.mr3(v-if="user.clovers && user.clovers.length")
-              img.block.mr1(src="@/assets/icons/clover-icon-1.svg")
-              span.block {{ user.clovers.length }}
-            .flex.items-center(v-if="Number(user.balance)")
-              coin-icon.mr1(:width="16")
-              span.block {{ prettyUserBalance }}
-        figure.py2.md-pr1.md-mr3.md-flex-first
-          img(:src="userImage(user, 87)" width="87" height="87", alt="User Avatar")
+    header
+      user-card(:user="user")
     //- main
     section.mx3
       //- filters
@@ -42,13 +28,12 @@
 
 <script>
 import store from '@/store'
-import { mapGetters } from 'vuex'
+import UserCard from '@/components/UserCard'
 import CloverListCards from '@/components/CloverList--Cards'
 import FiltersNav from '@/components/FiltersNav'
 import PageNav from '@/components/PageNav'
-import { prettyBigNumber, cleanObj } from '@/utils'
+import { cleanObj } from '@/utils'
 import svgX from '@/components/Icons/SVG-X'
-import CoinIcon from '@/components/Icons/CoinIcon'
 
 export default {
   name: 'User',
@@ -122,12 +107,7 @@ export default {
     showFilters () {
       if (!this.hasResults) return false
       return !!this.filters.filter || this.filters.asc || !!this.filters.sort
-    },
-    prettyUserBalance () {
-      return prettyBigNumber(this.user.balance || '0')
-    },
-
-    ...mapGetters(['userName', 'userImage'])
+    }
   },
   watch: {
     filters: {
@@ -152,8 +132,6 @@ export default {
     this.query()
   },
   methods: {
-    prettyBigNumber,
-
     toggleFilters () {
       this.filtersVisible = !this.filtersVisible
     },
@@ -207,6 +185,6 @@ export default {
     const { addr } = to.params
     store.dispatch('getUser', addr).then(next)
   },
-  components: { CloverListCards, svgX, CoinIcon, FiltersNav, PageNav }
+  components: { UserCard, CloverListCards, svgX, FiltersNav, PageNav }
 }
 </script>

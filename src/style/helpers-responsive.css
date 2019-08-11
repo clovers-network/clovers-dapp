@@ -8,6 +8,10 @@
   .sm-flex-no-wrap{ flex-wrap: nowrap }
   .sm-flex-none{ flex:none; }
   .sm-col-auto{ width:auto; }
+  .sm-bg-none{ background:none; }
+  .sm-border{ border-style: solid }
+  .sm-flex-first{order:-99;}
+  .sm-justify-start{justify-content: flex-start;}
 }
 @media (--breakpoint-md) {
   .md-block{ display: block }
@@ -17,5 +21,4 @@
   .md-border{border-style:solid;}
   .md-bg-none{background:none;}
   .md-flex-first{order:-99;}
-  .md-justify-start{justify-content: flex-start;}
 }

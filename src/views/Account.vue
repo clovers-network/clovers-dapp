@@ -1,19 +1,7 @@
 <template lang="pug">
   .green
-    section.border.rounded.px2.md-px3.max-width-2.my4.relative(name="My profile")
-      .flex.items-center
-        .mr3
-          img(:src="userImage(user, 87)" width="87" height="87")
-        div
-          h2.h3.md-h2.mt3.mb0.font-exp
-            span.pointer(@click="signOrEdit") {{ name }}
-          small.h6(v-if="user.created") Member since block # {{ user.created.toLocaleString() }}
-          .mt2.mb3
-            span.flex.items-center
-              coin-icon
-              span.pl1.bold {{ prettyUserBalance }}
-      .absolute.top-0.right-0
-        a.p2.block.h4.pointer(@click="signOrEdit" style="transform:scale(-1, 1)") ✎
+    header
+      user-card(:user="user", :editable="true", @edit="signOrEdit")
 
     section(name="My unregistered Clovers")
       h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
@@ -77,6 +65,7 @@
 import store from '@/store'
 import { mapActions, mapGetters, mapState } from 'vuex'
 import { pluralize, cloverImage } from '@/utils'
+import UserCard from '@/components/UserCard'
 import KeepClover from '@/views/KeepClover'
 import PickListItem from '@/components/PickListItem'
 import CloverListCards from '@/components/CloverList--Cards'
@@ -196,7 +185,7 @@ export default {
     }
     this.form.name = this.user.name
   },
-  components: { KeepClover, PickListItem, CloverListCards, EditUser, CoinIcon }
+  components: { UserCard, KeepClover, PickListItem, CloverListCards, EditUser, CoinIcon }
 }
 </script>
 

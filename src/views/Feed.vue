@@ -1,5 +1,5 @@
 <template lang="pug">
-  .mx3.green
+  .mx3.md-mx0.green
     more-information(title="?" content="<b>The Feed</b> is where all registerd Clovers can be found. You can filter by symmetry, popularity, comments, clovers for sale as well as sort by price or date.")
 
     //- filters
@@ -20,8 +20,8 @@
         //- option(value="rft") RFT
       //- sort
       select(slot="sort", v-model='filters.sort')
-        option(:value='undefined') Sort by Date
-        option(value='price') Sort by Price
+        option(:value='undefined') By Date
+        option(value='price') By Price
 
     //- Clover List
     .fade-enter-active(v-if="hasResults", :class="{'opacity-50': loading}")
