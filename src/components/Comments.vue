@@ -1,37 +1,40 @@
 <template lang="pug">
-  section(name="comments")
-    //- h1.center.h1.font-exp.mb3 Activity / Comments
+  section.rounded-2(name="comments")
     .flex.flex-column.chat-scroll(:class="{ chatpb: view === 'chat' }")
-
       .overflow-auto.touch.flex-auto(ref="chat")
-        header.sticky.z1.top-0.bg-white
-          //- .overflow-hidden(style="padding-bottom:1px;")
-          view-nav.h2.py1(:items="[{lbl: 'Comments', value:'chat'}, {lbl: 'Activity', value:'logs'}]", @change="view = $event", @click.native="maybeScroll", :thick="false")
+        header.sticky.z1.top-0
+          .rounded-2.overflow-hidden.pt2.mx2
+            view-nav.font-ext.h3.rounded-2(:items="[{lbl: 'Comments', value:'chat'}, {lbl: 'Activity', value:'logs'}]", @change="view = $event", @click.native="maybeScroll", :thick="false")
 
-        div(v-if="view === 'chat'")
+        //- chat
+        .px2.mb3(v-if="view === 'chat'")
+          h6.my2.h6.opacity-50.center
+            span(v-if="noComments") No comments yet
+            span(v-else-if="loading || moreCommentsToLoad") Loading...
+            span(v-else) Start of chat
           ul.list-reset.m0
-            li(v-if="noComments").p3.h6.opacity-50 No comments yet
-            li(v-else-if="loading || moreCommentsToLoad").p3.h6.opacity-50 Loading...
-            li(v-else).p3.h6.opacity-50 Start of chat
             //- li(v-else).p3.white.h6 nothing here yet
-            li.px2.pb2(v-for="comment in comments", :key="comment.id", ref="comment", :class="{ 'right-align': commentOwner(comment) }")
-              .py1.px2.msg.rounded.inline-block.bg-lightest-green
-                .mb1.relative
-                  template(v-if="comment.deleted")
-                    span(v-text="comment.userName").font-mono.pr2.nowrap
-                    span.pr2.light-green.h5 [Deleted]
-                  template(v-else-if="comment.flagged")
-                    span.pr2.light-green.h5 [Flagged]
-                  template(v-else)
-                    router-link(:to="'/users/' + comment.userAddress")
+            li(v-for="comment in comments", :key="comment.id", ref="comment", style="margin:5px 0")
+              .flex.col-12(:class="{ 'justify-end right-align': commentOwner(comment) }")
+                .flex.msg.rounded.bg-lightest-green
+                  .relative.pt2.px2.pb2.mr1
+                    template(v-if="comment.deleted")
                       span(v-text="comment.userName").font-mono.pr2.nowrap
-                    span(v-text="comment.comment").bold.pr2.break-word
-                    span.mobile-delete.hvr.h6.orange.pointer.absolute.right-0.px2.py1.bg-white.rounded(v-if="owner && !commentOwner(comment)", @click="flagOrDeleteComment(comment.id)") Flag
-                    span.mobile-delete.hvr.h6.red.pointer.absolute.right-0.px2.py1.bg-white.rounded(v-if="commentOwner(comment)", @click="flagOrDeleteComment(comment.id)") Delete
-                  span.block.sm-inline
-                  span(v-text="commentDate(comment.created)").h6.pr2.light-green
-
-        div(v-else)
+                      span.pr2.light-green.h5 [Deleted]
+                    template(v-else-if="comment.flagged")
+                      span.pr2.light-green.h5 [Flagged]
+                    template(v-else)
+                      //- username
+                      router-link(:to="'/users/' + comment.userAddress")
+                        span(v-text="comment.userName").font-reg.mr2.nowrap.h5
+                      //- comment
+                      span(v-text="comment.comment").break-word.font-exp.h5
+                      //- span.mobile-delete.hvr.h6.orange.pointer.absolute.right-0.px2.py1.bg-white.rounded(v-if="owner && !commentOwner(comment)", @click="flagOrDeleteComment(comment.id)") Flag
+                      //- span.mobile-delete.hvr.h6.red.pointer.absolute.right-0.px2.py1.bg-white.rounded(v-if="commentOwner(comment)", @click="flagOrDeleteComment(comment.id)") Delete
+                    //- span.block.sm-inline
+                    div(v-text="commentDate(comment.created)", style="margin-top:0.125em").font-mono.h7.light-green.nowrap
+        //- activity
+        .px2(v-else)
           .fade-enter-active(v-if="hasResults", :class="{'opacity-50': loading}")
             .mx-auto
               .flex.justify-end.items-center
@@ -64,16 +67,15 @@
             .center.h5.font-mono.px2.py4
               span.opacity-50 {{ loading ? 'Loading...' : 'No results' }}
 
-    .sticky.left-0.right-0.bottom-0.pb3.chat-hover.bg-white.px2(v-if="view === 'chat'")
-      div(v-if="signedIn")
+    .sticky.z2.left-0.right-0.bottom-0.mx2.mt2.chat-hover(v-if="view === 'chat'")
+      .rounded-2.pb2(v-if="signedIn")
         form(@submit.prevent="postComment")
-          input.p3.col-12.h4.bg-lightest-green.font-ext.rounded.line-height-2.focus-light-green(@focus="focusActivity()" v-model="newComment", ref="input", type="text", placeholder="Comment...")
+          input.p3.col-12.h4.border-dashed.bg-white.font-exp.rounded-2.line-height-2.focus-border(@focus="focusActivity()" v-model="newComment", ref="input", type="text", placeholder="Comment...")
           //- .right-align.mt2.hide
           //-   button(type="submit", :disabled="posting", v-text="buttonTxt").px3.py2.bg-green.white.font-exp
-      div(v-else)
-        p.font-exp.p3.mb0.bg-lightest-green.rounded.line-height-2
-          span(@click="signIn").pointer.underline Sign in
-          span  to comment
+      .bg-white.rounded-2.pb2(v-else)
+        button.block.col-12.font-exp.p3.mb0.border.rounded-2.line-height-2.pointer.hover-bg-l-green(@click="signIn")
+          | <span class="underline"> Sign in</span> to comment...
 </template>
 
 <script>
@@ -341,17 +343,22 @@ function atBottom (el) {
 @import '../style/settings.css';
 
 .chat-scroll {
-  max-height: 100%;
+  /*max-height: 100%;*/
   /*height: calc(100vh - 93px);*/
-  height: 76vh;
-  overflow: auto;
+  /*height: 76vh;*/
+  /*overflow: auto;*/
   /*padding-bottom: 67px;*/
 
-  &.chatpb { height: calc(76vh - 92px); }
+  /*&.chatpb { height: calc(76vh - 92px); }*/
+}
+
+.msg{
+  max-width: 93%;
 }
 
 @media (--breakpoint-sm) {
   .msg {
+    max-width:75%;
     & .hvr {
       opacity: 0;
       transition: opacity .1s;

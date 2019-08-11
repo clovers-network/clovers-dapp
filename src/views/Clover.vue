@@ -33,7 +33,7 @@
         .absolute.top-0.right-0.flex.items-center.p2(v-if="isSymm")
           symmetry-icons(:board="clover.symmetries", style="font-size:12px")
 
-    .center.mt4.mb2.md-mb3
+    //- .center.mt4.mb2.md-mb3
       h1.h1.font-exp.m0.ws-pl
         span {{ cloverName }}
         span.pr3.font-reg.light-green.pointer.absolute.flip-x(v-if="signedIn && isMyClover", @click="currentAction = 'change'") ✎
@@ -45,32 +45,33 @@
         span.pl2.light-green.pointer.absolute(v-if="isMyClover && !showSalePrice", @click="currentAction='transfer'") &rlarr; Transfer
 
     //- Trade
-    template(v-if="isRFT")
-      trade(:market="board", :sharesOwnedWei="sharesOwnedWei", @trade="checkShares")
+      template(v-if="isRFT")
+        trade(:market="board", :sharesOwnedWei="sharesOwnedWei", @trade="checkShares")
 
-    template(v-else)
-      .flex.flex-wrap.justify-center.my4
-        .mx1.mb2.flex.items-center
-          .flex.items-center.py2.px3.border.rounded(v-if="showSalePrice")
-            span.pr2 Price:
-            coin-icon.mr1
-            span.font-exp {{ prettyPrice }}
-          .flex.items-center.py2.px3.border.rounded(v-else)
-            span.pr2 Original price:
-            coin-icon.mr1
-            span.font-exp ~{{ originalPrice }}
+      template(v-else)
+        .flex.flex-wrap.justify-center.my4
+          .mx1.mb2.flex.items-center
+            .flex.items-center.py2.px3.border.rounded(v-if="showSalePrice")
+              span.pr2 Price:
+              coin-icon.mr1
+              span.font-exp {{ prettyPrice }}
+            .flex.items-center.py2.px3.border.rounded(v-else)
+              span.pr2 Original price:
+              coin-icon.mr1
+              span.font-exp ~{{ originalPrice }}
 
-        .mx1.mb2.rounded.white.bg-green(v-if="isMyClover")
-          button.line-height-4.pointer.py2.px3.font-exp(@click="currentAction = 'sell'") {{ sellButton }}
-        .mx1.mb2.rounded.white.bg-green(v-else-if="showSalePrice")
-          button.line-height-4.pointer.py2.px3.font-exp(@click="currentAction = 'buy'") BUY
-        .mx1.mb2.rounded.light-green.border(v-else)
-          button.line-height-4.py2.px3.font-exp Unavailable
+          .mx1.mb2.rounded.white.bg-green(v-if="isMyClover")
+            button.line-height-4.pointer.py2.px3.font-exp(@click="currentAction = 'sell'") {{ sellButton }}
+          .mx1.mb2.rounded.white.bg-green(v-else-if="showSalePrice")
+            button.line-height-4.pointer.py2.px3.font-exp(@click="currentAction = 'buy'") BUY
+          .mx1.mb2.rounded.light-green.border(v-else)
+            button.line-height-4.py2.px3.font-exp Unavailable
 
     //- comments
-    section.flex.justify-center.col-12
-      div(style="width:100vw")
-        comments.mt4(:board="board", :name="cloverName", :owner="isMyClover")
+    .pt4
+    .pt4
+    section.pt4.mt4.md-mb4.pt1.max-width-3.mx-auto
+      comments(:board="board", :name="cloverName", :owner="isMyClover")
 
     //- ACTION MODAL
     transition(name="fade")

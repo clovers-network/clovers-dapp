@@ -2,6 +2,8 @@
 
 @media (--breakpoint-xs) {
   .xs-border-right-transp{border-right-color:transparent}
+  .xs-shadow-none{box-shadow: none}
+  .xs-border-none{border:none;}
 }
 @media (--breakpoint-sm) {
   .sm-block{ display: block }
@@ -11,6 +13,8 @@
   .sm-bg-none{ background:none; }
   .sm-border{ border-style: solid }
   .sm-flex-first{order:-99;}
+  .sm-border-dashed{ border-style: dashed; }
+  .sm-border-none{border:none;}
   .sm-justify-start{justify-content: flex-start;}
 }
 @media (--breakpoint-md) {

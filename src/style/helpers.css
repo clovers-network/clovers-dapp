@@ -120,6 +120,7 @@
 .bg-light-green{ background-color: var(--light-green); }
 .bg-lightest-green{ background-color: var(--lightest-green); }
 .focus-light-green:focus { border-color: var(--light-green); }
+.focus-border:focus{ border-style:solid; }
 .bg-current-color{background-color: currentColor;}
 .bg-green { background-color: var(--green); }
 .bg-white { background-color: white; }
@@ -152,7 +153,7 @@
 .outline-none { outline: 0;}
 .outline{ outline:1px solid var(--green); }
 .border-dashed { border-style: dashed; }
-.hover-border-solid:hover { border-style:solid; }
+@media (hover:hover) { .hover-border-solid:hover { border-style:solid; }}
 
 .rounded-2 { border-radius: var(--border-radius-2); }
 

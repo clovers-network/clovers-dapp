@@ -70,6 +70,7 @@ button{
 input{
   appearance:none;
   border:none;
+  border-width:1px;
   font-size:inherit;
   background:none;
   color:inherit;
