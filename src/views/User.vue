@@ -13,40 +13,29 @@
               img.block.mr1(src="@/assets/icons/clover-icon-1.svg")
               span.block {{ user.clovers.length }}
             .flex.items-center(v-if="Number(user.balance)")
-              coin-icon.mr1
+              coin-icon.mr1(:width="16")
               span.block {{ prettyUserBalance }}
         figure.py2.md-pr1.md-mr3.md-flex-first
           img(:src="userImage(user, 87)" width="87" height="87", alt="User Avatar")
+    //- main
     section.mx3
-      .mt4
-        .mb2
-          .flex.left-align.justify-end
-            .pt1.pb2.pl2.pr1
-              .center.h4.select
-                select(v-model="filters.filter")
-                  option(:value="undefined") All Clovers
-                  option(value="forsale") Clovers for Sale
-                  option(value="Sym") Symmetrical Clovers
-
-            .pt1.pb2.pr2.pl1
-              .center.h4.select
-                select(v-model='filters.sort')
-                  option(:value='undefined') Sort by Date
-                  option(value='price') Sort by Price
-            .pt1.pb2.center(style="min-width:140px")
-              .center.h4.border.rounded.h-100.px2.flex.items-center.justify-between.hover-bg-l-green
-                span.pr2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !prevPossible }", @click="back")
-                  img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
-                span {{ filters.page }} of {{ maxPage }}
-                span.pl2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !nextPossible }", @click="forward")
-                  img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
-
+      //- filters
+      filters-nav(:page="filters.page", :maxPages="maxPage", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
+        select(slot="filter", v-model="filters.filter")
+          option(:value="undefined") All Clovers
+          option(value="forsale") Clovers for Sale
+          option(value="Sym") Symmetrical Clovers
+        select(slot="sort", v-model='filters.sort')
+          option(:value='undefined') Sort by Date
+          option(value='price') Sort by Price
       section
+        //- (list)
         .fade-enter-active(v-if="hasResults", :class="{'opacity-50':loading}")
           clover-list-cards(v-if="clovers.length", :clovers="clovers")
+        //- (empty)
         div(v-else)
           p.center.p2.m0 Nothing to show
-
+        
         page-nav(:hasResults="hasResults", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
 
 </template>
@@ -55,6 +44,7 @@
 import store from '@/store'
 import { mapGetters } from 'vuex'
 import CloverListCards from '@/components/CloverList--Cards'
+import FiltersNav from '@/components/FiltersNav'
 import PageNav from '@/components/PageNav'
 import { prettyBigNumber, cleanObj } from '@/utils'
 import svgX from '@/components/Icons/SVG-X'
@@ -217,6 +207,6 @@ export default {
     const { addr } = to.params
     store.dispatch('getUser', addr).then(next)
   },
-  components: { CloverListCards, svgX, CoinIcon, PageNav }
+  components: { CloverListCards, svgX, CoinIcon, FiltersNav, PageNav }
 }
 </script>
