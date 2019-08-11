@@ -31,28 +31,29 @@
         .activity-itm__icon.mr2.sm-mr3.h2.line-height-1 &clubs;&#xFE0E;
         div(v-if="item.data.price === '0'")
           span.opacity-50 Removed from Market
-        div(v-else='')
+        .flex.items-center(v-else='')
           span.opacity-50 Price is now&ensp;
-          span
-            | {{ newPrice }}&ensp;
-            coin-icon
+          coin-icon.mr1
+          | {{ newPrice }}&ensp;
       //- Bought Tokens
       template(v-else-if="item.name === 'ClubTokenController_Buy'")
         .h1.mr2.sm-mx3.center.black.border.circle(v-if='!noImg' style='flex:0 0 50px;height:50px') &clubs;&#xFE0E;
         .activity-itm__icon.mr2.sm-mr3.h3.line-height-1 &nearr;
         .font-mono.truncate
           router-link.hover-underline(:to="'/users/' + item.data.buyer") {{ userName }}
-        .nowrap.pl1
+        .pl1.flex.items-center
           span.opacity-50 bought&ensp;
-          span {{ price(item.data.tokens) }} <coin-icon/>
+          coin-icon.mr1
+          span {{ price(item.data.tokens) }}
       //- Sold Tokens
       template(v-else-if="item.name === 'ClubTokenController_Sell'")
         .h1.mr2.sm-mx3.center.black.border.circle(v-if='!noImg' style='width:50px;height:50px') &clubs;&#xFE0E;
         .activity-itm__icon.mr2.sm-mr3.h3.line-height-1 &searr;
         router-link.font-mono.truncate.hover-underline(:to='userRt(item.userAddress)') {{ userName }}
-        .nowrap.pl1
+        .pl1.flex.items-center
           span.opacity-50 sold&ensp;
-          span {{ price(item.data.tokens) }} <coin-icon/>
+          coin-icon.mr1
+          span {{ price(item.data.tokens) }}
       //- Bought RFT Shares
       template(v-else-if="item.name === 'CurationMarket_Buy'")
         .mr2.sm-mx3.flex-none(v-if='!noImg')

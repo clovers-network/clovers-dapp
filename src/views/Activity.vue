@@ -2,26 +2,14 @@
   .mx3
     more-information(title="?" content="<u>The Activity Log</u> is where you can get an overview of everything that's happening on the site in real time. You'll see activity for when a new Clover is registered, when one is bought or listed for sale, when users buy or sell Clover Coin and when they comment on someones Clover.")
 
-    filters-nav
+    filters-nav(:page="filters.page", :maxPages="maxPage", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
       //- Filter
-      .col-6.sm-col-auto.my1.px1
-        .center.h4.select
-          select(v-model='filters.filter')
-            option(v-for='(val, key) of types' :key='key' :value="key !== 'all' ? key : undefined") {{ val }}
+      select(slot="filter", v-model='filters.filter')
+        option(v-for='(val, key) of types' :key='key' :value="key !== 'all' ? key : undefined") {{ val }}
       //- Sort
-      .col-6.sm-col-auto.my1.px1
-        .center.h4.select
-          select(v-model='filters.asc')
-            option(:value='false') Newest first
-            option(:value='true') Oldest first
-      //- Pages
-      .col-12.sm-col-auto.my1.px1
-        .center.h4.border.rounded.h-select.px2.flex.items-center.justify-between.hover-bg-l-green
-          span.pr2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !prevPossible }", @click="back")
-            img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
-          span {{ filters.page }} of {{ maxPage }}
-          span.pl2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !nextPossible }", @click="forward")
-            img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
+      select(slot="sort", v-model='filters.asc')
+        option(:value='false') Newest first
+        option(:value='true') Oldest first
 
     //- .col-12.my1.rounded.bg-lightest-green.p2.font-mono
       | Block
@@ -29,7 +17,7 @@
 
     .fade-enter-active(v-if='hasResults', :class="{'opacity-50': loading}")
       .mx-auto.bg-white
-        .mxn2
+        .mxn2.sm-px2
           //- show
           .list-reset.font-mono.center.mb2(v-if='liveLogs.length' style='top:93px')
             span.pl2.pointer.h5(@click.self='addNew') ✨ Show {{ liveLogs.length }} new log(s)

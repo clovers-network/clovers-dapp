@@ -345,7 +345,7 @@ textarea {
   display: block;
   position: relative;
   border: 1px solid currentColor;
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius-2);
   transition: all var(--anim-timing-medium);
 
   & select {
@@ -355,12 +355,13 @@ textarea {
     font: inherit;
     height: var(--height-select);
     outline: none;
-    padding: 0 var(--space-4) 0 var(--space-2);
+    padding: 0 var(--space-4) 0.1em var(--space-2);
     width: 100%;
+    box-sizing: border-box;
   }
 
   &:after {
-    color: var(--green);
+    /*color: var(--green);*/
     content: '';
     background: url(./assets/icons/chevron-down.svg) no-repeat center;
     width: 15px;
@@ -368,9 +369,9 @@ textarea {
     pointer-events: none;
     position: absolute;
     right: var(--space-2);
-    text-shadow: 1px 0px 0px var(--green);
+    /*text-shadow: 1px 0px 0px var(--green);*/
     top: var(--space-1);
-    transform: translateY(7px);
+    transform: translateY(4px);
   }
 
   &.active:after { transform: rotate(180DEG); }

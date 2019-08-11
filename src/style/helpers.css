@@ -16,7 +16,7 @@
 .w-1em{width:1em;}
 .h-100{height:100%;}
 .h-nav-btn{height:2.7rem;}
-.h-select{height:3.9rem;}
+.h-select{height:var(--height-select);}
 .h-header{height:var(--height-header);}
 .h-bttm-bar{height:var(--height-bttm-bar);}
 .h-100vh{height:100vh}
