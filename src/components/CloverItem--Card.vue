@@ -24,11 +24,11 @@
         p.m0.h6 Owner 0x098hhi8hf98379874
       .px1.pb2
         .mt2.flex.items-end.nowrap
-          .px1.sm-px2.flex-auto
+          .px1.flex-auto
             h3.h5.md-h4.truncate {{ userName(clover.user) }}
-          .px1.sm-px2.col-6.sm-col-5.right-align(v-if="isRFT || clover.price.toString(10) !== '0'")
-            h4.h5.md-h4
-              coin-icon.mr1
+          .px1.col-6.sm-col-5.flex.justify-end(v-if="isRFT || clover.price.toString(10) !== '0'")
+            h4.h5.md-h4.flex.items-center
+              coin-icon.block.mr1
               span(v-if="isRFT") {{ priceInCollateral.toFormat(4) }}
               span(v-else) {{ displayPrice }}
 

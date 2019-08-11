@@ -28,29 +28,31 @@
           | {{showMenu ? &apos;Clovers&apos; : $route.meta.title}}
       //- right col
       #accountHeader.col-4.flex.justify-end
+        //- btn group
         .border.rounded.flex.items-center.mr2.md-mr3
           //- btn: pig
           .relative.border-right.hidden.sm-block
-            .h-nav-btn.h6.sm-h5.px2.flex.items-center.pointer.lh1(@click='pigMenuToggle')
+            .h-nav-btn.px2.flex.items-center.pointer(@click='pigMenuToggle')
               //- dot
               span.border.mr1.inline-block(style='border-radius:100%; width:13px; height:13px;')
                 span.block(:class="mining && 'bg-currentColor throb'" style='border-radius:100%; width: 13px; height: 13px; margin-top: -1px; margin-left: -1px;')
-              span PIG
-            //- menu dropdown
+              span.h6.sm-h5.lh1.block PIG
+            //- dropdown: pig
             pig-menu(@closePigMenu="closePigMenu" v-click-outside="closePigMenu" v-if="pigMenu" )
           //- btn: picks
-          router-link.h-nav-btn.h6.sm-h5.px2.flex.items-center.pointer(:to="{name: 'Picks'}")
+          router-link.h-nav-btn.px2.flex.items-center.pointer(:to="{name: 'Picks'}")
             cart-icon.mr1
-            span {{pickCount}}
+            span.h6.sm-h5.lh1.block {{pickCount}}
           //- btn: tokens
-          router-link.h-nav-btn.h6.sm-h5.flex.px1.items-center.border-left(:to="{name: 'Trade'}", v-show="prettyUserBalance !== '-'")
-            coin-icon.mr1(style="padding-bottom:4px")
-            span {{prettyUserBalance}}
+          router-link.h-nav-btn.flex.px1.items-center.border-left(:to="{name: 'Trade'}", v-show="prettyUserBalance !== '-'")
+            coin-icon.mr1
+            span.h6.sm-h5.lh1.block {{prettyUserBalance}}
           //- bnt: account
           .relative
             #personToggle.h-nav-btn.h6.sm-h5.pl2.pr1.flex.items-center.pointer.border-left(@click="accountMenuToggle")
               person-icon(:class="!authHeader && 'red'")
               .chevron
+            //- dropdown: account
             account-menu(@close-account-menu="closeAccountMenu" v-click-outside="closeAccountMenu" v-if="accountMenu")
     //- (mobile page title)
     h1.md-hide.h1.font-exp.mt3.pt1.pl2(v-if="$route.meta.title") {{$route.meta.title}}

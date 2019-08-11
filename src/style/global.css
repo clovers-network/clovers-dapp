@@ -10,6 +10,7 @@
 
 html {
   font-size:var(--rem);
+  line-height: normal;
   /*background-color: var(--green)*/
 }
 
