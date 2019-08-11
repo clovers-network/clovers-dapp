@@ -1,5 +1,5 @@
 <template lang="pug">
-  .mt4(v-if="clover.board")
+  article.mt4(v-if="clover.board")
     //- header
       .mt-header-h.border-bottom
         //- if owner: editable name
@@ -24,12 +24,12 @@
             .font-exp.mt1 {{ isRFT ? sharesOwned: (showSalePrice ? prettyPrice : originalPrice) + ' ♣&#xFE0E;' }}
 
     //- clover image
-    figure.relative.touch.max-width-1.mx-auto(@click="view = false")
+    figure.relative.touch.col-8.sm-col-5.mx-auto(@click="view = false")
 
       clv(:moveString="cloverMovesString", :byteBoard="board", :isRFT="isRFT")
 
-      .absolute.z1.top--2.right--2.flex.items-center
-        symmetry-icons(v-if="clover", :board="clover.symmetries", style="font-size:14px")
+      .flex.items-center.justify-center.my3(v-if="isSymm")
+        symmetry-icons(:board="clover.symmetries", style="font-size:15px")
 
     .center.mt3.mb2.md-mb3
       h1.h1.font-exp.m0.ws-pl
@@ -201,6 +201,9 @@ export default {
         this.account &&
         this.clover.owner.toLowerCase() === this.account
       )
+    },
+    isSymm () {
+      return this.clover && Object.values(this.clover.symmetries).reduce((acc, cum) => cum + acc, 0)
     },
     isRFT () {
       return (
