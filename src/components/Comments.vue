@@ -3,8 +3,10 @@
     //- h1.center.h1.font-exp.mb3 Activity / Comments
     .flex.flex-column.chat-scroll(:class="{ chatpb: view === 'chat' }")
 
-      .overflow-auto.touch.flex-auto.px3(ref="chat")
-        view-nav.sticky.top-0.z1.h2.font-ext.bg-white(:items="[{lbl: 'Comments', value:'chat'}, {lbl: 'Activity', value:'logs'}]", @change="view = $event", @click.native="maybeScroll", :thick="false")
+      .overflow-auto.touch.flex-auto(ref="chat")
+        header.sticky.z1.top-0.bg-white
+          //- .overflow-hidden(style="padding-bottom:1px;")
+          view-nav.h2.py1(:items="[{lbl: 'Comments', value:'chat'}, {lbl: 'Activity', value:'logs'}]", @change="view = $event", @click.native="maybeScroll", :thick="false")
 
         div(v-if="view === 'chat'")
           ul.list-reset.m0
@@ -62,14 +64,14 @@
             .center.h5.font-mono.px2.py4
               span.opacity-50 {{ loading ? 'Loading...' : 'No results' }}
 
-    .sticky.left-0.right-0.bottom-0.pb3.chat-hover.bg-white.lg-px3(v-if="view === 'chat'")
+    .sticky.left-0.right-0.bottom-0.pb3.chat-hover.bg-white.px2(v-if="view === 'chat'")
       div(v-if="signedIn")
         form(@submit.prevent="postComment")
-          input.p3.col-12.h4.border.border-white.bg-lightest-green.font-ext.rounded.line-height-2.focus-light-green(@focus="focusActivity()" v-model="newComment", ref="input", type="text", placeholder="Comment...")
+          input.p3.col-12.h4.bg-lightest-green.font-ext.rounded.line-height-2.focus-light-green(@focus="focusActivity()" v-model="newComment", ref="input", type="text", placeholder="Comment...")
           //- .right-align.mt2.hide
           //-   button(type="submit", :disabled="posting", v-text="buttonTxt").px3.py2.bg-green.white.font-exp
       div(v-else)
-        p.font-exp.p3.mb0.border.border-white.bg-lightest-green.rounded.line-height-2
+        p.font-exp.p3.mb0.bg-lightest-green.rounded.line-height-2
           span(@click="signIn").pointer.underline Sign in
           span  to comment
 </template>

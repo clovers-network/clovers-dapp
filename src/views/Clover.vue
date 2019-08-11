@@ -1,5 +1,5 @@
 <template lang="pug">
-  article.mt4(v-if="clover.board")
+  article.mt3.lg-mt1(v-if="clover.board")
     //- header
       .mt-header-h.border-bottom
         //- if owner: editable name
@@ -24,14 +24,16 @@
             .font-exp.mt1 {{ isRFT ? sharesOwned: (showSalePrice ? prettyPrice : originalPrice) + ' ♣&#xFE0E;' }}
 
     //- clover image
-    figure.relative.touch.col-8.sm-col-5.mx-auto(@click="view = false")
+    figure.touch.max-width-2.border-dashed.mx3.sm-mx-auto.rounded.shadow(@click="view = false")
+      .relative.pb-100
+        .absolute.overlay.flex.items-center.justify-center
+          .col-6
+            clv(:moveString="cloverMovesString", :byteBoard="board", :isRFT="isRFT")
 
-      clv(:moveString="cloverMovesString", :byteBoard="board", :isRFT="isRFT")
+        .absolute.top-0.right-0.flex.items-center.p2(v-if="isSymm")
+          symmetry-icons(:board="clover.symmetries", style="font-size:12px")
 
-      .flex.items-center.justify-center.my3(v-if="isSymm")
-        symmetry-icons(:board="clover.symmetries", style="font-size:15px")
-
-    .center.mt3.mb2.md-mb3
+    .center.mt4.mb2.md-mb3
       h1.h1.font-exp.m0.ws-pl
         span {{ cloverName }}
         span.pr3.font-reg.light-green.pointer.absolute.flip-x(v-if="signedIn && isMyClover", @click="currentAction = 'change'") ✎
@@ -48,13 +50,15 @@
 
     template(v-else)
       .flex.flex-wrap.justify-center.my4
-        .mx1.mb2
-          .inline-block.py2.px3.border.rounded(v-if="showSalePrice")
+        .mx1.mb2.flex.items-center
+          .flex.items-center.py2.px3.border.rounded(v-if="showSalePrice")
             span.pr2 Price:
-            span.inline-block.font-exp {{ prettyPrice }} <coin-icon/>
-          .inline-block.py2.px3.border.rounded(v-else)
+            coin-icon.mr1
+            span.font-exp {{ prettyPrice }}
+          .flex.items-center.py2.px3.border.rounded(v-else)
             span.pr2 Original price:
-            span.inline-block.font-exp ~{{ originalPrice }} <coin-icon/>
+            coin-icon.mr1
+            span.font-exp ~{{ originalPrice }}
 
         .mx1.mb2.rounded.white.bg-green(v-if="isMyClover")
           button.line-height-4.pointer.py2.px3.font-exp(@click="currentAction = 'sell'") {{ sellButton }}
@@ -63,7 +67,10 @@
         .mx1.mb2.rounded.light-green.border(v-else)
           button.line-height-4.py2.px3.font-exp Unavailable
 
-    comments.mt4(:board="board", :name="cloverName", :owner="isMyClover")
+    //- comments
+    section.flex.justify-center.col-12
+      div(style="width:100vw")
+        comments.mt4(:board="board", :name="cloverName", :owner="isMyClover")
 
     //- ACTION MODAL
     transition(name="fade")
