@@ -4,7 +4,7 @@
     header
       user-card(:user="user")
     //- main
-    section.mx3
+    section.mx3.md-mx0
       //- filters
       filters-nav(:page="filters.page", :maxPages="maxPage", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
         select(slot="filter", v-model="filters.filter")
