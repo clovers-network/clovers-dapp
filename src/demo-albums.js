@@ -13,6 +13,7 @@ const clvrs = [
 ]
 
 function shuffle (array) {
+  array = JSON.parse(JSON.stringify(array))
   let currentIndex = array.length
   let temporaryValue
   let randomIndex

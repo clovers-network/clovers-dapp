@@ -47,10 +47,13 @@
       h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
         router-link(:to="{name: 'User/Albums', params: {addr: account}}") Albums
       p.h5 You have <strong>{{ albums.length }}</strong> {{ pluralize('Album', albums.length) }}
-      .mt3.px1.sm-px0
-        album-list-cards(:albums="albums")
-      nav.mt2.md-mt3.flex.justify-center.sm-block
-        .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green.mr2(v-if="albumsCount")
+      //- (about albums)
+      p.my3.rounded.bg-lightest-green.p2(v-if="!albums.length") Albums are for grouping clovers together. You can add any clover to your albums, even ones you don't own. Additionally, anyone can add to your album, but only you can edit it.
+      //- (albums list)
+      .mt3.px1.sm-px0(v-else)
+        album-list-cards(:albums="albums", :limit="4")
+      nav.mt2.md-mt0.flex.justify-center.sm-block
+        .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green.mr2(v-if="albums.length")
           router-link.h5.flex.items-center.justify-center(:to="{name: 'User/Albums', params: {addr: account}}")
             | View All
         .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green
