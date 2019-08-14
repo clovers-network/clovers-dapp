@@ -809,6 +809,20 @@ export default {
     if (!yes) return false
     commit('REMOVE_SAVED_CLOVER', clover)
     return true
+  },
+
+  // ALBUMS
+  async createAlbum ({ getters }, { name }) {
+    return axios
+      .post(
+        apiUrl(`/albums`),
+        { name },
+        {
+          headers: {
+            Authorization: getters.authHeader
+          }
+        }
+      )
   }
 }
 

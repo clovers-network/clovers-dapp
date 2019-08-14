@@ -16,7 +16,7 @@
               pick-list-item.inline-block(v-for="(pick, i) in pickList" :key="pick.byteBoard" :pick="pick" :data-key="pick.board" :style="fadeOut(i)", :diameter="128")
           nav.mt3
             router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(:to="{ name: 'Picks' }")
-              span View all
+              span View All
         //- (empty)
         div(v-else)
           p.max-width-1 Your basket contains unregistered Clovers that you picked from the <strong>Field</strong>, or symmetrical Clovers mined by the <strong>Clover Pig</strong>
@@ -38,7 +38,7 @@
             clover-list-cards(:clovers="clovers")
           nav.mt2.md-mt0.flex.justify-center.sm-block
             router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(to="/account/clovers")
-              span View all
+              span View All
         template(v-else)
           p.max-width-1 Clovers that are registered to your account (wallet address). Save some from your basket and they will show up here.
 
@@ -46,15 +46,13 @@
     section.my4.sm-mt0(name="My Clovers")
       h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
         router-link(:to="{name: 'User/Albums', params: {addr: account}}") Albums
-      p.h5 You have <strong>{{ albumsCount }}</strong> {{ pluralize('Album', albumsCount) }}
-      template(v-if="albumsCount")
-        nav.mt2.md-mt0.flex.justify-center.sm-block
-          router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(:to="{name: 'User/Albums', params: {addr: account}}")
-            | View all
+      p.h5 You have <strong>{{ albums.length }}</strong> {{ pluralize('Album', albums.length) }}
+      .mt3.px1.sm-px0
+        album-list-cards(:albums="albums")
       nav.mt2.md-mt3.flex.justify-center.sm-block
         .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green.mr2(v-if="albumsCount")
           router-link.h5.flex.items-center.justify-center(:to="{name: 'User/Albums', params: {addr: account}}")
-            | View all
+            | View All
         .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green
           router-link.h5.flex.items-center.justify-center.pointer(:to="{hash: 'add-album'}")
             | Add Album
@@ -69,7 +67,7 @@
     transition(name="fade")
       div(v-if="editing")
         edit-user(@cancel="editing = false")
-    
+
     transition(name="fade")
       add-album-modal(v-show="$route.hash === '#add-album'", @close="$router.push({hash: ''})")
 </template>
@@ -85,6 +83,7 @@ import CloverListCards from '@/components/CloverList--Cards'
 import EditUser from '@/components/EditUser'
 import CoinIcon from '@/components/Icons/CoinIcon'
 import AddAlbumModal from '@/components/Modals/AddAlbumModal'
+import AlbumListCards from '@/components/AlbumList--Cards'
 
 export default {
   name: 'Account',
@@ -96,8 +95,7 @@ export default {
     return {
       loading: false,
       editing: false,
-      form: { name: null },
-      albumsCount: 0
+      form: { name: null }
     }
   },
   computed: {
@@ -130,6 +128,9 @@ export default {
     cloversCount () {
       if (!this.results || !this.results.allResults) return 0
       return this.results.allResults
+    },
+    albums () {
+      return this.$store.state.albums
     },
 
     showPickModal () {
@@ -200,7 +201,7 @@ export default {
     }
     this.form.name = this.user.name
   },
-  components: { UserCard, KeepClover, PickListItem, CloverListCards, EditUser, CoinIcon, AddAlbumModal }
+  components: { UserCard, KeepClover, PickListItem, CloverListCards, EditUser, CoinIcon, AddAlbumModal, AlbumListCards }
 }
 </script>
 

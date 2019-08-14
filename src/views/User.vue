@@ -54,7 +54,7 @@ export default {
   },
   computed: {
     name () {
-      return this.userName(this.user)
+      return this.$store.getters.userName(this.user)
     },
     user () {
       if (this.$route.name === 'Account/Clovers') return this.$store.getters.user
