@@ -108,6 +108,10 @@ export default new Router({
       meta: { title: 'Collector' },
       props: true
     },
+    {
+      path: '/users/:addr/:album',
+      name: 'User/Albums'
+    },
 
     {
       path: '*',

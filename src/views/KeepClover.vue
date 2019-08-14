@@ -1,16 +1,12 @@
 <template lang="pug">
-  .green.fixed.z3.flex.modal(@click.self="close")
-    .m-auto.bg-white.flex.flex-column.justify-between.border.border-dashed.rounded
-      header
-        .h-header.flex.justify-between.items-center.px2
-          //- btn: close
-          button.p1.pointer(@click="close")
-            svgX(style="width:1.2rem;height:1.2rem", thickness="1.1")
-          //- btn: pick / remove
-          button.px1.h5(v-if="$route.name === 'Picks'", @click="remove") Remove
-          button.px1.pt1(v-else, @click="$store.commit('SAVE_CLOVER', clover)")
-            heart-icon(:active="isSaved", :invisible="false")
-
+  modal.green(@close="close")
+    //- btn: pick | remove
+    div(slot="top-right-btn")
+      button.px1.h5(v-if="$route.name === 'Picks'", @click="remove") Remove
+      button.px1.pt1(v-else, @click="$store.commit('SAVE_CLOVER', clover)")
+        heart-icon(:active="isSaved", :invisible="false")
+    
+    div
       //- image
       figure.flex-auto.px2.mt1
         img.block.mx-auto(:src="cloverImage(clover, 196)" width="196" height="196")
@@ -72,6 +68,7 @@ import {
 import { fromWei } from 'web3-utils'
 import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
+import Modal from '@/components/Modals/Modal'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 import CoinIcon from '@/components/Icons/CoinIcon'
 import MoreInformation from '@/components/MoreInformation'
@@ -284,6 +281,6 @@ export default {
     this.checkClover()
     this.getClubTokenPrice()
   },
-  components: { SymmetryIcons, CoinIcon, MoreInformation, HeartIcon, svgX }
+  components: { Modal, SymmetryIcons, CoinIcon, MoreInformation, HeartIcon, svgX }
 }
 </script>
