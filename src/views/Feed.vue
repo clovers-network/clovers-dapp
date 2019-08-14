@@ -7,7 +7,7 @@
       //- filter
       select(slot="filter", v-model="filters.filter")
         option(:value="undefined") All Clovers
-        option(value="forsale") Clovers for Sale
+        option(value="market") Clovers for Sale
         option(value="Sym") Symmetrical Clovers
         option(value="RotSym") Sym. Rotational
         option(value="X0Sym") Sym. Vertical
@@ -105,7 +105,7 @@ export default {
       let order = !this.filters.asc ? '' : this.filters.sort ? ' (low to high)' : ' (oldest first)'
 
       switch (this.filters.filter) {
-        case 'forsale':
+        case 'market':
           type = 'For Sale'; break
         case 'rft':
           type = 'RFT'; break

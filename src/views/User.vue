@@ -9,7 +9,7 @@
       filters-nav(:page="filters.page", :maxPages="maxPage", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
         select(slot="filter", v-model="filters.filter")
           option(:value="undefined") All Clovers
-          option(value="forsale") Clovers for Sale
+          option(value="market") Clovers for Sale
           option(value="Sym") Symmetrical Clovers
         select(slot="sort", v-model='filters.sort')
           option(:value='undefined') Sort by Date
@@ -76,7 +76,7 @@ export default {
       let order = !this.filters.asc ? '' : this.filters.sort ? ' (low to high)' : ' (oldest first)'
 
       switch (this.filters.filter) {
-        case 'forsale':
+        case 'market':
           type = 'For Sale'; break
         case 'rft':
           type = 'RFT'; break

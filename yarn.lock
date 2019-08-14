@@ -3827,10 +3827,9 @@ cloneable-readable@^1.0.0:
     process-nextick-args "^2.0.0"
     readable-stream "^2.3.5"
 
-clovers-contracts@^1.0.19:
+"clovers-contracts@https://github.com/clovers-network/clovers-contracts#52c98bf28065ddf822428d94f17e9dc07b7992b0":
   version "1.0.19"
-  resolved "https://registry.yarnpkg.com/clovers-contracts/-/clovers-contracts-1.0.19.tgz#78d08346439d3dcb294084cade22cd2cd6173292"
-  integrity sha512-roonNF4k6Lu77Q6qPAws5bcojGW8FLNKO7Gk5YESDcUOdoy583Io4OPL304yzd9SLf9R/vd/N/s7EUfe+qFUCg==
+  resolved "https://github.com/clovers-network/clovers-contracts#52c98bf28065ddf822428d94f17e9dc07b7992b0"
 
 clovers-reversi@^1.0.14:
   version "1.0.18"
