@@ -42,6 +42,23 @@
         template(v-else)
           p.max-width-1 Clovers that are registered to your account (wallet address). Save some from your basket and they will show up here.
 
+    //- Albums
+    section.my4.sm-mt0(name="My Clovers")
+      h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
+        router-link(:to="{name: 'User/Albums', params: {addr: account}}") Albums
+      p.h5 You have <strong>{{ albumsCount }}</strong> {{ pluralize('Album', albumsCount) }}
+      template(v-if="albumsCount")
+        nav.mt2.md-mt0.flex.justify-center.sm-block
+          router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(:to="{name: 'User/Albums', params: {addr: account}}")
+            | View all
+      nav.mt2.md-mt3.flex.justify-center.sm-block
+        .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green.mr2(v-if="albumsCount")
+          router-link.h5.flex.items-center.justify-center(:to="{name: 'User/Albums', params: {addr: account}}")
+            | View all
+        .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green
+          button.h5.flex.items-center.justify-center.pointer
+            | Add Album
+
     footer.py2.center
       p.h1(style="filter:hue-rotate(292deg)") ☘️
 
@@ -76,7 +93,8 @@ export default {
     return {
       loading: false,
       editing: false,
-      form: { name: null }
+      form: { name: null },
+      albumsCount: 0
     }
   },
   computed: {
