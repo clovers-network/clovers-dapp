@@ -29,6 +29,7 @@ const state = {
   accountData: null,
 
   pagedClovers: {},
+  pagedAlbums: {},
 
   // web3 stuff
   enabled: false,

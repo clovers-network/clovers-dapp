@@ -8,7 +8,6 @@ import Learn from '@/views/Learn/Learn'
 const Clover = () => import(/* webpackChunkName: 'clovers' */ '@/views/Clover')
 const Feed = () => import(/* webpackChunkName: 'clovers' */ '@/views/Feed')
 const Field = () => import(/* webpackChunkName: 'clovers' */ '@/views/Field')
-const User = () => import(/* webpackChunkName: 'clovers' */ '@/views/User')
 
 const Account = () => import(/* webpackChunkName: 'user' */ '@/views/Account')
 const Picks = () => import(/* webpackChunkName: 'user' */ '@/views/Picks')
@@ -16,6 +15,10 @@ const Trade = () => import(/* webpackChunkName: 'user' */ '@/views/Trade')
 const About = () => import(/* webpackChunkName: 'user' */ '@/views/About')
 
 const Activity = () => import(/* webpackChunkName: 'activity' */ '@/views/Activity.vue')
+
+const User = () => import(/* webpackChunkName: 'clovers' */ '@/views/User/User')
+const UserClovers = () => import(/* webpackChunkName: 'clovers' */ '@/views/User/User__Clovers')
+const UserAlbums = () => import(/* webpackChunkName: 'clovers' */ '@/views/User/User__Albums')
 
 Vue.use(Router)
 
@@ -103,14 +106,22 @@ export default new Router({
     },
     {
       path: '/users/:addr',
-      name: 'User',
       component: User,
-      meta: { title: 'Collector' },
-      props: true
-    },
-    {
-      path: '/users/:addr/albums',
-      name: 'User/Albums'
+      props: true,
+      children: [
+        {
+          path: '',
+          name: 'User',
+          component: UserClovers,
+          meta: { title: 'Collector' }
+        },
+        {
+          path: 'albums',
+          name: 'User/Albums',
+          component: UserAlbums,
+          meta: { title: 'Collector' }
+        }
+      ]
     },
 
     {

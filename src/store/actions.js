@@ -823,6 +823,16 @@ export default {
           }
         }
       )
+  },
+  getPagedAlbums ({ state, commit }, { url, filters = {} }) {
+    return axios.get(url, {
+      params: { ...filters }
+    }).then(({ data }) => commit('SET_PAGED_ALBUMS', data))
+      .catch((err) => {
+        if (err.response && err.response.data) {
+          commit('SET_PAGED_ALBUMS', err.response.data)
+        }
+      })
   }
 }
 

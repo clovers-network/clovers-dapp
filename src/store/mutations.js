@@ -259,6 +259,11 @@ export default {
     let msgKey = state.messages.findIndex(m => m.id === msgId)
     if (msgKey < 0) return
     state.messages.splice(msgKey, 1)
+  },
+
+  // ALBUMS
+  SET_PAGED_ALBUMS (state, page) {
+    state.pagedAlbums = page
   }
 }
 
