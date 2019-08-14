@@ -109,7 +109,7 @@ export default new Router({
       props: true
     },
     {
-      path: '/users/:addr/:album',
+      path: '/users/:addr/albums',
       name: 'User/Albums'
     },
 
@@ -124,7 +124,10 @@ export default new Router({
     if (savedPosition || to.name === 'Garden') {
       return savedPosition
     } else {
-      return { x: 0, y: 0 }
+      // to top if path or query.page changed
+      if (to.path !== from.path || to.query.page !== from.query.page) {
+        return { x: 0, y: 0 }
+      }
     }
   }
 })

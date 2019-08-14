@@ -56,7 +56,7 @@
           router-link.h5.flex.items-center.justify-center(:to="{name: 'User/Albums', params: {addr: account}}")
             | View all
         .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green
-          button.h5.flex.items-center.justify-center.pointer
+          router-link.h5.flex.items-center.justify-center.pointer(:to="{hash: 'add-album'}")
             | Add Album
 
     footer.py2.center
@@ -69,7 +69,9 @@
     transition(name="fade")
       div(v-if="editing")
         edit-user(@cancel="editing = false")
-
+    
+    transition(name="fade")
+      add-album-modal(v-show="$route.hash === '#add-album'", @close="$router.push({hash: ''})")
 </template>
 
 <script>
@@ -82,6 +84,7 @@ import PickListItem from '@/components/PickListItem'
 import CloverListCards from '@/components/CloverList--Cards'
 import EditUser from '@/components/EditUser'
 import CoinIcon from '@/components/Icons/CoinIcon'
+import AddAlbumModal from '@/components/Modals/AddAlbumModal'
 
 export default {
   name: 'Account',
@@ -197,7 +200,7 @@ export default {
     }
     this.form.name = this.user.name
   },
-  components: { UserCard, KeepClover, PickListItem, CloverListCards, EditUser, CoinIcon }
+  components: { UserCard, KeepClover, PickListItem, CloverListCards, EditUser, CoinIcon, AddAlbumModal }
 }
 </script>
 
