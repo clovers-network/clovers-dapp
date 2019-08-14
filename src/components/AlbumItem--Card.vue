@@ -9,8 +9,8 @@
     footer.px2.pb2.flex.justify-between
       h6.col-9.truncate.h5 [owner]
       .col-4.flex.items-center.justify-end
-        img.block.mr1(src="@/assets/icons/clover-icon-1.svg", style="width:0.875em")
         span.h5 {{album.clovers.length}}
+        //- img.block(src="@/assets/icons/clover-icon-1.svg", style="width:0.66em; margin-left:0.175em")
 </template>
 
 <script>

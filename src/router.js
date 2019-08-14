@@ -9,16 +9,17 @@ const Clover = () => import(/* webpackChunkName: 'clovers' */ '@/views/Clover')
 const Feed = () => import(/* webpackChunkName: 'clovers' */ '@/views/Feed')
 const Field = () => import(/* webpackChunkName: 'clovers' */ '@/views/Field')
 
+const User = () => import(/* webpackChunkName: 'user' */ '@/views/User/User')
+const UserClovers = () => import(/* webpackChunkName: 'user' */ '@/views/User/User__Clovers')
+const UserAlbums = () => import(/* webpackChunkName: 'user' */ '@/views/User/User__Albums')
+
 const Account = () => import(/* webpackChunkName: 'user' */ '@/views/Account')
 const Picks = () => import(/* webpackChunkName: 'user' */ '@/views/Picks')
 const Trade = () => import(/* webpackChunkName: 'user' */ '@/views/Trade')
-const About = () => import(/* webpackChunkName: 'user' */ '@/views/About')
 
 const Activity = () => import(/* webpackChunkName: 'activity' */ '@/views/Activity.vue')
 
-const User = () => import(/* webpackChunkName: 'clovers' */ '@/views/User/User')
-const UserClovers = () => import(/* webpackChunkName: 'clovers' */ '@/views/User/User__Clovers')
-const UserAlbums = () => import(/* webpackChunkName: 'clovers' */ '@/views/User/User__Albums')
+const Album = () => import(/* webpackChunkName: 'albums' */ '@/views/Album')
 
 Vue.use(Router)
 
@@ -122,6 +123,14 @@ export default new Router({
           meta: { title: 'Collector' }
         }
       ]
+    },
+
+    {
+      path: '/albums/:id',
+      name: 'Album',
+      component: Album,
+      props: true,
+      meta: { title: 'Album' }
     },
 
     {

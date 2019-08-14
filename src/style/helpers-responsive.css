@@ -15,6 +15,7 @@
   .sm-flex-first{order:-99;}
   .sm-border-dashed{ border-style: dashed; }
   .sm-border-none{border:none;}
+  .sm-items-end{align-items: flex-end;}
   .sm-justify-start{justify-content: flex-start;}
 }
 @media (--breakpoint-md) {
@@ -25,4 +26,8 @@
   .md-border{border-style:solid;}
   .md-bg-none{background:none;}
   .md-flex-first{order:-99;}
+}
+
+@media (--breadkpoint-lg) {
+  .lg-w-20{width:20%;}
 }
