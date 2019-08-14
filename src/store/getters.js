@@ -1,6 +1,6 @@
 import Reversi from 'clovers-reversi'
 import utils from 'web3-utils'
-import { Clovers, CurationMarket } from 'clovers-contracts'
+import { Clovers } from 'clovers-contracts'
 import { prettyBigNumber, abbrvAddr, abbrvNum, cloverImage } from '@/utils'
 import BigNumber from 'bignumber.js'
 
@@ -109,7 +109,7 @@ export default {
   wrongNetwork: state => state.networkId !== state.correctNetwork,
 
   curationMarketAddress ({ correctNetwork }) {
-    return CurationMarket.networks[correctNetwork].address.toLowerCase()
+    return null // CurationMarket.networks[correctNetwork].address.toLowerCase()
   },
   cloversBankAddress ({ correctNetwork }) {
     return Clovers.networks[correctNetwork].address.toLowerCase()
