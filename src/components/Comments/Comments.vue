@@ -4,21 +4,24 @@
       .overflow-auto.touch.flex-auto(ref="chat")
         header.sticky.z1.top-0
           .rounded-2.overflow-hidden.pt2.mx2
-            view-nav.font-ext.h3.rounded-2(:items="[{lbl: 'Comments', value:'chat'}, {lbl: 'Activity', value:'logs'}]", @change="view = $event", @click.native="maybeScroll", :thick="false")
+            view-nav.font-ext.h3.rounded-2(:items="[{lbl: 'Comments', value:'chat'}, {lbl: 'Albums', value: 'albums'}, {lbl: 'Activity', value:'logs'}]", @change="view = $event", @click.native="maybeScroll", :thick="false")
 
         //- tab: comments
         .px2.mb3(v-if="view === 'chat'")
           h6.my2.h6.opacity-50.center
-            span(v-if="noComments") No comments yet
+            span.mt3.block(v-if="noComments") No comments yet
             span(v-else-if="loading || moreCommentsToLoad") Loading...
             span(v-else) Start of chat
           ul.list-reset.m0
             //- li(v-else).p3.white.h6 nothing here yet
             li(v-for="comment in comments", :key="comment.id", ref="comment", style="margin:5px 0")
               comment(:comment="comment", :owner="owner")
+        
+        //- tab: albums
+        .px(v-else-if="view === 'albums'")
 
         //- tab: activity
-        .px2(v-else)
+        .px2(v-else-if="view === 'activity'")
           .fade-enter-active(v-if="hasResults", :class="{'opacity-50': loading}")
             .mx-auto
               .flex.justify-end.items-center
@@ -82,12 +85,12 @@ export default {
   },
   data () {
     return {
+      view: 'chat', // || 'logs'
       socket: null,
       showChat: true,
       comments: [],
       newComment: '',
       posting: false,
-      view: 'chat', // || 'logs'
       loading: false,
       doneFirstLoad: false,
       moreCommentsToLoad: true,
@@ -256,7 +259,7 @@ export default {
         this.scrollDown()
         this.addListener()
         setTimeout(this.focusActivity, 30)
-      } else {
+      } else if (newVal === 'activity') {
         this.loadActivity().then(this.focusActivity)
       }
     },
