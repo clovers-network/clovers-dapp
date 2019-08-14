@@ -2,7 +2,7 @@
   //- fullscreen overlay
   .fixed.z3.flex.modal(@click.self="close")
     //- card
-    .relative.pt4.m-auto.bg-white.border.border-dashed.rounded
+    .relative.pt3.m-auto.bg-white.border.border-dashed.rounded
       //- header
       nav.absolute.top-0.left-0.col-12.h-header.flex.justify-between.items-center.px2
         //- btn: close

@@ -1,6 +1,6 @@
 <template lang="pug">
   modal.green(@close="$emit('close')", :cancel="true")
-    .mx3.pb4.pt1
+    .mx3.pb4.pt2
       h4.font-exp.center.lh1 Add Album
       form.mt2.pt1(@submit.prevent="submit")
         label.hide Album Name

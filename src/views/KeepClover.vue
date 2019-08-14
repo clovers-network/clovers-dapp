@@ -6,7 +6,7 @@
       button.px1.pt1(v-else, @click="$store.commit('SAVE_CLOVER', clover)")
         heart-icon(:active="isSaved", :invisible="false")
 
-    div
+    .pt1
       //- image
       figure.flex-auto.px2.mt1
         img.block.mx-auto(:src="cloverImage(clover, 196)" width="196" height="196")
