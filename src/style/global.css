@@ -60,6 +60,7 @@ h1,h2,h3,h4,h5,h6{
 button{
   appearance:none;
   border:none;
+  border-width:1px;
   background:none;
   color:inherit;
   font-size:inherit;

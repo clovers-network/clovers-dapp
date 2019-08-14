@@ -1,68 +1,78 @@
 <template lang="pug">
-  section.rounded-2(name="comments")
-    .flex.flex-column.chat-scroll(:class="{ chatpb: view === 'chat' }")
-      .overflow-auto.touch.flex-auto(ref="chat")
-        header.sticky.z1.top-0
-          .rounded-2.overflow-hidden.pt2.mx2
-            view-nav.font-ext.h3.rounded-2(:items="[{lbl: 'Comments', value:'chat'}, {lbl: 'Albums', value: 'albums'}, {lbl: 'Activity', value:'logs'}]", @change="view = $event", @click.native="maybeScroll", :thick="false")
+  section(name="social", ref="chat")
+    header.pt2.mx2
+      view-nav.font-ext.h3.rounded-2(:items="[{lbl: 'Comments', value:'chat'}, {lbl: 'Albums', value: 'albums'}, {lbl: 'Activity', value:'logs'}]", @change="view = $event", @click.native="maybeScroll", :thick="false")
 
-        //- tab: comments
-        .px2.mb3(v-if="view === 'chat'")
-          h6.my2.h6.opacity-50.center
-            span.mt3.block(v-if="noComments") No comments yet
-            span(v-else-if="loading || moreCommentsToLoad") Loading...
-            span(v-else) Start of chat
-          ul.list-reset.m0
-            //- li(v-else).p3.white.h6 nothing here yet
-            li(v-for="comment in comments", :key="comment.id", ref="comment", style="margin:5px 0")
-              comment(:comment="comment", :owner="owner")
-        
-        //- tab: albums
-        .px(v-else-if="view === 'albums'")
+    //- tab: comments
+    .px2.mb3.relative(v-if="view === 'chat'")
+      h6.my2.h6.opacity-50.center
+        span.mt3.block(v-if="noComments") No comments yet
+        span(v-else-if="loading || moreCommentsToLoad") Loading...
+        span(v-else) Start of chat
+      ul.list-reset.m0
+        //- li(v-else).p3.white.h6 nothing here yet
+        li(v-for="comment in comments", :key="comment.id", ref="comment", style="margin:5px 0")
+          comment(:comment="comment", :owner="owner")
+      //- input: comment / sign in
+      .sticky.mt3.z2.left-0.right-0.bottom-0.mt2.chat-hover
+        .rounded-2.pb2(v-if="signedIn")
+          form(@submit.prevent="postComment")
+            input.p3.col-12.h4.border-dashed.bg-white.font-exp.rounded-2.line-height-2.focus-border(@focus="focusActivity()" v-model="newComment", ref="input", type="text", placeholder="Comment...")
+            //- .right-align.mt2.hide
+            //-   button(type="submit", :disabled="posting", v-text="buttonTxt").px3.py2.bg-green.white.font-exp
+        .bg-white.rounded.pb2(v-else)
+          button.block.col-12.font-exp.p3.mb0.border.rounded-2.line-height-2.pointer.hover-bg-l-green(@click="signIn")
+            | <span class="underline"> Sign in</span> to comment...
 
-        //- tab: activity
-        .px2(v-else-if="view === 'activity'")
-          .fade-enter-active(v-if="hasResults", :class="{'opacity-50': loading}")
-            .mx-auto
-              .flex.justify-end.items-center
-                router-link.block.h5.pt2.mr3.light-green.hover-underline(to="/activity") view all logs
-                .pt3.pb2.center(style="min-width:140px")
-                  .center.h4.border.rounded.h-100.px2.py1.flex.items-center.justify-between.hover-bg-l-green
-                    span.pr2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !prevPossible }", @click="back")
-                      img(src="@/assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
-                    span {{ filters.page }} of {{ maxPage }}
-                    span.pl2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !nextPossible }", @click="forward")
-                      img(src="@/assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
+    //- tab: albums
+    .px1(v-else-if="view === 'albums'")
+      h6.my2.p3.h6.opacity-50.center(v-if="!albums.length") No Albums yet
+      ul.mt3.mb0.list-reset.flex.flex-wrap
+        li.col-12.sm-col-6.px1(v-for="(album, i) in albums")
+          router-link.block.px2.py3.my1.rounded.clover-item-border.flex.justify-center(:to="{name: 'Album', params: {id: i}}")
+            h4.font-exp {{album.name}}
+            //- h6.h6 [username]
+      footer.sticky.bottom-0.left-0.mt1.px1.pb2
+        .rounded.pointer(style="background:rgba(255,255,255,.9)")
+          //- (btn: add to album)
+          button.block.col-12.font-exp.p3.border-dashed.hover-border-solid.bg-lightest-green.rounded.lh1(v-if="signedIn") Add to Album
+          //- (sign in...)
+          button.block.col-12.font-exp.p3.bg-white.border.rounded.lh1.hover-bg-l-green(v-else, @click="signIn")
+            | <span class="underline">Sign in</span> to add...
 
-              ul.m0.p0.list-reset.mt2
-                //- log item
-                li.border.border-dashed.rounded.mb2(v-for="log in activity" :key="log.id || log.transactionHash")
-                  activity-item(:item="log", :no-img="true")
-
-              nav.list-reset.flex.h5.green.items-center.justify-center.my3.pb2(v-if='(prevPossible || nextPossible) && hasResults')
-                li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !prevPossible }", @click="back")
+    //- tab: activity
+    .px2(v-else-if="view === 'logs'")
+      .fade-enter-active(v-if="hasResults", :class="{'opacity-50': loading}")
+        .mx-auto
+          .flex.justify-end.items-center
+            router-link.block.h5.pt2.mr3.light-green.hover-underline(to="/activity") view all logs
+            .pt3.pb2.center(style="min-width:140px")
+              .center.h4.border.rounded.h-100.px2.py1.flex.items-center.justify-between.hover-bg-l-green
+                span.pr2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !prevPossible }", @click="back")
                   img(src="@/assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
-                  span.pl1 Previous
-                li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !nextPossible }", @click="forward")
-                  span.pr1 Next
+                span {{ filters.page }} of {{ maxPage }}
+                span.pl2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !nextPossible }", @click="forward")
                   img(src="@/assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
 
-              .center.h5.font-mono.h-bttm-bar.px2.py3(v-else)
-                span.opacity-50 End of results
+          ul.m0.p0.list-reset.mt2
+            //- log item
+            li.border.border-dashed.rounded.mb2(v-for="log in activity" :key="log.id || log.transactionHash")
+              activity-item(:item="log", :no-img="true")
 
-          div(v-else)
-            .center.h5.font-mono.px2.py4
-              span.opacity-50 {{ loading ? 'Loading...' : 'No results' }}
+          nav.list-reset.flex.h5.green.items-center.justify-center.my3.pb2(v-if='(prevPossible || nextPossible) && hasResults')
+            li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !prevPossible }", @click="back")
+              img(src="@/assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
+              span.pl1 Previous
+            li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !nextPossible }", @click="forward")
+              span.pr1 Next
+              img(src="@/assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
 
-    .sticky.z2.left-0.right-0.bottom-0.mx2.mt2.chat-hover(v-if="view === 'chat'")
-      .rounded-2.pb2(v-if="signedIn")
-        form(@submit.prevent="postComment")
-          input.p3.col-12.h4.border-dashed.bg-white.font-exp.rounded-2.line-height-2.focus-border(@focus="focusActivity()" v-model="newComment", ref="input", type="text", placeholder="Comment...")
-          //- .right-align.mt2.hide
-          //-   button(type="submit", :disabled="posting", v-text="buttonTxt").px3.py2.bg-green.white.font-exp
-      .bg-white.rounded-2.pb2(v-else)
-        button.block.col-12.font-exp.p3.mb0.border.rounded-2.line-height-2.pointer.hover-bg-l-green(@click="signIn")
-          | <span class="underline"> Sign in</span> to comment...
+          .center.h5.font-mono.h-bttm-bar.px2.py3(v-else)
+            span.opacity-50 End of results
+
+      div(v-else)
+        .center.h5.font-mono.px2.py4
+          span.opacity-50 {{ loading ? 'Loading...' : 'No results' }}
 </template>
 
 <script>
@@ -115,6 +125,10 @@ export default {
     activity () {
       if (!this.logs.results) return []
       return this.logs.results
+    },
+    albums () {
+      // demo
+      return this.$store.state.albums
     },
     prevPossible () {
       return this.logs.prevPage
@@ -259,7 +273,7 @@ export default {
         this.scrollDown()
         this.addListener()
         setTimeout(this.focusActivity, 30)
-      } else if (newVal === 'activity') {
+      } else if (newVal === 'logs') {
         this.loadActivity().then(this.focusActivity)
       }
     },
@@ -318,16 +332,6 @@ function atBottom (el) {
 
 <style>
 @import '../../style/settings.css';
-
-.chat-scroll {
-  /*max-height: 100%;*/
-  /*height: calc(100vh - 93px);*/
-  /*height: 76vh;*/
-  /*overflow: auto;*/
-  /*padding-bottom: 67px;*/
-
-  /*&.chatpb { height: calc(76vh - 92px); }*/
-}
 
 .touch {
   -webkit-overflow-scrolling: touch;
