@@ -106,6 +106,7 @@
   }
 }
 
+.touch-scroll {-webkit-overflow-scrolling: touch;}
 .overflow-x-scroll{overflow-x:scroll;}
 .overflow-y-scroll{overflow-y:scroll;}
 .invisible-scrollbar::-webkit-scrollbar {display: none;}
