@@ -21,10 +21,10 @@
               span View All
         //- (empty)
         div(v-else)
-          p.max-width-2.h5 Clovers you pick from your <b>Garden</b>, or symmetrical clovers found by your <b>Clover Pig</b>, are saved here.
+          p.h5 Your <b>Basket</b> is where clovers picked from your <router-link to="/garden">Garden</router-link>, or symmetrical clovers found by your Clover Pig are saved.
           nav.mt3
             router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(to="/garden")
-              | Find Clovers
+              | Pick Clovers
 
       //- Clovers
       section.my4.sm-mt0.mx2.sm-mx3.md-mx0(name="My Clovers")
