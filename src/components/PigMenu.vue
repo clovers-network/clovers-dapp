@@ -1,5 +1,5 @@
 <template lang="pug">
-    #pigMenu.border.green.bg-white.absolute.shadow.no-select
+    #pigMenu.border.green.bg-white.absolute.no-select
       .justify-between.items-end.border-bottom.flex.pt1.pb2.px2
         .col-3
           .h4.bold {{mined.toLocaleString()}}
