@@ -133,7 +133,8 @@ export default {
       return this.results.allResults
     },
     albums () {
-      return this.$store.state.albums
+      return []
+      // return this.myAlbums()
     },
 
     showPickModal () {

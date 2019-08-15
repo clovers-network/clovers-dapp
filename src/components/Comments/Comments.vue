@@ -29,7 +29,7 @@
       h6.my2.p3.h6.opacity-50.center(v-if="!albums.length") No Albums yet
       ul.mt3.mb0.list-reset.flex.flex-wrap
         li.col-12.sm-col-6.px1(v-for="(album, i) in albums")
-          router-link.block.px2.py3.my1.rounded.clover-item-border.flex.justify-center(:to="{name: 'Album', params: {id: i}}")
+          router-link.block.px2.py3.my1.rounded.clover-item-border.flex.justify-center(:to="{name: 'Album', params: {id: album.id}}")
             h4.font-exp {{album.name}}
             //- h6.h6 [username]
       footer.sticky.bottom-0.left-0.mt1.px1.pb2
@@ -41,7 +41,7 @@
             | <span class="underline">Sign in</span> to add...
       //- modal: add to album
       transition(name="fade")
-        add-to-album-modal(v-show="$route.hash === '#connect'", @close="$router.push({hash: ''})")
+        add-to-album-modal(:board="board" v-show="$route.hash === '#connect'", @close="$router.push({hash: ''})")
 
     //- tab: activity
     .px2(v-else-if="view === 'logs'")
@@ -87,7 +87,7 @@ import ViewNav from '@/components/ViewNav'
 import ActivityItem from '@/components/ActivityItem'
 import AddToAlbumModal from '@/components/Modals/AddToAlbumModal'
 import { apiBase } from '@/store/actions'
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import { cloverImage } from '@/utils'
 
 export default {
@@ -131,8 +131,7 @@ export default {
       return this.logs.results
     },
     albums () {
-      // demo
-      return this.$store.state.albums
+      return this.allAlbums.filter(a => a.clovers.indexOf(this.board) > -1)
     },
     prevPossible () {
       return this.logs.prevPage
@@ -153,7 +152,8 @@ export default {
     },
     noComments () {
       return !this.moreCommentsToLoad && !this.comments.length
-    }
+    },
+    ...mapState(['allAlbums'])
   },
   methods: {
     addListener () {
@@ -217,6 +217,9 @@ export default {
         this.moreCommentsToLoad = false
       })
     },
+    loadAlbums () {
+      this.getAllAlbums()
+    },
     loadActivity () {
       return axios.get(`${apiBase}/clovers/${this.board}/activity`, {
         params: { page: this.filters.page }
@@ -259,13 +262,20 @@ export default {
     },
     maybeScroll () {
       this.$nextTick(() => {
-        if (this.view === 'chat') {
-          this.focusActivity()
+        switch (this.view) {
+          case('chat'):
+            this.focusActivity()
+            break
+          case('albums'):
+            this.getAllAlbums()
+            break
+          default:
         }
       })
     },
 
     ...mapActions([
+      'getAllAlbums',
       'getComments',
       'addComment',
       'signIn'

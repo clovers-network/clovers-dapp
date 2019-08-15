@@ -12,19 +12,27 @@
 
 <script>
 import Modal from './Modal'
+import {mapActions} from 'vuex'
 export default {
   name: 'AddAlbumModal',
   data () {
     return {
       album: {
-        name: ''
+        name: '',
+        clovers: []
       },
       error: null
     }
   },
   methods: {
-    submit () {
-      // this.$store.dispatch('createAlbum', {name: this.album.name})
+    ...mapActions(['createAlbum']),
+    async submit () {
+      try {
+        await this.createAlbum(this.album)
+        this.$emit('close')
+      } catch (error) {
+        console.error(error)
+      }
     }
   },
   components: { Modal }

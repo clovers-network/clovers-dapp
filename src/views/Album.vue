@@ -6,16 +6,16 @@
         h1.col-12.h2.font-exp.mt1.px1.pb2(style="min-height:4.5em") {{album.name}}
         small.block.col-12.flex.items-center.sm-items-end.justify-between.sm-p1.pr1
           h6
-            router-link.h5.mr2.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-border-green(:to="{name: 'User', params: {addr: album.owner}}") [username]
+            router-link.h5.mr2.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-border-green(:to="{name: 'User', params: {addr: album.userAddress}}") {{_userName}}
             span.h6.sm-h5 &larr;&nbsp; Editor
           h6.h5.sm-h4.flex.items-center.pt1
-            | {{album.clovers.length}}
+            | {{album.clovers && album.clovers.length}}
             img.block.ml1(src="@/assets/icons/clover-icon-1.svg", style="width:0.875em;")
         //- edit btn
         button.absolute.top-0.right-0.p2.block.h4.pointer(v-if="isEditor", @click="showEdit" style="transform:scale(-1, 1)", aria-label="Edit Album") ✎
     //- clovers
     section.px1.flex.flex-wrap
-      template(v-for="n in 4")
+      template(v-for="n in album.clovers")
         //- item
         .col-4.sm-col-4.md-col-3.lg-w-20.sm-px1.sm-my1(v-for="clover in album.clovers")
           //- border
@@ -23,7 +23,7 @@
             router-link.absolute.overlay.flex.items-center.justify-center(:to="{name: 'Clover', params: {board: clover}}")
               img.block.col-8.sm-col-9(:src="cloverImage(clover, 128)")
             //- TODO show for owner !!
-            button.absolute.top-0.right-0.m1.border.rounded-full.bg-lightest-green.pointer.trans-quick.opacity-50(style="padding:0.4rem", v-if="isEditor")
+            button.absolute.top-0.right-0.m1.border.rounded-full.bg-lightest-green.pointer.trans-quick.opacity-50(style="padding:0.4rem", v-if="isEditor" @click="removeClover(clover)")
               svg-x(style="width:0.6rem;height:0.6rem")
 
     //- modal: edit album
@@ -41,14 +41,16 @@
             .absolute.bg-red.opacity-25.overlay.rounded
             .relative.z1.center
               //- .h4.h4.mb2.font-exp Delete Album
-              button.inline-block.font-ext.pointer.py2.px3.rounded.bg-red.white(@click="deleteAlbum") Delete Album
+              button.inline-block.font-ext.pointer.py2.px3.rounded.bg-red.white(@click="_deleteAlbum") Delete Album
 
 </template>
 
 <script>
+import store from '@/store'
 import { cloverImage } from '@/utils'
 import Modal from '@/components/Modals/Modal'
 import svgX from '@/components/Icons/SVG-X'
+import {mapGetters, mapActions} from 'vuex'
 export default {
   name: 'Album',
   props: ['id'],
@@ -59,24 +61,47 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['userName']),
     album () {
-      return this.$store.state.albums[this.id]
+      return this.$store.state.currentAlbum
     },
     isEditor () {
       return true
+    },
+    _userName () {
+      return this.album && this.userName(this.album.user)
     }
   },
+  beforeRouteEnter (to, from, next) {
+    const { id } = to.params
+    store.dispatch('getAlbum', id).then(next)
+  },
   methods: {
+    ...mapActions(['updateAlbum', 'deleteAlbum']),
     cloverImage,
     showEdit () {
       this.newName = this.album.name
       this.edit = true
     },
-    submitNewName () {
-
+    async submitNewName () {
+      let albumCopy = JSON.parse(JSON.stringify(this.album))
+      albumCopy.name = this.newName
+      await this.updateAlbum(albumCopy)
+      this.edit = false
     },
-    deleteAlbum () {
+    async _deleteAlbum () {
       let yes = window.confirm('Are you sure you want to delete this Album? This action cannot be undone...')
+      if (yes) {
+        try {
+          await this.deleteAlbum(this.album.id)
+          this.$router.push('/albums')
+        } catch (error) {
+          console.error(error)
+        }
+      }
+    },
+    removeClover (clover) {
+      console.log(`DELETE ${clover}`)
     }
   },
   components: { svgX, Modal }

@@ -4,7 +4,7 @@
     filters-nav(:page="filters.page", :maxPages="maxPage", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
     section
       //- (list)
-      .fade-enter-active(v-if="'demo' === 'demo' || hasResults", :class="{'opacity-50':loading}")
+      .fade-enter-active(v-if="hasResults", :class="{'opacity-50':loading}")
         album-list-cards(v-if="albums.length", :albums="albums")
       //- (empty)
       div(v-else)
@@ -18,6 +18,7 @@ import AlbumListCards from '@/components/AlbumList--Cards'
 import FiltersNav from '@/components/FiltersNav'
 import PageNav from '@/components/PageNav'
 // import { cleanObj } from '@/utils'
+import {mapState} from 'vuex'
 export default {
   name: 'PagedAlbums',
   props: {
@@ -35,51 +36,45 @@ export default {
     }
   },
   computed: {
+    ...mapState(['pagedAlbums']),
     apiUrl () {
-      return `${process.env.VUE_APP_API_URL}/${this.apiPath}` // users/${this.user.address}/clovers`
+      return `${process.env.VUE_APP_API_URL}${this.apiPath}`
     },
     albums () {
-      // demo
-      return this.$store.state.albums
-
-      // if (!this.results.results) return []
-      // return this.results.results
+      if (!this.results.results) return []
+      return this.results.results
     },
-    // results () {
-    //   return this.$store.state.pagedAlbums
-    // },
+    results () {
+      return this.pagedAlbums
+    },
     hasResults () {
-      return true
-      // return this.results.results && !!this.results.results.length
+      return this.results.results && !!this.results.results.length
     },
     prevPossible () {
-      return false
-      // return this.results.prevPage
+      return this.results.prevPage
     },
     nextPossible () {
-      return true
-      // return this.results.nextPage
+      return this.results.nextPage
     },
     maxPage () {
-      return 2
-      // if (!this.results.allResults) return 0
-      // return Math.ceil(this.results.allResults / 12)
+      if (!this.results.allResults) return 0
+      return Math.ceil(this.results.allResults / 12)
     }
   },
   methods: {
     query () {
-      // if (this.loading || !this.apiUrl) return
-      // this.loading = true
+      if (this.loading || !this.apiUrl) return
+      this.loading = true
 
-      // this.$store.dispatch('getPagedAlbums', {
-      //   url: this.apiUrl,
-      //   // filters: this.filters
-      // }).then(() => {
-      //   this.loading = false
-      // }).catch((error) => {
-      //   console.error(error)
-      //   this.loading = false
-      // })
+      this.$store.dispatch('getPagedAlbums', {
+        url: this.apiUrl,
+        // filters: this.filters
+      }).then(() => {
+        this.loading = false
+      }).catch((error) => {
+        console.error(error)
+        this.loading = false
+      })
     },
     back () {
       // if (!this.prevPossible) return

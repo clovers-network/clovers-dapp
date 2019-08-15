@@ -169,6 +169,19 @@ export default {
     state.feedFilter = filter
   },
 
+  SET_ALL_ALBUMS (state, albums) {
+    state.allAlbums = albums
+  },
+
+  SET_CURRENT_ALBUM (state, album) {
+    let index = state.allAlbums.indexOf(a => a.id === album.id)
+    console.log(index, state.allAlbums, album)
+    if (index > 0) {
+      state.allAlbums.splice(index, 1, album)
+    }
+    state.currentAlbum = album
+  },
+
   SET_CURRENT_CLOVER (state, clover) {
     state.currentClover = formatClover(clover)
   },
