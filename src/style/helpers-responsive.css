@@ -24,6 +24,7 @@
   .md-border-right{border-right-style:solid;}
   .md-border-bottom{border-bottom-style: solid}
   .md-border{border-style:solid;}
+  .md-border-none{border:none;}
   .md-bg-none{background:none;}
   .md-flex-first{order:-99;}
 }
