@@ -3,18 +3,20 @@
     header
       user-card(:user="user", :editable="true", @edit="signOrEdit")
 
-    section.mx2.sm-mx3.md-mx0
+    section
       //- Basket
       section.my4.sm-mt0(name="My unregistered Clovers")
-        h2.h2.md-h2.mt2.md-mt3.mb1.font-exp
+        h2.mx2.sm-mx3.md-mx0.h2.md-h2.mt2.md-mt3.mb1.font-exp
           router-link(:to="{ name: 'Picks' }") Basket
         //- (picks)
         div(v-if="pickCount")
-          p.h5 You have <strong>{{ pickCount }}</strong> unregistered {{ pluralize('Clover', pickCount) }}
-          .mxn2.mt3
-            ul.list-reset.m0.flex
-              pick-list-item(v-for="(pick, i) in picks", :key="pick.byteBoard", :pick="pick", :data-key="pick.board", :style="fadeOut(i)", :diameter="128", v-if="i < 6", :class="{'hidden sm-block': i === 4, 'hidden md-block': i === 5}")
-          nav.mt3
+          p.h5.mx2.sm-mx3.md-mx0 You have <strong>{{ pickCount }}</strong> unregistered {{ pluralize('Clover', pickCount) }}
+          .mt3.relative
+            .overflow-x-scroll.lg-overflow-x-hidden.py2.touch-scroll.invisible-scrollbar
+              ul.list-reset.m0.nowrap
+                pick-list-item.inline-block(v-for="(pick, i) in picks", :key="pick.byteBoard", :pick="pick", :data-key="pick.board", :diameter="128", v-if="i < 8")
+            .absolute.overlay.pointer-events-none(style="background:linear-gradient(to left, white 8%, rgba(255,255,255,0) 85%)")
+          nav.mt3.mx2.sm-mx3.md-mx0
             router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(:to="{ name: 'Picks' }")
               span View All
         //- (empty)
@@ -25,7 +27,7 @@
               | Find Clovers
 
       //- Clovers
-      section.my4.sm-mt0(name="My Clovers")
+      section.my4.sm-mt0.mx2.sm-mx3.md-mx0(name="My Clovers")
         h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
           router-link(to="/account/clovers") Collection
         //- (clovers list)
@@ -41,7 +43,7 @@
           p.max-width-1 Clovers that are registered to your account (wallet address). Save some from your basket and they will show up here.
 
       //- Albums
-      section.my4.sm-mt0(name="My Clovers")
+      section.mx2.sm-mx3.md-mx0.my4.sm-mt0(name="My Clovers")
         header.mt2.md-mt3.flex.items-center.justify-between
           .flex-auto
             h2.h3.md-h2.mb1.font-exp
@@ -176,11 +178,6 @@ export default {
       } else {
         this.signIn()
       }
-    },
-    fadeOut (i) {
-      if (!i) return
-      const o = (100 - (i * 19.5)) / 100
-      return { opacity: o }
     },
 
     ...mapActions(['getPagedClovers', 'signIn'])
