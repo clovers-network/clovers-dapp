@@ -5,7 +5,8 @@ const webpack = require('webpack')
 module.exports = {
   lintOnSave: false,
   devServer: {
-    disableHostCheck: true,
+    disableHostCheck: true
+    // https: true
   },
   configureWebpack: {
     optimization: {
