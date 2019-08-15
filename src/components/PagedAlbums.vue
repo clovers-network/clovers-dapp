@@ -19,7 +19,7 @@ import FiltersNav from '@/components/FiltersNav'
 import PageNav from '@/components/PageNav'
 // import { cleanObj } from '@/utils'
 export default {
-  name: 'AlbumPages',
+  name: 'PagedAlbums',
   props: {
     apiPath: { type: String, default: '/albums' }
   },
