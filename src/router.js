@@ -19,6 +19,7 @@ const Trade = () => import(/* webpackChunkName: 'user' */ '@/views/Trade')
 
 const Activity = () => import(/* webpackChunkName: 'activity' */ '@/views/Activity.vue')
 
+const Albums = () => import(/* webpackChunkName: 'albums' */ '@/views/Albums')
 const Album = () => import(/* webpackChunkName: 'albums' */ '@/views/Album')
 
 Vue.use(Router)
@@ -125,6 +126,12 @@ export default new Router({
       ]
     },
 
+    {
+      path: '/albums',
+      name: 'Albums',
+      component: Albums,
+      meta: { title: 'Albums' }
+    },
     {
       path: '/albums/:id',
       name: 'Album',

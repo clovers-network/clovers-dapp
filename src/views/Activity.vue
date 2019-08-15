@@ -1,6 +1,6 @@
 <template lang="pug">
   .mx3
-    more-information(title="?" content="<u>The Activity Log</u> is where you can get an overview of everything that's happening on the site in real time. You'll see activity for when a new Clover is registered, when one is bought or listed for sale, when users buy or sell Clover Coin and when they comment on someones Clover.")
+    more-information(title="?") <u>The Activity Log</u> is where you can get an overview of everything that's happening on the site in real time. You'll see activity for when a new Clover is registered, when one is bought or listed for sale, when users buy or sell Clover Coin and when they comment on someones Clover."
 
     filters-nav(:page="filters.page", :maxPages="maxPage", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
       //- Filter

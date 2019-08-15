@@ -1,6 +1,6 @@
 <template lang="pug">
   .mt1.mx3.sm-mt3.pb-full-height
-    more-information(title="?" content="<u>The Garden</u> is where you can grow new Clovers and pick the ones you like. They'll go into your basket until they get registered. If you'd like to register the Clover to keep it, you'll be charged 10 Clover Coins. If the Clover is symmetrical however, you can exchange it for a reward! Use your Pig to search quickly for only symmetrical Clovers and begin earning Clover Coins.")
+    more-information(title="?") In the <b>Garden</b>, you can generate new clovers and pick favorites. Picked clovers go to your <router-link :to="{name: 'Picks'}" class="underline">Basket</router-link>. If you'd like to add a clover to your collection, you need to register it on the network. Registration costs a base fee of <router-link :to="{name: 'Trade'}">10 <coin-icon class="inline-block" /></router-link>. If the clover is symmetrical however, you can instead exchange it for a reward! Use your Pig to rapidly sniff-out symmetrical clovers, and start earning.
 
     .arrow-up.center.bg-green.fixed.bottom-0.right-0.mb4.mr4.block.pointer.z3(@click="scrollUp")
       img(:src="require('../assets/icons/arrow-up.svg')")
@@ -20,6 +20,7 @@ import { mapActions } from 'vuex'
 import KeepClover from '@/views/KeepClover'
 import FieldItem from '@/components/FieldItem'
 import MoreInformation from '@/components/MoreInformation'
+import CoinIcon from '@/components/Icons/CoinIcon'
 import Bottleneck from 'bottleneck'
 import Reversi from 'clovers-reversi'
 import { cloverIsMonochrome } from '@/utils'
@@ -99,7 +100,7 @@ export default {
     this.limiter.stop({ dropWaitingJobs: true })
     next()
   },
-  components: { KeepClover, FieldItem, MoreInformation }
+  components: { KeepClover, FieldItem, MoreInformation, CoinIcon }
 }
 </script>
 <style lang="css" scoped>

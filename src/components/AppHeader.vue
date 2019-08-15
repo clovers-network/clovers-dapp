@@ -44,7 +44,7 @@
             cart-icon.mr1
             span.h6.sm-h5.lh1.block {{pickCount}}
           //- btn: tokens
-          router-link.h-nav-btn.flex.px1.items-center.border-left(:to="{name: 'Trade'}", v-show="prettyUserBalance !== '-'")
+          router-link.h-nav-btn.flex.px2.items-center.border-left(:to="{name: 'Trade'}", v-show="prettyUserBalance !== '-'")
             coin-icon.mr1
             span.h6.sm-h5.lh1.block {{prettyUserBalance}}
           //- bnt: account

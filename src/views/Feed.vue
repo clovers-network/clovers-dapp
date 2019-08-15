@@ -1,6 +1,6 @@
 <template lang="pug">
   .mx3.md-mx0.green
-    more-information(title="?" content="<b>The Feed</b> is where all registerd Clovers can be found. You can filter by symmetry, popularity, comments, clovers for sale as well as sort by price or date.")
+    more-information(title="?") <b>The Feed</b> is where all registerd Clovers can be found. You can filter by symmetry, popularity, comments, clovers for sale as well as sort by price or date.
 
     //- filters
     filters-nav(:page="filters.page", :maxPages="maxPage", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")

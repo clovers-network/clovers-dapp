@@ -1,6 +1,6 @@
 <template lang="pug">
   section
-    more-information(title="?" content="<u>Trade</u> is where you can buy or sell Clover Coin. This currency is used for registering new Clovers and as a reward for finding Symmetrical Clovers. It uses a Bonding Curve to buy and sell. To learn more about that concept check out this <u><a target='_blank' href='https://blog.relevant.community/how-to-make-bonding-curves-for-continuous-token-models-3784653f8b17'>article</a></u> or jump over to the <u><a href='https://forum.clovers.network'>Forum</a></u> to find out more details.")
+    more-information(title="?") <u>Trade</u> is where you can buy or sell Clover Coin. This currency is used for registering new Clovers and as a reward for finding Symmetrical Clovers. It uses a Bonding Curve to buy and sell. To learn more about that concept check out this <u><a target='_blank' href='https://blog.relevant.community/how-to-make-bonding-curves-for-continuous-token-models-3784653f8b17'>article</a></u> or jump over to the <u><a href='https://forum.clovers.network'>Forum</a></u> to find out more details.
     //- header.flex(v-if="!isRFT")
       .col-6.p2
         small.lh2.block.h6 My Balance
