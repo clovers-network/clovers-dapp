@@ -42,7 +42,7 @@
       //- modal: add to album
       transition(name="fade")
         add-to-album-modal(v-show="$route.hash === '#connect'", @close="$router.push({hash: ''})")
-    
+
     //- tab: activity
     .px2(v-else-if="view === 'logs'")
       .fade-enter-active(v-if="hasResults", :class="{'opacity-50': loading}")
