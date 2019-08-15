@@ -149,6 +149,10 @@
     transition: all var(--anim-timing-medium);
     &:hover, &:active { background-color: var(--lightest-green); }
   }  
+  .hover-bg-l-red{
+    transition: all var(--anim-timing-medium);
+    &:hover, &:active { background-color: var(--lightest-red); }
+  }
 }
 
 .border-transparent{ border-color: transparent; }

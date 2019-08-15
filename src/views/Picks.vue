@@ -3,9 +3,11 @@
     more-information(title="?") Your <b>Basket</b> is where clovers picked from your <router-link to="/garden" class="underlin">Garden</router-link>, or symmetrical clovers found by your Clover Pig are saved. To register a clover and permanently add it your Collection, it costs a base fee of 10 <router-link to="/trade">Clover Coins</router-link>. Once registered, they'll appear on your Profile, and in the Feed.
 
     //- (picks list)
-    section.sm-col-10.lg-col-12.mx-auto(v-if="picks.length")
-      .flex.flex-wrap.mxn2.mb4.md-px2
+    section.sm-col-10.lg-col-12.mx-auto.pb4.mb4(v-if="picks.length")
+      .flex.flex-wrap.mxn2.md-px2
         field-item(v-for='(clover, i) in picks', :key='i' data-expand='-50', :data-appear='i % 3', :clover="clover")
+      footer.mt3.flex.justify-center(v-if="picks.length > 12")
+        button.red.border.rounded-2.p2.px3.pointer.hover-bg-l-red(@click="discardAll") Discard All
     //- (no picks)
     section.center(v-else)
       p.p2.bg-lightest-green.rounded.my3 Your Basket is empty.
@@ -83,6 +85,11 @@ export default {
       if (this.entryRt !== 'Account/Keep') return this.$router.go(-1)
       this.entryRt = null // clear, so always use BACK now
       this.$router.push({ name: 'Picks' })
+    },
+
+    discardAll () {
+      const confirm = window.confirm('Are you sure you want to discard ALL the clovers in your Basket? This action cannot be undone...')
+      if (confirm) this.$store.commit('REMOVE_ALL_SAVED_CLOVERS')
     },
 
     ...mapActions(['formatFoundClover']),

@@ -133,6 +133,10 @@ export default {
       updateLocal('saved_clovers', state.allSavedClovers)
     }
   },
+  REMOVE_ALL_SAVED_CLOVERS (state) {
+    state.allSavedClovers = []
+    updateLocal('saved_clovers', state.allSavedClovers)
+  },
   MOVE_ANON_CLOVERS (state) {
     if (state.account && state.allSavedClovers.anon.length) {
       state.allSavedClovers = { [state.account]: [], ...state.allSavedClovers }

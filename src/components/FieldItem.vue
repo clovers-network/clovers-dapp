@@ -8,7 +8,7 @@
       //- heart / rmv
       heart-icon.icon.h2.absolute.top-0.left-0.mt2.ml2(v-if="inField", :active="isSaved", @click="save")
       button.icon.hidden.md-block.h6.absolute.top-0.left-0.ml2.mt2.pointer(v-else, @click.stop="remove")
-        span Remove
+        span Discard
       //- symm icons
       .green.absolute.top-0.right-0.mt2.mr2(v-if="clover.symmetrical")
         symmetry-icons.h6(:board="clover")
