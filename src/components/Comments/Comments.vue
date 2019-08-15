@@ -33,13 +33,16 @@
             h4.font-exp {{album.name}}
             //- h6.h6 [username]
       footer.sticky.bottom-0.left-0.mt1.px1.pb2
-        .rounded.pointer(style="background:rgba(255,255,255,.9)")
+        .rounded(style="background:rgba(255,255,255,.9)")
           //- (btn: add to album)
-          button.block.col-12.font-exp.p3.border-dashed.hover-border-solid.bg-lightest-green.rounded.lh1(v-if="signedIn") Add to Album
+          button.block.col-12.font-exp.p3.border-dashed.hover-border-solid.bg-lightest-green.rounded.lh1.pointer(v-if="signedIn", @click="$router.push({hash: 'connect'})") Add to Album
           //- (sign in...)
-          button.block.col-12.font-exp.p3.bg-white.border.rounded.lh1.hover-bg-l-green(v-else, @click="signIn")
+          button.block.col-12.font-exp.p3.bg-white.border.rounded.lh1.hover-bg-l-green.pointer(v-else, @click="signIn")
             | <span class="underline">Sign in</span> to add...
-
+      //- modal: add to album
+      transition(name="fade")
+        add-to-album-modal(v-show="$route.hash === '#connect'", @close="$router.push({hash: ''})")
+    
     //- tab: activity
     .px2(v-else-if="view === 'logs'")
       .fade-enter-active(v-if="hasResults", :class="{'opacity-50': loading}")
@@ -82,6 +85,7 @@ import Comment from './Comment'
 import ChatIcon from '@/components/Icons/ChatIcon'
 import ViewNav from '@/components/ViewNav'
 import ActivityItem from '@/components/ActivityItem'
+import AddToAlbumModal from '@/components/Modals/AddToAlbumModal'
 import { apiBase } from '@/store/actions'
 import { mapActions } from 'vuex'
 import { cloverImage } from '@/utils'
@@ -321,7 +325,7 @@ export default {
   destroyed () {
     this.socket.destroy()
   },
-  components: { Comment, ChatIcon, ViewNav, ActivityItem }
+  components: { Comment, ChatIcon, ViewNav, ActivityItem, AddToAlbumModal }
 }
 
 function atBottom (el) {

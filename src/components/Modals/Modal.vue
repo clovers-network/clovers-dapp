@@ -2,9 +2,9 @@
   //- fullscreen overlay
   .fixed.z3.flex.modal(@click.self="close")
     //- card
-    .relative.pt3.m-auto.bg-white.border.border-dashed.rounded
+    .relative.pt3.m-auto.bg-white.border.border-dashed.rounded(@click.stop)
       //- header
-      nav.absolute.top-0.left-0.col-12.h-header.flex.justify-between.items-center.px2
+      nav.absolute.z2.top-0.left-0.col-12.h-header.flex.justify-between.items-center.px2
         //- btn: close
         button.p1.pointer(@click="close")
           span.h5(v-if="cancel") Cancel

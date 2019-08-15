@@ -426,7 +426,7 @@ button {
 button:disabled:not(.h-bttm-bar),
 input:disabled,
 .unselected {
-  opacity: .4;
+  opacity: .33;
 }
 
 .input, select, textarea, .btn {
