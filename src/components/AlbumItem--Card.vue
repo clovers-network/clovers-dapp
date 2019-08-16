@@ -22,7 +22,7 @@ export default {
   computed: {
     ...mapGetters(['userName']),
     _userName () {
-      return this.userName( this.album.user )
+      return this.userName(this.album.user)
     },
     clovers () {
       console.log('compute clovers')

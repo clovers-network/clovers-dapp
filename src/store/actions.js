@@ -815,12 +815,12 @@ export default {
 
   getAllAlbums ({commit}) {
     return axios.get(apiUrl('/albums/list/all'))
-    .then((results) => {
-      console.log({results})
-      commit('SET_ALL_ALBUMS', results.data)
-    }).catch((err) => {
-      console.error(err)
-    })
+      .then((results) => {
+        console.log({results})
+        commit('SET_ALL_ALBUMS', results.data)
+      }).catch((err) => {
+        console.error(err)
+      })
   },
 
   getPagedAlbums ({ state, commit }, { url, filters = {} }) {
@@ -834,7 +834,7 @@ export default {
       })
   },
 
-  async deleteAlbum({dispatch, commit, getters}, albumId) {
+  async deleteAlbum ({dispatch, commit, getters}, albumId) {
     if (!albumId) {
       return Promise.reject(new Error('Misisng album id'))
     }
@@ -844,54 +844,55 @@ export default {
         Authorization: getters.authHeader
       }
     })
-    .then((_) => {
-      dispatch('selfDestructMsg', {
-        type: 'success',
-        msg: 'Album deleted'
+      .then((_) => {
+        dispatch('selfDestructMsg', {
+          type: 'success',
+          msg: 'Album deleted'
+        })
+        dispatch('getAllAlbums')
       })
-    })
-    .catch(err => {
-      dispatch('selfDestructMsg', {
-        type: 'error',
-        msg: err.message
-      })
-      if ('response' in err) {
-        if (err.response.status === 401) {
-          commit('SIGN_OUT')
+      .catch(err => {
+        dispatch('selfDestructMsg', {
+          type: 'error',
+          msg: err.message
+        })
+        if ('response' in err) {
+          if (err.response.status === 401) {
+            commit('SIGN_OUT')
+          }
         }
-      }
-    })
+      })
   },
 
   async createAlbum ({getters, dispatch, commit}, album) {
     if (!album.name || !album.clovers) {
       return Promise.reject(new Error('Missing album'))
     }
-    console.log({album})
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
     return axios.post(apiUrl('/albums'), {albumName: album.name, clovers: album.clovers}, {
       headers: {
         Authorization: getters.authHeader
       }
     })
-    .then(({data}) => {
-      if (!data) throw new Error('404')
-      dispatch('selfDestructMsg', {
-        type: 'success',
-        msg: 'Album created!'
+      .then(({data}) => {
+        if (!data) throw new Error('404')
+        dispatch('selfDestructMsg', {
+          type: 'success',
+          msg: 'Album created!'
+        })
+        dispatch('getAllAlbums')
       })
-    })
-    .catch(err => {
-      dispatch('selfDestructMsg', {
-        type: 'error',
-        msg: err.message
-      })
-      if ('response' in err) {
-        if (err.response.status === 401) {
-          commit('SIGN_OUT')
+      .catch(err => {
+        dispatch('selfDestructMsg', {
+          type: 'error',
+          msg: err.message
+        })
+        if ('response' in err) {
+          if (err.response.status === 401) {
+            commit('SIGN_OUT')
+          }
         }
-      }
-    })
+      })
   },
 
   async updateAlbum ({getters, dispatch, commit, state}, album) {
@@ -904,42 +905,42 @@ export default {
         Authorization: getters.authHeader
       }
     })
-    .then(({data}) => {
-      if (!data) throw new Error('404')
-      let setAlbum
-      if (state.currentAlbum && state.currentAlbum.id === album.id) {
-        setAlbum = JSON.parse(JSON.stringify(state.currentAlbum))
-      } else {
-        setAlbum = state.allAlbums.find(a => a.id === album.id)
-      }
-      if (setAlbum) {
-        setAlbum.name = data.name
-        setAlbum.clovers = data.clovers
-        setAlbum.modified = data.modified
-        commit('SET_CURRENT_ALBUM', setAlbum)
-      }
-      dispatch('selfDestructMsg', {
-        type: 'success',
-        msg: 'Album details updated'
-      })
-    })
-    .catch(err => {
-      console.log(err)
-      dispatch('selfDestructMsg', {
-        type: 'error',
-        msg: err.message
-      })
-      if ('response' in err) {
-        if (err.response.status === 401) {
-          commit('SIGN_OUT')
+      .then(({data}) => {
+        if (!data) throw new Error('404')
+        let setAlbum
+        if (state.currentAlbum && state.currentAlbum.id === album.id) {
+          setAlbum = JSON.parse(JSON.stringify(state.currentAlbum))
+        } else {
+          setAlbum = state.allAlbums.find(a => a.id === album.id)
         }
-      }
-    })
+        if (setAlbum) {
+          setAlbum.name = data.name
+          setAlbum.clovers = data.clovers
+          setAlbum.modified = data.modified
+          commit('SET_CURRENT_ALBUM', setAlbum)
+        }
+        dispatch('selfDestructMsg', {
+          type: 'success',
+          msg: 'Album details updated'
+        })
+      })
+      .catch(err => {
+        console.log(err)
+        dispatch('selfDestructMsg', {
+          type: 'error',
+          msg: err.message
+        })
+        if ('response' in err) {
+          if (err.response.status === 401) {
+            commit('SIGN_OUT')
+          }
+        }
+      })
   },
 
   getAlbum ({ state, commit }, albumId) {
     if (!albumId) {
-      return Promise.reject(new Error("Missing parameter: `id`"))
+      return Promise.reject(new Error('Missing parameter: `id`'))
     }
     return axios.get(apiUrl('/albums/' + albumId))
       .then(({data}) => {

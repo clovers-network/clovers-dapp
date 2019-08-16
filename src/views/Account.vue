@@ -54,7 +54,7 @@
         album-list-cards(:albums="albums", :limit="4")
       nav.mt2.md-mt0.flex.justify-center.sm-block
         .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green.mr2(v-if="albums.length")
-          router-link.h5.flex.items-center.justify-center(:to="{name: 'User/Albums', params: {addr: account}}")
+          router-link.h5.flex.items-center.justify-center(:to="{name: 'Albums', params: {addr: account}}")
             | View All
         .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green
           router-link.h5.flex.items-center.justify-center.pointer(:to="{hash: 'add-album'}")
@@ -133,8 +133,7 @@ export default {
       return this.results.allResults
     },
     albums () {
-      return []
-      // return this.myAlbums()
+      return this.allAlbums.filter(a => a.userAddress === this.user.account)
     },
 
     showPickModal () {
@@ -152,7 +151,7 @@ export default {
       ]
     },
 
-    ...mapState(['account']),
+    ...mapState(['account', 'allAlbums']),
     ...mapGetters([
       'prettyUserBalance',
       'user',
@@ -185,7 +184,7 @@ export default {
       return { opacity: o }
     },
 
-    ...mapActions(['getPagedClovers', 'signIn'])
+    ...mapActions(['getPagedClovers', 'signIn', 'getAllAlbums'])
   },
   watch: {
     account () {
@@ -204,6 +203,7 @@ export default {
       this.$router.push({ name: 'Picks' })
     }
     this.form.name = this.user.name
+    this.getAllAlbums()
   },
   components: { UserCard, KeepClover, PickListItem, CloverListCards, EditUser, CoinIcon, AddAlbumModal, AlbumListCards }
 }

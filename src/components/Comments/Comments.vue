@@ -35,13 +35,13 @@
       footer.sticky.bottom-0.left-0.mt1.px1.pb2
         .rounded(style="background:rgba(255,255,255,.9)")
           //- (btn: add to album)
-          button.block.col-12.font-exp.p3.border-dashed.hover-border-solid.bg-lightest-green.rounded.lh1.pointer(v-if="signedIn", @click="$router.push({hash: 'connect'})") Add to Album
+          button.block.col-12.font-exp.p3.border-dashed.hover-border-solid.bg-lightest-green.rounded.lh1.pointer(v-if="signedIn", @click="addToAlbum = true") Add to Album
           //- (sign in...)
           button.block.col-12.font-exp.p3.bg-white.border.rounded.lh1.hover-bg-l-green.pointer(v-else, @click="signIn")
             | <span class="underline">Sign in</span> to add...
       //- modal: add to album
       transition(name="fade")
-        add-to-album-modal(:board="board" v-show="$route.hash === '#connect'", @close="$router.push({hash: ''})")
+        add-to-album-modal(:board="board" v-show="addToAlbum", @close="addToAlbum = false")
 
     //- tab: activity
     .px2(v-else-if="view === 'logs'")
@@ -113,7 +113,8 @@ export default {
       filters: {
         page: 1
       },
-      logs: {}
+      logs: {},
+      addToAlbum: false
     }
   },
   computed: {
@@ -263,10 +264,10 @@ export default {
     maybeScroll () {
       this.$nextTick(() => {
         switch (this.view) {
-          case('chat'):
+          case ('chat'):
             this.focusActivity()
             break
-          case('albums'):
+          case ('albums'):
             this.getAllAlbums()
             break
           default:

@@ -101,7 +101,21 @@ export default {
       }
     },
     removeClover (clover) {
-      console.log(`DELETE ${clover}`)
+      let yes = window.confirm('Are you sure you want to remove this Clover? This action cannot be undone...')
+      if (yes) {
+        console.log(`DELETE ${clover}`)
+        let album = JSON.parse(JSON.stringify(this.album))
+        console.log(album.clovers)
+        let cloverIndex = album.clovers.indexOf(clover)
+        console.log({cloverIndex})
+        if (cloverIndex > -1) {
+          album.clovers.splice(cloverIndex, 1)
+          this.updateAlbum(album)
+        } else {
+          console.error(`couldn't find clover ${clover} in album`)
+          console.log(album.clovers)
+        }
+      }
     }
   },
   components: { svgX, Modal }

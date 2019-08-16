@@ -67,7 +67,7 @@ export default {
       this.loading = true
 
       this.$store.dispatch('getPagedAlbums', {
-        url: this.apiUrl,
+        url: this.apiUrl
         // filters: this.filters
       }).then(() => {
         this.loading = false
