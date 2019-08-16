@@ -1,6 +1,6 @@
 <template lang="pug">
   modal.green(@close="$emit('close')", :cancel="true")
-    form.px3.pt4.pb3.center.relative(@click.prevent="addToAlbum")
+    form.px3.pt4.pb3.center.relative(@submit.prevent="addToAlbum")
       label.block.font-exp Add Clover to Album
       input.border.mt3.py2.px2.rounded.col-12.input(v-model="query", ref="input", type="search", autocomplete="off", placeholder="Search albums...", v-autofocus="true")
       ul.mt0.mb0.list-reset
@@ -30,7 +30,7 @@ export default {
   computed: {
     ...mapState(['allAlbums', 'account']),
     couldCreate () {
-      return this.query !== '' && !this.albums.filter(a => {
+      return this.query !== '' && this.select === null && !this.albums.filter(a => {
         return a.name === this.query
       }).length
     },
@@ -51,6 +51,7 @@ export default {
   watch: {
     query () {
       this.select = null
+      console.log('query changed')
     }
   },
   methods: {
@@ -64,7 +65,7 @@ export default {
     async addToAlbum () {
       if (this.select === null && !this.couldCreate) return
       let album
-      if (this.couldCreate) {
+      if (this.couldCreate && this.select == null) {
         album = {name: this.query, clovers: []}
       } else {
         album = JSON.parse(JSON.stringify(this.albums[this.select]))
