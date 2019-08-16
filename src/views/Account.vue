@@ -133,7 +133,7 @@ export default {
       return this.results.allResults
     },
     albums () {
-      return this.allAlbums.filter(a => a.userAddress === this.user.account)
+      return this.allAlbums.filter(a => a.userAddress === this.account)
     },
 
     showPickModal () {

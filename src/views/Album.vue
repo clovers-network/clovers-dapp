@@ -15,16 +15,15 @@
         button.absolute.top-0.right-0.p2.block.h4.pointer(v-if="isEditor", @click="showEdit" style="transform:scale(-1, 1)", aria-label="Edit Album") ✎
     //- clovers
     section.px1.flex.flex-wrap
-      template(v-for="n in album.clovers")
-        //- item
-        .col-4.sm-col-4.md-col-3.lg-w-20.sm-px1.sm-my1(v-for="clover in album.clovers")
-          //- border
-          article.album__clover.block.pb-100.relative.border-transparent.border-dashed.hover-border-green.hover-shadow.trans-quick.rounded
-            router-link.absolute.overlay.flex.items-center.justify-center(:to="{name: 'Clover', params: {board: clover}}")
-              img.block.col-8.sm-col-9(:src="cloverImage(clover, 128)")
-            //- TODO show for owner !!
-            button.absolute.top-0.right-0.m1.border.rounded-full.bg-lightest-green.pointer.trans-quick.opacity-50(style="padding:0.4rem", v-if="isEditor" @click="removeClover(clover)")
-              svg-x(style="width:0.6rem;height:0.6rem")
+      //- item
+      .col-4.sm-col-4.md-col-3.lg-w-20.sm-px1.sm-my1(v-for="clover in album.clovers")
+        //- border
+        article.album__clover.block.pb-100.relative.border-transparent.border-dashed.hover-border-green.hover-shadow.trans-quick.rounded
+          router-link.absolute.overlay.flex.items-center.justify-center(:to="{name: 'Clover', params: {board: clover}}")
+            img.block.col-8.sm-col-9(:src="cloverImage(clover, 128)")
+          //- TODO show for owner !!
+          button.absolute.top-0.right-0.m1.border.rounded-full.bg-lightest-green.pointer.trans-quick.opacity-50(style="padding:0.4rem", v-if="isEditor" @click="removeClover(clover)")
+            svg-x(style="width:0.6rem;height:0.6rem")
 
     //- modal: edit album
     transition(name="fade")
@@ -50,7 +49,7 @@ import store from '@/store'
 import { cloverImage } from '@/utils'
 import Modal from '@/components/Modals/Modal'
 import svgX from '@/components/Icons/SVG-X'
-import {mapGetters, mapActions} from 'vuex'
+import {mapState, mapGetters, mapActions} from 'vuex'
 export default {
   name: 'Album',
   props: ['id'],
@@ -62,11 +61,12 @@ export default {
   },
   computed: {
     ...mapGetters(['userName']),
+    ...mapState(['account']),
     album () {
       return this.$store.state.currentAlbum
     },
     isEditor () {
-      return true
+      return this.account && this.account === this.album.userAddress
     },
     _userName () {
       return this.album && this.userName(this.album.user)

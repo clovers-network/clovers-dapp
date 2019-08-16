@@ -174,7 +174,7 @@ export default {
   },
 
   SET_CURRENT_ALBUM (state, album) {
-    let index = state.allAlbums.indexOf(a => a.id === album.id)
+    let index = state.allAlbums.findIndex(a => a.id === album.id)
     console.log(index, state.allAlbums, album)
     if (index > 0) {
       state.allAlbums.splice(index, 1, album)

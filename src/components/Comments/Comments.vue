@@ -41,7 +41,7 @@
             | <span class="underline">Sign in</span> to add...
       //- modal: add to album
       transition(name="fade")
-        add-to-album-modal(:board="board" v-show="addToAlbum", @close="addToAlbum = false")
+        add-to-album-modal(:board="board" v-if="addToAlbum", @close="addToAlbum = false")
 
     //- tab: activity
     .px2(v-else-if="view === 'logs'")
