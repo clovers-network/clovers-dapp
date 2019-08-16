@@ -6,9 +6,9 @@
       .col-4.flex.pl2.items-center
         //- desktop menu
         #desktopMenu.flex.flex-center.ml3
-          router-link.pr2(:to="{name: 'Feed'}") Feed
           router-link.pr2(:to="{name: 'Garden'}") Garden
-          router-link.pr2(:to="{name: 'Learn'}") Learn
+          router-link.pr2(:to="{name: 'Feed'}") Feed
+          router-link.pr2(:to="{name: 'Albums'}") Albums
           router-link.pr2(:to="{name: 'Activity'}") Activity
         //- menu btn
         button#mobileMenu.menu-btn.pointer.relative.py2.pr2(@click='clickMenu' aria-label='Toggle Menu')
@@ -68,7 +68,7 @@
           li
             router-link.inline-block.p1(:to="{ name: 'Garden' }") Garden
           li
-            router-link.inline-block.p1(:to="{name: 'Learn'}") Learn
+            router-link.inline-block.p1(:to="{name: 'Albums'}") Albums
           li
             router-link.inline-block.p1.relative(:to="{ name: 'Activity' }")
               span Activity <sup v-if="newLogs">{{newLogs}}</sup>

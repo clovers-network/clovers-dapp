@@ -53,7 +53,7 @@ export default new Router({
       path: '/feed',
       name: 'Feed',
       component: Feed,
-      meta: { title: 'The Feed' }
+      meta: { title: 'Feed' }
     },
 
     {

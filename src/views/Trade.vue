@@ -33,7 +33,7 @@
             .font-exp.mt1.truncate(v-if="isRFT") {{denom}} {{ marketCap.toFormat(2) }}
             .font-exp.mt1.truncate(v-else) {{denom}} {{ marketCap.toFormat(displayIn === 'ETH' ? 4 : 2) }}
       //- TRADE
-      view-nav(:items="[{lbl: 'Buy', value:'buy'}, {lbl: 'Sell', value:'sell'}]", @change="view = $event", :thick="true")
+      view-nav.mt2(:items="[{lbl: 'Buy', value:'buy'}, {lbl: 'Sell', value:'sell'}]", @change="view = $event", :thick="true")
       //- BUY
       section(v-if="view === 'buy'")
         form(@submit.prevent="buyTokens")
