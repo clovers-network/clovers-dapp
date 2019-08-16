@@ -153,6 +153,7 @@ export default {
   },
   SIGN_OUT (state) {
     if (!state.account) return
+    state.account = null
     Vue.delete(state.tokens, state.account)
     updateLocal('clover_tokens', state.tokens)
   },

@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapMutations, mapActions, mapState } from 'vuex'
 import {
   cloverImage,
   fetchCloudImage,
@@ -166,12 +166,16 @@ export default {
       } else if (this.unavailable) {
         return 'View Clover'
       }
-      return 'Confirm'
+      if (!this.account) {
+        return 'Sign in first...'
+      } else {
+        return 'Confirm'
+      }
     },
     cloverLink () {
       return this.clover && `/clovers/${this.id}`
     },
-
+    ...mapState(['account']),
     ...mapGetters(['picks', 'prettyUserBalance', 'userBalanceInETH'])
   },
   methods: {

@@ -94,6 +94,14 @@
         div
           span.opacity-50 Renamed&ensp;
           router-link.hover-underline(:to="{name: 'Clover', params:{board:item.data.board}}") {{ item.data.newName }}
+      template(v-else-if="item.name === 'Album_Updated'")
+        .mr2.sm-mx3.flex-none(v-if='!noImg')
+          router-link(:to='cloverLink(item.data.board)')
+            img.block(:src='cloverImage(item.data.board, 50)' style='width:50px;height:50px')
+        .activity-itm__icon.mr2.sm-mr3.h3 &#x270E;
+        div
+          span.opacity-50 Updated Album&ensp;
+          router-link.hover-underline(:to="{name: 'Album', params: {id: item.data.id} }") {{ item.data.name }}
       div(v-else)
         pre.
           \n{{ item }}

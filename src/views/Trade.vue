@@ -17,7 +17,7 @@
           //- span.block.absolute.right-0.top-0.p2.h6.pointer(@click="switchMax") Last {{paddedOrders.length}} trades
           chart.border-bottom(:market="market", :orders="paddedOrders")
         //- details
-        .col-12.flex.flex-wrap.justify-around.border-right.border-bottom.border-left.green.rounded-bottom.py2.center(:class="{'flex-order_-1': isRFT}")
+        .col-12.flex.flex-wrap.justify-around.border-right.border-bottom.border-left.green.rounded-bottom.py2.center(@click="swapCurrency", :class="{'flex-order_-1': isRFT}")
           //- price
           .col-12.md-col-4.p2.md-border-right
             small.lh2.block.h6 {{isRFT ? 'Share Price' : '&clubs;&#xfe0e; Value in ' + displayIn}}
@@ -192,6 +192,9 @@ export default {
     ...mapGetters(['userBalance', 'prettyUserBalance', 'priceInCollateral'])
   },
   methods: {
+    swapCurrency () {
+      this.displayIn = this.displayIn === 'ETH' ? 'USD' : 'ETH'
+    },
     switchMax () {
       let len = this.orders.length
       if (len <= 10) return false

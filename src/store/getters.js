@@ -30,13 +30,11 @@ export default {
     return abbrvNum(userBalanceWei.div(ctp).toString(10))
   },
   userName: ({ nullAddress }, { cloversBankAddress, curationMarketAddress }) => (user, truncate = true) => {
-    console.log('compute userName', user)
     if (!user) return null
     let { address } = user
     let name = address === cloversBankAddress ? 'Clovers'
       : address === curationMarketAddress ? 'Curation Mrkt.'
         : address === nullAddress ? 'Nobody' : null
-    console.log({name})
     if (name) return name
     name = user.name && user.name.trim() !== '' ? user.name
       : user.ens ? user.ens : address

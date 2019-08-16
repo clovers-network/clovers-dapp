@@ -1,6 +1,6 @@
 <template lang="pug">
   #app.relative
-    app-header(v-if="$route.name !== 'Welcome' && $route.name !== 'Soon'")
+    app-header(v-if="$route.name !== 'Soon'")
     main.mx-auto.md-col-10.lg-col-8.min-height-app
       router-view
     foot
