@@ -1,6 +1,6 @@
 <template lang="pug">
   //- fullscreen overlay
-  .fixed.z3.flex.modal(@click.self="close")
+  .fixed.z3.flex.modal.touch-scroll(@click.self="close")
     //- card
     .relative.pt3.m-auto.bg-white.border.border-dashed.rounded(@click.stop)
       //- header

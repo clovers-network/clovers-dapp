@@ -1,13 +1,15 @@
 <template lang="pug">
   article.p1.md-p2.col-6.sm-col-4.lg-col-3.relative
-    router-link.relative.block.px1.pt2.md-pb1.md-pt3.pick-border.rounded(:to="{ query: {pick: clover.movesString } }")
-      figure.pb-100.relative
+    //- card
+    figure.relative.px1.pt2.md-pb1.md-pt3.pick-border.rounded
+      router-link.block.pb-100.relative(:to="{ query: {pick: clover.movesString } }")
         .absolute.overlay.flex.items-center.justify-center
           img.block.pointer.p3(:src="cloverImage(clover)" @click="viewSingle = clover")
-      heart-icon.icon.h2.absolute.top-0.left-0.mt2.ml2(:active="isSaved" @click="save" v-if="inField")
-      button.icon.hidden.md-block.h6.absolute.top-0.left-0.ml2.mt2.pointer(v-else, @click="remove")
-        span Remove
-
+      //- heart / rmv
+      heart-icon.icon.h2.absolute.top-0.left-0.mt2.ml2(v-if="inField", :active="isSaved", @click="save")
+      button.icon.hidden.md-block.h6.absolute.top-0.left-0.ml2.mt2.pointer(v-else, @click.stop="remove")
+        span Discard
+      //- symm icons
       .green.absolute.top-0.right-0.mt2.mr2(v-if="clover.symmetrical")
         symmetry-icons.h6(:board="clover")
 </template>

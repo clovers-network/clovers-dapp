@@ -3,35 +3,34 @@
     header
       user-card(:user="user", :editable="true", @edit="signOrEdit")
 
-    section.mx2.sm-mx3.md-mx0
+    section
       //- Basket
       section.my4.sm-mt0(name="My unregistered Clovers")
-        h2.h2.md-h2.mt2.md-mt3.mb1.font-exp
+        h2.mx2.sm-mx3.md-mx0.h2.md-h2.mt2.md-mt3.mb1.font-exp
           router-link(:to="{ name: 'Picks' }") Basket
         //- (picks)
         div(v-if="pickCount")
-          p.h5 You have <strong>{{ pickCount }}</strong> unregistered {{ pluralize('Clover', pickCount) }}
-          .mxn2.mt3
-            ul.list-reset.items-center.m0.nowrap.overflow-visible
-              pick-list-item.inline-block(v-for="(pick, i) in pickList" :key="pick.byteBoard" :pick="pick" :data-key="pick.board" :style="fadeOut(i)", :diameter="128")
-          nav.mt3
+          p.h5.mx2.sm-mx3.md-mx0 You have <strong>{{ pickCount }}</strong> unregistered {{ pluralize('Clover', pickCount) }}
+          .mt3.relative
+            .overflow-x-scroll.lg-overflow-x-hidden.py2.touch-scroll.invisible-scrollbar
+              ul.list-reset.m0.nowrap
+                pick-list-item.inline-block(v-for="(pick, i) in picks", :key="pick.byteBoard", :pick="pick", :data-key="pick.board", :diameter="128", v-if="i < 8")
+            .absolute.overlay.pointer-events-none(style="background:linear-gradient(to left, white 8%, rgba(255,255,255,0) 85%)")
+          nav.mt3.mx2.sm-mx3.md-mx0
             router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(:to="{ name: 'Picks' }")
               span View All
         //- (empty)
         div(v-else)
-          p.max-width-1 Your basket contains unregistered Clovers that you picked from the <strong>Field</strong>, or symmetrical Clovers mined by the <strong>Clover Pig</strong>
-          .mxn2
-            ul.list-reset.items-start.m0.nowrap.overflow-hidden
-              pick-list-item.inline-block
-          p
-            router-link(to="/field")
-              span.underline Pick some now
-              span.font-mono.bold &nbsp;&rarr;
+          p.h5 Your <b>Basket</b> is where clovers picked from your <router-link to="/garden">Garden</router-link>, or symmetrical clovers found by your Clover Pig are saved.
+          nav.mt3
+            router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(to="/garden")
+              | Pick Clovers
 
       //- Clovers
-      section.my4.sm-mt0(name="My Clovers")
+      section.my4.sm-mt0.mx2.sm-mx3.md-mx0(name="My Clovers")
         h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
           router-link(to="/account/clovers") Collection
+        //- (clovers list)
         template(v-if="cloversCount")
           p.h5 You have <strong>{{ cloversCount }}</strong> registered {{ pluralize('Clover', cloversCount) }}
           .mt3.px1.sm-px0
@@ -39,26 +38,32 @@
           nav.mt2.md-mt0.flex.justify-center.sm-block
             router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(to="/account/clovers")
               span View All
+        //- (no clovers)
         template(v-else)
           p.max-width-1 Clovers that are registered to your account (wallet address). Save some from your basket and they will show up here.
 
-    //- Albums
-    section.my4.sm-mt0(name="My Clovers")
-      h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
-        router-link(:to="{name: 'User/Albums', params: {addr: account}}") Albums
-      p.h5 You have <strong>{{ albums.length }}</strong> {{ pluralize('Album', albums.length) }}
-      //- (about albums)
-      p.my3.rounded.bg-lightest-green.p2(v-if="!albums.length") Albums are for grouping clovers together. You can add any clover to your albums, even ones you don't own. Additionally, anyone can add to your album, but only you can edit it.
-      //- (albums list)
-      .mt3.px1.sm-px0(v-else)
-        album-list-cards(:albums="albums", :limit="4")
-      nav.mt2.md-mt0.flex.justify-center.sm-block
-        .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green.mr2(v-if="albums.length")
-          router-link.h5.flex.items-center.justify-center(:to="{name: 'Albums', params: {addr: account}}")
-            | View All
-        .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green
-          router-link.h5.flex.items-center.justify-center.pointer(:to="{hash: 'add-album'}")
-            | Add Album
+      //- Albums
+      section.mx2.sm-mx3.md-mx0.my4.sm-mt0(name="My Clovers")
+        header.mt2.md-mt3.flex.items-center.justify-between
+          .flex-auto
+            h2.h3.md-h2.mb1.font-exp
+              router-link(:to="{name: 'User/Albums', params: {addr: account}}") Albums
+            p.h5 You have <strong>{{ albums.length }}</strong> {{ pluralize('Album', albums.length) }}
+          //- btn: new
+          router-link.ml3.h5.green.border.px3.p2.rounded-2.hover-bg-l-green.flex.items-center.justify-center.pointer(:to="{hash: 'add-album'}")
+            | New
+        //- (about albums)
+        p.my3.rounded.bg-lightest-green.p2(v-if="!albums.length") Albums are for grouping clovers together. You can add any clover to your albums, even ones you don't own. Additionally, anyone can add to your album, but only you can edit it.
+        //- (albums list)
+        .mt2.px1.sm-px0(v-else)
+          album-list-cards(:albums="albums", :limit="4")
+        nav.mt2.md-mt0.flex.justify-center.sm-block
+          .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green.mr2(v-if="albums.length")
+            router-link.h5.flex.items-center.justify-center(:to="{name: 'User/Albums', params: {addr: account}}")
+              | View All
+          //- .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green
+            router-link.h5.flex.items-center.justify-center.pointer(:to="{hash: 'add-album'}")
+              | Add Album
 
     footer.py2.center
       p.h1(style="filter:hue-rotate(292deg)") ☘️
@@ -113,10 +118,6 @@ export default {
     },
     cloversUrl () {
       return `${process.env.VUE_APP_API_URL}/users/${this.account || 'anon'}/clovers`
-    },
-
-    pickList () {
-      return this.picks.slice(0, 8)
     },
     blankCloverImage () {
       return cloverImage('0', 160)
@@ -177,11 +178,6 @@ export default {
       } else {
         this.signIn()
       }
-    },
-    fadeOut (i) {
-      if (!i) return
-      const o = (100 - (i * 18)) / 100
-      return { opacity: o }
     },
 
     ...mapActions(['getPagedClovers', 'signIn', 'getAllAlbums'])

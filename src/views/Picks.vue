@@ -1,44 +1,19 @@
 <template lang="pug">
   .mt1.mx3.sm-mt3
-    more-information(title="?") <u>Your Basket</u> is where Clovers that you've picked are stored. If you'd like to register them publicly you'll need to pay 10 Clover Coins. Afterwards they'll show up on your Profile and in the Feed where you can give them names, add comments or sell them to other players."
-    //- .green.border-bottom.py1.center
-    //-   p.my0.md-my1 Your unregistered Clovers
+    more-information(title="?") Your <b>Basket</b> is where clovers picked from your <router-link to="/garden" class="underlin">Garden</router-link>, or symmetrical clovers found by your Clover Pig are saved. To register a clover and permanently add it your Collection, it costs a base fee of 10 <router-link to="/trade">Clover Coins</router-link>. Once registered, they'll appear on your Profile, and in the Feed.
 
-    //- has picks:
-    section.sm-col-10.lg-col-12.mx-auto(v-if="picks.length !== 0")
-      .flex.flex-wrap.mxn2.mb4.md-px2
+    //- (picks list)
+    section.sm-col-10.lg-col-12.mx-auto.pb4.mb4(v-if="picks.length")
+      .flex.flex-wrap.mxn2.md-px2
         field-item(v-for='(clover, i) in picks', :key='i' data-expand='-50', :data-appear='i % 3', :clover="clover")
-    //- no picks:
-    .h1.center.mt4.block(v-else) Go to <a href="/garden"><u>your Garden</u></a> to pick some Clovers...
-    //- ul.list-reset.md-flex.flex-wrap.items-center.m0.md-px1.pb-bttm-bar
-    //-   //- clover item
-    //-   li.md-col-6.md-px1(v-for="(clover, i) in picks" :key="i")
-    //-     .flex.py2.border-bottom.justify-between.items-center.green
-    //-       .col-3.center.relative
-    //-         .sym-badge.absolute.h7.p1(v-if="isSym(clover)") SYM
-    //-         router-link(:to="{ query: { pick: clover.movesString } }")
-    //-           img.pointer(:src="cloverImage(clover, 64)" width="64" height="64")
+      footer.mt3.flex.justify-center(v-if="picks.length > 12")
+        button.red.border.rounded-2.p2.px3.pointer.hover-bg-l-red(@click="discardAll") Discard All
+    //- (no picks)
+    section.center(v-else)
+      p.p2.bg-lightest-green.rounded.my3 Your Basket is empty.
+      router-link.h5.inline-block.px3.py2.bg-white.border.rounded-2.border.mx-auto.hover-bg-l-green(to="/garden") Pick Clovers
 
-    //-       .col-3.pr2.h7.font-mono {{ fromNow(clover) }}
-
-    //-       .pr1.h6.font-mono
-    //-         button.btn.btn-big.border.border-green.regular(@click="removeClover(clover)") Remove
-
-    //-       .pr2.h6.font-mono
-    //-         router-link.btn.btn-big.bg-green.white.nowrap.regular(:to="{ query: { pick: clover.movesString } }") Keep/Sell
-
-    //-   li.p2.center(v-if="!picks.length") No Clovers To Show...
-    //-     .flex.py2.border-bottom.justify-between.items-center.green
-    //-       .col-3.center.relative
-    //-         img.pointer(:src="newClover ? cloverImage(newClover, 64) : 'https://api2.clovers.network/clovers/svg/0x0/64'" width="64" height="64" @click="viewSingle = newClover")
-    //-       .col-6.pr2.font-mono
-    //-         input.col-12.font-mono.border-bottom(id="manual-clover" type="text" pattern="[a-fA-F\d]+" placeholder="Add Clover Manually" v-model="newCloverMoves")
-    //-       .pr3.h6.font-mono
-    //-         button.btn.btn-big.bg-green.white.nowrap.regular(@click="addNewClover()") Add Clover
-
-    //- .fixed-center-max-width.bottom-0.bg-green.white.center.p2.pointer.h-bttm-bar.flex(is="router-link" tag="div" to="/field")
-    //-   span.m-auto.h3.font-exp Find more
-
+    //- modal: keep
     transition(name="fade")
       div(v-if="showPickModal")
         keep-clover(:movesString="showPickModal")
@@ -110,6 +85,11 @@ export default {
       if (this.entryRt !== 'Account/Keep') return this.$router.go(-1)
       this.entryRt = null // clear, so always use BACK now
       this.$router.push({ name: 'Picks' })
+    },
+
+    discardAll () {
+      const confirm = window.confirm('Are you sure you want to discard ALL the clovers in your Basket? This action cannot be undone...')
+      if (confirm) this.$store.commit('REMOVE_ALL_SAVED_CLOVERS')
     },
 
     ...mapActions(['formatFoundClover']),

@@ -347,11 +347,11 @@ function atBottom (el) {
 
 <style>
 @import '../../style/settings.css';
-
+/*
 .touch {
   -webkit-overflow-scrolling: touch;
   -webkit-tap-highlight-color: transparent;
-}
+}*/
 
 .break-word {
   overflow-wrap: break-word;

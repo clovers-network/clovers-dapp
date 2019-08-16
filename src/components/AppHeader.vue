@@ -1,5 +1,5 @@
  <template lang="pug">
-  header(:class="{'bg-white green': !showMenu, 'white': showMenu}")
+  header.no-select(:class="{'bg-white green': !showMenu, 'white': showMenu}")
     //- top bar
     .relative.z5.h-header.flex.items-center.justify-between
       //- left col

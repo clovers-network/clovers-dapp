@@ -106,6 +106,7 @@
   }
 }
 
+.touch-scroll {-webkit-overflow-scrolling: touch;}
 .overflow-x-scroll{overflow-x:scroll;}
 .overflow-y-scroll{overflow-y:scroll;}
 .invisible-scrollbar::-webkit-scrollbar {display: none;}
@@ -148,6 +149,10 @@
     transition: all var(--anim-timing-medium);
     &:hover, &:active { background-color: var(--lightest-green); }
   }  
+  .hover-bg-l-red{
+    transition: all var(--anim-timing-medium);
+    &:hover, &:active { background-color: var(--lightest-red); }
+  }
 }
 
 .border-transparent{ border-color: transparent; }

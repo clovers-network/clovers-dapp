@@ -1,7 +1,7 @@
 <template lang="pug">
   modal.green(@close="$emit('close')", :cancel="true")
-    .mx3.pb4.pt2
-      h4.font-exp.center.lh1 Add Album
+    .mx3.pb4.pt3.mt1
+      h4.font-exp.center.lh1 New Album
       form.mt2.pt1(@submit.prevent="submit")
         label.hide Album Name
         input.border.py2.px2.rounded.col-12.input(v-model="album.name", name="clover-album-name", type="text", autocomplete="off", placeholder="Album Name", v-autofocus="true", required)
