@@ -285,6 +285,11 @@ export default {
 }
 
 function updateLocal (key, value) {
-  if (!window.localStorage) return
-  window.localStorage.setItem(key, JSON.stringify(value))
+  if (window.localStorage) {
+    window.localStorage.setItem(key, JSON.stringify(value))
+  } else if (localStorage) {
+    localStorage.setItem(key, JSON.stringify(value))
+  } else {
+    throw new Error('no local storage')
+  }
 }

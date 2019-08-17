@@ -101,8 +101,3 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app')
-
-function alreadyVisited (key = 'first-visit') {
-  if (!window.localStorage) return null
-  return JSON.parse(window.localStorage.getItem(key))
-}

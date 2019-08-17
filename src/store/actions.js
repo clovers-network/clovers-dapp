@@ -202,8 +202,7 @@ export default {
     console.log('getNetwork')
     const networkId = await global.web3.eth.net.getId()
     if (state.networkId !== networkId) {
-      commit('SET_NETWORK', 4) // TODO: DONT LEAVE THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      // commit('SET_NETWORK', networkId)
+      commit('SET_NETWORK', networkId)
       await dispatch('getContracts')
     }
   },
@@ -473,9 +472,7 @@ export default {
     })
   },
   async signIn ({ state, commit, dispatch }) {
-    console.log('signIn')
     if (!state.web3Enabled) {
-      console.log('toggleModal')
       global.web3Connect.toggleModal() // open modal on button click
     } else {
       if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
@@ -490,6 +487,7 @@ export default {
       }
 
       if (state.tokens && account in state.tokens && state.tokens[account]) {
+        console.log('already have token')
         return
       }
       global.web3.currentProvider.sendAsync(
@@ -500,23 +498,38 @@ export default {
         },
         (err, { error, result }) => {
           if (error || err) {
-            commit('UPDATE_WEB3', false)
+            return dispatch('oldSignIn', account)
+          } else {
             dispatch('selfDestructMsg', {
-              type: 'error',
-              msg: 'Could not sign in'
+              type: 'success',
+              msg: 'Successfully signed in'
             })
-            return
+            commit('SIGN_IN', { account, signature: result })
           }
-          dispatch('selfDestructMsg', {
-            type: 'success',
-            msg: 'Successfully signed in'
-          })
-          commit('SIGN_IN', { account, signature: result })
         }
       )
     }
   },
-
+  async oldSignIn ({dispatch, commit}, account) {
+    return new Promise(async (resolve, reject) => {
+      try {
+        var signature = await global.web3.eth.sign(signingParams[0].value, account)
+        dispatch('selfDestructMsg', {
+          type: 'success',
+          msg: `Successfully signed in ${account} ${signature}`
+        })
+        commit('SIGN_IN', { account, signature })
+        resolve()
+      } catch (error) {
+        commit('UPDATE_WEB3', false)
+        dispatch('selfDestructMsg', {
+          type: 'error',
+          msg: `Could not sign in`
+        })
+        reject(error)
+      }
+    })
+  },
   updateCloverName ({ getters, commit, dispatch }, clover) {
     const { board, name } = clover
     // if (!getters.authHeader) alert('Not signed in, this won\'t work')

@@ -93,13 +93,22 @@ export default new Vuex.Store({
 })
 
 function getTokens (key = 'clover_tokens') {
-  if (!window.localStorage) return null
-  return JSON.parse(window.localStorage.getItem(key))
+  if (window.localStorage) {
+    return JSON.parse(window.localStorage.getItem(key))
+  } else if (localStorage) {
+    return JSON.parse(localStorage.getItem(key))
+  }
 }
 
 function getSavedClovers (key = 'saved_clovers') {
-  if (!window.localStorage) return []
-  let stored = JSON.parse(window.localStorage.getItem(key))
+  let stored
+  if (window.localStorage) {
+    stored = JSON.parse(window.localStorage.getItem(key))
+  } else if (localStorage) {
+    stored = JSON.parse(localStorage.getItem(key))
+  } else {
+    return []
+  }
   if (!Array.isArray(stored)) {
     let all = []
     for (var foo in stored) {
@@ -114,6 +123,10 @@ function getSavedClovers (key = 'saved_clovers') {
 
 function getMiningStats (key = 'clover_pig_stats') {
   let empty = { mineTime: 0, totalMined: 0, symms: 0 }
-  if (!window.localStorage) return empty
-  return JSON.parse(window.localStorage.getItem(key)) || empty
+  if (window.localStorage) {
+    return JSON.parse(window.localStorage.getItem(key)) || empty
+  } else if (localStorage) {
+    return JSON.parse(localStorage.getItem(key)) || empty
+  }
+  return empty
 }
