@@ -518,7 +518,7 @@ export default {
       var signingParams = JSON.parse(JSON.stringify(msgParams))
       var thisMonth = now.getMonth() + '/' + now.getFullYear()
       signingParams[0].value += thisMonth
-      
+
       try {
         global.web3.currentProvider.sendAsync({
           jsonrpc: '2.0',
