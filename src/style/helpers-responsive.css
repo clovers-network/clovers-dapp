@@ -17,6 +17,7 @@
   .sm-border-none{border:none;}
   .sm-items-end{align-items: flex-end;}
   .sm-justify-start{justify-content: flex-start;}
+  .sm-max-width-2{max-width: var(--width-2);}
 }
 @media (--breakpoint-md) {
   .md-block{ display: block }
@@ -27,6 +28,7 @@
   .md-border-none{border:none;}
   .md-bg-none{background:none;}
   .md-flex-first{order:-99;}
+
 }
 
 @media (--breakpoint-lg) {

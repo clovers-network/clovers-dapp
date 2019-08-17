@@ -1,6 +1,6 @@
 <template lang="pug">
   .my3.sm-my4.sm-mx3.md-mx0.bg-lightest-green.sm-bg-none(v-if="user")
-    .relative.sm-border.rounded.py2.sm-py1.px3.max-width-2.flex.items-center.justify-between.sm-justify-start
+    .relative.sm-border.rounded.py2.sm-py1.px3.sm-max-width-2.flex.items-center.justify-between.sm-justify-start
       //- info
       .pt2.pb3
         h2.h3.md-h2.mb1.font-exp
