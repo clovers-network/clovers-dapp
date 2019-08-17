@@ -17,7 +17,7 @@
   .sm-border-none{border:none;}
   .sm-items-end{align-items: flex-end;}
   .sm-justify-start{justify-content: flex-start;}
-  .sm-max-width-2{max-width: var(--width-2);}
+  .sm-min-width-2{min-width: var(--width-2);}
 }
 @media (--breakpoint-md) {
   .md-block{ display: block }
