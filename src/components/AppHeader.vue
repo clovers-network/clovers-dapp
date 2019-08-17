@@ -31,33 +31,34 @@
             router-link(v-if="item[1]", :to="item[1]") {{item[0]}}
             span(v-else) {{item[0]}}
       //- right col
-      #accountHeader.col-4.flex.justify-end
-        //- btn group
-        .border.rounded.flex.items-center.mr2.md-mr3
-          //- btn: pig
-          .relative.border-right.hidden.sm-block
-            .h-nav-btn.px2.flex.items-center.pointer(@click='pigMenuToggle')
-              //- dot
-              span.border.mr1.inline-block(style='border-radius:100%; width:13px; height:13px;')
-                span.block(:class="mining && 'bg-currentColor throb'" style='border-radius:100%; width: 13px; height: 13px; margin-top: -1px; margin-left: -1px;')
-              span.h6.sm-h5.lh1.block PIG
-            //- dropdown: pig
-            pig-menu(@closePigMenu="closePigMenu" v-click-outside="closePigMenu" v-if="pigMenu" )
-          //- btn: picks
-          router-link.h-nav-btn.px2.flex.items-center.pointer(:to="{name: 'Picks'}", :class="{'bg-green white': $route.name === 'Picks'}")
-            cart-icon.mr1
-            span.h6.sm-h5.lh1.block {{pickCount}}
-          //- btn: tokens
-          router-link.h-nav-btn.flex.px2.items-center.border-left(:to="{name: 'Trade'}", v-show="prettyUserBalance !== '-'")
-            coin-icon.mr1
-            span.h6.sm-h5.lh1.block {{prettyUserBalance}}
-          //- bnt: account
-          .relative
-            #personToggle.h-nav-btn.h6.sm-h5.pl2.pr1.flex.items-center.pointer.border-left(@click="accountMenuToggle")
-              person-icon(:class="!authHeader && 'red'")
-              .chevron
-            //- dropdown: account
-            account-menu(@close-account-menu="closeAccountMenu" v-click-outside="closeAccountMenu" v-if="accountMenu")
+      #accountHeader.lg-col-4.flex.justify-end
+        .relative
+          //- btn-group
+          .border.rounded.flex.items-center.mr2.md-mr3.overflow-hidden
+            //- btn: pig
+            .relative.border-right.hidden.sm-block
+              button.h-nav-btn.px2.flex.items-center.pointer(@click='pigMenu = !pigMenu', aria-label="View Clover Pig")
+                span.border.mr1.inline-block(style='border-radius:100%; width:13px; height:13px;')
+                  span.block(:class="mining && 'bg-currentColor throb'" style='border-radius:100%; width: 13px; height: 13px; margin-top: -1px; margin-left: -1px;')
+                span.h6.sm-h5.lh1.block PIG
+
+            //- btn: picks
+            router-link.h-nav-btn.px2.flex.items-center.pointer(:to="{name: 'Picks'}", :class="{'bg-green white': $route.name === 'Picks'}")
+              cart-icon.mr1
+              span.h6.sm-h5.lh1.block {{pickCount}}
+            //- btn: tokens
+            router-link.h-nav-btn.flex.px2.items-center.border-left(:to="{name: 'Trade'}", v-show="prettyUserBalance !== '-'")
+              coin-icon.mr1
+              span.h6.sm-h5.lh1.block {{prettyUserBalance}}
+            //- bnt: account
+            .relative
+              button#personToggle.h-nav-btn.h6.sm-h5.pl2.pr1.flex.items-center.pointer.border-left(@click="accountMenuToggle", aria-label="View Account Menu")
+                person-icon(:class="!authHeader && 'red'")
+                .chevron
+          //- dropdown: pig
+          pig-menu.left-0(v-if="pigMenu", @closePigMenu="closePigMenu", style="transform:translateX(calc(-100% + 66px))", v-click-outside="closePigMenu")
+          //- dropdown: account
+          account-menu.mr2.md-mr3(v-if="accountMenu", @close-account-menu="closeAccountMenu", v-click-outside="closeAccountMenu")
 
     //- nav overlay
     .fixed.z4.h-100vh.col-12.bg-green.top-0.left-0.flex.flex-column.justify-between.center(v-show='showMenu')
@@ -154,9 +155,6 @@ export default {
   methods: {
     clickMenu () {
       this.showMenu = !this.showMenu
-    },
-    pigMenuToggle () {
-      this.pigMenu = !this.pigMenu
     },
     closeAccountMenu () {
       if (this.accountMenu) this.accountMenu = false
