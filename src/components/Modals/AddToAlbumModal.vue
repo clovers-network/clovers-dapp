@@ -6,7 +6,7 @@
       ul.mt0.mb0.list-reset
         li.my1.h5.rounded.bg-lightest-green.flex.justify-between.py2.px1.border.border-transparent.pointer.hover-border-green.hover-opacity-100(v-for="(album, i) in albums", @click.stop="select = i", :class="{'border-green': select === i, 'opacity-50': select !== i && select !== null, 'white': alreadyAdded(album), 'bg-green' : alreadyAdded(album)}")
           h5.col-9.px1.left-align.font-exp {{album.name}}
-            sup {{album.clovers.length}}
+            sup.h7.font-mono {{album.clovers.length}}
           h6.col-3.px1.truncate.right-align {{yours(album) ? "Yours" : alreadyAdded(album) ? 'Added' : ''}}
         li.my1.h5.rounded.bg-lightest-green.flex.justify-between.py2.px1.border.border-transparent.opacity-50(v-if="couldCreate && onlyAddedInList")
           h5.col-12.px1.left-align.font-exp Album not found
