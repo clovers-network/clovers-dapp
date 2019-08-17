@@ -488,7 +488,7 @@ export default {
 
       if (state.tokens && account in state.tokens && state.tokens[account]) {
         console.log('already have token')
-        return
+        // return
       }
       global.web3.currentProvider.sendAsync(
         {
