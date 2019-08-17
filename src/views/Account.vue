@@ -36,7 +36,7 @@
           .mt3.px1.sm-px0
             clover-list-cards(:clovers="clovers")
           nav.mt2.md-mt0.flex.justify-center.sm-block
-            router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(to="/account/clovers")
+            router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(:to="{name: 'User', params: {addr: user.address}}")
               span View All
         //- (no clovers)
         template(v-else)
@@ -48,17 +48,17 @@
           .flex-auto
             h2.h3.md-h2.mb1.font-exp
               router-link(:to="{name: 'User/Albums', params: {addr: account}}") Albums
-            p.h5 You have <strong>{{ albums.length }}</strong> {{ pluralize('Album', albums.length) }}
+            p.h5 You have <strong>{{ userAlbums.length }}</strong> {{ pluralize('Album', userAlbums.length) }}
           //- btn: new
           button.ml3.h5.green.border.px3.p2.rounded-2.hover-bg-l-green.flex.items-center.justify-center.pointer(@click="newAlbum = true")
             | New
         //- (about albums)
-        p.my3.rounded.bg-lightest-green.p2(v-if="!albums.length") Albums are for grouping clovers together. You can add any clover to your albums, even ones you don't own. Additionally, anyone can add to your album, but only you can edit it.
+        p.my3.rounded.bg-lightest-green.p2(v-if="!userAlbums.length") Albums are for grouping clovers together. You can add any clover to your albums, even ones you don't own. Additionally, anyone can add to your album, but only you can edit it.
         //- (albums list)
-        .mt2.px1.sm-px0(v-else)
-          album-list-cards(:albums="albums", :limit="4")
+        .mt3.px1.sm-px0(v-else)
+          album-list-cards(:albums="userAlbums", :limit="4")
         nav.mt2.md-mt0.flex.justify-center.sm-block
-          .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green.mr2(v-if="albums.length")
+          .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green.mr2(v-if="userAlbums.length")
             router-link.h5.flex.items-center.justify-center(:to="{name: 'User/Albums', params: {addr: account}}")
               | View All
 
@@ -131,9 +131,6 @@ export default {
       if (!this.results || !this.results.allResults) return 0
       return this.results.allResults
     },
-    albums () {
-      return this.allAlbums.filter(a => a.userAddress === this.account)
-    },
 
     showPickModal () {
       return this.$route.query.pick
@@ -150,14 +147,15 @@ export default {
       ]
     },
 
-    ...mapState(['account', 'allAlbums']),
+    ...mapState(['account']),
     ...mapGetters([
       'prettyUserBalance',
       'user',
       'picks',
       'pickCount',
       'userName',
-      'userImage'
+      'userImage',
+      'userAlbums'
     ])
   },
   methods: {
