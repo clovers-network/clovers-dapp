@@ -24,9 +24,10 @@
 
       //- title
       h1.hidden.md-block.font-exp.col-4.py1.center.h5(v-show="$route.meta.logo !== false")
-        router-link.h3(to="/") Clovers
-        //- span.nowrap
-          | {{showMenu ? &apos;Clovers&apos; : $route.meta.title}}
+        span.h3
+          router-link(to="/") Clovers 
+          template(v-if="$route.meta.title")
+            | &#32;<span class="font-ext">&rarr;</span> {{$route.meta.title}}
       //- right col
       #accountHeader.col-4.flex.justify-end
         //- btn group

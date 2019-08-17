@@ -21,7 +21,7 @@
               span View All
         //- (empty)
         div(v-else)
-          p.my3.rounded.bg-lightest-green.p2 Your <b>Basket</b> is where clovers picked from your <router-link to="/garden">Garden</router-link>, or symmetrical clovers found by your Clover Pig are saved.
+          p.my3.rounded.bg-lightest-green.p2 <b>Basket</b> is where clovers picked from your <router-link to="/garden">Garden</router-link>, or symmetrical clovers found by your Clover Pig are saved.
           nav.mt3
             router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(to="/garden")
               | Pick Clovers
