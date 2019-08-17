@@ -1,13 +1,17 @@
 <template lang="pug">
-  .mt1.mx3.sm-mt3.pb-full-height
-    more-information(title="?") In the <b>Garden</b>, you can generate new clovers and pick favorites. Picked clovers go to your <router-link :to="{name: 'Picks'}" class="underline">Basket</router-link>. If you'd like to add a clover to your collection, you need to register it on the network. Registration costs a base fee of <router-link :to="{name: 'Trade'}">10 <coin-icon class="inline-block" /></router-link>. If the clover is symmetrical however, you can instead exchange it for a reward! Use your Pig to rapidly sniff-out symmetrical clovers, and start earning.
+  article.mx3
+    header.mb2.md-mb0
+      page-title
+        h1 Garden
+        p(slot="info") Your <b>Garden</b> generates new clovers as your scoll. Click a clover to register it for a small fee, or save it to your <router-link :to="{name: 'Picks'}" class="underline">Basket</router-link> for later. Registered clovers are added to your Collection and will appear on your Profile.
 
-    .arrow-up.center.bg-green.fixed.bottom-0.right-0.mb4.mr4.block.pointer.z3(@click="scrollUp")
+    section.mxn2.px1.md-px0
+      .sm-col-10.lg-col-12.mx-auto.pb-full-height
+        section.flex.flex-wrap.mxn2.mb4.md-px2
+          field-item(v-for='(clover, i) in generated' :key='i' data-expand='-50' :data-appear='i % 3' :clover="clover" :in-field="true")
+
+    button.arrow-up.center.bg-green.fixed.bottom-0.right-0.mb4.mr4.block.pointer.z3(@click="scrollUp", aria-label="Jump to Top")
       img(:src="require('../assets/icons/arrow-up.svg')")
-
-    .sm-col-10.lg-col-12.mx-auto
-      section.flex.flex-wrap.mxn2.mb4.md-px2
-        field-item(v-for='(clover, i) in generated' :key='i' data-expand='-50' :data-appear='i % 3' :clover="clover" :in-field="true")
 
     transition(name="fade")
       div(v-if="showPickModal")
@@ -19,7 +23,7 @@
 import { mapActions } from 'vuex'
 import KeepClover from '@/views/KeepClover'
 import FieldItem from '@/components/FieldItem'
-import MoreInformation from '@/components/MoreInformation'
+import PageTitle from '@/components/PageTitle'
 import CoinIcon from '@/components/Icons/CoinIcon'
 import Bottleneck from 'bottleneck'
 import Reversi from 'clovers-reversi'
@@ -100,7 +104,7 @@ export default {
     this.limiter.stop({ dropWaitingJobs: true })
     next()
   },
-  components: { KeepClover, FieldItem, MoreInformation, CoinIcon }
+  components: { KeepClover, FieldItem, PageTitle, CoinIcon }
 }
 </script>
 <style lang="css" scoped>
