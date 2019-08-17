@@ -21,7 +21,7 @@
               span View All
         //- (empty)
         div(v-else)
-          p.h5 Your <b>Basket</b> is where clovers picked from your <router-link to="/garden">Garden</router-link>, or symmetrical clovers found by your Clover Pig are saved.
+          p.my3.rounded.bg-lightest-green.p2 Your <b>Basket</b> is where clovers picked from your <router-link to="/garden">Garden</router-link>, or symmetrical clovers found by your Clover Pig are saved.
           nav.mt3
             router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(to="/garden")
               | Pick Clovers
@@ -40,7 +40,7 @@
               span View All
         //- (no clovers)
         template(v-else)
-          p.max-width-1 Clovers that are registered to your account (wallet address). Save some from your basket and they will show up here.
+          p.my3.rounded.bg-lightest-green.p2 Clovers that are registered to your account (wallet address). Save some from your basket and they will show up here.
 
       //- Albums
       section.mx2.sm-mx3.md-mx0.my4.sm-mt0(name="My Clovers")
@@ -50,7 +50,7 @@
               router-link(:to="{name: 'User/Albums', params: {addr: account}}") Albums
             p.h5 You have <strong>{{ albums.length }}</strong> {{ pluralize('Album', albums.length) }}
           //- btn: new
-          router-link.ml3.h5.green.border.px3.p2.rounded-2.hover-bg-l-green.flex.items-center.justify-center.pointer(:to="{hash: 'add-album'}")
+          button.ml3.h5.green.border.px3.p2.rounded-2.hover-bg-l-green.flex.items-center.justify-center.pointer(@click="newAlbum = true")
             | New
         //- (about albums)
         p.my3.rounded.bg-lightest-green.p2(v-if="!albums.length") Albums are for grouping clovers together. You can add any clover to your albums, even ones you don't own. Additionally, anyone can add to your album, but only you can edit it.
@@ -61,9 +61,6 @@
           .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green.mr2(v-if="albums.length")
             router-link.h5.flex.items-center.justify-center(:to="{name: 'User/Albums', params: {addr: account}}")
               | View All
-          //- .inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green
-            router-link.h5.flex.items-center.justify-center.pointer(:to="{hash: 'add-album'}")
-              | Add Album
 
     footer.py2.center
       p.h1(style="filter:hue-rotate(292deg)") ☘️
@@ -77,7 +74,7 @@
         edit-user(@cancel="editing = false")
 
     transition(name="fade")
-      add-album-modal(v-show="$route.hash === '#add-album'", @close="$router.push({hash: ''})")
+      add-album-modal(v-show="newAlbum", @close="newAlbum = false")
 </template>
 
 <script>
@@ -103,7 +100,8 @@ export default {
     return {
       loading: false,
       editing: false,
-      form: { name: null }
+      form: { name: null },
+      newAlbum: false
     }
   },
   computed: {
