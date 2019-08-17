@@ -37,7 +37,7 @@
             .font-exp.mt1.truncate(v-else) {{denom}} {{ marketCap.toFormat(displayIn === 'ETH' ? 4 : 2) }}
 
       //- Buy | Sell
-      section.mt2.mb3.p3.bg-lightest-green.rounded
+      section.mt2.mb3.p2.sm-p3.bg-lightest-green.rounded
           view-nav.mb3(:items="[{lbl: 'Buy', value:'buy'}, {lbl: 'Sell', value:'sell'}]", @change="view = $event", :thick="true")
           .px1
           //- BUY
