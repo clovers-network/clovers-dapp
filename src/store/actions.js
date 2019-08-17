@@ -17,7 +17,7 @@ const signingParams = [
   {
     type: 'string',
     name: 'Message',
-    value: 'To avoid bad things, sign below to authenticate with Clovers'
+    value: 'Please sign this message to authenticate with Clovers'
   }
 ]
 const networks = {
@@ -245,13 +245,11 @@ export default {
         throw new Error('wrong-network')
       }
     }
-    try {
+
       await dispatch('updateBasePrice')
       await dispatch('updateStakeAmount')
-    } catch (err) {
-      console.log(err)
-    }
-    commit('CONTRACTS_DEPLOYED', true)
+      commit('CONTRACTS_DEPLOYED', true)
+
   },
   async updateBasePrice ({ commit }) {
     let basePrice = await contracts.CloversController.instance.methods
@@ -488,7 +486,7 @@ export default {
 
       if (state.tokens && account in state.tokens && state.tokens[account]) {
         console.log('already have token')
-        // return
+        return
       }
       global.web3.currentProvider.sendAsync(
         {
@@ -510,17 +508,34 @@ export default {
       )
     }
   },
-  async oldSignIn ({dispatch, commit}, account) {
+  async oldSignIn ({state, dispatch, commit}, account) {
     return new Promise(async (resolve, reject) => {
       try {
-        var hashed = global.web3.utils.sha3(signingParams[0].value)
-        var signature = await global.web3.eth.sign(hashed, account)
-        dispatch('selfDestructMsg', {
-          type: 'success',
-          msg: `Successfully signed in ${account} ${signature} ${global.web3.version}`
+        global.web3.currentProvider.sendAsync({
+          jsonrpc: '2.0',
+          id: state.networkId || 1,
+          method: 'personal_sign',
+          params: [
+            signingParams[0].value,
+            account
+          ]
+        }, (err, signature) => {
+          if (err) {
+            commit('UPDATE_WEB3', false)
+            dispatch('selfDestructMsg', {
+              type: 'error',
+              msg: `Could not sign in`
+            })
+            reject(err)
+          } else {
+            dispatch('selfDestructMsg', {
+              type: 'success',
+              msg: `Successfully signed in ${signature.result} ${Object.keys(signature).join()} ${global.web3.version}`
+            })
+            commit('SIGN_IN', { account, signature: signature.result })
+            resolve()
+          }
         })
-        commit('SIGN_IN', { account, signature })
-        resolve()
       } catch (error) {
         commit('UPDATE_WEB3', false)
         dispatch('selfDestructMsg', {
