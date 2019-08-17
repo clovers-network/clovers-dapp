@@ -191,9 +191,11 @@ export default {
   },
 
   SET_USER (state, data) {
-    if (data && data.name !== 'undefined') {
-      state.accountData = data
-    }
+    // shouldn't really have conditional save here...
+    // remove if doesnt break anything
+    // if (data && typeof data.name !== 'undefined') {
+    state.accountData = data
+    // }
   },
   SET_OTHER_USER (state, data) {
     state.otherUser = data

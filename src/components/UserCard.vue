@@ -1,11 +1,13 @@
 <template lang="pug">
   .my3.sm-my4.sm-mx3.md-mx0.bg-lightest-green.sm-bg-none.sm-col-9(v-if="user")
-    .block.sm-inline-block.sm-min-width-2.relative.sm-border.rounded
+    //- border
+    .block.sm-inline-block.sm-min-width-2.relative.sm-border.rounded(:class="{'sm-border-dashed pointer hover-border-solid hover-shadow': signIn}", @click="onCardClick")
       .py2.sm-py1.px3.flex.items-start.justify-between.sm-justify-start
         //- info
         .pt2.pb3
           h2.h3.mb1.font-exp.lh1.sm-pt1
-            router-link(:to="{name: 'User', params: {addr: user.address}}") {{ userName(user) }}
+            router-link(v-if="user.address", :to="{name: 'User', params: {addr: user.address}}") {{ userName(user) }}
+            span(v-else-if="signIn") Sign In...
           small.block.h7
             span(v-if="user.created") Member since block # {{ user.created.toLocaleString() }}
             span(v-else-if="user.modified") Last active, block # {{ user.modified.toLocaleString() }}
@@ -21,7 +23,7 @@
         figure.py2.my1.sm-pr1.sm-mr3.sm-flex-first(style="flex-shrink:0")
           img.block(:src="userImage(user, 128)" width="87" height="87", alt="User Avatar")
         //- edit btn
-        .absolute.top-0.right-0(v-if="editable")
+        .absolute.top-0.right-0(v-if="editable && user.address")
           a.p2.block.h4.pointer(@click="$emit('edit')" style="transform:scale(-1, 1)") ✎
 </template>
 
@@ -36,6 +38,14 @@ export default {
     ...mapGetters(['userName', 'userImage']),
     prettyUserBalance () {
       return prettyBigNumber(this.user.balance || '0')
+    },
+    signIn () {
+      return (!this.user || !this.user.address) && this.editable
+    }
+  },
+  methods: {
+    onCardClick () {
+      return this.signIn && this.$store.dispatch('signIn')
     }
   },
   components: { CoinIcon }

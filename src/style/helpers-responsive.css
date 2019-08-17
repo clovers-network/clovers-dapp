@@ -18,6 +18,7 @@
   .sm-items-end{align-items: flex-end;}
   .sm-justify-start{justify-content: flex-start;}
   .sm-min-width-2{min-width: var(--width-2);}
+  /*.sm-rounded-none{border-radius: none}*/
 }
 @media (--breakpoint-md) {
   .md-block{ display: block }

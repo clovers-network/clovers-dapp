@@ -380,9 +380,8 @@ export default {
   },
 
   getCurrentUser ({ commit }, account) {
-    if (!account) {
-      return commit('SET_USER', null)
-    }
+    // empty / sign-out:
+    if (!account) return commit('SET_USER', null)
     return axios.get(apiUrl(`/users/${account.toLowerCase()}`))
       .then(({ data }) => commit('SET_USER', data))
   },

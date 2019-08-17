@@ -172,6 +172,7 @@
 
 .rounded-full{ border-radius: 100% }
 .rounded-2 { border-radius: var(--border-radius-2); }
+/*.rounded-left{ border-top-left-radius: var(--border-radius); border-bottom-left-radius: var(--border-radius) }*/
 
 .pointer { cursor: pointer;}
 .no-pointer { cursor: default;}
