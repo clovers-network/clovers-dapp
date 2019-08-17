@@ -136,6 +136,7 @@ export default {
   },
   // web3 stuff
   async checkWeb3 ({ state, dispatch, commit }) {
+    console.log('checkWeb3')
     if (!state.web3Enabled) {
       dispatch('signIn')
       return
@@ -151,6 +152,7 @@ export default {
     }
   },
   async approve ({ state, commit }) {
+    console.log('approve')
     if (!state.enabled && global.ethereum) {
       try {
         await global.ethereum.enable()
@@ -197,13 +199,16 @@ export default {
     })
   },
   async getNetwork ({ commit, state, dispatch }) {
+    console.log('getNetwork')
     const networkId = await global.web3.eth.net.getId()
     if (state.networkId !== networkId) {
-      commit('SET_NETWORK', networkId)
+      commit('SET_NETWORK', 4) // TODO: DONT LEAVE THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      // commit('SET_NETWORK', networkId)
       await dispatch('getContracts')
     }
   },
   async getAccount ({ commit, dispatch, state }) {
+    console.log('getAccount')
     await dispatch('getNetwork')
     let accounts = await global.web3.eth.getAccounts()
     if (accounts.length && state.account !== accounts[0].toLowerCase()) {
@@ -227,6 +232,7 @@ export default {
     })
   },
   async getContracts ({ dispatch, state, commit }) {
+    console.log('getContracts')
     commit('CONTRACTS_DEPLOYED', false)
     for (var name in contracts) {
       if (!contracts.hasOwnProperty(name)) continue
@@ -240,8 +246,12 @@ export default {
         throw new Error('wrong-network')
       }
     }
-    await dispatch('updateBasePrice')
-    await dispatch('updateStakeAmount')
+    try {
+      await dispatch('updateBasePrice')
+      await dispatch('updateStakeAmount')
+    } catch (err) {
+      console.log(err)
+    }
     commit('CONTRACTS_DEPLOYED', true)
   },
   async updateBasePrice ({ commit }) {
@@ -463,7 +473,9 @@ export default {
     })
   },
   async signIn ({ state, commit, dispatch }) {
+    console.log('signIn')
     if (!state.web3Enabled) {
+      console.log('toggleModal')
       global.web3Connect.toggleModal() // open modal on button click
     } else {
       if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
