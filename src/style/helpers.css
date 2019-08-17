@@ -189,6 +189,7 @@
 .transl-x-50{transform: translateX(50%);}
 .flip-x { transform:scaleX(-1); }
 
+.trans-fast{ transition: all 150ms; }
 .trans-quick{ transition: all 300ms; }
 .trans-transform { transition: transform var(--anim-timing-medium); }
 .trans-opacity-long { transition: opacity var(--anim-timing-long); }

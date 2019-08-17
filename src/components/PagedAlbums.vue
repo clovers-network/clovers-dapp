@@ -6,11 +6,12 @@
       //- (list)
       .fade-enter-active(v-if="hasResults", :class="{'opacity-50':loading}")
         album-list-cards(v-if="albums.length", :albums="albums")
+        page-nav(:hasResults="hasResults", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
+
       //- (empty)
       div(v-else)
-        p.center.p2.m0 Nothing to show
+        p.center.p2.lg-mt4 No Albums
 
-      page-nav(:hasResults="hasResults", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
 </template>
 
 <script>

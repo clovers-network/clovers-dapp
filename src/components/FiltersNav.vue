@@ -1,5 +1,5 @@
 <template lang="pug">
-  .h4.md-h5.mxn2.mt3.mb3.pb1.sm-pb0.sm-mb2.px3.sm-px1.flex.flex-wrap.sm-flex-no-wrap.sm-justify-end(:class="{'justify-center': !$slots.filter && !$slots.sort}")
+  .h4.md-h5.mxn2.mt3.mb3.pb1.sm-pb0.sm-mt2.md-mt0.sm-mb2.px3.sm-px1.flex.flex-wrap.sm-flex-no-wrap.sm-justify-end(:class="{'justify-center': !$slots.filter && !$slots.sort}")
     //- filter by ?
     .col-9.sm-col-auto.my1.px1(v-if="$slots.filter")
       .center.select

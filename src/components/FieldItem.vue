@@ -11,7 +11,7 @@
         span Discard
       //- symm icons
       .green.absolute.top-0.right-0.mt2.mr2(v-if="clover.symmetrical")
-        symmetry-icons.h6(:board="clover")
+        symmetry-icons(:board="clover", style="font-size: 10px")
 </template>
 
 <script>
