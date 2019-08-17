@@ -30,7 +30,8 @@ export default new Router({
     {
       path: '/',
       name: 'Welcome',
-      component: Welcome
+      component: Welcome,
+      meta: { logo: false }
     },
     {
       path: '/welcome',
