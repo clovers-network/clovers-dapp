@@ -6,7 +6,7 @@
       template(v-else)
         router-link.block.p2(to="/account") {{ userName(user) }}
     .h5
-      .p2.lh2.center(v-if="!authHeader") Sign in to edit your Profile, leave comments, and rename clovers
+      .p2.lh2.center(v-if="!authHeader") Sign in to register clovers, edit your Profile, and leave&nbsp;comments.
       .md-p2.lh3(v-else)
         div
           router-link.block.md-inline.p2.md-p0.border-bottom.md-border-none(:to="{name: 'Account'}", @click.native="$emit('closeAccountMenu')") Your Dashboard

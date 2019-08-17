@@ -9,7 +9,7 @@
         h2.mx2.sm-mx3.md-mx0.h2.md-h2.mt2.md-mt3.mb1.font-exp
           router-link(:to="{ name: 'Picks' }") Basket
         //- (picks)
-        div(v-if="pickCount")
+        template(v-if="pickCount")
           p.h5.mx2.sm-mx3.md-mx0 You have <strong>{{ pickCount }}</strong> unregistered {{ pluralize('Clover', pickCount) }}
           .mt3.relative
             .overflow-x-scroll.lg-overflow-x-hidden.py2.touch-scroll.invisible-scrollbar
@@ -20,8 +20,8 @@
             router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(:to="{ name: 'Picks' }")
               span View All
         //- (empty)
-        div(v-else)
-          p.my3.rounded.bg-lightest-green.p2 <b>Basket</b> is where clovers picked from your <router-link to="/garden">Garden</router-link>, or symmetrical clovers found by your Clover Pig are saved.
+        template(v-else)
+          p.my3.rounded.bg-lightest-green.p2 Your <b>Basket</b> is where clovers picked from your <router-link to="/garden">Garden</router-link>, or symmetrical clovers found by your Clover Pig are saved.
           nav.mt3
             router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(to="/garden")
               | Pick Clovers
@@ -35,15 +35,19 @@
           p.h5 You have <strong>{{ cloversCount }}</strong> registered {{ pluralize('Clover', cloversCount) }}
           .mt3.px1.sm-px0
             clover-list-cards(:clovers="clovers")
-          nav.mt2.md-mt0.flex.justify-center.sm-block
-            router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(:to="{name: 'User', params: {addr: user.address}}")
-              span View All
         //- (no clovers)
         template(v-else)
-          p.my3.rounded.bg-lightest-green.p2 Clovers that are registered to your account (wallet address). Save some from your basket and they will show up here.
+          p.my3.rounded.bg-lightest-green.p2 Clovers registered to your wallet address will appear here.
+        nav.mt2.md-mt0.flex.justify-center.sm-block
+          .h5.inline-block.green.border.rounded-2.hover-bg-l-green
+            //- (view all)
+            router-link.px3.py2.block(v-if="cloversCount", :to="{name: 'User', params: {addr: user.address}}")
+              | View All
+            //- (sign in)
+            button.px3.py2.block.pointer(v-else-if="!signedIn", @click="signIn") Sign In...
 
       //- Albums
-      section.mx2.sm-mx3.md-mx0.my4.sm-mt0(name="My Clovers")
+      section.mx2.sm-mx3.md-mx0.my4.sm-mt0(name="My Clovers", v-if="signedIn")
         header.mt2.md-mt3.flex.items-center.justify-between
           .flex-auto
             h2.h3.md-h2.mb1.font-exp
@@ -100,7 +104,6 @@ export default {
     return {
       loading: false,
       editing: false,
-      form: { name: null },
       newAlbum: false
     }
   },
@@ -183,18 +186,10 @@ export default {
       this.$nextTick(() => {
         this.query()
       })
-    },
-    user (newVal) {
-      if (!newVal) return
-      this.form.name = newVal.name
     }
   },
   mounted () {
     this.query()
-    if (!this.user.address) {
-      this.$router.push({ name: 'Picks' })
-    }
-    this.form.name = this.user.name
     this.getAllAlbums()
   },
   components: { UserCard, KeepClover, PickListItem, CloverListCards, EditUser, CoinIcon, AddAlbumModal, AlbumListCards }
