@@ -96,8 +96,8 @@ export default new Router({
       path: '/clovers/:board',
       name: 'Clover',
       component: Clover,
-      props: true
-      // meta: { title: 'Clover' }
+      props: true,
+      meta: { logo: false }
     },
 
     {

@@ -23,8 +23,9 @@
                   | {{ symms }}
 
       //- title
-      h1.hidden.md-block.font-exp.h3.col-4.py1.center
-        span.nowrap
+      h1.hidden.md-block.font-exp.col-4.py1.center.h5(v-show="$route.meta.logo !== false")
+        router-link.h3(to="/") Clovers
+        //- span.nowrap
           | {{showMenu ? &apos;Clovers&apos; : $route.meta.title}}
       //- right col
       #accountHeader.col-4.flex.justify-end
@@ -54,8 +55,7 @@
               .chevron
             //- dropdown: account
             account-menu(@close-account-menu="closeAccountMenu" v-click-outside="closeAccountMenu" v-if="accountMenu")
-    //- (mobile page title)
-    h1.md-hide.h1.font-exp.mt3.pt1.px2.sm-px3(v-if="$route.meta.title") {{$route.meta.title}}
+
     //- nav overlay
     .fixed.z4.h-100vh.col-12.bg-green.top-0.left-0.flex.flex-column.justify-between.center(v-show='showMenu')
       .h-header

@@ -1,38 +1,42 @@
 <template lang="pug">
-  .mx3.md-mx0.green
-    more-information(title="?") <b>The Feed</b> is where all registerd Clovers can be found. You can filter by symmetry, popularity, comments, clovers for sale as well as sort by price or date.
+  article.mx3.md-mx0.green
+    header
+      page-title
+        h1 Feed
+        span(slot="info") <b>The Feed</b> is where all registerd clovers can be found.<br> You can filter by symmetry, clovers for sale or with comments, as well as sort by price or date.
 
-    //- filters
-    filters-nav(:page="filters.page", :maxPages="maxPage", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
-      //- filter
-      select(slot="filter", v-model="filters.filter")
-        option(:value="undefined") All Clovers
-        option(value="market") Clovers for Sale
-        option(value="Sym") Symmetrical Clovers
-        option(value="RotSym") Sym. Rotational
-        option(value="X0Sym") Sym. Vertical
-        option(value="Y0Sym") Sym. Horizontal
-        option(value="XYSym") Sym. Diagonal Up
-        option(value="XnYSym") Sym. Diagonal Down
-        option(value="public") Human owned
-        option(value="contract") Contract owned
-        option(value="commented") With Comments
-        //- option(value="rft") RFT
-      //- sort
-      select(slot="sort", v-model='filters.sort')
-        option(:value='undefined') By Date
-        option(value='price') By Price
+    section
+      //- filters
+      filters-nav(:page="filters.page", :maxPages="maxPage", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
+        //- filter
+        select(slot="filter", v-model="filters.filter")
+          option(:value="undefined") All Clovers
+          option(value="market") Clovers for Sale
+          option(value="Sym") Symmetrical Clovers
+          option(value="RotSym") Sym. Rotational
+          option(value="X0Sym") Sym. Vertical
+          option(value="Y0Sym") Sym. Horizontal
+          option(value="XYSym") Sym. Diagonal Up
+          option(value="XnYSym") Sym. Diagonal Down
+          option(value="public") Human owned
+          option(value="contract") Contract owned
+          option(value="commented") With Comments
+          //- option(value="rft") RFT
+        //- sort
+        select(slot="sort", v-model='filters.sort')
+          option(:value='undefined') By Date
+          option(value='price') By Price
 
-    //- Clover List
-    .fade-enter-active(v-if="hasResults", :class="{'opacity-50': loading}")
-      clover-list-cards(:clovers='clovers')
-    .fade-enter-active(v-else, :class="{'opacity-50': true}")
-      clover-list-cards(:clovers='fakeClovers')
+      //- Clover List
+      .fade-enter-active(v-if="hasResults", :class="{'opacity-50': loading}")
+        clover-list-cards(:clovers='clovers')
+      .fade-enter-active(v-else, :class="{'opacity-50': true}")
+        clover-list-cards(:clovers='fakeClovers')
 
-    page-nav(:canPrev="prevPossible", :canNext="nextPossible", :hasResults="hasResults", @prev="back", @next="forward")
+      page-nav(:canPrev="prevPossible", :canNext="nextPossible", :hasResults="hasResults", @prev="back", @next="forward")
 
-    //- .sticky.bottom-0.bg-green.white.p2.center.h-bttm-bar.flex.pointer(v-if='newCloversCount' @click='addNew')
-      span.block.m-auto.font-exp Show {{ newCloversCount }} new {{ pluralize(&apos;Clover&apos;, newCloversCount) }}
+      //- .sticky.bottom-0.bg-green.white.p2.center.h-bttm-bar.flex.pointer(v-if='newCloversCount' @click='addNew')
+        span.block.m-auto.font-exp Show {{ newCloversCount }} new {{ pluralize(&apos;Clover&apos;, newCloversCount) }}
 </template>
 
 <script>
@@ -40,9 +44,9 @@ import store from '@/store'
 import { mapState, mapGetters } from 'vuex'
 import { pluralize, cleanObj } from '@/utils'
 import CloverListCards from '@/components/CloverList--Cards'
+import PageTitle from '@/components/PageTitle'
 import PageNav from '@/components/PageNav'
 import svgX from '@/components/Icons/SVG-X'
-import MoreInformation from '@/components/MoreInformation'
 import FiltersNav from '@/components/FiltersNav'
 
 const apiUrl = process.env.VUE_APP_API_URL + '/clovers'
@@ -204,6 +208,6 @@ export default {
       this.filters.page = this.results.nextPage
     }
   },
-  components: { CloverListCards, svgX, PageNav, MoreInformation, FiltersNav }
+  components: { CloverListCards, svgX, PageTitle, PageNav, FiltersNav }
 }
 </script>
