@@ -513,10 +513,11 @@ export default {
   async oldSignIn ({dispatch, commit}, account) {
     return new Promise(async (resolve, reject) => {
       try {
-        var signature = await global.web3.eth.sign(signingParams[0].value, account)
+        var hashed = global.web3.utils.sha3(signingParams[0].value)
+        var signature = await global.web3.eth.sign(hashed, account)
         dispatch('selfDestructMsg', {
           type: 'success',
-          msg: `Successfully signed in ${account} ${signature}`
+          msg: `Successfully signed in ${account} ${signature} ${global.web3.version}`
         })
         commit('SIGN_IN', { account, signature })
         resolve()
