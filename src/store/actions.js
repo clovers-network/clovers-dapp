@@ -12,12 +12,11 @@ import confetti from 'canvas-confetti'
 window.contracts = contracts
 
 export const apiBase = process.env.VUE_APP_API_URL
-
-const signingParams = [
+const msgParams = [
   {
     type: 'string',
     name: 'Message',
-    value: 'Please sign this message to authenticate with Clovers'
+    value: 'Please sign this message to authenticate with Clovers - '
   }
 ]
 const networks = {
@@ -246,10 +245,9 @@ export default {
       }
     }
 
-      await dispatch('updateBasePrice')
-      await dispatch('updateStakeAmount')
-      commit('CONTRACTS_DEPLOYED', true)
-
+    await dispatch('updateBasePrice')
+    await dispatch('updateStakeAmount')
+    commit('CONTRACTS_DEPLOYED', true)
   },
   async updateBasePrice ({ commit }) {
     let basePrice = await contracts.CloversController.instance.methods
@@ -488,6 +486,12 @@ export default {
         console.log('already have token')
         return
       }
+
+      var now = new Date()
+      var signingParams = JSON.parse(JSON.stringify(msgParams))
+      var thisMonth = now.getMonth() + '/' + now.getFullYear()
+      signingParams[0].value += thisMonth
+
       global.web3.currentProvider.sendAsync(
         {
           method: 'eth_signTypedData',
@@ -510,6 +514,11 @@ export default {
   },
   async oldSignIn ({state, dispatch, commit}, account) {
     return new Promise(async (resolve, reject) => {
+      var now = new Date()
+      var signingParams = JSON.parse(JSON.stringify(msgParams))
+      var thisMonth = now.getMonth() + '/' + now.getFullYear()
+      signingParams[0].value += thisMonth
+      
       try {
         global.web3.currentProvider.sendAsync({
           jsonrpc: '2.0',

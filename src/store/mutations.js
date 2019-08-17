@@ -155,7 +155,7 @@ export default {
     if (!state.account) return
     state.account = null
     Vue.delete(state.tokens, state.account)
-    updateLocal('clover_tokens', state.tokens)
+    updateLocal('clover_tokens', null)
   },
 
   // marketplace
@@ -191,7 +191,7 @@ export default {
   },
 
   SET_USER (state, data) {
-    if (typeof data.name !== 'undefined') {
+    if (data && data.name !== 'undefined') {
       state.accountData = data
     }
   },
