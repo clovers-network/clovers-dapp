@@ -113,7 +113,8 @@ export default new Router({
         {
           path: 'albums',
           name: 'User/Albums',
-          component: UserAlbums
+          component: UserAlbums,
+          meta: { title: [['Users']] }
         }
       ]
     },
@@ -127,7 +128,8 @@ export default new Router({
       path: '/albums/:id',
       name: 'Album',
       component: Album,
-      props: true
+      props: true,
+      meta: { title: [['Albums', '/albums']] }
     },
 
     {
