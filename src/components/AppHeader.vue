@@ -25,9 +25,11 @@
       //- title
       h1.hidden.md-block.font-exp.col-4.py1.center.h5(v-show="$route.meta.logo !== false")
         span.h3
-          router-link(to="/") Clovers 
-          template(v-if="$route.meta.title")
-            | &#32;<span class="font-ext">&rarr;</span> {{$route.meta.title}}
+          router-link(to="/") Clovers
+          template(v-for="item in $route.meta.title")
+            | &#32;<span class="font-ext">&rarr;</span>&#32;
+            router-link(v-if="item[1]", :to="item[1]") {{item[0]}}
+            span(v-else) {{item[0]}}
       //- right col
       #accountHeader.col-4.flex.justify-end
         //- btn group
@@ -42,7 +44,7 @@
             //- dropdown: pig
             pig-menu(@closePigMenu="closePigMenu" v-click-outside="closePigMenu" v-if="pigMenu" )
           //- btn: picks
-          router-link.h-nav-btn.px2.flex.items-center.pointer(:to="{name: 'Picks'}")
+          router-link.h-nav-btn.px2.flex.items-center.pointer(:to="{name: 'Picks'}", :class="{'bg-green white': $route.name === 'Picks'}")
             cart-icon.mr1
             span.h6.sm-h5.lh1.block {{pickCount}}
           //- btn: tokens

@@ -68,12 +68,13 @@ export default new Router({
       path: '/account',
       name: 'Account',
       component: Account,
-      meta: { title: 'You' }
+      meta: { title: [['You']] }
     },
     {
       path: '/account/basket',
       name: 'Picks',
-      component: Picks
+      component: Picks,
+      meta: { title: [['You', '/account']] }
     },
     {
       path: '/account/clovers',
@@ -107,7 +108,7 @@ export default new Router({
           path: '',
           name: 'User',
           component: UserClovers,
-          meta: { title: 'Profile' }
+          meta: { title: [['Users']] }
         },
         {
           path: 'albums',
