@@ -1,6 +1,9 @@
 <template lang="pug">
-  .mt1.mx3.sm-mt3
-    more-information(title="?") Your <b>Basket</b> is where clovers picked from your <router-link to="/garden" class="underlin">Garden</router-link>, or symmetrical clovers found by your Clover Pig are saved. To register a clover and permanently add it your Collection, it costs a base fee of 10 <router-link to="/trade">Clover Coins</router-link>. Once registered, they'll appear on your Profile, and in the Feed.
+  .mx3
+    header
+      page-title
+        h1 Basket
+        p(slot="info") <b>Your Basket</b> is where clovers picked from your <router-link to="/garden" class="underlin">Garden</router-link>, or symmetrical clovers found by your Clover Pig are saved. To register a clover and permanently add it your Collection, it costs a base fee of 10 <router-link to="/trade">Clover Coins</router-link>. Once registered, they'll appear on your Profile, and in the Feed.
 
     //- (picks list)
     section.sm-col-10.lg-col-12.mx-auto.pb4.mb4(v-if="picks.length")
@@ -27,7 +30,7 @@ import KeepClover from '@/views/KeepClover'
 import moment from 'moment'
 import Reversi from 'clovers-reversi'
 import FieldItem from '@/components/FieldItem'
-import MoreInformation from '@/components/MoreInformation'
+import PageTitle from '@/components/PageTitle'
 
 export default {
   name: 'Picks',
@@ -98,7 +101,7 @@ export default {
       saveClover: 'SAVE_CLOVER'
     })
   },
-  components: { KeepClover, FieldItem, MoreInformation }
+  components: { KeepClover, FieldItem, PageTitle }
 }
 </script>
 

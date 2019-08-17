@@ -5,9 +5,9 @@
         button.block.col-12.pointer.p2(@click="signClick") Sign In
       template(v-else)
         router-link.block.p2(to="/account") {{ userName(user) }}
-    .md-p2.h5.lh3
-      template(v-if="!authHeader") Sign in to edit your Profile, leave comments, and rename clovers
-      template(v-else)
+    .h5
+      .p2.lh2.center(v-if="!authHeader") Sign in to edit your Profile, leave comments, and rename clovers
+      .md-p2.lh3(v-else)
         div
           router-link.block.md-inline.p2.md-p0.border-bottom.md-border-none(:to="{name: 'Account'}", @click.native="$emit('closeAccountMenu')") Your Dashboard
         div

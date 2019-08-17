@@ -90,6 +90,9 @@ export default {
     //     return Number(b.modified) - Number(a.modified)
     //   })
   },
+  userAlbums ({ allAlbums }, { user }) {
+    return allAlbums.filter(a => a.userAddress === user.address)
+  },
   newCloversCount ({ newClovers }) {
     return newClovers.length
   },

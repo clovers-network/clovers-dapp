@@ -23,9 +23,13 @@
                   | {{ symms }}
 
       //- title
-      h1.hidden.md-block.font-exp.h3.col-4.py1.center
-        span.nowrap
-          | {{showMenu ? &apos;Clovers&apos; : $route.meta.title}}
+      h1.hidden.md-block.font-exp.col-4.py1.center.h5(v-show="$route.meta.logo !== false")
+        span.h3
+          router-link(to="/") Clovers
+          template(v-for="item in $route.meta.title")
+            | &#32;<span class="font-ext">&rarr;</span>&#32;
+            router-link(v-if="item[1]", :to="item[1]") {{item[0]}}
+            span(v-else) {{item[0]}}
       //- right col
       #accountHeader.col-4.flex.justify-end
         //- btn group
@@ -40,7 +44,7 @@
             //- dropdown: pig
             pig-menu(@closePigMenu="closePigMenu" v-click-outside="closePigMenu" v-if="pigMenu" )
           //- btn: picks
-          router-link.h-nav-btn.px2.flex.items-center.pointer(:to="{name: 'Picks'}")
+          router-link.h-nav-btn.px2.flex.items-center.pointer(:to="{name: 'Picks'}", :class="{'bg-green white': $route.name === 'Picks'}")
             cart-icon.mr1
             span.h6.sm-h5.lh1.block {{pickCount}}
           //- btn: tokens
@@ -54,8 +58,7 @@
               .chevron
             //- dropdown: account
             account-menu(@close-account-menu="closeAccountMenu" v-click-outside="closeAccountMenu" v-if="accountMenu")
-    //- (mobile page title)
-    h1.md-hide.h1.font-exp.mt3.pt1.px2.sm-px3(v-if="$route.meta.title") {{$route.meta.title}}
+
     //- nav overlay
     .fixed.z4.h-100vh.col-12.bg-green.top-0.left-0.flex.flex-column.justify-between.center(v-show='showMenu')
       .h-header

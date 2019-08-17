@@ -31,7 +31,7 @@ export default new Router({
       path: '/',
       name: 'Welcome',
       component: Welcome,
-      meta: { title: '' }
+      meta: { logo: false }
     },
     {
       path: '/welcome',
@@ -40,27 +40,23 @@ export default new Router({
     {
       path: '/soon',
       name: 'Soon',
-      component: ComingSoon,
-      meta: { title: '' }
+      component: ComingSoon
     },
     {
       path: '/garden',
       name: 'Garden',
-      component: Field,
-      meta: { title: 'Garden' }
+      component: Field
     },
     {
       path: '/feed',
       name: 'Feed',
-      component: Feed,
-      meta: { title: 'Feed' }
+      component: Feed
     },
 
     {
       path: '/trade',
       name: 'Trade',
-      component: Trade,
-      meta: { title: 'Trade' }
+      component: Trade
     },
     {
       path: '/learn',
@@ -73,19 +69,18 @@ export default new Router({
       path: '/account',
       name: 'Account',
       component: Account,
-      meta: { title: 'Dashboard' }
+      meta: { title: [['You']] }
     },
     {
       path: '/account/basket',
       name: 'Picks',
       component: Picks,
-      meta: { title: 'Your Basket' }
+      meta: { title: [['You', '/account']] }
     },
     {
       path: '/account/clovers',
       name: 'Account/Clovers',
-      component: User,
-      meta: { title: 'Your Clovers' }
+      component: User
     },
 
     {
@@ -96,15 +91,14 @@ export default new Router({
       path: '/clovers/:board',
       name: 'Clover',
       component: Clover,
-      props: true
-      // meta: { title: 'Clover' }
+      props: true,
+      meta: { logo: false }
     },
 
     {
       path: '/activity',
       name: 'Activity',
-      component: Activity,
-      meta: { title: 'Activity Log' }
+      component: Activity
     },
     {
       path: '/users/:addr',
@@ -115,13 +109,13 @@ export default new Router({
           path: '',
           name: 'User',
           component: UserClovers,
-          meta: { title: 'Collector' }
+          meta: { title: [['Users']] }
         },
         {
           path: 'albums',
           name: 'User/Albums',
           component: UserAlbums,
-          meta: { title: 'Collector' }
+          meta: { title: [['Users']] }
         }
       ]
     },
@@ -129,15 +123,14 @@ export default new Router({
     {
       path: '/albums',
       name: 'Albums',
-      component: Albums,
-      meta: { title: 'Albums' }
+      component: Albums
     },
     {
       path: '/albums/:id',
       name: 'Album',
       component: Album,
       props: true,
-      meta: { title: 'Album' }
+      meta: { title: [['Albums', '/albums']] }
     },
 
     {

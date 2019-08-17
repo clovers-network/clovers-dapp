@@ -1,6 +1,9 @@
 <template lang="pug">
-  .mx3
-    more-information(title="?") <u>The Activity Log</u> is where you can get an overview of everything that's happening on the site in real time. You'll see activity for when a new Clover is registered, when one is bought or listed for sale, when users buy or sell Clover Coin and when they comment on someones Clover."
+  article.mx3
+    header
+      page-title
+        h1 Activity
+        p(slot="info") The <b> Activity Log</b> is where you can get an overview of everything that's happening on Clovers.
 
     filters-nav(:page="filters.page", :maxPages="maxPage", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
       //- Filter
@@ -38,7 +41,7 @@
 import store from '@/store'
 import { mapGetters, mapActions } from 'vuex'
 import ActivityItem from '@/components/ActivityItem'
-import MoreInformation from '@/components/MoreInformation'
+import PageTitle from '@/components/PageTitle'
 import FiltersNav from '@/components/FiltersNav'
 import PageNav from '@/components/PageNav'
 import svgX from '@/components/Icons/SVG-X'
@@ -63,7 +66,7 @@ export default {
       },
 
       types: {
-        all: 'All',
+        all: 'All Activity',
         Comment_Added: 'Comments',
         CloverName_Changed: 'Clover name changes',
         Clovers_Transfer: 'Clover transfers',
@@ -193,6 +196,6 @@ export default {
   destroyed () {
     clearInterval(this.interval)
   },
-  components: { ActivityItem, svgX, MoreInformation, FiltersNav, PageNav }
+  components: { ActivityItem, svgX, PageTitle, FiltersNav, PageNav }
 }
 </script>
