@@ -29,7 +29,7 @@
   .md-border-none{border:none;}
   .md-bg-none{background:none;}
   .md-flex-first{order:-99;}
-
+  .md-border-b-0{border-bottom-width: 0}
 }
 
 @media (--breakpoint-lg) {

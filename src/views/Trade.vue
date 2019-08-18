@@ -1,9 +1,9 @@
 <template lang="pug">
-  article.mx2.md-mx0
+  article.mx2.md-mx0.mb4
     header.px2.md-px0
       page-title
         h1 Trade
-        p(slot="info") <b>Trade</b> is where you can buy or sell Clover Coin. This currency is used for registering new clovers and as a reward for finding symmetrical clovers. It uses a "bonding-curve" to buy and sell. To learn more about bonding-curves check out this <a class="underline" target='_blank' href='https://blog.relevant.community/how-to-make-bonding-curves-for-continuous-token-models-3784653f8b17'>article</a></u> or visit the <a class="underline" href='https://forum.clovers.network'>Forum</a> to find out more details.
+        p(slot="info") <b>Trade</b> is where you can buy or sell Clover Coin. This currency is used for registering new clovers and as a reward for finding symmetrical clovers. It uses a "bonding-curve" to buy and sell. To learn more about bonding-curves, check out this <a class="underline" target='_blank' href='https://blog.relevant.community/how-to-make-bonding-curves-for-continuous-token-models-3784653f8b17'>article</a></u> or visit the <a class="underline" href='https://forum.clovers.network'>Forum</a> to find out more details.
     //- header.flex(v-if="!isRFT")
       .col-6.p2
         small.lh2.block.h6 My Balance
@@ -20,21 +20,22 @@
           //- span.block.absolute.right-0.top-0.p2.h6.pointer(@click="switchMax") Last {{paddedOrders.length}} trades
           chart.border-bottom(:market="market", :orders="paddedOrders")
         //- details
-        .col-12.p2.rounded-bottom.border-left.border-right.border-bottom.flex.flex-wrap.justify-around.green.center.pointer(@click="swapCurrency", :class="{'flex-order_-1': isRFT}")
+        .col-12.md-p2.rounded-bottom.border-left.border-right.border-bottom.flex.flex-wrap.justify-around.green.center.pointer(@click="swapCurrency", :class="{'flex-order_-1': isRFT}")
           //- price
-          .col-4.p2.border-right
-            small.lh2.block.h6 {{isRFT ? 'Share Price' : '&clubs;&#xfe0e; Value in ' + displayIn}}
-            .font-exp.mt1.truncate(v-if="isRFT") {{denom}} {{ price.toFormat(4) }}
-            .font-exp.mt1.truncate(v-else) {{denom}} {{ price.toFormat(displayIn === 'ETH' ? 4 : 2) }} <span class="opacity-50 font-reg"> / <span v-html="currentToken" /></span>
+          .col-12.md-col-4.p2.border-bottom.md-border-right.md-border-b-0
+            small.lh3.h6.flex.items-center.justify-center {{'Value in ' + displayIn}}
+            .font-exp.mt1.truncate.flex.items-center.justify-center.mb1
+              | {{denom}} {{ price.toFormat(displayIn === 'ETH' ? 4 : 2) }}
+              span.opacity-50.font-reg.block.mx1 /
+              <coin-icon title="Clover Coin"/>
           //- supply
-          .col-4.p2
-            small.lh2.block.h6 Total {{currentTokenPlural}}
-            .font-exp.mtborder1.truncate {{ totalSupply.toFormat(0) }}
+          .col-6.md-col-4.p2
+            small.lh3.h6.flex.items-center.justify-center Total Supply <coin-icon class="ml1" />
+            .font-exp.mt1.truncate.mb1 {{ totalSupply.toFormat(0) }}
           //- market cap
-          .col-4.p2.border-left
-            small.lh2.block.h6 Market Cap in {{displayIn}}
-            //- .font-exp.mt1.truncate(v-if="isRFT") {{denom}} {{ marketCap.toFormat(2) }}
-            .font-exp.mt1.truncate {{denom}} {{ marketCap.toFormat(displayIn === 'ETH' ? 4 : 2) }}
+          .col-6.md-col-4.p2.border-left
+            small.lh3.block.h6 Market Cap in {{displayIn}}
+            .font-exp.mt1.truncate.mb1 {{denom}} {{ marketCap.toFormat(displayIn === 'ETH' ? 4 : 2) }}
 
       //- Buy | Sell
       section.mt2.mb3.p2.sm-p3.bg-lightest-green.rounded
@@ -43,17 +44,14 @@
           //- BUY
           form(v-if="view === 'buy'", @submit.prevent="buyTokens")
             .mb3.px1
-              label.block.h5.mb1
-                span Spend
-                //- span.opacity-50.pointer(v-if="isRFT", @click="spendAll") &emsp;(all)
+              label.block.h5.mb1.lh3 Spend
               .relative
                 input.input.border.font-exp.rounded(v-model="buy", placeholder="0", type="number", min="0", step="any")
-                span.absolute.top-0.right-0.p2.claimed {{collateral}}
-            .mb3.px1
-              p.h5.mb1 Receive
-              .relative
-                .pt1.pl2.pb2.border-bottom.font-exp {{clubReceive}}
-                span.absolute.top-0.right-0.py1.claimed {{currencies}}
+                span.absolute.top-0.right-0.p2.opacity-50 {{collateral}}
+            .mb3.px1.pb2
+              small.block.h5.mb1.lh3 Receive
+              .relative.p2.rounded.bg-lightest-green.font-exp {{clubReceive}}
+                span.absolute.top-0.right-0.p2.opacity-50.font-reg {{currencies}}
             button(:disabled="working").h-bttm-bar.col-12.pointer.rounded-2.bg-green.white
               span.font-exp(v-if="!working") Confirm
               wavey-menu.m-auto(v-else, :is-white="true")
@@ -61,18 +59,16 @@
           //- SELL
           form(v-else, @submit.prevent="sellTokens")
             .mb3.px1
-              label.block.h5.mb1
+              label.block.h5.mb1.lh3
                 span Amount
-                span.opacity-50.pointer(@click="sellAll") &emsp;(all)
+                button.inline.opacity-50.pointer(@click="sellAll") &emsp;(all)
               .relative
                 input.input.border.font-exp.rounded(v-model="sell", placeholder="0", type="number", min="0", step="any")
-                span.absolute.top-0.right-0.p2.claimed {{currencies}}
-            .mb3.px1
-              p.h5.mb1 Receive
-              .relative
-                //- input.input.border.font-exp(v-model="ethReceive", placeholder="ETH", disabled="true")
-                .pt1.pl2.pb2.border-bottom.font-exp {{ethReceive}}
-                span.absolute.top-0.right-0.py1.pr2.pb2.claimed {{collateral}}
+                span.absolute.top-0.right-0.p2.opacity-50 {{currencies}}
+            .mb3.px1.pb2
+              small.block.h5.mb1.lh3 Receive
+              .relative.p2.rounded.bg-lightest-green.font-exp {{ethReceive}}
+                span.absolute.top-0.right-0.p2.opacity-50.font-reg {{collateral}}
             button(:disabled="working").h-bttm-bar.col-12.pointer.rounded-2.bg-green.white.pointer
               span.font-exp(v-if="!working") Confirm
               wavey-menu.m-auto(v-else, :is-white="true")
@@ -87,6 +83,7 @@ import Chart from '@/components/Chart'
 import PageTitle from '@/components/PageTitle'
 import { prettyBigNumber } from '@/utils'
 import WaveyMenu from '@/components/Icons/WaveyMenu'
+import CoinIcon from '@/components/Icons/CoinIcon'
 
 export default {
   name: 'Trade',
@@ -295,6 +292,6 @@ export default {
   destroyed () {
     this.clearOrders()
   },
-  components: { ViewNav, Chart, WaveyMenu, PageTitle }
+  components: { ViewNav, Chart, WaveyMenu, PageTitle, CoinIcon }
 }
 </script>
