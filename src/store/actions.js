@@ -220,8 +220,8 @@ export default {
     // commit('UPDATE_WAIT_TO_PING', true)
   },
   async contractsDeployed ({ state }) {
-    return new Promise((resolve, _) => {
-      function tryDeploy() {
+    return new Promise((resolve, reject) => {
+      function tryDeploy () {
         if (state.contractsDeployed) {
           resolve()
         } else {
