@@ -20,21 +20,21 @@
           //- span.block.absolute.right-0.top-0.p2.h6.pointer(@click="switchMax") Last {{paddedOrders.length}} trades
           chart.border-bottom(:market="market", :orders="paddedOrders")
         //- details
-        .col-12.p2.rounded-bottom.border-left.border-right.border-bottom.flex.flex-wrap.justify-around.green.center(@click="swapCurrency", :class="{'flex-order_-1': isRFT}")
+        .col-12.p2.rounded-bottom.border-left.border-right.border-bottom.flex.flex-wrap.justify-around.green.center.pointer(@click="swapCurrency", :class="{'flex-order_-1': isRFT}")
           //- price
-          .col-12.md-col-4.p2.md-border-right
+          .col-4.p2.border-right
             small.lh2.block.h6 {{isRFT ? 'Share Price' : '&clubs;&#xfe0e; Value in ' + displayIn}}
             .font-exp.mt1.truncate(v-if="isRFT") {{denom}} {{ price.toFormat(4) }}
             .font-exp.mt1.truncate(v-else) {{denom}} {{ price.toFormat(displayIn === 'ETH' ? 4 : 2) }} <span class="opacity-50 font-reg"> / <span v-html="currentToken" /></span>
           //- supply
-          .col-6.md-col-4.p2
+          .col-4.p2
             small.lh2.block.h6 Total {{currentTokenPlural}}
             .font-exp.mtborder1.truncate {{ totalSupply.toFormat(0) }}
           //- market cap
-          .col-6.md-col-4.p2.border-left
+          .col-4.p2.border-left
             small.lh2.block.h6 Market Cap in {{displayIn}}
-            .font-exp.mt1.truncate(v-if="isRFT") {{denom}} {{ marketCap.toFormat(2) }}
-            .font-exp.mt1.truncate(v-else) {{denom}} {{ marketCap.toFormat(displayIn === 'ETH' ? 4 : 2) }}
+            //- .font-exp.mt1.truncate(v-if="isRFT") {{denom}} {{ marketCap.toFormat(2) }}
+            .font-exp.mt1.truncate {{denom}} {{ marketCap.toFormat(displayIn === 'ETH' ? 4 : 2) }}
 
       //- Buy | Sell
       section.mt2.mb3.p2.sm-p3.bg-lightest-green.rounded
@@ -45,7 +45,7 @@
             .mb3.px1
               label.block.h5.mb1
                 span Spend
-                span.opacity-50.pointer(v-if="isRFT", @click="spendAll") &emsp;(all)
+                //- span.opacity-50.pointer(v-if="isRFT", @click="spendAll") &emsp;(all)
               .relative
                 input.input.border.font-exp.rounded(v-model="buy", placeholder="0", type="number", min="0", step="any")
                 span.absolute.top-0.right-0.p2.claimed {{collateral}}
@@ -149,7 +149,7 @@ export default {
       return this.currentToken === 'Share' ? 'Shares' : '♣︎'
     },
     currencies () {
-      return this.currentToken === 'Share' ? 'Shares' : 'Coins (♣︎)'
+      return this.currentToken === 'Share' ? 'Shares' : 'Clover Coins'
     },
     price () {
       return this.displayIn === 'ETH' ? this.priceInEth : this.priceInUSD

@@ -2,7 +2,7 @@
   modal.green(@close="close")
     //- btn: pick | remove
     div(slot="top-right-btn")
-      button.px1.h5(v-if="$route.name === 'Picks'", @click="remove") Remove
+      button.px1.h5(v-if="$route.name === 'Picks'", @click="remove") Discard
       button.px1.pt1(v-else, @click="$store.commit('SAVE_CLOVER', clover)")
         heart-icon(:active="isSaved", :invisible="false")
 
