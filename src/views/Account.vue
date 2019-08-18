@@ -57,7 +57,7 @@
           button.ml3.h5.green.border.px3.p2.rounded-2.hover-bg-l-green.flex.items-center.justify-center.pointer(@click="newAlbum = true")
             | New
         //- (about albums)
-        p.my3.rounded.bg-lightest-green.p2(v-if="!userAlbums.length") Albums are for grouping clovers together. You can add any clover to your albums, even ones you don't own. Additionally, anyone can add to your album, but only you can edit it.
+        p.my3.rounded.bg-lightest-green.p2(v-if="!userAlbums.length") <b>Albums</b> are for grouping clovers together. You can add <i>any</i> clover to your albums, even ones you don't own. Anyone else can add to your albums, but only you can edit them.
         //- (albums list)
         .mt3.px1.sm-px0
           album-list-cards(:albums="userAlbums", :limit="4", :newBtn="true")
