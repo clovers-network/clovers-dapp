@@ -55,7 +55,7 @@ export default {
   name: 'Activity',
   data () {
     return {
-      interval: null,
+      keepChecking: true,
       currentBlock: null,
       loading: false,
 
@@ -189,12 +189,16 @@ export default {
     this.setFilters()
     this.query()
     this.getBlockNumber()
-    this.interval = setInterval(() => {
+    var checkBlock = () => {
       this.getBlockNumber()
-    }, 5000)
+      if (this.keepChecking) {
+        setTimeout(checkBlock, 5000)
+      }
+    }
+    checkBlock()
   },
   destroyed () {
-    clearInterval(this.interval)
+    this.keepChecking = false
   },
   components: { ActivityItem, svgX, PageTitle, FiltersNav, PageNav }
 }

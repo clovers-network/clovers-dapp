@@ -132,7 +132,7 @@ export default {
     },
     cloversCount () {
       if (!this.results || !this.results.allResults) return 0
-      return this.results.allResults
+      return this.results.allResults.toLocaleString()
     },
 
     showPickModal () {
@@ -192,7 +192,16 @@ export default {
     this.query()
     this.getAllAlbums()
   },
-  components: { UserCard, KeepClover, PickListItem, CloverListCards, EditUser, CoinIcon, AddAlbumModal, AlbumListCards }
+  components: {
+    UserCard,
+    KeepClover,
+    PickListItem,
+    CloverListCards,
+    EditUser,
+    CoinIcon,
+    AddAlbumModal,
+    AlbumListCards
+  }
 }
 </script>
 

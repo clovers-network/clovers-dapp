@@ -15,7 +15,7 @@
           .mt3.pt1.flex.items-center.h5.lh1
             .flex.items-center.mr3(v-if="user.clovers && user.clovers.length")
               img.block.mr1(src="@/assets/icons/clover-icon-1.svg")
-              span.block {{ user.clovers.length }}
+              span.block {{ cloverCount }}
             .flex.items-center(v-if="Number(user.balance)")
               coin-icon.mr1(:width="16")
               span.block {{ prettyUserBalance }}
@@ -35,13 +35,18 @@ export default {
   name: 'UserCard',
   props: ['user', 'editable'],
   computed: {
-    ...mapGetters(['userName', 'userImage']),
     prettyUserBalance () {
       return prettyBigNumber(this.user.balance || '0')
     },
     signIn () {
       return (!this.user || !this.user.address) && this.editable
-    }
+    },
+    cloverCount () {
+      let c = this.$store.state.pagedClovers.allResults || 0
+      return c.toLocaleString()
+    },
+
+    ...mapGetters(['userName', 'userImage'])
   },
   methods: {
     onCardClick () {

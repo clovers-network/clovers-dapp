@@ -221,12 +221,14 @@ export default {
   },
   async contractsDeployed ({ state }) {
     return new Promise((resolve, reject) => {
-      let interval = setInterval(() => {
+      function tryDeploy () {
         if (state.contractsDeployed) {
-          clearInterval(interval)
           resolve()
+        } else {
+          setTimeout(tryDeploy, 500)
         }
-      }, 500)
+      }
+      tryDeploy()
     })
   },
   async getContracts ({ dispatch, state, commit }) {
