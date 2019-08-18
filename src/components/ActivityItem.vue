@@ -130,7 +130,7 @@ export default {
   methods: {
     cloverImage,
     cloverLink,
-    getUser(key) {
+    getUser (key) {
       if (!this.item.userAddresses) return 'NO USER'
       let i = this.item.userAddresses && this.item.userAddresses.findIndex(i => i.id === key)
       if (i > -1) {
