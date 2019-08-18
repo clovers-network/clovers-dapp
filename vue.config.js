@@ -27,5 +27,14 @@ module.exports = {
         "underscore": path.resolve(__dirname, 'node_modules/underscore')
       }
     }
+  },
+  // (dev) force Safari not to cache
+  chainWebpack: config => {
+    if (process.env.NODE_ENV === 'development') {
+      config
+        .output
+        .filename('[name].[hash].js')
+        .end()
+    }
   }
 }
