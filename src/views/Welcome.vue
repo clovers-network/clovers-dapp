@@ -147,11 +147,6 @@ export default {
   },
   mounted () {
     this.$nextTick(() => this.scrollTo())
-    // setTimeout(() => {
-    //   this.interval = setInterval(() => {
-    //     this.swapVerb()
-    //   }, 1800)
-    // }, 2700)
   },
   destroyed () {
     clearInterval(this.interval)

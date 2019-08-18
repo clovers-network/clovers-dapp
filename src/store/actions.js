@@ -220,13 +220,15 @@ export default {
     // commit('UPDATE_WAIT_TO_PING', true)
   },
   async contractsDeployed ({ state }) {
-    return new Promise((resolve, reject) => {
-      let interval = setInterval(() => {
+    return new Promise((resolve, _) => {
+      function tryDeploy() {
         if (state.contractsDeployed) {
-          clearInterval(interval)
           resolve()
+        } else {
+          setTimeout(tryDeploy, 500)
         }
-      }, 500)
+      }
+      tryDeploy()
     })
   },
   async getContracts ({ dispatch, state, commit }) {
