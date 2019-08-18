@@ -49,8 +49,6 @@ import xss from 'xss'
 import axios from 'axios'
 import { cleanObj } from '@/utils'
 
-const logUrl = process.env.VUE_APP_API_URL + '/logs'
-
 export default {
   name: 'Activity',
   data () {
@@ -117,8 +115,7 @@ export default {
     filtersColors () {
       return this.showFilters ? 'bg-green white' : 'bg-white green'
     },
-
-    ...mapGetters(['userName'])
+    ...mapGetters(['userName', 'apiBase'])
   },
   methods: {
     setFilters () {
@@ -131,7 +128,7 @@ export default {
     query () {
       if (this.loading) return
       this.loading = true
-      axios.get(logUrl, {
+      axios.get(this.apiBase + '/logs', {
         params: { ...this.filters }
       }).then(({ data }) => {
         this.loading = false

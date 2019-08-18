@@ -117,7 +117,6 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['apiBase', 'authHeader']),
     signedIn () {
       return !!this.authHeader
     },
@@ -154,7 +153,8 @@ export default {
     noComments () {
       return !this.moreCommentsToLoad && !this.comments.length
     },
-    ...mapState(['allAlbums'])
+    ...mapState(['allAlbums']),
+    ...mapGetters(['apiBase', 'authHeader', 'apiBase'])
   },
   methods: {
     addListener () {
@@ -309,7 +309,7 @@ export default {
     })
 
     // listen for new comments and changes
-    this.socket = io(process.env.VUE_APP_API_URL, { path: '/comments' })
+    this.socket = io(this.apiBase, { path: '/comments' })
 
     this.socket.on('new comment', (doc) => {
       if (doc.board === this.board) {

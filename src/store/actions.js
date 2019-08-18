@@ -323,8 +323,8 @@ export default {
   },
 
   // api stuff
-  async setUpSocket ({ commit }) {
-    const socket = io(process.env.VUE_APP_API_URL)
+  async setUpSocket ({ commit, getters }) {
+    const socket = io(getters.apiBase)
 
     socket.on('connect', () => {
       console.log('connected')
@@ -705,6 +705,7 @@ export default {
       let ENSaddress = await global.ens.resolver(address).addr()
       address = ENSaddress
     } catch (error) {
+      console.error(error)
       console.error('No ENS')
     }
     if (!isHex(address) || address.replace('0x', '').length !== 40) {

@@ -118,7 +118,7 @@ export default {
       return `/users/${this.account}`
     },
     cloversUrl () {
-      return `${process.env.VUE_APP_API_URL}/users/${this.account || 'anon'}/clovers`
+      return `${this.apiBase}/users/${this.account || 'anon'}/clovers`
     },
     blankCloverImage () {
       return cloverImage('0', 160)
@@ -149,6 +149,7 @@ export default {
 
     ...mapState(['account', 'pagedClovers']),
     ...mapGetters([
+      'apiBase',
       'prettyUserBalance',
       'user',
       'picks',

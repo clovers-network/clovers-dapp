@@ -18,7 +18,6 @@ import Clv from '@/components/Clv'
 // import './registerServiceWorker'
 // import ZeroClientProvider from 'web3-provider-engine/zero.js'
 
-// global.ens = new ENS(global.web3.currentProvider)
 import Web3Connect from 'web3connect'
 
 const networks = {
@@ -35,6 +34,7 @@ if (global.ethereum) {
   const portis = new Portis(process.env.VUE_APP_PORTIS_DAPP, networks[store.state.correctNetwork])
   global.web3 = new Web3(portis.provider)
 }
+global.ens = new ENS(global.web3.currentProvider)
 global.web3Connect = new Web3Connect.Core({
   providerOptions: {
     portis: !global.web3.currentProvider.isPortis && {
@@ -51,6 +51,7 @@ global.web3Connect = new Web3Connect.Core({
 global.web3Connect.on('connect', (provider) => {
   global.web3 = new Web3(provider) // add provider to web3
   store.commit('UPDATE_WEB3', true)
+  global.ens = new ENS(global.web3.currentProvider)
   store.dispatch('signIn')
 })
 
@@ -76,7 +77,6 @@ Object.defineProperty(Vue.prototype, '$BN', { value: BN })
 // Vue config
 Vue.config.productionTip = false
 Vue.config.devtools = true
-// Vue.config.APIBaseUrl = process.env.VUE_APP_API_URL
 
 Vue.use(VueHead, { separator: '|', complement: 'Clovers' })
 Vue.use(VueTouch, { name: 'v-touch' })

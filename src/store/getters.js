@@ -6,10 +6,13 @@ import BigNumber from 'bignumber.js'
 
 export default {
   apiBase ({networkId}) {
+    console.log({networkId})
     var apiBase = process.env.VUE_APP_API_URL
+    console.log({apiBase})
     if (apiBase.indexOf(':4444') < 0) {
       apiBase = '//' + (networkId === 4 ? 'api2' : 'api') + '.clovers.network'
     }
+    console.log({apiBase})
     return apiBase
   },
   baseURL: (_, {apiBase}) => (path) => {
