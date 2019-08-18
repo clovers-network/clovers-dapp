@@ -31,8 +31,10 @@ export default {
   },
   userName: ({ nullAddress }, { cloversBankAddress, curationMarketAddress }) => (user, truncate = true) => {
     if (!user) return null
+    if (typeof user === 'string') {
+      user = { address: user }
+    }
     let { address } = user
-    console.log('addr', address)
     let name = address === cloversBankAddress ? 'Clovers'
       : address === curationMarketAddress ? 'Curation Mrkt.'
         : address === nullAddress ? 'Nobody' : null
