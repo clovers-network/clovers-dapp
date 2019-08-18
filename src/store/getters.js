@@ -7,8 +7,8 @@ import BigNumber from 'bignumber.js'
 export default {
   apiBase ({networkId}) {
     var apiBase = process.env.VUE_APP_API_URL
-    if (apiBase.indexOf(":4444") < 0) {
-      apiBase =  '//' + (networkId === 4 ? 'api2' : 'api') + '.clovers.network'
+    if (apiBase.indexOf(':4444') < 0) {
+      apiBase = '//' + (networkId === 4 ? 'api2' : 'api') + '.clovers.network'
     }
     return apiBase
   },

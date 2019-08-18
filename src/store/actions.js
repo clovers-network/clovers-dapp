@@ -1003,7 +1003,6 @@ export default {
   }
 }
 
-
 async function getLowestPrice (
   contracts,
   targetAmount,
