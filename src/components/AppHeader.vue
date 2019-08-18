@@ -1,7 +1,7 @@
  <template lang="pug">
   header.no-select(:class="{'bg-white green': !showMenu, 'white': showMenu}")
     //- top bar
-    .relative.z5.h-header.flex.items-center.justify-between
+    .relative.z4.h-header.flex.items-center.justify-between
       //- left col
       .col-4.flex.pl2.items-center
         //- desktop menu
