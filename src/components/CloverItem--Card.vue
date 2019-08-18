@@ -1,53 +1,31 @@
 <template lang="pug">
   router-link.block.clover-item-border.rounded(:to="cloverLink(clover)", :class="{'red': isRFT}")
-    .relative(v-if="clover.board")
-      .absolute.top-0.left-0.p2(v-if="isRFT", style="line-height:0")
-        span.red.font-mono.h6.line-height-1 RFT
-      .absolute.top-0.right-0.p2
-        symmetry-icons(v-if="clover", :board="clover.symmetries", style="font-size:8px")
-      figure.pb-120.relative
-        .absolute.top-0.left-0.col-12.h-100.flex.items-center.justify-center
-          img.block.col-7(:src="cloverImage(clover, 128)")
-      .relative
-        .absolute.left-0.mtn2.col-12.flex.justify-center
-          chat-icon.block(
-            :color="isRFT ? '#FF4136' : '#01B463'"
-            v-if="clover.commentCount != 0"
-            :count="clover.commentCount"
-            :size="16"
-            :blank="true"
-            :invert="false")
-        .center.px2
-          h3.h5.md-h4.truncate.rounded.p1.md-px2.block.inline-block.mx-auto(:class="{border: clover.name && clover.name !== clover.board}") {{ clover.name === clover.board ? '&nbsp;' : clover.name }}
+    article.relative.pb-ar-card(v-if="clover.board")
+      .absolute.overlay.flex.flex-column.justify-between.pt1.sm-pt2
+        //- symm icons
+        header.absolute.top-0.right-0.p1.sm-p2
+          symmetry-icons(v-if="clover", :board="clover.symmetries", style="font-size:8px")
+        figure.pb-100.relative.md-mt1
+          .absolute.overlay.flex.flex.items-center.justify-center
+            img.block.col-7(:src="cloverImage(clover, 128)")
+          .absolute.bottom-0.left-0.col-12.flex.justify-center(style="padding-bottom:.1em")
+            chat-icon.block(
+              :color="isRFT ? '#FF4136' : '#01B463'"
+              v-if="clover.commentCount != 0"
+              :count="clover.commentCount"
+              :size="16"
+              :blank="true"
+              :invert="false")
+        .px2.flex.items-center.lg-pb1
+          h3.h5.lh2.sm-h6.md-h4.truncate.rounded.p1.md-px2.mx-auto(:class="{border: clover.name && clover.name !== clover.board}") {{ clover.name === clover.board ? '&nbsp;' : clover.name }}
 
-      //- .px1
-        p.m0.h6 Owner 0x098hhi8hf98379874
-      .px1.pb2
-        .mt2.flex.items-end.nowrap
+        footer.px1.pb1.sm-pb2.flex.items-end.nowrap
           .px1.flex-auto
-            h3.h5.md-h4.truncate {{ userName(clover.user) }}
-          .px1.col-6.sm-col-5.flex.justify-end(v-if="isRFT || clover.price.toString(10) !== '0'")
-            h4.h5.md-h4.flex.items-center
+            h3.h5.md-h4.lg-h5.truncate {{ userName(clover.user) }}
+          .px1.col-6.sm-col-5.flex.justify-end(v-if="clover.price.toString(10) !== '0'")
+            h4.h5.md-h4.lg-h5.flex.items-center
               coin-icon.block.mr1
-              span(v-if="isRFT") {{ priceInCollateral.toFormat(4) }}
-              span(v-else) {{ displayPrice }}
-
-        //- .px1
-        //-   h3.h4.truncate
-        //-     span {{ clover.name }}
-        //-     span &nbsp;
-        //- .mt2.flex
-        //-   .px1.col-6
-        //-     h6.h7 {{isRFT ? 'Market Cap' : 'Owner'}}
-        //-     h4.h6.font-mono.truncate
-        //-       span(v-if="isRFT") ${{ marketCapInUSD.toFormat(2) }}
-        //-       span(v-else) {{ userName(clover.user) }}
-        //-   .px1.col-6(v-if="isRFT || clover.price.toString(10) !== '0'")
-        //-     .pl1
-        //-       h6.h7 {{ isRFT ? '&clubs; / Share' : 'Price &clubs;' }}
-        //-       h4.h6.font-mono.truncate
-        //-         span(v-if="isRFT") {{ priceInCollateral.toFormat(4) }}
-        //-         span(v-else) {{ prettyBigNumber(clover.price, 0) }}
+              | {{ displayPrice }}
 </template>
 
 <script>
