@@ -56,6 +56,7 @@
 .pb-120 { padding-bottom: 120%; }
 .pb-bttm-bar { padding-bottom: var(--height-bttm-bar); }
 .pb-full-height { padding-bottom: calc(100vh - 375px); }
+.pb-ar-card { padding-bottom: 165.69767442%; }
 
 .content-box{ box-sizing: content-box; }
 
