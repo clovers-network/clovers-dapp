@@ -32,7 +32,6 @@ export default {
   userName: ({ nullAddress }, { cloversBankAddress, curationMarketAddress }) => (user, truncate = true) => {
     if (!user) return null
     let { address } = user
-    console.log('addr', address)
     let name = address === cloversBankAddress ? 'Clovers'
       : address === curationMarketAddress ? 'Curation Mrkt.'
         : address === nullAddress ? 'Nobody' : null
@@ -126,7 +125,7 @@ export default {
   clubTokenInUSD ({ ethPrice }, { priceInCollateral }) {
     return priceInCollateral.times(new BigNumber(ethPrice))
   },
-  symmetries (state) {
+  symmetries () {
     // // return {Symmetricals: 0, RotSym: 0, X0Sym: 0, Y0Sym: 0, XYSym: 0, XnYSym: 0, PayMultiplier: 100}
     // let Symmetricals = 0
     // let RotSym = 0
