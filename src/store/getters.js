@@ -5,6 +5,16 @@ import { prettyBigNumber, abbrvAddr, abbrvNum, cloverImage } from '@/utils'
 import BigNumber from 'bignumber.js'
 
 export default {
+  apiBase ({networkId}) {
+    var apiBase = process.env.VUE_APP_API_URL
+    if (apiBase.indexOf(":4444") < 0) {
+      apiBase =  '//' + (networkId === 4 ? 'api2' : 'api') + '.clovers.network'
+    }
+    return apiBase
+  },
+  baseURL: (_, {apiBase}) => (path) => {
+    return apiBase + path
+  },
   user ({ account, accountData }) {
     if (!account) return { address: null, name: 'anon', clovers: [], balance: '0', image: '' }
     return accountData || {
@@ -117,8 +127,8 @@ export default {
   curationMarketAddress ({ correctNetwork }) {
     return null // CurationMarket.networks[correctNetwork].address.toLowerCase()
   },
-  cloversBankAddress ({ correctNetwork }) {
-    return Clovers.networks[correctNetwork].address.toLowerCase()
+  cloversBankAddress ({ networkId, correctNetwork }) {
+    return Clovers.networks[networkId || correctNetwork].address.toLowerCase()
   },
   priceInCollateral ({ orders }) {
     if (!orders.length) return new BigNumber(0)

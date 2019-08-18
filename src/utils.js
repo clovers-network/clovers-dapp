@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import utils from 'web3-utils'
 import store from './store'
 
+// this apiBase doesn't matter which network
 const apiBase = process.env.VUE_APP_API_URL
 const cloudinaryBase = process.env.VUE_APP_CLOUDINARY_BASE_URL
 

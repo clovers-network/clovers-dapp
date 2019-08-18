@@ -123,16 +123,13 @@ export default {
     blankCloverImage () {
       return cloverImage('0', 160)
     },
-    results () {
-      return this.$store.state.pagedClovers
-    },
     clovers () {
-      if (!this.results || !this.results.results) return []
-      return this.results.results.slice(0, 4)
+      if (!this.pagedClovers || !this.pagedClovers.results) return []
+      return this.pagedClovers.results.slice(0, 4)
     },
     cloversCount () {
-      if (!this.results || !this.results.allResults) return 0
-      return this.results.allResults.toLocaleString()
+      if (!this.pagedClovers || !this.pagedClovers.allResults) return 0
+      return this.pagedClovers.allResults.toLocaleString()
     },
 
     showPickModal () {
@@ -150,7 +147,7 @@ export default {
       ]
     },
 
-    ...mapState(['account']),
+    ...mapState(['account', 'pagedClovers']),
     ...mapGetters([
       'prettyUserBalance',
       'user',

@@ -1,7 +1,9 @@
 <template lang="pug">
-  section.mx3.md-mx0(v-if="userAlbums")
+  section.mx3.md-mx0
     header.hidden.md-block.h-select.py1.mb2.content-box
-    album-list-cards(:albums="userAlbums", :newBtn="isOwner")
+    album-list-cards(v-if="userAlbums.length" :albums="userAlbums", :newBtn="isOwner")
+    div(v-else)
+      p.center.p2.m0 Nothing to show
 </template>
 
 <script>

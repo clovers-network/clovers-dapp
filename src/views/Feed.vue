@@ -49,8 +49,6 @@ import PageNav from '@/components/PageNav'
 import svgX from '@/components/Icons/SVG-X'
 import FiltersNav from '@/components/FiltersNav'
 
-const apiUrl = process.env.VUE_APP_API_URL + '/clovers'
-
 export default {
   name: 'Feed',
   data () {
@@ -132,7 +130,7 @@ export default {
     },
 
     ...mapState(['newClovers']),
-    ...mapGetters(['newCloversCount'])
+    ...mapGetters(['newCloversCount', 'apiBase'])
   },
   watch: {
     filters: {
@@ -180,9 +178,8 @@ export default {
       if (this.loading) return
       this.filtersVisible = false
       this.loading = true
-
       this.$store.dispatch('getPagedClovers', {
-        url: apiUrl,
+        url: this.apiBase + '/clovers',
         filters: this.filters
       }).then(() => {
         this.loading = false

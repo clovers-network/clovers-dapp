@@ -11,7 +11,6 @@ import confetti from 'canvas-confetti'
 
 window.contracts = contracts
 
-export const apiBase = process.env.VUE_APP_API_URL
 const msgParams = [
   {
     type: 'string',
@@ -266,8 +265,8 @@ export default {
   clearOrders ({ commit }) {
     commit('SET_ORDERS', [])
   },
-  getOrders ({ commit }, market = 'ClubToken') {
-    axios.get(apiUrl(`/orders/${market}`)).then(({ data }) => {
+  getOrders ({ commit, getters }, market = 'ClubToken') {
+    axios.get(getters.baseURL(`/orders/${market}`)).then(({ data }) => {
       commit('SET_MARKET', market)
       commit('SET_ORDERS', data)
       return data
@@ -285,7 +284,7 @@ export default {
     if (!address) return
     return axios
       .put(
-        apiUrl(`/users/${address}`),
+        getters.baseURL(`/users/${address}`),
         { name, image },
         {
           headers: {
@@ -306,8 +305,11 @@ export default {
           msg: err.message
         })
         if ('response' in err) {
-          if (err.response.status === 401) {
+          console.log({err})
+          if (err.response && err.response.status === 401) {
             commit('SIGN_OUT')
+          } else {
+            console.error(err.message)
           }
         }
       })
@@ -376,24 +378,24 @@ export default {
     }
     return msg.id
   },
-  async cloverExists (_, byteBoard) {
+  async cloverExists ({getters}, byteBoard) {
     // let exists = await contracts.Clovers.instance.methods.exists(byteBoard).call()
-    return axios.get(apiUrl(`/clovers/${byteBoard}`)).then(() => true).catch(() => false)
+    return axios.get(getters.baseURL(`/clovers/${byteBoard}`)).then(() => true).catch(() => false)
   },
 
-  getCurrentUser ({ commit }, account) {
+  getCurrentUser ({ getters, commit }, account) {
     // empty / sign-out:
     if (!account) return commit('SET_USER', null)
-    return axios.get(apiUrl(`/users/${account.toLowerCase()}`))
+    return axios.get(getters.baseURL(`/users/${account.toLowerCase()}`))
       .then(({ data }) => commit('SET_USER', data))
   },
-  getUser ({ commit }, account) {
+  getUser ({ commit, getters }, account) {
     if (!account) return
-    return axios.get(apiUrl(`/users/${account.toLowerCase()}`))
+    return axios.get(getters.baseURL(`/users/${account.toLowerCase()}`))
       .then(({ data }) => commit('SET_OTHER_USER', data))
   },
 
-  getPagedClovers ({ state, commit }, { url, filters = {} }) {
+  getPagedClovers ({ commit }, { url, filters = {} }) {
     return axios.get(url, {
       params: { ...filters }
     }).then(({ data }) => commit('SET_PAGED_CLOVERS', data))
@@ -404,28 +406,28 @@ export default {
       })
   },
 
-  getClover ({ state, commit }, board) {
+  getClover ({ commit, getters }, board) {
     if (!board) {
       return Promise.reject(new Error('Missing parameter: `board` (address)'))
     }
-    return axios.get(apiUrl('/clovers/' + board))
+    return axios.get(getters.baseURL('/clovers/' + board))
       .then(({ data }) => {
         if (!data) throw new Error('404')
         commit('SET_CURRENT_CLOVER', data)
       }).catch(console.error)
   },
 
-  getComments (_, { board, params }) {
+  getComments ({getters}, { board, params }) {
     if (!board) {
       return Promise.reject(new Error('Missing parameter: `board` (address)'))
     }
-    return axios.get(apiUrl(`/chats/${board}`), { params })
+    return axios.get(getters.baseURL(`/chats/${board}`), { params })
   },
   addComment ({ getters }, { board, comment }) {
     if (!board) {
       return Promise.reject(new Error('Missing parameter: `board` (address)'))
     }
-    return axios.post(apiUrl(`/chats/${board}`), { comment }, {
+    return axios.post(getters.baseURL(`/chats/${board}`), { comment }, {
       headers: {
         Authorization: getters.authHeader
       }
@@ -433,7 +435,7 @@ export default {
       .catch(console.error)
   },
   flagOrDeleteComment ({ getters }, id) {
-    return axios.delete(apiUrl(`/chats/${id}`), {
+    return axios.delete(getters.baseURL(`/chats/${id}`), {
       headers: {
         Authorization: getters.authHeader
       }
@@ -561,7 +563,7 @@ export default {
     // if (!getters.authHeader) alert('Not signed in, this won\'t work')
     return axios
       .put(
-        apiUrl(`/clovers/${board}`),
+        getters.baseURL(`/clovers/${board}`),
         { name },
         {
           headers: {
@@ -687,8 +689,8 @@ export default {
         })
     }
   },
-  syncClover (_, clover) {
-    axios.get(apiUrl(`/clovers/sync/${clover.board}`)).catch(error => {
+  syncClover ({getters}, clover) {
+    axios.get(getters.baseURL(`/clovers/sync/${clover.board}`)).catch(error => {
       console.error(error)
     })
   },
@@ -864,8 +866,8 @@ export default {
 
   // ALBUMS
 
-  getAllAlbums ({commit}) {
-    return axios.get(apiUrl('/albums/list/all'))
+  getAllAlbums ({getters, commit}) {
+    return axios.get(getters.baseURL('/albums/list/all'))
       .then((results) => {
         console.log({results})
         commit('SET_ALL_ALBUMS', results.data)
@@ -890,7 +892,7 @@ export default {
       return Promise.reject(new Error('Misisng album id'))
     }
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
-    return axios.delete(apiUrl('/albums/' + albumId), {
+    return axios.delete(getters.baseURL('/albums/' + albumId), {
       headers: {
         Authorization: getters.authHeader
       }
@@ -920,7 +922,7 @@ export default {
       return Promise.reject(new Error('Missing album'))
     }
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
-    return axios.post(apiUrl('/albums'), {albumName: album.name, clovers: album.clovers}, {
+    return axios.post(getters.baseURL('/albums'), {albumName: album.name, clovers: album.clovers}, {
       headers: {
         Authorization: getters.authHeader
       }
@@ -951,7 +953,7 @@ export default {
       return Promise.reject(new Error('Missing album'))
     }
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
-    return axios.put(apiUrl('/albums/' + album.id), {albumName: album.name, clovers: album.clovers}, {
+    return axios.put(getters.baseURL('/albums/' + album.id), {albumName: album.name, clovers: album.clovers}, {
       headers: {
         Authorization: getters.authHeader
       }
@@ -989,11 +991,11 @@ export default {
       })
   },
 
-  getAlbum ({ state, commit }, albumId) {
+  getAlbum ({ getters, commit }, albumId) {
     if (!albumId) {
       return Promise.reject(new Error('Missing parameter: `id`'))
     }
-    return axios.get(apiUrl('/albums/' + albumId))
+    return axios.get(getters.baseURL('/albums/' + albumId))
       .then(({data}) => {
         if (!data) throw new Error('404')
         commit('SET_CURRENT_ALBUM', data)
@@ -1001,9 +1003,6 @@ export default {
   }
 }
 
-function apiUrl (path) {
-  return apiBase + path
-}
 
 async function getLowestPrice (
   contracts,

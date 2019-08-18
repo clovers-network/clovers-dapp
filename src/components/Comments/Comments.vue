@@ -86,8 +86,7 @@ import ChatIcon from '@/components/Icons/ChatIcon'
 import ViewNav from '@/components/ViewNav'
 import ActivityItem from '@/components/ActivityItem'
 import AddToAlbumModal from '@/components/Modals/AddToAlbumModal'
-import { apiBase } from '@/store/actions'
-import { mapActions, mapState } from 'vuex'
+import { mapGetters, mapActions, mapState } from 'vuex'
 import { cloverImage } from '@/utils'
 
 export default {
@@ -118,8 +117,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['apiBase', 'authHeader']),
     signedIn () {
-      return !!this.$store.getters.authHeader
+      return !!this.authHeader
     },
     buttonTxt () {
       return this.posting ? 'Posting...' : 'Submit'
@@ -222,7 +222,7 @@ export default {
       this.getAllAlbums()
     },
     loadActivity () {
-      return axios.get(`${apiBase}/clovers/${this.board}/activity`, {
+      return axios.get(`${this.apiBase}/clovers/${this.board}/activity`, {
         params: { page: this.filters.page }
       }).then(({ data }) => {
         this.logs = data

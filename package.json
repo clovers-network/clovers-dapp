@@ -21,7 +21,7 @@
     "bottleneck": "^2.6.0",
     "canvas-confetti": "^0.3.0",
     "chart.js": "^2.7.2",
-    "clovers-contracts": "https://github.com/clovers-network/clovers-contracts#52c98bf28065ddf822428d94f17e9dc07b7992b0",
+    "clovers-contracts": "1.0.20",
     "clovers-reversi": "^1.0.14",
     "copy-to-clipboard": "^3.2.0",
     "decimal.js": "^10.2.0",

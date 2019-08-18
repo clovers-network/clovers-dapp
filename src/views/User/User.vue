@@ -1,5 +1,5 @@
 <template lang="pug">
-  .green.relative.mb4.pb4(v-if="user")
+  .green.relative.mb4.pb4(v-if="user || isClovers")
     //- profile
     header
       user-card(:user="user")
@@ -17,13 +17,17 @@
 import store from '@/store'
 import UserCard from '@/components/UserCard'
 import NotFound from '@/views/404'
-
+import {mapGetters} from 'vuex'
 export default {
   name: 'User',
   props: {
     addr: String
   },
   computed: {
+    ...mapGetters(['cloversBankAddress']),
+    isClovers () {
+      return this.user && this.user.address.toLowerCase() === this.cloversBankAddress
+    },
     name () {
       return this.$store.getters.userName(this.user)
     },

@@ -1,7 +1,7 @@
 <template lang="pug">
   section.mx3.md-mx0
     //- filters
-    filters-nav(:page="filters.page", :maxPages="maxPage", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
+    filters-nav(v-if="hasResults", :page="filters.page", :maxPages="maxPage", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
       select(slot="filter", v-model="filters.filter")
         option(:value="undefined") All Clovers
         option(value="forsale") Clovers for Sale
@@ -9,6 +9,7 @@
       select(slot="sort", v-model='filters.sort')
         option(:value='undefined') Sort by Date
         option(value='price') Sort by Price
+    header.hidden.md-block.h-select.py1.mb2.content-box(v-else)
     section
       //- (list)
       .fade-enter-active(v-if="hasResults", :class="{'opacity-50':loading}")
@@ -17,7 +18,7 @@
       div(v-else)
         p.center.p2.m0 Nothing to show
 
-      page-nav(:hasResults="hasResults", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
+      page-nav(v-if="hasResults", :hasResults="hasResults", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
 </template>
 
 <script>
@@ -25,6 +26,7 @@ import CloverListCards from '@/components/CloverList--Cards'
 import FiltersNav from '@/components/FiltersNav'
 import PageNav from '@/components/PageNav'
 import { cleanObj } from '@/utils'
+import {mapGetters} from 'vuex'
 export default {
   name: 'User__Clovers',
   props: ['user'],
@@ -40,6 +42,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['apiBase']),
     clovers () {
       if (!this.results.results) return []
       return this.results.results
@@ -61,7 +64,7 @@ export default {
       return Math.ceil(this.results.allResults / 12)
     },
     apiUrl () {
-      return `${process.env.VUE_APP_API_URL}/users/${this.user.address}/clovers`
+      return `${this.apiBase}/users/${this.user.address}/clovers`
     }
   },
   methods: {

@@ -40,7 +40,7 @@ const state = {
   querying: false,
   tryAgain: false,
   networkId: null,
-  correctNetwork: 4,
+  correctNetwork: 1,
   contractsDeployed: false,
   nullAddress: '0x0000000000000000000000000000000000000000',
 
