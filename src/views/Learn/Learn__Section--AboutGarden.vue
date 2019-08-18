@@ -1,6 +1,6 @@
 <template lang="pug">
   about(v-on="$listeners")
-    h3(slot="header") Or find more by visiting your <b>Garden. </b><br class="hide sm-show">It seeds new clovers as you scroll...
+    h3(slot="header") Visit your <b>Garden</b> to find more clovers. <br class="hide sm-show">It seeds new clovers as you scroll...
     img.block(slot="graphic", src="./imgs/garden.svg", style="height:70vh;max-height:80vw;max-width:none")
 </template>
 

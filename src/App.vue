@@ -1,7 +1,7 @@
 <template lang="pug">
   #app.relative
     app-header(v-if="$route.name !== 'Soon'")
-    main.mx-auto.md-col-10.lg-col-8.min-height-app
+    main.mx-auto.md-col-10.lg-col-8(:class="{'min-height-app': !$route.meta.isOverlay}")
       router-view
     foot
     messages

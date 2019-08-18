@@ -120,6 +120,3 @@ export default {
   components: { CloverListCards, FiltersNav, PageNav }
 }
 </script>
-
-<style>
-</style>

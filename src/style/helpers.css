@@ -19,7 +19,7 @@
 .h-select{height:var(--height-select);}
 .h-header{height:var(--height-header);}
 .h-bttm-bar{height:var(--height-bttm-bar);}
-.h-100vh{height:100vh}
+.h-100vh{height:50vh}
 .h-100vw{height:100vw;}
 .min-h-100vh{min-height: 100vh}
 
@@ -56,6 +56,7 @@
 .pb-120 { padding-bottom: 120%; }
 .pb-bttm-bar { padding-bottom: var(--height-bttm-bar); }
 .pb-full-height { padding-bottom: calc(100vh - 375px); }
+.pb-ar-card { padding-bottom: 164%; }
 
 .content-box{ box-sizing: content-box; }
 
@@ -109,7 +110,18 @@
 .touch-scroll {-webkit-overflow-scrolling: touch;}
 .overflow-x-scroll{overflow-x:scroll;}
 .overflow-y-scroll{overflow-y:scroll;}
-.invisible-scrollbar::-webkit-scrollbar {display: none;}
+.invisible-scrollbar{
+  &::-webkit-scrollbar {
+    display: none;
+    background-color: transparent;
+  }
+  &::-webkit-scrollbar-thumb{
+    background-color: transparent;
+  }
+  &::-webkit-scrollbar-track{
+    background-color: transparent;
+  }
+}
 
 .flex-grow{flex-grow: 1;}
 .flex-order_-1{order:-1;}

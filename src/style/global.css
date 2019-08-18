@@ -241,8 +241,6 @@ hr {
   }
 }
 
-.claimed { opacity: .5; }
-
 .clover-item-border {
   border: 1px dashed;
   box-shadow: none;

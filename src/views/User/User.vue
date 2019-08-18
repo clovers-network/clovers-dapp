@@ -10,11 +10,14 @@
           router-link.inline-block.mr3(:to="{name: 'User', params: {addr: user.address}}", :class="{'opacity-25': $route.name !== 'User'}") Clovers
           router-link.inline-block(:to="{name: 'User/Albums', params: {addr: user.address}}", :class="{'opacity-25': $route.name !== 'User/Albums'}") Albums
       router-view(:user="user")
+  not-found(v-else)
 </template>
 
 <script>
 import store from '@/store'
 import UserCard from '@/components/UserCard'
+import NotFound from '@/views/404'
+
 export default {
   name: 'User',
   props: {
@@ -31,12 +34,12 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     const { addr } = to.params
-    store.dispatch('getUser', addr).then(next)
+    store.dispatch('getUser', addr).finally(next)
   },
   beforeRouteUpdate (to, from, next) {
     const { addr } = to.params
-    store.dispatch('getUser', addr).then(next)
+    store.dispatch('getUser', addr).finally(next)
   },
-  components: { UserCard }
+  components: { UserCard, NotFound }
 }
 </script>

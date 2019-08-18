@@ -61,7 +61,8 @@ export default new Router({
     {
       path: '/learn',
       name: 'Learn',
-      component: Learn
+      component: Learn,
+      meta: { isOverlay: true }
     },
 
     // account dashboard

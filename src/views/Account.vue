@@ -57,7 +57,7 @@
           button.ml3.h5.green.border.px3.p2.rounded-2.hover-bg-l-green.flex.items-center.justify-center.pointer(@click="newAlbum = true")
             | New
         //- (about albums)
-        p.my3.rounded.bg-lightest-green.p2(v-if="!userAlbums.length") Albums are for grouping clovers together. You can add any clover to your albums, even ones you don't own. Additionally, anyone can add to your album, but only you can edit it.
+        p.my3.rounded.bg-lightest-green.p2(v-if="!userAlbums.length") <b>Albums</b> are for grouping clovers together. You can add <i>any</i> clover to your albums, even ones you don't own &mdash; and, Anyone else can add to your albums, but only you can edit them.
         //- (albums list)
         .mt3.px1.sm-px0
           album-list-cards(:albums="userAlbums", :limit="4", :newBtn="true")
@@ -66,7 +66,7 @@
             router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(v-if="userAlbums.length", :to="{name: 'User/Albums', params: {addr: account}}")
               | View All
 
-    footer.py2.center
+    footer.py2.center.mb3
       p.h1(style="filter:hue-rotate(292deg)") ☘️
 
     transition(name="fade")
@@ -132,7 +132,7 @@ export default {
     },
     cloversCount () {
       if (!this.results || !this.results.allResults) return 0
-      return this.results.allResults
+      return this.results.allResults.toLocaleString()
     },
 
     showPickModal () {
@@ -192,7 +192,16 @@ export default {
     this.query()
     this.getAllAlbums()
   },
-  components: { UserCard, KeepClover, PickListItem, CloverListCards, EditUser, CoinIcon, AddAlbumModal, AlbumListCards }
+  components: {
+    UserCard,
+    KeepClover,
+    PickListItem,
+    CloverListCards,
+    EditUser,
+    CoinIcon,
+    AddAlbumModal,
+    AlbumListCards
+  }
 }
 </script>
 

@@ -1,6 +1,6 @@
 <template lang="pug">
   .relative.w-100
-    .overflow-x-scroll.invisible-scrollbar(ref="container")
+    .overflow-x-scroll.touch-scroll.invisible-scrollbar.py4(ref="container")
       .center.nowrap(style="min-width:100%")
         .inline-block.px3.md-px1
         .inline-block.px3.md-px2.content-box(v-for="clover in clovers")

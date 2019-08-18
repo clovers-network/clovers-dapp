@@ -128,7 +128,7 @@ export default {
   clubTokenInUSD ({ ethPrice }, { priceInCollateral }) {
     return priceInCollateral.times(new BigNumber(ethPrice))
   },
-  symmetries (state) {
+  symmetries () {
     // // return {Symmetricals: 0, RotSym: 0, X0Sym: 0, Y0Sym: 0, XYSym: 0, XnYSym: 0, PayMultiplier: 100}
     // let Symmetricals = 0
     // let RotSym = 0
