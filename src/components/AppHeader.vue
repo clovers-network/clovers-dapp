@@ -61,7 +61,7 @@
           account-menu.mr2.md-mr3(v-if="accountMenu", @close-account-menu="closeAccountMenu", v-click-outside="closeAccountMenu")
 
     //- nav overlay
-    .fixed.z4.h-100vh.col-12.bg-green.top-0.left-0.flex.flex-column.justify-between.center(v-show='showMenu')
+    .fixed.z3.h-100vh.col-12.bg-green.top-0.left-0.flex.flex-column.justify-between.center(v-show='showMenu')
       .h-header
       nav.flex-auto.flex.items-center.justify-center.pb1
         ul.h2.list-reset
