@@ -33,39 +33,40 @@
         .absolute.top-0.right-0.flex.items-center.p2(v-if="isSymm")
           symmetry-icons(:board="clover.symmetries", style="font-size:12px")
 
-    .center.mt4.mb2.md-mb3
-      h1.h1.font-exp.m0.ws-pl
-        span {{ cloverName }}
-        span.pr3.font-reg.light-green.pointer.absolute.flip-x(v-if="signedIn && isMyClover", @click="currentAction = 'change'") ✎
+    header.center.mt4.mb2.md-mb3
+      h1.flex.justify-center
+        .ws-pl.relative(@click="openNameEditor", :class="{'pointer': isMyClover}")
+          span.h1.font-exp.lh1 {{ cloverName }}
+          button.h2.absolute.font-reg.light-green.pointer.top-0.right-0.py1.md-px1(v-if="isMyClover", @click="openNameEditor", style="transform:translate(100%,-50%) scale(-1,1)", aria-label="Edit Name") ✎
 
-      .h3.font-reg.mt2
-        span.pr1 Owner:
-        router-link.py1.px2.rounded.white.bg-green(v-if="clover && clover.owner", :to="{name: 'User', params:{addr: clover.owner}}") {{ currentOwner }}
-        span.py1.px2.rounded.white.bg-green(v-else) {{ currentOwner }}
-        span.pl2.light-green.pointer.absolute(v-if="isMyClover && !showSalePrice", @click="currentAction='transfer'") &rlarr; Transfer
+      h2.h3.font-reg.mt2.pt1.flex.items-center.justify-center.flex-wrap.col-12.px3
+        span.pr1.pl2.my1 Owner{{currentOwner.length > 16 ? ':' : ' &rarr;'}}
+        router-link.my1.py1.px2.rounded.border.hover-bg-l-green(v-if="clover && clover.owner", :to="{name: 'User', params:{addr: clover.owner}}") {{ currentOwner }}
+        span.my1.py1.px2.rounded.border(v-else) {{ currentOwner }}
+        span.my1.pl1.pointer.nowrap.opacity-50.hover-opacity-100.trans-fast(v-if="isMyClover && !showSalePrice", @click="currentAction='transfer'") &rarr; Transfer
 
     //- Trade
     template(v-if="isRFT")
       trade(:market="board", :sharesOwnedWei="sharesOwnedWei", @trade="checkShares")
 
     template(v-else)
-      .flex.flex-wrap.justify-center.my4
-        .mx1.mb2.flex.items-center
-          .flex.items-center.py2.px3.border.rounded(v-if="showSalePrice")
+      .flex.flex-wrap.justify-center.my4.px3
+        .mx1.mb2.flex.items-center.py2.px3.border.rounded-2
+          template(v-if="showSalePrice")
             span.pr2 Price:
-            coin-icon.mr1
             span.font-exp {{ prettyPrice }}
-          .flex.items-center.py2.px3.border.rounded(v-else)
-            span.pr2 Original price:
-            coin-icon.mr1
+            coin-icon.ml1
+          template(v-else)
+            span.pr2 Original value:
             span.font-exp ~{{ originalPrice }}
+            coin-icon.ml1
 
-        .mx1.mb2.rounded.white.bg-green(v-if="isMyClover")
+        .mx1.mb2.rounded-2.white.bg-green(v-if="isMyClover")
           button.line-height-4.pointer.py2.px3.font-exp(@click="currentAction = 'sell'") {{ sellButton }}
-        .mx1.mb2.rounded.white.bg-green(v-else-if="showSalePrice")
-          button.line-height-4.pointer.py2.px3.font-exp(@click="currentAction = 'buy'") BUY
-        .mx1.mb2.rounded.light-green.border(v-else)
-          button.line-height-4.py2.px3.font-exp Unavailable
+        .mx1.mb2.rounded-2.white.bg-green(v-else-if="showSalePrice")
+          button.line-height-4.pointer.py2.px3.font-exp(@click="currentAction = 'buy'") Buy
+        .mx1.mb2.rounded-2.light-green.border(v-else)
+          span.inline-block.line-height-4.py2.px3.font-exp Unavailable
 
     //- comments
     section.mt4.md-mb4.pt1.max-width-3.mx-auto
@@ -248,7 +249,7 @@ export default {
       return name
     },
     sellButton () {
-      return this.price > 0 ? 'Change price' : 'Sell Clover'
+      return this.price > 0 ? 'Change price' : 'Sell'
     },
 
     ...mapState(['account', 'orders']),
@@ -301,6 +302,12 @@ export default {
       this.metaTitle = name
       this.$emit('updateHead')
     },
+    openNameEditor () {
+      if (this.signedIn && this.isMyClover) {
+        this.currentAction = 'change'
+      }
+    },
+
     ...mapActions([
       'makeCloverRFT',
       'signIn',
