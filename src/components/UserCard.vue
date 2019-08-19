@@ -2,21 +2,21 @@
   .my3.sm-my4.sm-mx3.md-mx0.bg-lightest-green.sm-bg-none.sm-col-9(v-if="user")
     //- border
     .block.sm-inline-block.sm-min-width-2.relative.sm-border.rounded(:class="{'sm-border-dashed pointer hover-border-solid hover-shadow': signIn}", @click="onCardClick")
-      .py2.sm-py1.px3.flex.items-start.justify-between.sm-justify-start
+      .py2.sm-py1.px3.flex.justify-between.sm-justify-start
         //- info
-        .pt2.pb3
+        .pt2.pb3.flex.flex-column
           h2.h3.mb1.font-exp.lh1.sm-pt1
             router-link(v-if="user.address", :to="{name: 'User', params: {addr: user.address}}") {{ userName(user) }}
             span(v-else-if="signIn") Sign In...
-          small.block.h7
+          small.block.h7.flex-auto
             span(v-if="user.created") Member since block # {{ user.created.toLocaleString() }}
             span(v-else-if="user.modified") Last active, block # {{ user.modified.toLocaleString() }}
           //- stats
           .mt3.pt1.flex.items-center.h5.lh1
-            .flex.items-center.mr3(v-if="user.clovers && user.clovers.length")
+            .flex.items-center.mr3
               img.block.mr1(src="@/assets/icons/clover-icon-1.svg")
               span.block {{ cloverCount }}
-            .flex.items-center(v-if="Number(user.balance)")
+            .flex.items-center
               coin-icon.mr1(:width="16")
               span.block {{ prettyUserBalance }}
         //- avatar
@@ -29,14 +29,14 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { prettyBigNumber } from '@/utils'
+import { concatPrice, prettyBigNumber } from '@/utils'
 import CoinIcon from '@/components/Icons/CoinIcon'
 export default {
   name: 'UserCard',
   props: ['user', 'editable'],
   computed: {
     prettyUserBalance () {
-      return prettyBigNumber(this.user.balance || '0')
+      return concatPrice(prettyBigNumber(this.user.balance || '0'))
     },
     signIn () {
       return (!this.user || !this.user.address) && this.editable
