@@ -42,11 +42,11 @@ export default {
       return this.$store.state.otherUser
     },
     cloverCount () {
-      const c = this.$store.state.pagedClovers.allResults || 0
+      const c = (this.user && this.user.cloverCount) || 0
       return concatPrice(c)
     },
     albumCount () {
-      const c = this.user.albumCount || 0
+      const c = (this.user && this.user.albumCount) || 0
       return concatPrice(c)
     }
   },
