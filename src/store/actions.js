@@ -81,13 +81,14 @@ export default {
       dispatch('stop')
     }
   },
-  newSymFound (_) {
-    // alert('new sym!!!!')
-    var end = Date.now() + (1 * 1000)
-
-    // go Buckeyes!
-    var colors = ['#01B463', '#FF4136', '#FFDC00', '#0074D9'];
-
+  newSymFound ({ dispatch }) {
+    // alert
+    setTimeout(() => {
+      dispatch('selfDestructMsg', { msg: 'New symmetrical clover found!', link: { name: 'Picks' } })
+    }, 1000)
+    // confetti:
+    const end = Date.now() + (1 * 1000)
+    const colors = ['#01B463', '#FF4136', '#FFDC00', '#0074D9']; // go Buckeyes!
     (function frame () {
       confetti({
         particleCount: 4,
@@ -892,7 +893,7 @@ export default {
         // console.log({results})
         commit('SET_ALL_ALBUMS', results.data)
       }).catch((err) => {
-        dispatch('selfDestructmsg', {
+        dispatch('selfDestructMsg', {
           type: 'error',
           msg: err.message
         })
