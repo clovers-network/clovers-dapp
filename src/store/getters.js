@@ -10,7 +10,7 @@ export default {
     var apiBase = process.env.VUE_APP_API_URL
     // console.log({apiBase})
     if (apiBase.indexOf(':4444') < 0) {
-      apiBase = '//' + (networkId === 4 ? 'api2' : 'api') + '.clovers.network'
+      apiBase = 'https://' + (networkId === 4 ? 'api2' : 'api') + '.clovers.network'
     }
     // console.log({apiBase})
     return apiBase
