@@ -9,10 +9,10 @@
         nav.h2.lg-h3.font-exp.lh2.h-select.flex.items-end
           router-link.inline-block.mr3(:to="{name: 'User', params: {addr: user.address}}", :class="{'opacity-25': $route.name !== 'User'}")
             span Clovers
-            sup.h6.font-mono {{ cloverCount }}
+            sup.font-mono.sup {{ cloverCount }}
           router-link.inline-block(:to="{name: 'User/Albums', params: {addr: user.address}}", :class="{'opacity-25': $route.name !== 'User/Albums'}")
             span Albums
-            sup.h6.font-mono {{ albumCount }}
+            sup.font-mono.sup {{ albumCount }}
       router-view(:user="user")
   not-found(v-else)
 </template>
@@ -61,3 +61,7 @@ export default {
   components: { UserCard, NotFound }
 }
 </script>
+
+<style>
+.sup{ margin-left:0.33em; font-size:0.625em; }
+</style>
