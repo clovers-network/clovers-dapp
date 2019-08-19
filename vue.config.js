@@ -2,6 +2,8 @@
 const path = require('path')
 const webpack = require('webpack')
 
+const production = process.env.NODE_ENV === 'production'
+
 module.exports = {
   lintOnSave: false,
   devServer: {
@@ -15,7 +17,7 @@ module.exports = {
       }
     },
     plugins: [
-      // new BundleAnalyzerPlugin(),
+     // new BundleAnalyzerPlugin(),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
     ],
     output: {

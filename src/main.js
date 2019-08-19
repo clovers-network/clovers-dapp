@@ -15,7 +15,6 @@ import BN from 'bignumber.js'
 
 import Clv from '@/components/Clv'
 // import CloverGridItem from '@/components/CloverGridItem'
-// import './registerServiceWorker'
 // import ZeroClientProvider from 'web3-provider-engine/zero.js'
 
 import Web3Connect from 'web3connect'
@@ -84,7 +83,6 @@ Object.defineProperty(Vue.prototype, '$BN', { value: BN })
 
 // Vue config
 Vue.config.productionTip = false
-Vue.config.devtools = true
 
 Vue.use(VueHead, { separator: '|', complement: 'Clovers' })
 Vue.use(VueTouch, { name: 'v-touch' })

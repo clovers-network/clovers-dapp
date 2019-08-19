@@ -198,10 +198,14 @@ export default {
   },
   async getNetwork ({ commit, state, dispatch }) {
     console.log('getNetwork')
-    const networkId = await global.web3.eth.net.getId()
-    if (state.networkId !== networkId) {
-      commit('SET_NETWORK', networkId)
-      await dispatch('getContracts')
+    try {
+      const networkId = await global.web3.eth.net.getId()
+      if (state.networkId !== networkId) {
+        commit('SET_NETWORK', networkId)
+        await dispatch('getContracts')
+      }
+    } catch (error) {
+      console.log(error)
     }
   },
   async getAccount ({ commit, dispatch, state }) {
@@ -272,14 +276,14 @@ export default {
       return data
     })
   },
-  async updateUserENS ({ commit }, user) {
-    let ensName = await global.ens
-      .reverse(user.address)
-      .name()
-      .catch(e => {})
-    user.ens = ensName === undefined ? false : ensName
-    commit('UPDATE_USER', user)
-  },
+  // async updateUserENS ({ commit }, user) {
+  //   let ensName = await global.ens
+  //     .reverse(user.address)
+  //     .name()
+  //     .catch(e => {})
+  //   user.ens = ensName === undefined ? false : ensName
+  //   commit('UPDATE_USER', user)
+  // },
   async changeUsername ({ commit, getters, dispatch }, { address, name, image }) {
     if (!address) return
     return axios
@@ -715,12 +719,6 @@ export default {
       console.error(error)
     })
   },
-  async getShares ({ state, dispatch }, market) {
-    await dispatch('contractsDeployed')
-    return contracts.CurationMarket.instance.methods
-      .balanceOf(new BigNumber(market, 16), state.account)
-      .call()
-  },
   async transferClover ({ state, dispatch }, { clover, address }) {
     try {
       let ENSaddress = await global.ens.resolver(address).addr()
@@ -888,13 +886,16 @@ export default {
 
   // ALBUMS
 
-  getAllAlbums ({getters, commit}) {
+  getAllAlbums ({ getters, commit, dispatch }) {
     return axios.get(getters.baseURL('/albums/list/all'))
       .then((results) => {
-        console.log({results})
+        // console.log({results})
         commit('SET_ALL_ALBUMS', results.data)
       }).catch((err) => {
-        console.error(err)
+        dispatch('selfDestructmsg', {
+          type: 'error',
+          msg: err.message
+        })
       })
   },
 
