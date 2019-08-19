@@ -42,8 +42,8 @@ export default {
       return (!this.user || !this.user.address) && this.editable
     },
     cloverCount () {
-      let c = this.$store.state.pagedClovers.allResults || 0
-      return c.toLocaleString()
+      const c = (this.user && this.user.cloverCount) || 0
+      return concatPrice(c)
     },
 
     ...mapGetters(['userName', 'userImage'])
