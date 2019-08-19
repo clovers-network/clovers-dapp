@@ -19,7 +19,7 @@ import AlbumListCards from '@/components/AlbumList--Cards'
 import FiltersNav from '@/components/FiltersNav'
 import PageNav from '@/components/PageNav'
 import { cleanObj } from '@/utils'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 
 export default {
   name: 'PagedAlbums',
@@ -35,9 +35,10 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['apiBase']),
     ...mapState(['pagedAlbums']),
     apiUrl () {
-      return `${process.env.VUE_APP_API_URL}${this.apiPath}`
+      return `${this.apiBase}${this.apiPath}`
     },
     albums () {
       if (!this.results.results) return []
