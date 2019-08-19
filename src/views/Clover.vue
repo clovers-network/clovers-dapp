@@ -249,7 +249,7 @@ export default {
       return name
     },
     sellButton () {
-      return this.price > 0 ? 'Change price' : 'Sell'
+      return this.price > 0 ? 'Change Price' : 'Sell'
     },
 
     ...mapState(['account', 'orders']),

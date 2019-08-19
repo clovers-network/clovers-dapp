@@ -2,19 +2,19 @@
   .mx3.mb3.mt2
 
     .center
-      .inline-block.py2.px3.border.rounded
-        span.inline-block.font-exp.h3.wrap-word {{ cloverPrice }} <coin-icon style="padding-bottom:3px"/>
+      .inline-block.py2.px3.border-dashed.rounded
+        span.h3.font-exp.flex.items-center.wrap-word {{ cloverPrice }} <coin-icon class="ml1"/>
 
-    .flex.justify-around.my3.bg-light-green.green.rounded.py2.center.items-center
-      .px2.col-6.border-right
-        small.block.lh1.h6 Your Balance
-        .font-exp {{ prettyUserBalance }} <coin-icon/>
-      .px2.col-6
-        small.block.lh1.h6 Balance After
-        .font-exp.wrap-word {{ balanceAfter }} <coin-icon/>
+    .flex.justify-around.my3.bg-lightest-green.green.rounded.py3.center.items-center
+      .px1.col-6.border-right
+        small.block.lh1.h6.mb1 Your Balance
+        span.flex.items-center.justify-center.font-exp {{ prettyUserBalance }} <coin-icon class="ml1"/>
+      .px1.col-6
+        small.block.lh1.h6.mb1 Balance After
+        span.flex.items-center.justify-center.font-exp.wrap-word {{ balanceAfter }} <coin-icon class="ml1"/>
 
-    .font-ext.center(:class="{'pointer-events-none': submitting}")
-      button.pointer.py2.px3.rounded.white.trans-bg(:class="cancelled ? 'bg-red' : 'bg-green'", type="submit", @click="confirm") {{ buttonText }}
+    footer.font-exp.center.mb2(:class="{'pointer-events-none': submitting}")
+      button.pointer.py2.px3.rounded-2.white.trans-bg.h3(:class="cancelled ? 'bg-red' : 'bg-green'", type="submit", @click="confirm") {{ buttonText }}
 </template>
 
 <script>
@@ -44,7 +44,7 @@ export default {
     },
     buttonText () {
       if (this.cancelled) return 'Transaction cancelled'
-      return this.submitting ? 'Submitting...' : 'Buy now'
+      return this.submitting ? 'Submitting...' : 'Buy'
     },
     balanceAfterBn () {
       if (!this.userBalance) return new this.$BN('0')
