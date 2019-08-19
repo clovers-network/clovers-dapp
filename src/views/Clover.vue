@@ -301,12 +301,6 @@ export default {
       this.metaTitle = name
       this.$emit('updateHead')
     },
-    async checkShares () {
-      if (this.isRFT) {
-        this.sharesOwnedWei = await this.getShares(this.board)
-      }
-    },
-
     ...mapActions([
       'makeCloverRFT',
       'signIn',
@@ -314,7 +308,6 @@ export default {
       'divest',
       'selfDestructMsg',
       'addMessage',
-      'getShares'
     ])
   },
   beforeRouteEnter (to, from, next) {

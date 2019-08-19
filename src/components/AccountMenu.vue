@@ -19,7 +19,7 @@
       div
         a.block.md-inline.p2.md-p0(href="mailto:hello@clovers.network", target="_blank" @click.native="$emit('closeAccountMenu')") Contact
     .md-p2.lh3.border-top(v-if="authHeader")
-        button.block.md-inline.col-12.p2.md-p0.left-align(@click="signClick") Sign Out     
+        button.block.md-inline.col-12.p2.md-p0.left-align(@click="signClick") Sign Out
 </template>
 
 <script>

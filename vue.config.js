@@ -15,7 +15,7 @@ module.exports = {
       }
     },
     plugins: [
-      // new BundleAnalyzerPlugin(),
+     // new BundleAnalyzerPlugin(),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
     ],
     output: {
