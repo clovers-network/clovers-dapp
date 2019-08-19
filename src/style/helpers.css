@@ -1,3 +1,8 @@
+.hidden{ display:none; }
+
+.visible{ visibility: visible; }
+.invisible { visibility: hidden }
+
 .top-100 { top: 100%; }
 .top-header-h { top: var(--height-header); }
 .top-header-h-2 { top: calc(var(--height-header) * 2 + 1px); }

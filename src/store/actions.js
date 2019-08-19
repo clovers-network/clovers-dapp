@@ -886,13 +886,16 @@ export default {
 
   // ALBUMS
 
-  getAllAlbums ({getters, commit}) {
+  getAllAlbums ({ getters, commit, dispatch }) {
     return axios.get(getters.baseURL('/albums/list/all'))
       .then((results) => {
-        console.log({results})
+        // console.log({results})
         commit('SET_ALL_ALBUMS', results.data)
       }).catch((err) => {
-        console.error(err)
+        dispatch('selfDestructmsg', {
+          type: 'error',
+          msg: err.message
+        })
       })
   },
 
