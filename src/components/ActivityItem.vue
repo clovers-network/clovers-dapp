@@ -116,7 +116,6 @@ export default {
       return !isMine ? '' : 'bg-lightest-green'
     },
     // userName () {
-    //   console.log(this.item.user || {address: this.item.userAddress})
     //   return this.parseUser(this.item.user || {address: this.item.userAddress})
     // },
     newPrice () {
