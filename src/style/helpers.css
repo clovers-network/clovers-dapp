@@ -10,6 +10,7 @@
 
 .momentum { -webkit-overflow-scrolling: touch; }
 
+.max-w-full{max-width: 100%}
 .min-width-1 { min-width: var(--width-0);}
 
 .h7 { font-size: .94rem; }
