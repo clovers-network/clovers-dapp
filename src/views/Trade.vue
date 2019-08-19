@@ -61,7 +61,7 @@
             .mb3.px1
               label.block.h5.mb1.lh3
                 span Amount
-                button.inline.opacity-50.pointer(@click="sellAll") &emsp;(all)
+                button.inline.opacity-50.pointer(@click.prevent="sellAll") &emsp;(all)
               .relative
                 input.input.border.font-exp.rounded(v-model="sell", placeholder="0", type="number", min="0", step="any")
                 span.absolute.top-0.right-0.p2.opacity-50 {{currencies}}

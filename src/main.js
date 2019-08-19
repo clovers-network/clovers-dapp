@@ -68,9 +68,18 @@ router.beforeEach((to, from, next) => {
   // }
 })
 
-router.afterEach(() => {
-  if (ga) ga('send', 'pageview')
+if (ga) {
+  ga('set', 'page', router.currentRoute.path);
+  ga('send', 'pageview');
+}
+
+router.afterEach(( to, from ) => {
+  if (ga) {
+    ga('set', 'page', to.path);
+    ga('send', 'pageview');
+  }
 })
+
 
 Object.defineProperty(Vue.prototype, '$BN', { value: BN })
 
