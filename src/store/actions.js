@@ -492,7 +492,7 @@ export default {
 
       var now = new Date()
       var signingParams = JSON.parse(JSON.stringify(msgParams))
-      var thisMonth = now.getMonth() + '/' + now.getFullYear()
+      var thisMonth = (now.getMonth() + 1) + '/' + now.getFullYear()
       signingParams[0].value += thisMonth
 
       global.web3.currentProvider.sendAsync(
@@ -519,7 +519,7 @@ export default {
     return new Promise(async (resolve, reject) => {
       var now = new Date()
       var signingParams = JSON.parse(JSON.stringify(msgParams))
-      var thisMonth = now.getMonth() + '/' + now.getFullYear()
+      var thisMonth = (now.getMonth() + 1) + '/' + now.getFullYear()
       signingParams[0].value += thisMonth
 
       try {
