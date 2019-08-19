@@ -18,8 +18,9 @@
 import AlbumListCards from '@/components/AlbumList--Cards'
 import FiltersNav from '@/components/FiltersNav'
 import PageNav from '@/components/PageNav'
-// import { cleanObj } from '@/utils'
-import {mapState, mapGetters} from 'vuex'
+import { cleanObj } from '@/utils'
+import { mapState } from 'vuex'
+
 export default {
   name: 'PagedAlbums',
   props: {
@@ -29,18 +30,14 @@ export default {
     return {
       loading: false,
       filters: {
-        sort: undefined,
-        filter: undefined,
-        page: 1, // (temp) change back to: undefined,
-        asc: undefined
+        page: 1 // (temp) change back to: undefined
       }
     }
   },
   computed: {
-    ...mapGetters(['apiBase']),
     ...mapState(['pagedAlbums']),
     apiUrl () {
-      return `${this.apiBase}${this.apiPath}`
+      return `${process.env.VUE_APP_API_URL}${this.apiPath}`
     },
     albums () {
       if (!this.results.results) return []
@@ -69,8 +66,8 @@ export default {
       this.loading = true
 
       this.$store.dispatch('getPagedAlbums', {
-        url: this.apiUrl
-        // filters: this.filters
+        url: this.apiUrl,
+        filters: this.filters
       }).then(() => {
         this.loading = false
       }).catch((error) => {
@@ -79,19 +76,41 @@ export default {
       })
     },
     back () {
-      // if (!this.prevPossible) return
-      // this.filters.page = this.results.prevPage
+      if (!this.prevPossible) return
+      this.filters.page = this.results.prevPage
     },
     forward () {
-      // if (!this.nextPossible) return
-      // this.filters.page = this.results.nextPage
+      if (!this.nextPossible) return
+      this.filters.page = this.results.nextPage
+    },
+    setFilters () {
+      const { query } = this.$route
+      this.filters.page = query.page || 1
+      // this.filters.filter = query.filter || undefined
+      // this.filters.sort = query.sort || undefined
+      // this.filters.asc = query.asc || false
     }
   },
   mounted () {
+    this.setFilters()
     this.query()
   },
   watch: {
+    filters: {
+      deep: true,
+      handler ({ filter }) {
+        let q = { ...this.filters }
+        cleanObj(q)
+        const cf = this.$route.query.filter
+        if (cf !== filter) {
+          delete q.page
+        }
+        this.$router.push({ name: 'Albums', query: { ...q } })
+      }
+    },
     $route () {
+      window.scroll(0, 0)
+      this.setFilters()
       this.query()
     }
   },
