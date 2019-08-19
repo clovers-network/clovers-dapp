@@ -30,7 +30,7 @@
       ul.mt3.mb0.list-reset.flex.flex-wrap
         li.col-12.sm-col-6.px1(v-for="(album, i) in albums")
           router-link.block.px2.py3.my1.rounded.clover-item-border.flex.justify-center(:to="{name: 'Album', params: {id: album.id}}")
-            h4.font-exp {{album.name}}
+            h4.font-exp.truncate {{album.name}}
             //- h6.h6 [username]
       footer.sticky.bottom-0.left-0.mt1.px1.pb2
         .rounded(style="background:rgba(255,255,255,.9)")

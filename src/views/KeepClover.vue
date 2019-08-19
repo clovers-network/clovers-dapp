@@ -37,7 +37,7 @@
               .bold.flex.items-center + {{ sellValue }} <coin-icon class="ml1"/>
           p.center.h6.underline.mb0.mt3.help(@click="showMore = true" v-if="!showMore") More Information
           p.center.h6.mb0.mt3.pointer.mx-auto.col-10(v-if="showMore" @click="showMore = false")
-            span(v-if="mode === 'keep'") To register this clover on the network,<br>a base fee of <span class="nowrap">10&nbsp;<coin-icon :width="10" class="inline-block"/></span> is charged
+            span(v-if="mode === 'keep'") To register this clover on the network,<br>a base fee of <span class="nowrap">1&nbsp;<coin-icon :width="10" class="inline-block"/></span> is charged
             span(v-else) Claim a reward for this rare clover.<br>This requires a verification before payout and can take a few minutes
 
         //- confirm
