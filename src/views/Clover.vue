@@ -307,7 +307,7 @@ export default {
       'invest',
       'divest',
       'selfDestructMsg',
-      'addMessage',
+      'addMessage'
     ])
   },
   beforeRouteEnter (to, from, next) {
