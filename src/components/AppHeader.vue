@@ -1,17 +1,17 @@
  <template lang="pug">
   header.no-select(:class="{'bg-white green': !showMenu, 'white': showMenu}")
     //- top bar
-    .relative.z4.h-header.flex.items-center.justify-between
+    .relative.z4.col-12.h-header.flex.items-center.justify-between(:class="{'fixed': showMenu}")
       //- left col
       .col-4.flex.pl2.items-center
-        //- desktop menu
-        #desktopMenu.flex.flex-center.ml3
+        //- (desktop menu)
+        #desktopMenu.hidden.md-flex.flex-center.ml3
           router-link.pr2(:to="{name: 'Garden'}") Garden
           router-link.pr2(:to="{name: 'Feed'}") Feed
           router-link.pr2(:to="{name: 'Albums'}") Albums
           router-link.pr2(:to="{name: 'Activity'}") Activity
-        //- menu btn
-        button#mobileMenu.menu-btn.pointer.relative.py2.pr2(@click='clickMenu' aria-label='Toggle Menu')
+        //- (menu btn - mobile)
+        button#mobileMenu.md-hidden.menu-btn.pointer.relative.py2.pr2(@click='clickMenu' aria-label='Toggle Menu')
           wavey-btn(v-show='mining', :is-white='showMenu')
           img.block(v-show='!mining', :src="showMenu\
             ? require('../assets/icons/hamburger-white.svg')\
@@ -61,26 +61,23 @@
           account-menu.mr2.md-mr3(v-if="accountMenu", @close-account-menu="closeAccountMenu", v-click-outside="closeAccountMenu")
 
     //- nav overlay
-    .fixed.z3.h-100vh.col-12.bg-green.top-0.left-0.flex.flex-column.justify-between.center(v-show='showMenu')
-      .h-header
-      nav.flex-auto.flex.items-center.justify-center.pb1
-        ul.h2.list-reset
-          li
-            router-link.inline-block.p1(:to="{ name: 'Welcome' }" exact) Welcome
-          li
-            router-link.inline-block.p1(:to="{ name: 'Feed' }") Feed
-          li
-            router-link.inline-block.p1(:to="{ name: 'Garden' }") Garden
-          li
-            router-link.inline-block.p1(:to="{name: 'Albums'}") Albums
-          li
-            router-link.inline-block.p1.relative(:to="{ name: 'Activity' }")
-              span Activity <sup v-if="newLogs">{{newLogs}}</sup>
-              //- span.circle.bg-orange.absolute(v-if="newLogs" style="width:8px;height:8px")
-          //- li
-            router-link.inline-block.p1(:to="{name: 'Account'}") Dashboard
-      .sm-hide.border.rounded.m2
-        pig.py3.mb1(@viewPicks="$router.push({name: 'Picks'})")
+    nav.fixed.z3.col-12.bg-green.top-0.left-0.h-100vh(:class="showMenu ? 'visible md-invisible' : 'invisible'")
+      .flex.flex-column.justify-between.center(:style="{height: winH + 'px'}")
+        section.flex-auto.mx2.mt4.pt2.flex.flex-column
+          header.h5.font-exp.left-align.mb1.lh3
+            router-link.h1(to="/") Clovers
+          nav.flex-auto.flex.flex-column
+            ul.h2.list-reset.m0.flex-auto.flex.flex-column.font-ext
+              router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center(:to="{ name: 'Feed' }") Feed
+              router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center(:to="{ name: 'Garden' }") Garden
+              router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center(:to="{name: 'Albums'}") Albums
+              router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center.relative(:to="{ name: 'Activity' }")
+                  span Activity <sup v-if="newLogs">{{newLogs}}</sup>
+                  //- span.circle.bg-orange.absolute(v-if="newLogs" style="width:8px;height:8px")
+              //- li
+                router-link.inline-block.p1(:to="{name: 'Account'}") Dashboard
+        section.sm-hide.border-dashed.rounded.mt1.mx2.mb2
+          pig.py3.mb1(@viewPicks="$router.push({name: 'Picks'})")
 </template>
 
 <script>
@@ -101,7 +98,9 @@ export default {
       showMenu: false,
       pigMenu: false,
       accountMenu: false,
-      showBadge: false
+      showBadge: false,
+      afterResize: null,
+      winH: window.innerHeight
     }
   },
   computed: {
@@ -137,6 +136,7 @@ export default {
       this.showBadge = true
     },
     showMenu () {
+      this.winH = window.innerHeight
       this.showBadge = false
       if (this.showMenu) {
         document.body.style.overflow = 'hidden'
@@ -147,10 +147,11 @@ export default {
   },
   mounted () {
     window.addEventListener('keyup', this.checkEsc)
-    window.addEventListener('resize', () => { this.showMenu = false })
+    window.addEventListener('resize', this.onResize)
   },
   destroyed () {
     window.removeEventListener('keyup', this.checkEsc)
+    window.removeEventListener('resize', this.onResize)
   },
   methods: {
     clickMenu () {
@@ -176,6 +177,13 @@ export default {
     viewPicks () {
       this.showMenu = false
       this.$router.push({ name: 'Picks' })
+    },
+    onResize () {
+      clearTimeout(this.afterResize)
+      this.afterResize = setTimeout(() => {
+        if (window.innerWidth < 769) return // match _settings.css (md)
+        this.showMenu = false
+      })
     }
   },
   directives: { ClickOutside },
@@ -240,15 +248,4 @@ export default {
       opacity: 0;
     }
   }
-  @media (--breakpoint-md) {
-    #mobileMenu {
-      display: none;
-    }
-  }
-  @media (--breakpoint-sm-only) {
-    #desktopMenu {
-      display: none;
-    }
-  }
-
 </style>

@@ -1,5 +1,3 @@
-.hidden{ display:none; }
-
 @media (--breakpoint-xs) {
   .xs-border-right-transp{border-right-color:transparent}
   .xs-shadow-none{box-shadow: none}
@@ -21,7 +19,9 @@
   /*.sm-rounded-none{border-radius: none}*/
 }
 @media (--breakpoint-md) {
+  .md-flex{ display:flex; }
   .md-block{ display: block }
+  .md-hidden{display: none}
   .md-border-right-transp{border-right-color:transparent;}
   .md-border-right{border-right-style:solid;}
   .md-border-bottom{border-bottom-style: solid}
@@ -33,6 +33,7 @@
   .md-bg-green{background-color:var(--green);}
   .md-white{color:white;}
   .md-justify-end{justify-content: flex-end}
+  .md-invisible{visibility: hidden}
 }
 
 @media (--breakpoint-lg) {
