@@ -188,8 +188,8 @@ export default {
       return this.invesment ? toWei(this.invesment) : '0'
     },
     originalPrice () {
-      if (!this.clover || !this.clover.reward) return '10'
-      let r = makeBn(this.clover.reward).add(toWei('10'))
+      if (!this.clover || !this.clover.reward) return '1'
+      let r = makeBn(this.clover.reward).add(toWei('1'))
       return parseFloat(prettyBigNumber(r, 2))
     },
     balanceAfterBn () {
