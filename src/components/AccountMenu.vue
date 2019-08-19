@@ -6,20 +6,22 @@
       template(v-else)
         router-link.block.p2(to="/account") {{ userName(user) }}
     .h5.p2.lh2.center(v-if="!authHeader") Sign in to register clovers, edit your Profile, and leave&nbsp;comments.
-    .md-px2.md-pt2.lh3(v-else)
+    .md-p2.lh3.md-border-bottom(v-else)
       div
         router-link.block.md-inline.p2.md-p0.border-bottom.md-border-none(:to="{name: 'Account'}", @click.native="$emit('closeAccountMenu')") Your Dashboard
       div
         router-link.block.md-inline.p2.md-p0.border-bottom.md-border-none(:to="'/users/' + account", @click.native="$emit('closeAccountMenu')") Your Profile
-    div.md-px2.md-pb2(:class='{"md-pt2": !authHeader, "lh3": !authHeader, "border-top": !authHeader}')
+      .hidden.md-block
+        button.block.md-inline.col-12.p2.md-p0.left-align(@click="signClick") Sign Out
+    .md-p2(:class='{"md-pt2": !authHeader, "lh3": !authHeader, "border-top": !authHeader}')
       div
         router-link.block.md-inline.p2.md-p0.border-bottom.md-border-none(:to="{name: 'Learn'}", @click.native="$emit('closeAccountMenu')") Tutorial
       div
-        a.block.md-inline.p2.md-p0.border-bottom.md-border-none(href="//forum.clovers.network/t/frequently-asked-questions-faq/", @click.native="$emit('closeAccountMenu')") Support
+        a.block.md-inline.p2.md-p0.border-bottom.md-border-none(href="//forum.clovers.network/t/frequently-asked-questions-faq/", @click.native="$emit('closeAccountMenu')") FAQ
       div
         a.block.md-inline.p2.md-p0(href="mailto:hello@clovers.network", target="_blank" @click.native="$emit('closeAccountMenu')") Contact
-    .md-p2.lh3.border-top(v-if="authHeader")
-        button.block.md-inline.col-12.p2.md-p0.left-align(@click="signClick") Sign Out
+    .md-hidden.border-top(v-if="authHeader")
+      button.block.col-12.p2.center.bg-lightest-green(@click="signClick") Sign Out
 </template>
 
 <script>

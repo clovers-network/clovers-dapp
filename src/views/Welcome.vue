@@ -1,5 +1,5 @@
 <template lang="pug">
-  .pt2.mt3.mb4.overflow-hidden.rounded.sm-mx2.sm-border.sm-pt4
+  .pt2.mt3.mb4.overflow-hidden.rounded.sm-mx2.sm-border.sm-pt4.md-mx0
     h1.h1.center.green.font-exp.strong.pb3
       | Clovers
     .center.my3.relative
