@@ -1,6 +1,6 @@
 <template>
   <article
-    :style="{'padding-top': (market === 'ClubToken' ? 'calc(100vh - 575px)' : 'calc(100vh - 900px)')}"
+    :style="{'padding-top': (market === 'ClubToken' ? 'calc(100vh - 737px)' : 'calc(100vh - 900px)')}"
     class="relative minh-200">
     <price-chart
       :chart-data="chartData"

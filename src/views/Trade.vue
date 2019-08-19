@@ -125,7 +125,8 @@ export default {
     paddedOrders () {
       if (!this.orders || this.orders.length === 0) return []
       let firstOrder = this.orders[0]
-      return ([firstOrder, ...this.orders]).slice(0, this.max)
+      return this.orders.slice(0, this.max)
+      // return ([firstOrder, ...this.orders]).slice(0, this.max)
     },
     denom () {
       return this.displayIn === 'ETH' ? 'Ξ' : '$'

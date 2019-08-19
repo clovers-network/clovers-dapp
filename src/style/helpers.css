@@ -19,7 +19,7 @@
 .h-select{height:var(--height-select);}
 .h-header{height:var(--height-header);}
 .h-bttm-bar{height:var(--height-bttm-bar);}
-.h-100vh{height:50vh}
+.h-100vh{height:100vh}
 .h-100vw{height:100vw;}
 .min-h-100vh{min-height: 100vh}
 
