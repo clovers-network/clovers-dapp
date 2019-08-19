@@ -3,11 +3,11 @@
     label.mb2.center.flex.items-center.justify-center Sell Price <coin-icon class="ml1" />
     input.border.py2.px2.rounded.col-12.input(v-model="form.price" autocomplete="off" placeholder="Edit Clover price" step="any" type="number" min="0" max="1000000" required v-autofocus="true")
 
-    p.center.h6.mb2.mt3.pointer(@click="form.price = '0'")
-      span Set to <span class="font-mono">0</span> to remove from marketplace
+    p.center.h6.mt3.mb2.pointer(@click="form.price = '0'")
+      | Set to <span class="font-mono">0</span> to remove from marketplace
 
-    .pt2.center.mb2(:class="{'pointer-events-none': submitting}")
-      input.font-exp.pointer.py2.px3.rounded-2.white.trans-bg(:class="cancelled ? 'bg-red' : 'bg-green'", type="submit", :value="buttonText", :disabled="!changed")
+    .mt3.center.mb2(:class="{'pointer-events-none': submitting}")
+      input.pointer.py2.px3.rounded-2.white.trans-bg(:class="cancelled ? 'bg-red' : 'bg-green'", type="submit", :value="buttonText", :disabled="!changed")
 </template>
 
 <script>

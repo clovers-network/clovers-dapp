@@ -13,8 +13,8 @@
         small.block.lh1.h6.mb1 Balance After
         span.flex.items-center.justify-center.font-exp.wrap-word {{ balanceAfter }} <coin-icon class="ml1"/>
 
-    footer.font-exp.center.mb2(:class="{'pointer-events-none': submitting}")
-      button.pointer.py2.px3.rounded-2.white.trans-bg.h3(:class="cancelled ? 'bg-red' : 'bg-green'", type="submit", @click="confirm") {{ buttonText }}
+    footer.center.mb2(:class="{'pointer-events-none': submitting}")
+      button.pointer.py2.px3.rounded-2.white.trans-bg(:class="cancelled ? 'bg-red' : 'bg-green'", type="submit", @click="confirm") {{ buttonText }}
 </template>
 
 <script>
