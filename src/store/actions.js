@@ -470,7 +470,7 @@ export default {
       msg: 'Succesfully signed out'
     })
   },
-  async signIn ({ state, commit, dispatch }) {
+  async experimentalSignIn ({ state, commit, dispatch }) {
     if (!state.web3Enabled) {
       global.web3Connect.toggleModal() // open modal on button click
     } else {
@@ -497,8 +497,8 @@ export default {
 
       global.web3.currentProvider.sendAsync(
         {
-          method: 'eth_signTypedData',
-          params: [signingParams, account],
+          method: 'eth_signTypedData_v3',
+          params: [account, JSON.stringify(signingParams)],
           from: account
         },
         (err, { error, result }) => {
@@ -515,48 +515,69 @@ export default {
       )
     }
   },
-  async oldSignIn ({state, dispatch, commit}, account) {
-    return new Promise(async (resolve, reject) => {
-      var now = new Date()
-      var signingParams = JSON.parse(JSON.stringify(msgParams))
-      var thisMonth = (now.getMonth() + 1) + '/' + now.getFullYear()
-      signingParams[0].value += thisMonth
+  async signIn ({state, dispatch, commit}, account) {
+    if (!state.web3Enabled) {
+      global.web3Connect.toggleModal() // open modal on button click
+    } else {
+      return new Promise(async (resolve, reject) => {
+        if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
+        const { account } = state
+        if (!account) {
+          dispatch('selfDestructMsg', {
+            type: 'error',
+            msg: 'No ETH account to sign in with'
+          })
+          commit('UPDATE_WEB3', false)
+          return
+        }
 
-      try {
-        global.web3.currentProvider.sendAsync({
-          jsonrpc: '2.0',
-          id: state.networkId || 1,
-          method: 'personal_sign',
-          params: [
-            signingParams[0].value,
-            account
-          ]
-        }, (err, signature) => {
-          if (err) {
-            commit('UPDATE_WEB3', false)
-            dispatch('selfDestructMsg', {
-              type: 'error',
-              msg: `Could not sign in`
-            })
-            reject(err)
-          } else {
-            dispatch('selfDestructMsg', {
-              type: 'success',
-              msg: `Successfully signed in ${signature.result} ${Object.keys(signature).join()} ${global.web3.version}`
-            })
-            commit('SIGN_IN', { account, signature: signature.result })
-            resolve()
-          }
-        })
-      } catch (error) {
-        commit('UPDATE_WEB3', false)
-        dispatch('selfDestructMsg', {
-          type: 'error',
-          msg: `Could not sign in`
-        })
-        reject(error)
-      }
-    })
+        if (state.tokens && account in state.tokens && state.tokens[account]) {
+          console.log('already have token')
+          return
+        }
+
+        var now = new Date()
+        var signingParams = JSON.parse(JSON.stringify(msgParams))
+        var thisMonth = (now.getMonth() + 1) + '/' + now.getFullYear()
+        signingParams[0].value += thisMonth
+
+        var msg = global.web3.utils.utf8ToHex(signingParams[0].value)
+        var params = [msg, account]
+        try {
+          global.web3.currentProvider.sendAsync({
+            jsonrpc: '2.0',
+            id: state.networkId || 1,
+            method: 'personal_sign',
+            params
+          }, (err, signature) => {
+            if (err) {
+              console.log(err)
+              commit('UPDATE_WEB3', false)
+              dispatch('selfDestructMsg', {
+                type: 'error',
+                msg: `Could not sign in`
+              })
+              reject(err)
+            } else {
+              dispatch('selfDestructMsg', {
+                type: 'success',
+                msg: `Successfully signed in`
+              })
+              commit('SIGN_IN', { account, signature: signature.result })
+              resolve()
+            }
+          })
+        } catch (error) {
+          console.log(error)
+          commit('UPDATE_WEB3', false)
+          dispatch('selfDestructMsg', {
+            type: 'error',
+            msg: `Could not sign in`
+          })
+          reject(error)
+        }
+      })
+    }
   },
   updateCloverName ({ getters, commit, dispatch }, clover) {
     const { board, name } = clover
