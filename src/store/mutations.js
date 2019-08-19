@@ -156,7 +156,6 @@ export default {
     Vue.delete(state.tokens, state.account)
     state.account = null
     updateLocal('clover_tokens', null)
-
   },
 
   // marketplace
