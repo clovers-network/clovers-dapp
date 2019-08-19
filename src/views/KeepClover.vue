@@ -1,54 +1,61 @@
 <template lang="pug">
-  .green.fixed.z3.flex.modal(@click.self="cancel")
-    .m-auto.bg-white.flex.flex-column.justify-between.border.border-dashed.rounded
-      header
-        .h-header.flex.justify-between.items-center
-          .col-4.pl3.pt1
-            button.pointer.h5(@click="cancel") Close
-          h1.col-4.font-exp.center.nowrap {{invalidClover ? 'Not Found' : ''}}
-          .green.mt3.mr3(v-if="clover.symmetrical")
-            symmetry-icons(:board="clover")
-      div.flex-auto.relative.p2.center
-        //- image
-        img(:src="cloverImage(clover, 196)" width="196" height="196")
+  modal.green(@close="close")
+    //- btn: pick | remove
+    div(slot="top-right-btn")
+      button.px1.h5(v-if="$route.name === 'Picks'", @click="remove") Discard
+      button.px1.pt1(v-else, @click="$store.commit('SAVE_CLOVER', clover)")
+        heart-icon(:active="isSaved", :invisible="false")
 
-      //- stats
-      .flex.justify-center(v-if="unavailable")
-        p.m0.red.opacity-50 &times; Already registered
+    .pt1
+      //- image
+      figure.flex-auto.px2.mt1
+        img.block.mx-auto(:src="cloverImage(clover, 196)" width="196" height="196")
+        //- symm icons ?
+        .green.mt3.h6(v-if="clover.symmetrical")
+          symmetry-icons(:board="clover")
 
-      .options.px3.pt2.mx3(v-else)
-        div
-          label.radio.block.pointer.border.rounded.py1.px2.mb1.flex.items-center(:active="mode === 'keep'")
-            input(v-model="mode" type="radio" value="keep")
-            .dot.mr2
-            span.flex-auto.mr3 Keep Clover
-            .bold - {{ keepValue }} <coin-icon/>
-          label.radio.block.pointer.border.rounded.py1.px2.mb1.flex.items-center(v-if="_reversi.symmetrical" :active="mode === 'sell'")
-            input(v-model="mode" type="radio" value="sell")
-            .dot.mr2
-            span.flex-auto.mr3 Claim Reward
-            .bold + {{ sellValue }} <coin-icon/>
-        p.center.h6.underline.mb0.mt3.help(@click="showMore = true" v-if="!showMore") More information
-        p.center.h6.mb0.mt3.pointer(v-if="showMore" @click="showMore = false")
-          span(v-if="mode === 'keep'") Register this clover on the network. A base fee of 10 <coin-icon :width="14" :height="14"/> is charged
-          span(v-else) Claim a reward for this rare clover. This requires a verification before payout and can take a few minutes
+      //- errors ?
+      template(v-if="unavailable || invalidClover")
+        h3.my3.font-exp.center.nowrap.red.opacity-50
+          span(v-if="invalidClover") Invalid Clover :(
+          span(v-else-if="unavailable") Already registered :(
 
-      //- keep / sell actions
-      footer.flex.justify-center(v-if="!submitted")
-        .m3.rounded.white.trans-bg(:class="cancelled ? 'bg-red' : 'bg-green'")
-          button.pointer.py2.px3(@click="btnClick", :class="{'pointer-events-none': submitting}")
-            span.block.m-auto(v-show="!submitting") {{ buttonText }}
-            span.block.m-auto(v-if="submitting") Submitting . . .
+      //- actions
+      template(v-else)
+        .options.px3.pt3.mx2.md-mx3
+          div
+            label.radio.block.pointer.border.rounded.py1.px2.mb1.flex.items-center(:active="mode === 'keep'")
+              input(v-model="mode" type="radio" value="keep")
+              .dot.mr2
+              span.flex-auto.mr3 Keep Clover
+              .bold.flex.items-center
+                | <span v-if="_reversi.symmetrical">-&#32;</span>{{ keepValue }} <coin-icon class="ml1"/>
+            label.radio.block.pointer.border.rounded.py1.px2.mb1.flex.items-center(v-if="_reversi.symmetrical", :active="mode === 'sell'")
+              input(v-model="mode" type="radio" value="sell")
+              .dot.mr2
+              span.flex-auto.mr3 Claim Reward
+              .bold.flex.items-center + {{ sellValue }} <coin-icon class="ml1"/>
+          p.center.h6.underline.mb0.mt3.help(@click="showMore = true" v-if="!showMore") More Information
+          p.center.h6.mb0.mt3.pointer.mx-auto.col-10(v-if="showMore" @click="showMore = false")
+            span(v-if="mode === 'keep'") To register this clover on the network,<br>a base fee of <span class="nowrap">10&nbsp;<coin-icon :width="10" class="inline-block"/></span> is charged
+            span(v-else) Claim a reward for this rare clover.<br>This requires a verification before payout and can take a few minutes
 
-      //- submitted
-      footer(v-else)
-        .m3.rounded.white.bg-green.center
-          router-link.col-12.pointer.p2.inline-block(:to="cloverLink")
-            p.m0.m-auto View Clover
+        //- confirm
+        footer.flex.justify-center(v-if="!submitted")
+          .m3.rounded.white.trans-bg(:class="cancelled ? 'bg-red' : 'bg-green'")
+            button.pointer.py2.px3(@click="btnClick", :class="{'pointer-events-none': submitting}")
+              span.block.m-auto(v-show="!submitting") {{ buttonText }}
+              span.block.m-auto(v-if="submitting") Submitting . . .
+
+        //- submitted
+        footer(v-else)
+          .m3.rounded.white.bg-green.center
+            router-link.col-12.pointer.p2.inline-block(:to="cloverLink")
+              p.m0.m-auto View Clover
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapGetters, mapMutations, mapActions, mapState } from 'vuex'
 import {
   cloverImage,
   fetchCloudImage,
@@ -61,9 +68,12 @@ import {
 import { fromWei } from 'web3-utils'
 import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
+import Modal from '@/components/Modals/Modal'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 import CoinIcon from '@/components/Icons/CoinIcon'
 import MoreInformation from '@/components/MoreInformation'
+import HeartIcon from '@/components/Icons/HeartIcon'
+import svgX from '@/components/Icons/SVG-X'
 
 const reversi = new Reversi()
 let lastRt = null
@@ -156,20 +166,27 @@ export default {
       } else if (this.unavailable) {
         return 'View Clover'
       }
-      return 'Confirm'
+      if (!this.account) {
+        return 'Sign in first...'
+      } else {
+        return 'Confirm'
+      }
     },
     cloverLink () {
       return this.clover && `/clovers/${this.id}`
     },
-
+    ...mapState(['account']),
     ...mapGetters(['picks', 'prettyUserBalance', 'userBalanceInETH'])
   },
   methods: {
     cloverImage,
 
-    cancel () {
+    close () {
       let current = { name: this.$route.name }
       this.$router.push(current)
+    },
+    remove () {
+      this.$store.dispatch('confirmRemoveSavedClover', this.clover).then(rmvd => rmvd && this.close())
     },
     btnClick () {
       if (this.cancelled || this.submitting) return
@@ -187,7 +204,7 @@ export default {
     async keep () {
       this.submitting = true
       try {
-        await this.buy(this.clover)
+        let foo = await this.buy(this.clover)
         this.submitting = false
         this.handleSuccess(
           `Success! You kept ${abbrvAddr(this.id)}`,
@@ -268,18 +285,6 @@ export default {
     this.checkClover()
     this.getClubTokenPrice()
   },
-  components: { SymmetryIcons, CoinIcon, MoreInformation }
+  components: { Modal, SymmetryIcons, CoinIcon, MoreInformation, HeartIcon, svgX }
 }
 </script>
-
-<style>
-.keep__figure__img {
-  width: calc(100% - 2rem);
-  height: calc(100% - 4rem);
-  top: 2rem;
-  left: 1rem;
-}
-sup {
-  font-size: 56%;
-}
-</style>

@@ -5,7 +5,7 @@
     .relative.px-1.pb2.sm-pb0(style="padding-top:14vmin")
       slot(name="graphic")
       //- img.block(src="./imgs/market.svg", style="height:70vmin;max-height:60vw")
-      .absolute.bottom-0.left-0.w-100(style="background:linear-gradient(to bottom, transparent, white 50%); height:16vmin")
+      .absolute.bottom-0.left-0.w-100(style="background:linear-gradient(to bottom, rgba(255,255,255,0), white 50%); height:16vmin")
     .absolute.bottom-0.left-0.w-100.pb3.px2.center.z2
       down-arrow-btn(v-on="$listeners")
 </template>

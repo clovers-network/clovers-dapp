@@ -10,6 +10,7 @@
 
 html {
   font-size:var(--rem);
+  line-height: normal;
   /*background-color: var(--green)*/
 }
 
@@ -59,16 +60,20 @@ h1,h2,h3,h4,h5,h6{
 button{
   appearance:none;
   border:none;
+  border-width:1px;
   background:none;
   color:inherit;
   font-size:inherit;
   padding:0;
   font-family:inherit;
+  width:auto;
+  line-height: inherit;
 }
 
 input{
   appearance:none;
   border:none;
+  border-width:1px;
   font-size:inherit;
   background:none;
   color:inherit;
@@ -118,8 +123,7 @@ h5 { font-size: .875rem }
 h6 { font-size: .75rem }
 */
 p {
-  margin-top: 0;
-  margin-bottom: 1em;
+  & + p{margin-top: 1em;}
 }
 small{font-size:inherit;}
 .pt5{padding-top: 5em;}
@@ -237,8 +241,6 @@ hr {
   }
 }
 
-.claimed { opacity: .5; }
-
 .clover-item-border {
   border: 1px dashed;
   box-shadow: none;
@@ -344,7 +346,7 @@ textarea {
   display: block;
   position: relative;
   border: 1px solid currentColor;
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius-2);
   transition: all var(--anim-timing-medium);
 
   & select {
@@ -354,12 +356,13 @@ textarea {
     font: inherit;
     height: var(--height-select);
     outline: none;
-    padding: 0 var(--space-4) 0 var(--space-2);
+    padding: 0 var(--space-4) 0.1em var(--space-2);
     width: 100%;
+    box-sizing: border-box;
   }
 
   &:after {
-    color: var(--green);
+    /*color: var(--green);*/
     content: '';
     background: url(./assets/icons/chevron-down.svg) no-repeat center;
     width: 15px;
@@ -367,18 +370,12 @@ textarea {
     pointer-events: none;
     position: absolute;
     right: var(--space-2);
-    text-shadow: 1px 0px 0px var(--green);
+    /*text-shadow: 1px 0px 0px var(--green);*/
     top: var(--space-1);
-    transform: translateY(7px);
+    transform: translateY(4px);
   }
 
   &.active:after { transform: rotate(180DEG); }
-
-  &:hover { background-color: var(--lightest-green); }
-}
-
-.hover-bg-l-green {
-  transition: all var(--anim-timing-medium);
 
   &:hover { background-color: var(--lightest-green); }
 }
@@ -428,7 +425,7 @@ button {
 button:disabled:not(.h-bttm-bar),
 input:disabled,
 .unselected {
-  opacity: .4;
+  opacity: .33;
 }
 
 .input, select, textarea, .btn {

@@ -1,18 +1,18 @@
 <template lang="pug">
- .bg-green(:class="{ hide: hideme }")
-  .max-width-4.flex.justify-center.mx-auto.white.align-middle
+ section.h5(:class="{ hide: hideme }")
+  .max-width-4.flex.justify-center.mx-auto.green.align-middle
      a.p2.flex.align-middle(target="_blank" href="https://github.com/clovers-network")
-      GithubIcon
-      .ml1.xs-hide Github
+      GithubIcon(:width="20")
+      .ml1.xs-hide.opacity-75.hover-opacity-100 Github
      a.p2.flex.align-middle(target="_blank" href="https://forum.clovers.network")
-      DiscourseIcon
-      .ml1.xs-hide Discourse
+      DiscourseIcon(:width="20")
+      .ml1.xs-hide.opacity-75.hover-opacity-100 Discourse
      a.p2.flex.align-middle(target="_blank" href="https://twitter.com/cloversnetwork")
-      TwitterIcon
-      .ml1.xs-hide Twitter
+      TwitterIcon(:width="20")
+      .ml1.xs-hide.opacity-75.hover-opacity-100 Twitter
      a.p2.flex.align-middle(target="_blank" href="https://t.me/cloversnetwork")
-      TelegramIcon
-      .ml1.xs-hide Telegram
+      TelegramIcon(:width="20")
+      .ml1.xs-hide.opacity-75.hover-opacity-100 Telegram
 
 </template>
 
@@ -25,7 +25,7 @@ export default {
   name: 'Foot',
   computed: {
     hideme () {
-      return this.$route.name === 'Clover'
+      return this.$route.name === 'Clover' || this.$route.meta.isOverlay
     }
   },
   components: {

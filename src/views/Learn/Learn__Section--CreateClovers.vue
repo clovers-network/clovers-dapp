@@ -3,7 +3,9 @@
     .absolute.top-0.left-0.w-100.h-100.flex.items-center
       //- basket
       basket(:count="clovers.length", v-show="showBasket")
-        h6.mr2.right-align.h6.sm-h5 These clovers have been saved to your <b>Basket</b> &rarr;
+        header.flex.items-center.pr2
+          h6.mr2.right-align.h4 These clovers have beet saved to&nbsp;your&nbsp;<b>Basket</b>
+          | &rarr;
       //- clovers
       row-of-clovers(ref="cloverList", :clovers="clovers", :canCreate="canCreate", @create="create", @endPlayMoves="step")
     //- text
@@ -28,7 +30,7 @@ export default {
   data () {
     return {
       no: 0,
-      text: 'You can create clovers in your browser.',
+      text: 'Clovers can be generated with your browser.',
       canCreate: true,
       noLimit: false,
       showBasket: false,

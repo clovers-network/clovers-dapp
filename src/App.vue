@@ -1,7 +1,7 @@
 <template lang="pug">
   #app.relative
-    app-header(v-if="$route.name !== 'Welcome' && $route.name !== 'Soon'")
-    main.mx-auto.md-col-10.lg-col-8.min-height-app
+    app-header(v-if="$route.name !== 'Soon'")
+    main.mx-auto.md-col-10.lg-col-8(:class="{'min-height-app': !$route.meta.isOverlay}")
       router-view
     foot
     messages
@@ -47,7 +47,7 @@ export default {
   @import './style/global';
   @import './style/imports';
   #WEB3_CONNECT_MODAL_ID > div {
-    z-index:4;
+    z-index:5;
     position: fixed;
   }
   .intro-screen {

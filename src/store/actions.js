@@ -1,6 +1,7 @@
 import * as contracts from 'clovers-contracts'
 import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
+import Decimal from 'decimal.js'
 import io from 'socket.io-client'
 import utils from 'web3-utils'
 import axios from 'axios'
@@ -10,13 +11,11 @@ import confetti from 'canvas-confetti'
 
 window.contracts = contracts
 
-export const apiBase = process.env.VUE_APP_API_URL
-
-const signingParams = [
+const msgParams = [
   {
     type: 'string',
     name: 'Message',
-    value: 'To avoid bad things, sign below to authenticate with Clovers'
+    value: 'Please sign this message to authenticate with Clovers - '
   }
 ]
 const networks = {
@@ -36,7 +35,6 @@ let miner
 export default {
 
   mine ({ dispatch, commit, state }) {
-    console.log('mine')
     if (state.miners.length === 0) {
       commit('RESET_MINED')
     }
@@ -67,7 +65,6 @@ export default {
     commit('ADD_MINER', miner)
   },
   stop ({ state, commit }) {
-    console.log('stop')
     if (state.miners.length) {
       let last = state.miners.length - 1
       let removed = state.miners[last]
@@ -137,7 +134,7 @@ export default {
   },
   // web3 stuff
   async checkWeb3 ({ state, dispatch, commit }) {
-    console.log('check web3')
+    console.log('checkWeb3')
     if (!state.web3Enabled) {
       dispatch('signIn')
       return
@@ -153,12 +150,13 @@ export default {
     }
   },
   async approve ({ state, commit }) {
+    console.log('approve')
     if (!state.enabled && global.ethereum) {
       try {
         await global.ethereum.enable()
         commit('SET_ENABLED', true)
       } catch (error) {
-        console.log(error)
+        console.error(error)
       }
     }
   },
@@ -199,14 +197,19 @@ export default {
     })
   },
   async getNetwork ({ commit, state, dispatch }) {
-    const networkId = await global.web3.eth.net.getId()
-    if (state.networkId !== networkId) {
-      commit('SET_NETWORK', networkId)
-      await dispatch('getContracts')
+    console.log('getNetwork')
+    try {
+      const networkId = await global.web3.eth.net.getId()
+      if (state.networkId !== networkId) {
+        commit('SET_NETWORK', networkId)
+        await dispatch('getContracts')
+      }
+    } catch (error) {
+      console.log(error)
     }
   },
   async getAccount ({ commit, dispatch, state }) {
-    console.log('get account')
+    console.log('getAccount')
     await dispatch('getNetwork')
     let accounts = await global.web3.eth.getAccounts()
     if (accounts.length && state.account !== accounts[0].toLowerCase()) {
@@ -221,16 +224,18 @@ export default {
   },
   async contractsDeployed ({ state }) {
     return new Promise((resolve, reject) => {
-      let interval = setInterval(() => {
+      function tryDeploy () {
         if (state.contractsDeployed) {
-          clearInterval(interval)
           resolve()
+        } else {
+          setTimeout(tryDeploy, 500)
         }
-      }, 500)
+      }
+      tryDeploy()
     })
   },
   async getContracts ({ dispatch, state, commit }) {
-    console.log('getContracts start')
+    console.log('getContracts')
     commit('CONTRACTS_DEPLOYED', false)
     for (var name in contracts) {
       if (!contracts.hasOwnProperty(name)) continue
@@ -240,16 +245,14 @@ export default {
           contract.abi,
           contract.networks[state.networkId].address
         )
-        console.log('instantiated ' + name)
       } else {
-        console.log(name + ' not deployed on this network')
         throw new Error('wrong-network')
       }
     }
+
     await dispatch('updateBasePrice')
     await dispatch('updateStakeAmount')
     commit('CONTRACTS_DEPLOYED', true)
-    console.log('getContracts ended')
   },
   async updateBasePrice ({ commit }) {
     let basePrice = await contracts.CloversController.instance.methods
@@ -266,26 +269,26 @@ export default {
   clearOrders ({ commit }) {
     commit('SET_ORDERS', [])
   },
-  getOrders ({ commit }, market = 'ClubToken') {
-    axios.get(apiUrl(`/orders/${market}`)).then(({ data }) => {
+  getOrders ({ commit, getters }, market = 'ClubToken') {
+    axios.get(getters.baseURL(`/orders/${market}`)).then(({ data }) => {
       commit('SET_MARKET', market)
       commit('SET_ORDERS', data)
       return data
     })
   },
-  async updateUserENS ({ commit }, user) {
-    let ensName = await global.ens
-      .reverse(user.address)
-      .name()
-      .catch(e => {})
-    user.ens = ensName === undefined ? false : ensName
-    commit('UPDATE_USER', user)
-  },
+  // async updateUserENS ({ commit }, user) {
+  //   let ensName = await global.ens
+  //     .reverse(user.address)
+  //     .name()
+  //     .catch(e => {})
+  //   user.ens = ensName === undefined ? false : ensName
+  //   commit('UPDATE_USER', user)
+  // },
   async changeUsername ({ commit, getters, dispatch }, { address, name, image }) {
     if (!address) return
     return axios
       .put(
-        apiUrl(`/users/${address}`),
+        getters.baseURL(`/users/${address}`),
         { name, image },
         {
           headers: {
@@ -306,8 +309,11 @@ export default {
           msg: err.message
         })
         if ('response' in err) {
-          if (err.response.status === 401) {
+          console.log({err})
+          if (err.response && err.response.status === 401) {
             commit('SIGN_OUT')
+          } else {
+            console.error(err.message)
           }
         }
       })
@@ -321,8 +327,8 @@ export default {
   },
 
   // api stuff
-  async setUpSocket ({ commit }) {
-    const socket = io(process.env.VUE_APP_API_URL)
+  async setUpSocket ({ commit, getters }) {
+    const socket = io(getters.apiBase)
 
     socket.on('connect', () => {
       console.log('connected')
@@ -376,25 +382,24 @@ export default {
     }
     return msg.id
   },
-  async cloverExists (_, byteBoard) {
+  async cloverExists ({getters}, byteBoard) {
     // let exists = await contracts.Clovers.instance.methods.exists(byteBoard).call()
-    return axios.get(apiUrl(`/clovers/${byteBoard}`)).then(() => true).catch(() => false)
+    return axios.get(getters.baseURL(`/clovers/${byteBoard}`)).then(() => true).catch(() => false)
   },
 
-  getCurrentUser ({ commit }, account) {
-    if (!account) {
-      return commit('SET_USER', null)
-    }
-    return axios.get(apiUrl(`/users/${account.toLowerCase()}`))
+  getCurrentUser ({ getters, commit }, account) {
+    // empty / sign-out:
+    if (!account) return commit('SET_USER', null)
+    return axios.get(getters.baseURL(`/users/${account.toLowerCase()}`))
       .then(({ data }) => commit('SET_USER', data))
   },
-  getUser ({ commit }, account) {
+  getUser ({ commit, getters }, account) {
     if (!account) return
-    return axios.get(apiUrl(`/users/${account.toLowerCase()}`))
+    return axios.get(getters.baseURL(`/users/${account.toLowerCase()}`))
       .then(({ data }) => commit('SET_OTHER_USER', data))
   },
 
-  getPagedClovers ({ state, commit }, { url, filters = {} }) {
+  getPagedClovers ({ commit }, { url, filters = {} }) {
     return axios.get(url, {
       params: { ...filters }
     }).then(({ data }) => commit('SET_PAGED_CLOVERS', data))
@@ -405,28 +410,28 @@ export default {
       })
   },
 
-  getClover ({ state, commit }, board) {
+  getClover ({ commit, getters }, board) {
     if (!board) {
       return Promise.reject(new Error('Missing parameter: `board` (address)'))
     }
-    return axios.get(apiUrl('/clovers/' + board))
+    return axios.get(getters.baseURL('/clovers/' + board))
       .then(({ data }) => {
         if (!data) throw new Error('404')
         commit('SET_CURRENT_CLOVER', data)
       }).catch(console.error)
   },
 
-  getComments (_, { board, params }) {
+  getComments ({getters}, { board, params }) {
     if (!board) {
       return Promise.reject(new Error('Missing parameter: `board` (address)'))
     }
-    return axios.get(apiUrl(`/chats/${board}`), { params })
+    return axios.get(getters.baseURL(`/chats/${board}`), { params })
   },
   addComment ({ getters }, { board, comment }) {
     if (!board) {
       return Promise.reject(new Error('Missing parameter: `board` (address)'))
     }
-    return axios.post(apiUrl(`/chats/${board}`), { comment }, {
+    return axios.post(getters.baseURL(`/chats/${board}`), { comment }, {
       headers: {
         Authorization: getters.authHeader
       }
@@ -434,7 +439,7 @@ export default {
       .catch(console.error)
   },
   flagOrDeleteComment ({ getters }, id) {
-    return axios.delete(apiUrl(`/chats/${id}`), {
+    return axios.delete(getters.baseURL(`/chats/${id}`), {
       headers: {
         Authorization: getters.authHeader
       }
@@ -469,15 +474,12 @@ export default {
       msg: 'Succesfully signed out'
     })
   },
-  async signIn ({ state, commit, dispatch }) {
+  async experimentalSignIn ({ state, commit, dispatch }) {
     if (!state.web3Enabled) {
-      console.log('toggle modal')
       global.web3Connect.toggleModal() // open modal on button click
     } else {
       if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
-      console.log('after check web3')
       const { account } = state
-      console.log({ account })
       if (!account) {
         dispatch('selfDestructMsg', {
           type: 'error',
@@ -487,42 +489,106 @@ export default {
         return
       }
 
-      console.log('here')
       if (state.tokens && account in state.tokens && state.tokens[account]) {
-        console.log('token is present', state.tokens[account])
+        console.log('already have token')
         return
       }
+
+      var now = new Date()
+      var signingParams = JSON.parse(JSON.stringify(msgParams))
+      var thisMonth = (now.getMonth() + 1) + '/' + now.getFullYear()
+      signingParams[0].value += thisMonth
+
       global.web3.currentProvider.sendAsync(
         {
-          method: 'eth_signTypedData',
-          params: [signingParams, account],
+          method: 'eth_signTypedData_v3',
+          params: [account, JSON.stringify(signingParams)],
           from: account
         },
         (err, { error, result }) => {
           if (error || err) {
-            commit('UPDATE_WEB3', false)
+            return dispatch('oldSignIn', account)
+          } else {
             dispatch('selfDestructMsg', {
-              type: 'error',
-              msg: 'Could not sign in'
+              type: 'success',
+              msg: 'Successfully signed in'
             })
-            return
+            commit('SIGN_IN', { account, signature: result })
           }
-          dispatch('selfDestructMsg', {
-            type: 'success',
-            msg: 'Successfully signed in'
-          })
-          commit('SIGN_IN', { account, signature: result })
         }
       )
     }
   },
+  async signIn ({state, dispatch, commit}, account) {
+    if (!state.web3Enabled) {
+      global.web3Connect.toggleModal() // open modal on button click
+    } else {
+      return new Promise(async (resolve, reject) => {
+        if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
+        const { account } = state
+        if (!account) {
+          dispatch('selfDestructMsg', {
+            type: 'error',
+            msg: 'No ETH account to sign in with'
+          })
+          commit('UPDATE_WEB3', false)
+          return
+        }
 
+        if (state.tokens && account in state.tokens && state.tokens[account]) {
+          console.log('already have token')
+          return
+        }
+
+        var now = new Date()
+        var signingParams = JSON.parse(JSON.stringify(msgParams))
+        var thisMonth = (now.getMonth() + 1) + '/' + now.getFullYear()
+        signingParams[0].value += thisMonth
+
+        var msg = global.web3.utils.utf8ToHex(signingParams[0].value)
+        var params = [msg, account]
+        try {
+          global.web3.currentProvider.sendAsync({
+            jsonrpc: '2.0',
+            id: state.networkId || 1,
+            method: 'personal_sign',
+            params
+          }, (err, signature) => {
+            if (err) {
+              console.log(err)
+              commit('UPDATE_WEB3', false)
+              dispatch('selfDestructMsg', {
+                type: 'error',
+                msg: `Could not sign in`
+              })
+              reject(err)
+            } else {
+              dispatch('selfDestructMsg', {
+                type: 'success',
+                msg: `Successfully signed in`
+              })
+              commit('SIGN_IN', { account, signature: signature.result })
+              resolve()
+            }
+          })
+        } catch (error) {
+          console.log(error)
+          commit('UPDATE_WEB3', false)
+          dispatch('selfDestructMsg', {
+            type: 'error',
+            msg: `Could not sign in`
+          })
+          reject(error)
+        }
+      })
+    }
+  },
   updateCloverName ({ getters, commit, dispatch }, clover) {
     const { board, name } = clover
     // if (!getters.authHeader) alert('Not signed in, this won\'t work')
     return axios
       .put(
-        apiUrl(`/clovers/${board}`),
+        getters.baseURL(`/clovers/${board}`),
         { name },
         {
           headers: {
@@ -549,7 +615,7 @@ export default {
       market: 'ClubToken',
       amount: '1'
     })
-    commit('SET_CLUB_TOKEN_PRICE', clubTokenPrice.toString(10))
+    commit('SET_CLUB_TOKEN_PRICE', clubTokenPrice)
   },
   // Contract Interactions
   async getBuy ({ dispatch }, { market, amount }) {
@@ -600,13 +666,13 @@ export default {
       balance = new BigNumber(balance)
       let value = '0'
       if (balance.lt(amount)) {
-        value = await getLowestPrice(contracts.ClubTokenController, amount)
+        value = await getLowestPrice(contracts, amount)
       }
       return contracts.CurationMarket.instance.methods
         .buy(state.account, market, amount)
         .send({
           from: state.account,
-          value
+          value: value
         })
     }
   },
@@ -625,9 +691,9 @@ export default {
       if (balance.lt(amount)) {
         throw new Error(
           'balance too low: ' +
-            balance.toString(10) +
+            balance +
             ' < ' +
-            amount.toString(10)
+            amount
         )
       }
       return contracts.ClubTokenController.instance.methods.sell(amount).send({
@@ -639,7 +705,7 @@ export default {
         .call()
       balance = new BigNumber(balance)
       if (balance.lt(amount)) {
-        throw new Error('balance too low: ' + balance.toString(10))
+        throw new Error('balance too low: ' + balance)
       }
       return contracts.CurationMarket.instance.methods
         .sell(market, amount)
@@ -648,24 +714,18 @@ export default {
         })
     }
   },
-  syncClover (_, clover) {
-    axios.get(apiUrl(`/clovers/sync/${clover.board}`)).catch(error => {
-      console.log("sync broken clover didn't work")
-      console.log(error)
+  syncClover ({getters}, clover) {
+    axios.get(getters.baseURL(`/clovers/sync/${clover.board}`)).catch(error => {
+      console.error(error)
     })
-  },
-  async getShares ({ state, dispatch }, market) {
-    await dispatch('contractsDeployed')
-    return contracts.CurationMarket.instance.methods
-      .balanceOf(new BigNumber(market, 16).toString(10), state.account)
-      .call()
   },
   async transferClover ({ state, dispatch }, { clover, address }) {
     try {
       let ENSaddress = await global.ens.resolver(address).addr()
       address = ENSaddress
     } catch (error) {
-      console.log('no ens')
+      console.error(error)
+      console.error('No ENS')
     }
     if (!isHex(address) || address.replace('0x', '').length !== 40) {
       throw new Error('Not a valid address')
@@ -697,7 +757,6 @@ export default {
         .sellPrice(clover.board)
         .call()
       currentPrice = makeBn(currentPrice)
-      // console.log('currentPrice', utils.fromWei(currentPrice.toString(10)))
       // if 0 then it's not actually for sale
       if (currentPrice.eq(0)) {
         dispatch('syncClover', clover)
@@ -713,7 +772,7 @@ export default {
       // if it's less than the price then find the Eth needed to buy enough
       if (balanceOf.lt(currentPrice)) {
         value = await getLowestPrice(
-          contracts.ClubTokenController,
+          contracts,
           currentPrice.sub(balanceOf)
         )
       }
@@ -721,7 +780,7 @@ export default {
         .buy(clover.board)
         .send({
           from: state.account,
-          value
+          value: value.toFixed()
         })
     } else {
       // claim clover w option _keep = true
@@ -755,7 +814,7 @@ export default {
       } else {
         // sell clover (update price)
         return contracts.SimpleCloversMarket.instance.methods
-          .sell(clover.board, price)
+          .sell(clover.board, price.toFixed())
           .send({
             from: state.account
           })
@@ -803,78 +862,267 @@ export default {
     userBalance = new BigNumber(userBalance)
     if (userBalance.lt(investmentInWei)) {
       value = await getLowestPrice(
-        contracts.ClubTokenController,
+        contracts,
         investmentInWei
       )
     }
-    console.log(value)
     // go !
     await contracts.CurationMarket.instance.methods
       .addCloverToMarket(board, investmentInWei)
-      .send({ from: state.account, value })
+      .send({ from: state.account, value: value })
   },
 
   // activity page
   checkBlock () {
     return global.web3.eth.getBlockNumber()
+  },
+
+  async confirmRemoveSavedClover ({ commit }, clover) {
+    const yes = window.confirm('Are you sure? This can\'t be undone...')
+    if (!yes) return false
+    commit('REMOVE_SAVED_CLOVER', clover)
+    return true
+  },
+
+  // ALBUMS
+
+  getAllAlbums ({ getters, commit, dispatch }) {
+    return axios.get(getters.baseURL('/albums/list/all'))
+      .then((results) => {
+        // console.log({results})
+        commit('SET_ALL_ALBUMS', results.data)
+      }).catch((err) => {
+        dispatch('selfDestructmsg', {
+          type: 'error',
+          msg: err.message
+        })
+      })
+  },
+
+  getPagedAlbums ({ state, commit }, { url, filters = {} }) {
+    return axios.get(url, {
+      params: { ...filters }
+    }).then(({ data }) => commit('SET_PAGED_ALBUMS', data))
+      .catch((err) => {
+        if (err.response && err.response.data) {
+          commit('SET_PAGED_ALBUMS', err.response.data)
+        }
+      })
+  },
+
+  async deleteAlbum ({dispatch, commit, getters}, albumId) {
+    if (!albumId) {
+      return Promise.reject(new Error('Misisng album id'))
+    }
+    if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
+    return axios.delete(getters.baseURL('/albums/' + albumId), {
+      headers: {
+        Authorization: getters.authHeader
+      }
+    })
+      .then((_) => {
+        dispatch('selfDestructMsg', {
+          type: 'success',
+          msg: 'Album deleted'
+        })
+        dispatch('getAllAlbums')
+      })
+      .catch(err => {
+        dispatch('selfDestructMsg', {
+          type: 'error',
+          msg: err.message
+        })
+        if ('response' in err) {
+          if (err.response.status === 401) {
+            commit('SIGN_OUT')
+          }
+        }
+      })
+  },
+
+  async createAlbum ({getters, dispatch, commit}, album) {
+    if (!album.name || !album.clovers) {
+      return Promise.reject(new Error('Missing album'))
+    }
+    if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
+    return axios.post(getters.baseURL('/albums'), {albumName: album.name, clovers: album.clovers}, {
+      headers: {
+        Authorization: getters.authHeader
+      }
+    })
+      .then(({data}) => {
+        if (!data) throw new Error('404')
+        dispatch('selfDestructMsg', {
+          type: 'success',
+          msg: 'Album created!'
+        })
+        dispatch('getAllAlbums')
+      })
+      .catch(err => {
+        dispatch('selfDestructMsg', {
+          type: 'error',
+          msg: err.message
+        })
+        if ('response' in err) {
+          if (err.response.status === 401) {
+            commit('SIGN_OUT')
+          }
+        }
+      })
+  },
+
+  async updateAlbum ({getters, dispatch, commit, state}, album) {
+    if (!album) {
+      return Promise.reject(new Error('Missing album'))
+    }
+    if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
+    return axios.put(getters.baseURL('/albums/' + album.id), {albumName: album.name, clovers: album.clovers}, {
+      headers: {
+        Authorization: getters.authHeader
+      }
+    })
+      .then(({data}) => {
+        if (!data) throw new Error('404')
+        let setAlbum
+        if (state.currentAlbum && state.currentAlbum.id === album.id) {
+          setAlbum = JSON.parse(JSON.stringify(state.currentAlbum))
+        } else {
+          setAlbum = state.allAlbums.find(a => a.id === album.id)
+        }
+        if (setAlbum) {
+          setAlbum.name = data.name
+          setAlbum.clovers = data.clovers
+          setAlbum.modified = data.modified
+          commit('SET_CURRENT_ALBUM', setAlbum)
+        }
+        dispatch('selfDestructMsg', {
+          type: 'success',
+          msg: 'Album details updated'
+        })
+      })
+      .catch(err => {
+        console.log(err)
+        dispatch('selfDestructMsg', {
+          type: 'error',
+          msg: err.message
+        })
+        if ('response' in err) {
+          if (err.response.status === 401) {
+            commit('SIGN_OUT')
+          }
+        }
+      })
+  },
+
+  getAlbum ({ getters, commit }, albumId) {
+    if (!albumId) {
+      return Promise.reject(new Error('Missing parameter: `id`'))
+    }
+    return axios.get(getters.baseURL('/albums/' + albumId))
+      .then(({data}) => {
+        if (!data) throw new Error('404')
+        commit('SET_CURRENT_ALBUM', data)
+      }).catch(console.error)
   }
 }
 
-function apiUrl (path) {
-  return apiBase + path
-}
-
 async function getLowestPrice (
-  contract,
+  contracts,
   targetAmount,
   currentPrice = new BigNumber('0'),
-  incrementLevel = 0
+  incrementLevel = 0,
+  supply = false,
+  balance = false,
+  rr = false
 ) {
-  console.log('calc' + incrementLevel)
+  if (!rr || !supply || !balance) {
+    supply = await contracts.ClubToken.instance.methods
+      .totalSupply()
+      .call()
+    var virtualSupply = await contracts.ClubTokenController.instance.methods.virtualSupply().call()
+
+    supply = supply + virtualSupply
+    rr = await contracts.ClubTokenController.instance.methods.reserveRatio().call()
+
+    balance = await contracts.ClubTokenController.instance.methods.poolBalance().call()
+    var virtualBalance = await contracts.ClubTokenController.instance.methods.virtualBalance().call()
+    balance = balance + virtualBalance
+  }
   if (typeof targetAmount !== 'object') {
     targetAmount = new BigNumber(targetAmount)
   }
   const increments = [
+    new BigNumber(utils.toWei('100')),
+    new BigNumber(utils.toWei('10')),
     new BigNumber(utils.toWei('1')),
     new BigNumber(utils.toWei('0.5')),
     new BigNumber(utils.toWei('0.01')),
     new BigNumber(utils.toWei('0.005'))
   ]
   currentPrice = currentPrice.add(increments[incrementLevel])
-  console.log(currentPrice.toString(10))
-  let resultOfSpend = await contract.instance.methods
-    .getBuy(currentPrice)
-    .call()
-  resultOfSpend = new BigNumber(resultOfSpend)
+  // let resultOfSpend = getBuy(currentPrice, supply, balance, rr)
+  let resultOfSpend = await contracts.ClubTokenController.instance.methods.getBuy(currentPrice.toFixed()).call()
+  resultOfSpend = new BigNumber(resultOfSpend.toString())
   if (resultOfSpend.gt(targetAmount)) {
     if (incrementLevel === increments.length - 1) {
       return currentPrice
     } else {
       return getLowestPrice(
-        contract,
+        contracts,
         targetAmount,
         currentPrice.sub(increments[incrementLevel]),
-        incrementLevel + 1
+        incrementLevel + 1,
+        supply,
+        balance,
+        rr
       )
     }
   }
-  return getLowestPrice(contract, targetAmount, currentPrice, incrementLevel)
+  return getLowestPrice(contracts, targetAmount, currentPrice, incrementLevel, supply, balance, rr)
+}
+
+// def calculatePurchaseReturn(s, market_settings, amount):
+//     totalSupply = s['bc-totalSupply'] + market_settings["bc-virtualSupply"]
+//     collateral = s['bc-balance'] + market_settings["bc-virtualBalance"]
+//     CW = market_settings["bc-reserveRatio"]
+//     if (s['bc-balance'] <= 0):
+//         return 0
+//     return totalSupply * ((1 + amount / collateral)**CW-1)
+
+function getBuy (spendAmount, supply, balance, rr) {
+  supply = new Decimal(supply)
+  spendAmount = new Decimal(spendAmount.toFixed())
+  balance = new Decimal(balance)
+  rr = new Decimal(rr)
+
+  // let result = supply.mul(
+  //   (
+  //     spendAmount.div(balance).add(1)
+  //   ).pow(
+  //     rr.div(1000000)
+  //   ).sub(1)
+  // )
+  const result = supply.mul(
+    new Decimal(1)
+      .plus(spendAmount.div(balance))
+      .pow(rr.div(1000000))
+      .sub(1)
+  )
+
+  return result
 }
 
 async function claimClover ({ keep, account, clover }) {
-  console.log({ clover })
   let reversi = new Reversi()
   reversi.playGameMovesString(clover.movesString)
   let moves = reversi.returnByteMoves().map(m => '0x' + padRight(m, 56))
   let _tokenId = clover.board
-  let _symmetries = reversi.returnSymmetriesAsBN().toString(10)
+  let _symmetries = reversi.returnSymmetriesAsBN()
   let _keep = keep
   let from = account
   let value = new BigNumber('0')
-
   if (keep) {
     let mintPrice = await getMintPrice({ _symmetries })
-
     let balance = await contracts.ClubToken.instance.methods
       .balanceOf(account)
       .call()
@@ -882,7 +1130,7 @@ async function claimClover ({ keep, account, clover }) {
     if (balance.lt(mintPrice)) {
       let clubTokenToBuy = mintPrice.sub(balance)
       value = await getLowestPrice(
-        contracts.ClubTokenController,
+        contracts,
         clubTokenToBuy
       )
     }
@@ -891,27 +1139,26 @@ async function claimClover ({ keep, account, clover }) {
     .stakeAmount()
     .call()
   value = new BigNumber(value)
+
   value = value.plus(stakeAmount)
-  console.log(
-    moves,
-    _tokenId,
-    _symmetries,
-    _keep,
-    utils.fromWei(value.toString(10))
-  )
   return contracts.CloversController.instance.methods
-    .claimClover(moves, _tokenId, _symmetries, _keep)
-    .send({ from, value })
-  // .on('transactionHash', hash => {})
+    .claimClover(moves, _tokenId, _symmetries.toString(10), _keep)
+    .send({ from, value: value.toFixed() })
 }
 
 async function getMintPrice ({ _symmetries }) {
-  let reward = await contracts.CloversController.instance.methods
-    .calculateReward(_symmetries)
-    .call()
+  let reward
+  if (_symmetries.eq(0)) {
+    reward = '0'
+  } else {
+    reward = await contracts.CloversController.instance.methods
+      .calculateReward(_symmetries.toString(10))
+      .call()
+  }
+
   let basePrice = await contracts.CloversController.instance.methods
     .basePrice()
     .call()
   reward = new BigNumber(reward)
-  return reward.plus(basePrice)
+  return reward.add(basePrice)
 }

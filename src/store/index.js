@@ -5,6 +5,7 @@ import utils from 'web3-utils'
 import actions from './actions'
 import getters from './getters'
 import mutations from './mutations'
+import demoAlbums from '@/demo-albums'
 
 import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
@@ -17,6 +18,9 @@ Vue.use(Vuex)
 const debug = false
 
 const state = {
+  // demo !!
+  albums: demoAlbums,
+
   web3Enabled: false,
   // stored signin tokens
   tokens: getTokens(),
@@ -25,6 +29,9 @@ const state = {
   accountData: null,
 
   pagedClovers: {},
+  allAlbums: [],
+  pagedAlbums: [],
+  currentAlbum: {},
 
   // web3 stuff
   enabled: false,
@@ -33,7 +40,7 @@ const state = {
   querying: false,
   tryAgain: false,
   networkId: null,
-  correctNetwork: 4,
+  correctNetwork: 1,
   contractsDeployed: false,
   nullAddress: '0x0000000000000000000000000000000000000000',
 
@@ -86,13 +93,22 @@ export default new Vuex.Store({
 })
 
 function getTokens (key = 'clover_tokens') {
-  if (!window.localStorage) return null
-  return JSON.parse(window.localStorage.getItem(key))
+  if (window.localStorage) {
+    return JSON.parse(window.localStorage.getItem(key))
+  } else if (localStorage) {
+    return JSON.parse(localStorage.getItem(key))
+  }
 }
 
 function getSavedClovers (key = 'saved_clovers') {
-  if (!window.localStorage) return []
-  let stored = JSON.parse(window.localStorage.getItem(key))
+  let stored
+  if (window.localStorage) {
+    stored = JSON.parse(window.localStorage.getItem(key))
+  } else if (localStorage) {
+    stored = JSON.parse(localStorage.getItem(key))
+  } else {
+    return []
+  }
   if (!Array.isArray(stored)) {
     let all = []
     for (var foo in stored) {
@@ -107,6 +123,10 @@ function getSavedClovers (key = 'saved_clovers') {
 
 function getMiningStats (key = 'clover_pig_stats') {
   let empty = { mineTime: 0, totalMined: 0, symms: 0 }
-  if (!window.localStorage) return empty
-  return JSON.parse(window.localStorage.getItem(key)) || empty
+  if (window.localStorage) {
+    return JSON.parse(window.localStorage.getItem(key)) || empty
+  } else if (localStorage) {
+    return JSON.parse(localStorage.getItem(key)) || empty
+  }
+  return empty
 }
