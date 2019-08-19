@@ -68,7 +68,7 @@ export default {
     }
   },
   head: {
-    title: { inner: 'Market' },
+    title: { inner: 'Feed' },
     meta: [
       { name: 'description', content: 'The main feed of Clovers activity.', id: 'meta-desc' }
     ]
