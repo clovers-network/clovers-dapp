@@ -153,9 +153,10 @@ export default {
   },
   SIGN_OUT (state) {
     if (!state.account) return
-    state.account = null
     Vue.delete(state.tokens, state.account)
+    state.account = null
     updateLocal('clover_tokens', null)
+
   },
 
   // marketplace
