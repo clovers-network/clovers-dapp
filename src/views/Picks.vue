@@ -3,7 +3,7 @@
     header
       page-title
         h1 Basket
-        p(slot="info") <b>Your Basket</b> is where clovers picked from your <router-link to="/garden" class="underlin">Garden</router-link>, or symmetrical clovers found by your Clover Pig are saved. To register a clover and permanently add it your Collection, it costs a base fee of 1 <router-link to="/trade">Clover Coin</router-link>. Once registered, they'll appear on your Profile, and in the Feed.
+        p(slot="info") <b>Your Basket</b> is where clovers picked from your <router-link to="/garden" class="underlin">Garden</router-link>, or symmetrical clovers found by your Clover Pig are saved. To register a clover and permanently add it your Collection, it costs a base fee of {{ baseCloverFee }} <router-link to="/trade">Clover Coin</router-link>. Once registered, they'll appear on your Profile, and in the Feed.
 
     //- (picks list)
     section.sm-col-10.lg-col-12.mx-auto.pb4.mb4(v-if="picks.length")
@@ -64,6 +64,9 @@ export default {
   computed: {
     showPickModal () {
       return this.$route.query.pick
+    },
+    baseCloverFee () {
+      return this.$store.state.baseCloverFee
     },
 
     ...mapGetters(['picks', 'pickCount'])

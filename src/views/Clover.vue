@@ -183,7 +183,7 @@ export default {
     },
     originalPrice () {
       if (!this.clover || !this.clover.reward) return '1'
-      let r = makeBn(this.clover.reward).add(toWei('1'))
+      let r = makeBn(this.clover.reward).add(toWei(this.baseCloverFee))
       return parseFloat(prettyBigNumber(r, 2))
     },
     balanceAfterBn () {
@@ -246,7 +246,7 @@ export default {
       return this.price > 0 ? 'Change Price' : 'Sell'
     },
 
-    ...mapState(['account', 'orders']),
+    ...mapState(['account', 'orders', 'baseCloverFee']),
     ...mapGetters([
       'user',
       'userName',
