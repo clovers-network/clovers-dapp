@@ -1,7 +1,9 @@
 <template lang="pug">
   .h5.sm-h4.p2(:class='isMyLog')
     .flex.justify-start.items-center(:class="{'opacity-50': isBurned(item)}")
+      //- Block No.
       .font-mono.opacity-50.h6.xs-hide(:class='{mr3: noImg}') \#{{ item.blockNumber }}
+
       //- Clover Transfered
       template(v-if="item.name === 'Clovers_Transfer'")
         .mr2.sm-mx3.flex-none(v-if='!noImg')
@@ -13,16 +15,18 @@
           .pr1 Clover burned (invalid)
         template(v-else-if='isFromClovers(item)')
           .activity-itm__icon.mr2.sm-mr3.h2 &xodot;
-          .pr1.opacity-50 Sent to
-          router-link.block.font-mono.truncate.hover-underline(:to='userRt(item.data._to)') {{ getUser('_to') }}
+          .opacity-50 Sent to&ensp;
+          router-link.hover-underline(:to='userRt(item.data._to)') {{ getUser('_to') }}
         template(v-else-if='isBorn(item)')
           .activity-itm__icon.mr2.sm-mr3.h2 &xodot;
-          .pr1.opacity-50 Found by #[router-link.inline.font-mono.truncate.hover-underline(:to='userRt(item.data._to)') {{ getUser('_to') }}] &#x2618;&#xFE0F;
+          span.opacity-50 Found by&ensp;
+          router-link.hover-underline(:to='userRt(item.data._to)') {{ getUser('_to') }}&ensp;&#x2618;&#xFE0F;
         template(v-else='')
           .activity-itm__icon.mr2.sm-mr3.h2 &xodot;
-          router-link.block.font-mono.truncate.hover-underline(:to='userRt(item.data._to)') {{ getUser('_to') }}
+          router-link.block.truncate.hover-underline(:to='userRt(item.data._to)') {{ getUser('_to') }}
           .opacity-50.nowrap &ensp;bought Clover from&ensp;
-          router-link.block.font-mono.truncate.hover-underline(:to='userRt(item.data._from)') {{ getUser('_from') }}
+          router-link.block.truncate.hover-underline(:to='userRt(item.data._from)') {{ getUser('_from') }}
+
       //- Clover price updated
       template(v-else-if="item.name === 'SimpleCloversMarket_updatePrice'")
         .mr2.sm-mx3.flex-none(v-if='!noImg')
@@ -33,27 +37,28 @@
           span.opacity-50 Removed from Market
         .flex.items-center(v-else='')
           span.opacity-50 Price is now&ensp;
-          coin-icon.mr1
-          | {{ newPrice }}&ensp;
+          | {{ newPrice }}
+          coin-icon.ml1
+
       //- Bought Tokens
       template(v-else-if="item.name === 'ClubTokenController_Buy'")
         .h1.mr2.sm-mx3.center.black.border.circle(v-if='!noImg' style='flex:0 0 50px;height:50px') &clubs;&#xFE0E;
         .activity-itm__icon.mr2.sm-mr3.h3.line-height-1 &nearr;
-        .font-mono.truncate
-          router-link.hover-underline(:to="'/users/' + item.data.buyer") {{ getUser('buyer') }}
-        .pl1.flex.items-center
-          span.opacity-50 bought&ensp;
-          coin-icon.mr1
-          span {{ price(item.data.tokens) }}
+        router-link.hover-underline(:to="'/users/' + item.data.buyer") {{ getUser('buyer') }}&ensp;
+        span.opacity-50 bought&ensp;
+        | {{ price(item.data.tokens) }}
+        coin-icon.ml1
+
       //- Sold Tokens
       template(v-else-if="item.name === 'ClubTokenController_Sell'")
         .h1.mr2.sm-mx3.center.black.border.circle(v-if='!noImg' style='width:50px;height:50px') &clubs;&#xFE0E;
         .activity-itm__icon.mr2.sm-mr3.h3.line-height-1 &searr;
-        router-link.font-mono.truncate.hover-underline(:to="userRt(getUser('seller'))" ) {{ getUser('seller') }}
-        .pl1.flex.items-center
-          span.opacity-50 sold&ensp;
-          coin-icon.mr1
-          span {{ price(item.data.tokens) }}
+        router-link.hover-underline(:to="userRt(getUser('seller'))" ) {{ getUser('seller') }}&ensp;
+        //- .pl1.flex.items-center
+        span.opacity-50 sold&ensp;
+        | {{ price(item.data.tokens) }}
+        coin-icon.ml1
+
       //- New Comment
       template(v-else-if="item.name === 'Comment_Added'")
         .mr2.sm-mx3.flex-none(v-if='!noImg')
@@ -61,25 +66,24 @@
             img.block(:src='cloverImage(item.data.board, 50)' style='width:50px;height:50px')
         .activity-itm__icon.mr2.sm-mr3.h3
           chat-icon(:size='15' :blank='true' :invert='false')
-        .opacity-50.nowrap Comment by&ensp;
-        router-link.block.font-mono.truncate.hover-underline(:to="userRt(item.data.userAddress)") {{ item.data.userName }}
+        span.opacity-50.nowrap Comment by&ensp;
+        router-link.hover-underline(:to="userRt(item.data.userAddress)") {{ userName(item.data.userName) }}
+
       //- Renamed
       template(v-else-if="item.name === 'CloverName_Changed'")
         .mr2.sm-mx3.flex-none(v-if='!noImg')
           router-link(:to='cloverLink(item.data.board)')
             img.block(:src='cloverImage(item.data.board, 50)' style='width:50px;height:50px')
         .activity-itm__icon.mr2.sm-mr3.h3 &#x270E;
-        div
-          span.opacity-50 Renamed&ensp;
-          router-link.hover-underline(:to="{name: 'Clover', params:{board:item.data.board} }") {{ item.data.newName }}
+        span.opacity-50 Renamed&ensp;
+        router-link.hover-underline(:to="{name: 'Clover', params:{board:item.data.board} }") {{ item.data.newName }}
       template(v-else-if="item.name === 'Album_Updated'")
         .mr2.sm-mx3.flex-none(v-if='!noImg')
           router-link(:to='cloverLink(item.data.board)')
             img.block(:src='cloverImage(item.data.board, 50)' style='width:50px;height:50px')
         .activity-itm__icon.mr2.sm-mr3.h3 &#x270E;
-        div
-          span.opacity-50 Updated Album&ensp;
-          router-link.hover-underline(:to="{name: 'Album', params: {id: item.data.id} }") {{ item.data.name }}
+        span.opacity-50 Updated Album&ensp;
+        router-link.hover-underline(:to="{name: 'Album', params: {id: item.data.id} }") {{ item.data.name }}
       template(v-else-if="item.name === 'Album_Created'")
         .mr2.sm-mx3.flex-none(v-if='!noImg')
           router-link(:to='cloverLink(item.data.board)')
@@ -88,6 +92,8 @@
         div
           span.opacity-50 Created Album&ensp;
           router-link.hover-underline(:to="{name: 'Album', params: {id: item.data.id} }") {{ item.data.name }}
+
+      //- default
       div(v-else)
         pre {{ item }}
 </template>
