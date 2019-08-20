@@ -84,7 +84,7 @@ export default {
   newSymFound ({ dispatch }) {
     // alert
     setTimeout(() => {
-      dispatch('selfDestructMsg', { msg: 'New symmetrical clover found!', link: { name: 'Picks' } })
+      dispatch('selfDestructMsg', { type: 'success', msg: 'New symmetrical clover found!', link: { name: 'Picks' } })
     }, 1000)
     // confetti:
     const end = Date.now() + (1 * 1000)

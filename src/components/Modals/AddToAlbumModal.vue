@@ -42,8 +42,8 @@ export default {
         var containsString = this.query === '' ? true : a.name.toLowerCase().indexOf(this.query.toLowerCase()) > -1
         return containsString
       }).sort((item1, item2) => {
-        if (item1.name < item2.name) { return -1 }
-        if (item1.name > item2.name) { return 1 }
+        if (item1.name.toLowerCase() < item2.name.toLowerCase()) { return -1 }
+        if (item1.name.toLowerCase() > item2.name.toLowerCase()) { return 1 }
         return 0
       })
     }
