@@ -9,7 +9,9 @@
           router-link.pr2(:to="{name: 'Garden'}") Garden
           router-link.pr2(:to="{name: 'Feed'}") Feed
           router-link.pr2(:to="{name: 'Albums'}") Albums
-          router-link.pr2(:to="{name: 'Activity'}") Activity
+          router-link.pr2(:to="{name: 'Activity'}")
+            span Activity
+            sup.h7.font-mono(v-if="newLogs") {{ newLogs }}
         //- (menu btn - mobile)
         button#mobileMenu.md-hidden.menu-btn.pointer.relative.py2.pr2(@click='clickMenu' aria-label='Toggle Menu')
           wavey-btn(v-show='mining', :is-white='showMenu')
@@ -89,8 +91,9 @@ import Pig from '@/components/Pig'
 import PersonIcon from '@/components/Icons/PersonIcon'
 import CartIcon from '@/components/Icons/CartIcon'
 import CoinIcon from '@/components/Icons/CoinIcon'
-import { toDec } from '@/utils'
+import { toDec, concatPrice } from '@/utils'
 import { mapActions, mapGetters, mapState } from 'vuex'
+
 export default {
   name: 'AppHeader',
   data () {
@@ -114,7 +117,7 @@ export default {
       return this.$store.state.miningStats.symms
     },
     newLogs () {
-      return this.$store.state.logs.length
+      return concatPrice(this.$store.state.logs.length || 0)
     },
     showBackButton () {
       return this.$route.name === 'Clover' &&
