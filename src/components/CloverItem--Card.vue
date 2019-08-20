@@ -24,8 +24,8 @@
             h3.h5.md-h4.lg-h5.truncate {{ userName(clover.user) }}
           .px1.col-6.sm-col-5.flex.justify-end(v-if="clover.price.toString(10) !== '0'")
             h4.h5.md-h4.lg-h5.flex.items-center
-              coin-icon.block.mr1
               | {{ displayPrice }}
+              coin-icon(style="margin-left:0.3em", :width="12")
 </template>
 
 <script>
