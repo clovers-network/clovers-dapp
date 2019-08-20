@@ -17,8 +17,8 @@
       .flex.font-mono.h7.nowrap.light-green
         .inline-block.py1.mr1.sm-mr2(v-text="commentDate(comment.created)")
         //- flag / delete
-        button.p1.hvr.pointer(v-if="!commentOwner(comment)", @click="flagOrDeleteComment(comment.id)") Flag
-        button.p1.hvr.pointer(v-else-if="!comment.deleted", @click="flagOrDeleteComment(comment.id)") Delete
+        button.p1.hvr.pointer(v-if="owner && !commentOwner(comment)", @click="flagOrDeleteComment(comment.id)") Flag
+        button.p1.hvr.pointer(v-if="commentOwner(comment) && !comment.deleted", @click="flagOrDeleteComment(comment.id)") Delete
 </template>
 
 <script>
