@@ -54,6 +54,7 @@ const state = {
   currentPage: {},
   currentClover: {},
   otherUser: null,
+  baseCloverFee: '2',
 
   // use getter 'picks' in views
   allSavedClovers: getSavedClovers(),
