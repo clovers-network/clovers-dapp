@@ -10,7 +10,7 @@
         template(v-else)
           //- username
           router-link(:to="'/users/' + comment.userAddress")
-            span(v-text="comment.userName").mr2.nowrap.h5
+            span(v-text="userName(comment.userName)").mr2.nowrap.h5
           //- comment
           span(v-text="comment.comment").break-word.font-exp.h5
         //- span.block.sm-inline
@@ -23,7 +23,7 @@
 
 <script>
 import moment from 'moment'
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'Comment',
   props: ['comment', 'owner'],
@@ -31,6 +31,9 @@ export default {
     return {
       showActions: false
     }
+  },
+  computed: {
+    ...mapGetters(['userName'])
   },
   methods: {
     ...mapActions(['flagOrDeleteComment']),
