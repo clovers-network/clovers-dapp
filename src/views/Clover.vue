@@ -136,7 +136,10 @@ export default {
     meta () {
       if (lastRt || !this.board) return
       const img = fetchCloudImage(cloverImage({ board: this.board }, 640))
-      return img && [{ p: 'og:image', c: img, id: 'og-img' }]
+      return img && [
+        { p: 'og:url', c: 'https://clovers.network/clovers/' + this.board, id: 'og-url' },
+        { p: 'og:image', c: img, id: 'og-img' }
+      ]
     }
   },
   data () {
