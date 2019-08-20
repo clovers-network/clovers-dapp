@@ -11,7 +11,7 @@
       footer.absolute.bottom-0.left-0.col-12.px2.pb2.flex.justify-between
         h6.col-9.truncate.h5 {{_userName}}
         .col-4.flex.items-center.justify-end
-          span.h5 {{album.clovers.length}}
+          span.h5.font-mono {{album.clovers.length}}
           //- img.block(src="@/assets/icons/clover-icon-1.svg", style="width:0.66em; margin-left:0.175em")
 </template>
 
