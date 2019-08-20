@@ -25,7 +25,7 @@
                   | {{ symms }}
 
       //- title
-      h1.hidden.md-block.font-exp.col-4.py1.center.h5(v-show="$route.meta.logo !== false")
+      h1.hidden.md-block.font-exp.col-4.py1.center.h5(v-show="!hideTitle")
         span.h3
           router-link(to="/") Clovers
           template(v-for="item in $route.meta.title")
@@ -103,15 +103,16 @@ export default {
       accountMenu: false,
       showBadge: false,
       afterResize: null,
-      winH: window.innerHeight
+      winH: window.innerHeight,
+      lastRt: {}
     }
   },
   computed: {
     mining () {
       return this.miners.length > 0
     },
-    title () {
-      return this.$route.meta.title || 'Clovers'
+    hideTitle () {
+      return this.$route.meta.logo === false && this.lastRt.name
     },
     symms () {
       return this.$store.state.miningStats.symms
@@ -130,10 +131,11 @@ export default {
     ...mapGetters(['user', 'userBalance', 'pickCount', 'authHeader'])
   },
   watch: {
-    '$route' () {
+    '$route' (to, from) {
       this.showMenu = false
       this.accountMenu = false
       this.pigMenu = false
+      this.lastRt = from
     },
     symms () {
       this.showBadge = true
