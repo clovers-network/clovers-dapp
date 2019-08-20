@@ -11,7 +11,7 @@
           router-link.pr2(:to="{name: 'Albums'}") Albums
           router-link.pr2(:to="{name: 'Activity'}")
             span Activity
-            sup.h7.font-mono(v-if="newLogs") {{ newLogs }}
+            sup.h7.font-mono(v-if="showLogCount") {{ newLogs }}
         //- (menu btn - mobile)
         button#mobileMenu.md-hidden.menu-btn.pointer.relative.py2.pr2(@click='clickMenu' aria-label='Toggle Menu')
           wavey-btn(v-show='mining', :is-white='showMenu')
@@ -74,7 +74,7 @@
               router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center(:to="{ name: 'Garden' }") Garden
               router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center(:to="{name: 'Albums'}") Albums
               router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center.relative(:to="{ name: 'Activity' }")
-                  span Activity <sup v-if="newLogs">{{newLogs}}</sup>
+                  span Activity <sup v-if="showLogCount">{{newLogs}}</sup>
                   //- span.circle.bg-orange.absolute(v-if="newLogs" style="width:8px;height:8px")
               //- li
                 router-link.inline-block.p1(:to="{name: 'Account'}") Dashboard
@@ -119,6 +119,9 @@ export default {
     },
     newLogs () {
       return concatPrice(this.$store.state.logs.length || 0)
+    },
+    showLogCount () {
+      return this.newLogs !== '0' && this.$route.name !== 'Activity'
     },
     showBackButton () {
       return this.$route.name === 'Clover' &&
