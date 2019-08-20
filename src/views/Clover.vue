@@ -45,28 +45,23 @@
         span.my1.py1.px2.rounded.border(v-else) {{ currentOwner }}
         span.my1.pl1.pointer.nowrap.opacity-50.hover-opacity-100.trans-fast(v-if="isMyClover && !showSalePrice", @click="currentAction='transfer'") &rarr; Transfer
 
-    //- Trade
-    template(v-if="isRFT")
-      trade(:market="board", :sharesOwnedWei="sharesOwnedWei", @trade="checkShares")
+    .flex.flex-wrap.justify-center.my4.px3
+      .mx1.mb2.flex.items-center.py2.px3.border.rounded-2
+        template(v-if="showSalePrice")
+          span.pr2 Price:
+          span.font-exp {{ prettyPrice }}
+          coin-icon.ml1
+        template(v-else)
+          span.pr2 Original value:
+          span.font-exp ~{{ originalPrice }}
+          coin-icon.ml1
 
-    template(v-else)
-      .flex.flex-wrap.justify-center.my4.px3
-        .mx1.mb2.flex.items-center.py2.px3.border.rounded-2
-          template(v-if="showSalePrice")
-            span.pr2 Price:
-            span.font-exp {{ prettyPrice }}
-            coin-icon.ml1
-          template(v-else)
-            span.pr2 Original value:
-            span.font-exp ~{{ originalPrice }}
-            coin-icon.ml1
-
-        .mx1.mb2.rounded-2.white.bg-green(v-if="isMyClover")
-          button.line-height-4.pointer.py2.px3.font-exp(@click="currentAction = 'sell'") {{ sellButton }}
-        .mx1.mb2.rounded-2.white.bg-green(v-else-if="showSalePrice")
-          button.line-height-4.pointer.py2.px3.font-exp(@click="currentAction = 'buy'") Buy
-        .mx1.mb2.rounded-2.light-green.border(v-else)
-          span.inline-block.line-height-4.py2.px3.font-exp Unavailable
+      .mx1.mb2.rounded-2.white.bg-green(v-if="isMyClover")
+        button.line-height-4.pointer.py2.px3.font-exp(@click="currentAction = 'sell'") {{ sellButton }}
+      .mx1.mb2.rounded-2.white.bg-green(v-else-if="showSalePrice")
+        button.line-height-4.pointer.py2.px3.font-exp(@click="currentAction = 'buy'") Buy
+      .mx1.mb2.rounded-2.light-green.border(v-else)
+        span.inline-block.line-height-4.py2.px3.font-exp Unavailable
 
     //- comments
     section.mt4.md-mb4.pt1.max-width-3.mx-auto
@@ -118,7 +113,6 @@ import Reversi from 'clovers-reversi'
 
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 import Clv from '@/components/Clv'
-import Trade from '@/views/Trade'
 import Comments from '@/components/Comments/Comments'
 import CoinIcon from '@/components/Icons/CoinIcon'
 import EditCloverName from '@/components/EditCloverName'
@@ -330,14 +324,6 @@ export default {
       this.canGetComments = true
     }, 500)
   },
-  watch: {
-    'orders.length' () {
-      this.checkShares()
-    },
-    isRFT () {
-      this.checkShares()
-    }
-  },
-  components: { SymmetryIcons, Clv, Trade, Comments, CoinIcon, EditCloverName, TransferClover, SellClover, BuyClover, NotFound }
+  components: { SymmetryIcons, Clv, Comments, CoinIcon, EditCloverName, TransferClover, SellClover, BuyClover, NotFound }
 }
 </script>
