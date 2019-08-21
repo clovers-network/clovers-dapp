@@ -20,7 +20,7 @@
         //- border
         article.album__clover.block.pb-100.relative.border-transparent.border-dashed.hover-border-green.hover-shadow.trans-quick.rounded
           router-link.absolute.overlay.flex.items-center.justify-center(:to="{name: 'Clover', params: {board: clover}}")
-            img.block.col-8.sm-col-9(:src="cloverImage(clover, 128)")
+            clv-svg.col-8.sm-col-9(:byteBoard="clover", :size="196")
           //- TODO show for owner !!
           button.absolute.top-0.right-0.m1.border.rounded-full.bg-lightest-green.pointer.trans-quick.opacity-50(style="padding:0.4rem", v-if="isEditor" @click="removeClover(clover)")
             svg-x(style="width:0.6rem;height:0.6rem")
@@ -48,6 +48,7 @@
 import store from '@/store'
 import { cloverImage } from '@/utils'
 import Modal from '@/components/Modals/Modal'
+import ClvSvg from '@/components/Clv--SVG'
 import svgX from '@/components/Icons/SVG-X'
 import {mapState, mapGetters, mapActions} from 'vuex'
 export default {
@@ -118,7 +119,7 @@ export default {
       }
     }
   },
-  components: { svgX, Modal }
+  components: { svgX, Modal, ClvSvg }
 }
 </script>
 
