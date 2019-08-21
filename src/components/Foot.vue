@@ -25,7 +25,8 @@ export default {
   name: 'Foot',
   computed: {
     hideme () {
-      return this.$route.name === 'Clover' || this.$route.meta.isOverlay
+      const rt = this.$route
+      return rt.name === 'Clover' || rt.meta.isOverlay || rt.name === 'Garden'
     }
   },
   components: {
