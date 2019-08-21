@@ -108,7 +108,6 @@ export default {
         axios
           .post('https://clovers.club/register', { email: this.email })
           .then(response => {
-            console.log(response)
             this.success = true
             this.email = ''
           })

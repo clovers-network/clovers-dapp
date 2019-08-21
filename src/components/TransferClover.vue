@@ -4,7 +4,7 @@
     input.border.py2.px2.rounded.col-12.input(v-model="form.address" autocomplete="off" placeholder="Address" v-autofocus)
 
     .pt3.center(:class="{'pointer-events-none': submitting}")
-      input.font-ext.pointer.py2.px3.rounded.white.trans-bg(:class="cancelled ? 'bg-red' : 'bg-green'", :value="buttonText", :disabled="!changed", type="submit")
+      input.pointer.py2.px3.rounded.white.trans-bg(:class="cancelled ? 'bg-red' : 'bg-green'", :value="buttonText", :disabled="!changed", type="submit")
 </template>
 
 <script>

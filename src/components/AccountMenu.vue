@@ -1,42 +1,27 @@
-<template>
-  <div
-    id="accountMenu"
-    class="border green bg-white absolute">
-    <template >
-      <div class=" center bold border-bottom pointer" >
-        <template v-if="!authHeader">
-          <div
-            class="p2"
-            @click="signClick">Sign In</div>
-        </template>
-        <template v-else>
-          <router-link
-            to="/account"
-            class="block p2">{{ userName(user) }}</router-link>
-        </template>
-      </div>
-      <div class="p2 h5 lh3">
-        <template v-if="!authHeader">Sign in to edit your profile, make comments and rename Clovers.</template>
-        <template v-else>
-          <div class="pointer">
-            <router-link
-              :to="{name: 'Account'}"
-              @click.native="$emit('closeAccountMenu')">Your Dashboard</router-link>
-          </div>
-          <div class="pointer">
-            <router-link
-              :to="'/users/' + account"
-              @click.native="$emit('closeAccountMenu')">Your Profile</router-link>
-          </div>
-          <div class="pointer">
-            <div
-              class="pointer"
-              @click="signClick">Sign Out</div>
-          </div>
-        </template>
-      </div>
-    </template>
-  </div>
+<template lang="pug">
+  nav#accountMenu.border.green.bg-white.absolute.no-select
+    .center.border-bottom.pointer
+      template(v-if="!authHeader")
+        button.block.col-12.pointer.p2(@click="signClick") Sign In
+      template(v-else)
+        router-link.block.p2(to="/account") {{ userName(user) }}
+    .h5.p2.lh2.center(v-if="!authHeader") Sign in to register clovers, edit your Profile, and leave&nbsp;comments.
+    .md-p2.lh3.md-border-bottom(v-else)
+      div
+        router-link.block.md-inline.p2.md-p0.border-bottom.md-border-none(:to="{name: 'Account'}", @click.native="$emit('closeAccountMenu')") Your Dashboard
+      div
+        router-link.block.md-inline.p2.md-p0.border-bottom.md-border-none(:to="'/users/' + account", @click.native="$emit('closeAccountMenu')") Your Profile
+      .hidden.md-block
+        button.block.md-inline.col-12.p2.md-p0.left-align(@click="signClick") Sign Out
+    .md-p2(:class='{"md-pt2": !authHeader, "lh3": !authHeader, "border-top": !authHeader}')
+      div
+        router-link.block.md-inline.p2.md-p0.border-bottom.md-border-none(:to="{name: 'Learn'}", @click.native="$emit('closeAccountMenu')") Tutorial
+      div
+        a.block.md-inline.p2.md-p0.border-bottom.md-border-none(href="//forum.clovers.network/t/frequently-asked-questions-faq/", @click.native="$emit('closeAccountMenu')") FAQ
+      div
+        a.block.md-inline.p2.md-p0(href="mailto:hello@clovers.network", target="_blank" @click.native="$emit('closeAccountMenu')") Contact
+    .md-hidden.border-top(v-if="authHeader")
+      button.block.col-12.p2.center.bg-lightest-green(@click="signClick") Sign Out
 </template>
 
 <script>

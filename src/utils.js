@@ -2,6 +2,8 @@ import BigNumber from 'bignumber.js'
 import utils from 'web3-utils'
 import store from './store'
 
+// this apiBase doesn't matter which network
+const imgBase = 'https://img.clovers.network'
 const apiBase = process.env.VUE_APP_API_URL
 const cloudinaryBase = process.env.VUE_APP_CLOUDINARY_BASE_URL
 
@@ -26,7 +28,7 @@ export function isHex (foobar) {
 
 export function cloverImage (clover = '0', size = 200) {
   let board = clover.byteBoard || clover.board || clover
-  return `${apiBase}/clovers/svg/${encodeURIComponent(board)}/${size}`
+  return `${imgBase}/svg/${encodeURIComponent(board)}/${size}`
 }
 
 export function fetchCloudImage (src, transforms = 'f_png') {

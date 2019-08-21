@@ -1,56 +1,42 @@
 <template lang="pug">
-  .mx3.green
-    more-information(title="?" content="<b>The Feed</b> is where all registerd Clovers can be found. You can filter by symmetry, popularity, comments, clovers for sale as well as sort by price or date.")
+  article.mx3.md-mx0.green
+    header
+      page-title
+        h1 Feed
+        p(slot="info") <b>The Feed</b> is where all registerd clovers can be found.<br> You can filter by symmetry, clovers for sale or with comments, as well as sort by price or date.
 
-    //- filters
-    .mt3.mb3.pb1.sm-pb0.sm-mb2.flex.flex-wrap.sm-flex-no-wrap.left-align.sm-justify-end.mxn2.px3.sm-px1
-      //- filter
-      .col-6.sm-col-auto.my1.px1
-        .center.h4.select
-          select(v-model="filters.filter")
-            option(:value="undefined") All Clovers
-            option(value="forsale") Clovers for Sale
-            option(value="Sym") Symmetrical Clovers
-            option(value="RotSym") Sym. Rotational
-            option(value="X0Sym") Sym. Vertical
-            option(value="Y0Sym") Sym. Horizontal
-            option(value="XYSym") Sym. Diagonal Up
-            option(value="XnYSym") Sym. Diagonal Down
-            option(value="public") Human owned
-            option(value="contract") Contract owned
-            option(value="commented") With Comments
-            //- option(value="rft") RFT
-      //- sort
-      .col-6.sm-col-auto.my1.px1
-        .center.h4.select
-          select(v-model='filters.sort')
-            option(:value='undefined') Sort by Date
-            option(value='price') Sort by Price
-      //- page nav
-      .col-12.sm-col-auto.my1.px1
-        .center.h4.border.rounded.h-select.flex.items-center.justify-between.hover-bg-l-green.nowrap
-          span.p2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !prevPossible }", @click="back")
-            img.block(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
-          span {{ filters.page }} of {{ maxPage }}
-          span.p2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !nextPossible }", @click="forward")
-            img.block(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
+    section
+      //- filters
+      filters-nav(:page="filters.page", :maxPages="maxPage", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
+        //- filter
+        select(slot="filter", v-model="filters.filter")
+          option(:value="undefined") All Clovers
+          option(value="market") Clovers for Sale
+          option(value="Sym") Symmetrical Clovers
+          option(value="RotSym") Sym. Rotational
+          option(value="X0Sym") Sym. Vertical
+          option(value="Y0Sym") Sym. Horizontal
+          option(value="XYSym") Sym. Diagonal Up
+          option(value="XnYSym") Sym. Diagonal Down
+          option(value="public") Human owned
+          option(value="contract") Contract owned
+          option(value="commented") With Comments
+          //- option(value="rft") RFT
+        //- sort
+        select(slot="sort", v-model='filters.sort')
+          option(:value='undefined') By Date
+          option(value='price') By Price
 
-    //- Clover List
-    .fade-enter-active(v-if="hasResults", :class="{'opacity-50': loading}")
-      clover-list-cards(:clovers='clovers')
-    .fade-enter-active(v-else, :class="{'opacity-50': true}")
-      clover-list-cards(:clovers='fakeClovers')
+      //- Clover List
+      .fade-enter-active(v-if="hasResults", :class="{'opacity-50': loading}")
+        clover-list-cards(:clovers='clovers')
+      .fade-enter-active(v-else, :class="{'opacity-50': true}")
+        clover-list-cards(:clovers='fakeClovers')
 
-    nav.flex.h5.green.items-center.justify-center.my3.pb4(v-if='(prevPossible || nextPossible) && hasResults')
-      .col-6.flex.px1.sm-px2.justify-end
-        button.pointer.px3.py2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !prevPossible }", @click="back")
-          img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
-      .col-6.flex.px1.sm-px2
-        button.pointer.px3.py2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !nextPossible }", @click="forward")
-          img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
+      page-nav(:canPrev="prevPossible", :canNext="nextPossible", :hasResults="hasResults", @prev="back", @next="forward")
 
-    //- .sticky.bottom-0.bg-green.white.p2.center.h-bttm-bar.flex.pointer(v-if='newCloversCount' @click='addNew')
-      span.block.m-auto.font-exp Show {{ newCloversCount }} new {{ pluralize(&apos;Clover&apos;, newCloversCount) }}
+      //- .sticky.bottom-0.bg-green.white.p2.center.h-bttm-bar.flex.pointer(v-if='newCloversCount' @click='addNew')
+        span.block.m-auto.font-exp Show {{ newCloversCount }} new {{ pluralize(&apos;Clover&apos;, newCloversCount) }}
 </template>
 
 <script>
@@ -58,11 +44,10 @@ import store from '@/store'
 import { mapState, mapGetters } from 'vuex'
 import { pluralize, cleanObj } from '@/utils'
 import CloverListCards from '@/components/CloverList--Cards'
+import PageTitle from '@/components/PageTitle'
 import PageNav from '@/components/PageNav'
 import svgX from '@/components/Icons/SVG-X'
-import MoreInformation from '@/components/MoreInformation'
-
-const apiUrl = process.env.VUE_APP_API_URL + '/clovers'
+import FiltersNav from '@/components/FiltersNav'
 
 export default {
   name: 'Feed',
@@ -83,7 +68,7 @@ export default {
     }
   },
   head: {
-    title: { inner: 'Market' },
+    title: { inner: 'Feed' },
     meta: [
       { name: 'description', content: 'The main feed of Clovers activity.', id: 'meta-desc' }
     ]
@@ -122,7 +107,7 @@ export default {
       let order = !this.filters.asc ? '' : this.filters.sort ? ' (low to high)' : ' (oldest first)'
 
       switch (this.filters.filter) {
-        case 'forsale':
+        case 'market':
           type = 'For Sale'; break
         case 'rft':
           type = 'RFT'; break
@@ -145,7 +130,7 @@ export default {
     },
 
     ...mapState(['newClovers']),
-    ...mapGetters(['newCloversCount'])
+    ...mapGetters(['newCloversCount', 'apiBase'])
   },
   watch: {
     filters: {
@@ -193,14 +178,13 @@ export default {
       if (this.loading) return
       this.filtersVisible = false
       this.loading = true
-
       this.$store.dispatch('getPagedClovers', {
-        url: apiUrl,
+        url: this.apiBase + '/clovers',
         filters: this.filters
       }).then(() => {
         this.loading = false
       }).catch((error) => {
-        console.log(error)
+        console.error(error)
         this.loading = false
       })
     },
@@ -221,18 +205,6 @@ export default {
       this.filters.page = this.results.nextPage
     }
   },
-  components: { CloverListCards, svgX, PageNav, MoreInformation }
+  components: { CloverListCards, svgX, PageTitle, PageNav, FiltersNav }
 }
 </script>
-
-<style>
-.filters-btn {
-  bottom: 0;
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  right: 0;
-  top: 0;
-  transition: border 0.18s ease-in-out;
-}
-</style>

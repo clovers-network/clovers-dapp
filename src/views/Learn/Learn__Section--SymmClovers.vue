@@ -12,7 +12,8 @@
               button.border.rounded.green.px3.py1.h5.pointer.nowrap(@click="step", v-if="no === 1") Show Reward
         transition(name="fade")
           .absolute.top-100.left-0.col-12.font-mono.pt3.flex.justify-center(v-show="no === 2")
-            .nowrap {{cleanReward}} coins = ${{rewardInUSD}}
+            .nowrap
+              span.flex.items-center {{cleanReward}} <coin-icon class="inline-block ml1 mr2" /> ≈ {{rewardInETH}} ETH ≈ ${{rewardInUSD}}
     .absolute.left-0.w-100.pt2.px3.pb3.center(:class="no > 1 ? 'top-0' : 'bottom-0'")
       .font-ext.h4.sm-h2.mx-auto(v-html="text", style="max-width:26em")
     down-arrow-btn(v-if="no > 1", v-on="$listeners")
@@ -22,6 +23,7 @@
 import LearnFrame from './Learn__Section__Frame'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 import DownArrowBtn from './Learn__DownArrowBtn'
+import CoinIcon from '@/components/Icons/CoinIcon'
 import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
 import { abbrvNum } from '@/utils'
@@ -29,7 +31,7 @@ import { fromWei } from 'web3-utils'
 const reversi = new Reversi()
 export default {
   name: 'LearnSectionSymmClovers',
-  components: { LearnFrame, SymmetryIcons, DownArrowBtn },
+  components: { LearnFrame, SymmetryIcons, DownArrowBtn, CoinIcon },
   data () {
     return {
       no: 0,
@@ -44,6 +46,9 @@ export default {
     },
     cleanReward () {
       return this.reward ? abbrvNum(fromWei(this.reward.toString(10))) : '...'
+    },
+    rewardInETH () {
+      return this.reward && abbrvNum(this.$store.getters.priceInCollateral.toFormat(4) * this.cleanReward, 4)
     },
     rewardInUSD () {
       return this.reward && abbrvNum(this.$store.getters.clubTokenInUSD.toFormat(2) * this.cleanReward)
@@ -61,7 +66,7 @@ export default {
           this.text = 'Clovers with symmetry are rare. <br class="hide sm-show">If you find one, you can claim a reward!'
           break
         case 2:
-          this.text = 'This clover is currently worth <b>' + this.cleanReward + ' clover coins</b>.<br class="hide sm-show">You can use these coins to buy other clovers, or exchange them for Ether (ETH).'
+          this.text = 'This clover is currently worth <b>' + this.cleanReward + '&nbsp;clover coins</b>.<br class="hide sm-show"> You can use these coins to buy other clovers, or exchange them for Ether (ETH).'
           break
       }
     },

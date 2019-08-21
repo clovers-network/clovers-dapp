@@ -80,11 +80,6 @@ export default {
   },
   mounted () {
     this.$nextTick(() => this.scrollTo())
-    // setTimeout(() => {
-    //   this.interval = setInterval(() => {
-    //     this.swapVerb()
-    //   }, 1800)
-    // }, 2700)
   },
   destroyed () {
     clearInterval(this.interval)
@@ -136,7 +131,6 @@ function shuffle (a) {
   .cloverVerb:after {
     content: '';
     width:50px;
-    // border-bottom: 5px solid var(--green);
     position: absolute;
     right:0px;
     bottom:0px;

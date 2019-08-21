@@ -1,46 +1,35 @@
 <template lang="pug">
-  .mx2.sm-mx3
-    more-information(title="?" content="<u>The Activity Log</u> is where you can get an overview of everything that's happening on the site in real time. You'll see activity for when a new Clover is registered, when one is bought or listed for sale, when users buy or sell Clover Coin and when they comment on someones Clover.")
-    .mt4.mb2
-      .flex.left-align.justify-end
-        .pt2.pb2.flex-auto.left-align
-          .h6.sm-h5.font-mono.pt1
-            span.xs-hide.sm-hide Block
-            span(v-text="` #${currentBlock || ''}`")
-        .pt1.pb2.pl2.pr1
-          .center.h4.select
-            select(v-model='filters.filter')
-              option(v-for='(val, key) of types' :key='key' :value="key !== 'all' ? key : undefined") {{ val }}
-        .pt1.pb2.pr2.pl1
-          .center.h4.select
-            select(v-model='filters.asc')
-              option(:value='false') Newest first
-              option(:value='true') Oldest first
-        .pt1.pb2.center(style="min-width:140px")
-          .center.h4.border.rounded.h-100.px2.flex.items-center.justify-between.hover-bg-l-green
-            span.pr2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !prevPossible }", @click="back")
-              img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
-            span {{ filters.page }} of {{ maxPage }}
-            span.pl2.pointer.bold.trans-opacity-long(:class="{ 'opacity-30': !nextPossible }", @click="forward")
-              img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
+  article.mx3
+    header
+      page-title
+        h1 Activity
+        p(slot="info") The <b> Activity Log</b> is where you can get an overview of everything that's happening on Clovers.
+
+    filters-nav(:page="filters.page", :maxPages="maxPage", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
+      //- Filter
+      select(slot="filter", v-model='filters.filter')
+        option(v-for='(val, key) of types' :key='key' :value="key !== 'all' ? key : undefined") {{ val }}
+      //- Sort
+      select(slot="sort", v-model='filters.asc')
+        option(:value='false') Newest first
+        option(:value='true') Oldest first
+
+    //- .col-12.my1.rounded.bg-lightest-green.p2.font-mono
+      | Block
+      span(v-text="` #${currentBlock || ''}`")
 
     .fade-enter-active(v-if='hasResults', :class="{'opacity-50': loading}")
       .mx-auto.bg-white
-        .list-reset.font-mono.center.mb2(v-if='liveLogs.length' style='top:93px')
-          span.pl2.pointer.h5(@click.self='addNew') ✨ Show {{ liveLogs.length }} new log(s)
-
-        ul.m0.p0.list-reset
-          li.border.border-dashed.rounded.mb2(v-for='log in activity', :key='log.id || log.transactionHash')
-            activity-item(:item='log')
-        nav.list-reset.flex.h5.green.items-center.justify-center.my3.pb4(v-if='(prevPossible || nextPossible) && hasResults')
-          li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !prevPossible }", @click="back")
-            img(src="../assets/icons/chevron-down.svg", style="transform:rotate(90deg)")
-            span.pl1 Previous
-          li.pointer.px3.py2.mx2.border.rounded.hover.hover-bg-l-green(:class="{ 'opacity-30': !nextPossible }", @click="forward")
-            span.pr1 Next
-            img(src="../assets/icons/chevron-down.svg", style="transform:rotate(-90deg)")
-        .center.h5.font-mono.h-bttm-bar.px2.py3(v-else)
-          span.light-green End of results
+        .mxn2.sm-px2
+          //- show
+          .list-reset.font-mono.center.mb2(v-if='liveLogs.length' style='top:93px')
+            span.pl2.pointer.h5(@click.self='addNew') ✨ Show {{ liveLogs.length }} new log(s)
+          //- logs
+          ul.m0.p0.list-reset.mb3
+            li.border.border-dashed.rounded.mb2(v-for='log in activity', :key='log.id || log.transactionHash')
+              activity-item(:item='log')
+          //- btns: next / prev
+          page-nav(:hasResults="hasResults", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
 
     div(v-else)
       .center.h5.font-mono.px2.py4
@@ -52,19 +41,19 @@
 import store from '@/store'
 import { mapGetters, mapActions } from 'vuex'
 import ActivityItem from '@/components/ActivityItem'
-import MoreInformation from '@/components/MoreInformation'
+import PageTitle from '@/components/PageTitle'
+import FiltersNav from '@/components/FiltersNav'
+import PageNav from '@/components/PageNav'
 import svgX from '@/components/Icons/SVG-X'
 import xss from 'xss'
 import axios from 'axios'
 import { cleanObj } from '@/utils'
 
-const logUrl = process.env.VUE_APP_API_URL + '/logs'
-
 export default {
   name: 'Activity',
   data () {
     return {
-      interval: null,
+      keepChecking: true,
       currentBlock: null,
       loading: false,
 
@@ -75,13 +64,13 @@ export default {
       },
 
       types: {
-        all: 'All',
+        all: 'All Activity',
         Comment_Added: 'Comments',
         CloverName_Changed: 'Clover name changes',
         Clovers_Transfer: 'Clover transfers',
         SimpleCloversMarket_updatePrice: 'Clover price changes',
-        'ClubTokenController_Buy,ClubTokenController_Sell': 'Coin activity',
-        'CurationMarket_Buy,CurationMarket_Sell': 'Curation Market activity'
+        'ClubTokenController_Buy,ClubTokenController_Sell': 'Coin activity'
+        // 'CurationMarket_Buy,CurationMarket_Sell': 'Curation Market activity'
       },
 
       logs: {}
@@ -126,8 +115,7 @@ export default {
     filtersColors () {
       return this.showFilters ? 'bg-green white' : 'bg-white green'
     },
-
-    ...mapGetters(['userName'])
+    ...mapGetters(['userName', 'apiBase'])
   },
   methods: {
     setFilters () {
@@ -140,7 +128,7 @@ export default {
     query () {
       if (this.loading) return
       this.loading = true
-      axios.get(logUrl, {
+      axios.get(this.apiBase + '/logs', {
         params: { ...this.filters }
       }).then(({ data }) => {
         this.loading = false
@@ -198,13 +186,17 @@ export default {
     this.setFilters()
     this.query()
     this.getBlockNumber()
-    this.interval = setInterval(() => {
+    var checkBlock = () => {
       this.getBlockNumber()
-    }, 5000)
+      if (this.keepChecking) {
+        setTimeout(checkBlock, 5000)
+      }
+    }
+    checkBlock()
   },
   destroyed () {
-    clearInterval(this.interval)
+    this.keepChecking = false
   },
-  components: { ActivityItem, svgX, MoreInformation }
+  components: { ActivityItem, svgX, PageTitle, FiltersNav, PageNav }
 }
 </script>

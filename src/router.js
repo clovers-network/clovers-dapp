@@ -8,14 +8,19 @@ import Learn from '@/views/Learn/Learn'
 const Clover = () => import(/* webpackChunkName: 'clovers' */ '@/views/Clover')
 const Feed = () => import(/* webpackChunkName: 'clovers' */ '@/views/Feed')
 const Field = () => import(/* webpackChunkName: 'clovers' */ '@/views/Field')
-const User = () => import(/* webpackChunkName: 'clovers' */ '@/views/User')
+
+const User = () => import(/* webpackChunkName: 'user' */ '@/views/User/User')
+const UserClovers = () => import(/* webpackChunkName: 'user' */ '@/views/User/User__Clovers')
+const UserAlbums = () => import(/* webpackChunkName: 'user' */ '@/views/User/User__Albums')
 
 const Account = () => import(/* webpackChunkName: 'user' */ '@/views/Account')
 const Picks = () => import(/* webpackChunkName: 'user' */ '@/views/Picks')
 const Trade = () => import(/* webpackChunkName: 'user' */ '@/views/Trade')
-const About = () => import(/* webpackChunkName: 'user' */ '@/views/About')
 
 const Activity = () => import(/* webpackChunkName: 'activity' */ '@/views/Activity.vue')
+
+const Albums = () => import(/* webpackChunkName: 'albums' */ '@/views/Albums')
+const Album = () => import(/* webpackChunkName: 'albums' */ '@/views/Album')
 
 Vue.use(Router)
 
@@ -26,7 +31,7 @@ export default new Router({
       path: '/',
       name: 'Welcome',
       component: Welcome,
-      meta: { title: '' }
+      meta: { logo: false }
     },
     {
       path: '/welcome',
@@ -35,32 +40,29 @@ export default new Router({
     {
       path: '/soon',
       name: 'Soon',
-      component: ComingSoon,
-      meta: { title: '' }
+      component: ComingSoon
     },
     {
       path: '/garden',
       name: 'Garden',
-      component: Field,
-      meta: { title: 'Garden' }
+      component: Field
     },
     {
       path: '/feed',
       name: 'Feed',
-      component: Feed,
-      meta: { title: 'The Feed' }
+      component: Feed
     },
 
     {
       path: '/trade',
       name: 'Trade',
-      component: Trade,
-      meta: { title: 'Trade' }
+      component: Trade
     },
     {
       path: '/learn',
       name: 'Learn',
-      component: Learn
+      component: Learn,
+      meta: { isOverlay: true }
     },
 
     // account dashboard
@@ -68,19 +70,18 @@ export default new Router({
       path: '/account',
       name: 'Account',
       component: Account,
-      meta: { title: 'Dashboard' }
+      meta: { title: [['You']] }
     },
     {
       path: '/account/basket',
       name: 'Picks',
       component: Picks,
-      meta: { title: 'Your Basket' }
+      meta: { title: [['You', '/account']] }
     },
     {
       path: '/account/clovers',
       name: 'Account/Clovers',
-      component: User,
-      meta: { title: 'Your Clovers' }
+      component: User
     },
 
     {
@@ -91,22 +92,46 @@ export default new Router({
       path: '/clovers/:board',
       name: 'Clover',
       component: Clover,
-      props: true
-      // meta: { title: 'Clover' }
+      props: true,
+      meta: { logo: false }
     },
 
     {
       path: '/activity',
       name: 'Activity',
-      component: Activity,
-      meta: { title: 'Activity Log' }
+      component: Activity
     },
     {
       path: '/users/:addr',
-      name: 'User',
       component: User,
-      meta: { title: 'Collector' },
-      props: true
+      props: true,
+      children: [
+        {
+          path: '',
+          name: 'User',
+          component: UserClovers,
+          meta: { title: [['Users']] }
+        },
+        {
+          path: 'albums',
+          name: 'User/Albums',
+          component: UserAlbums,
+          meta: { title: [['Users']] }
+        }
+      ]
+    },
+
+    {
+      path: '/albums',
+      name: 'Albums',
+      component: Albums
+    },
+    {
+      path: '/albums/:id',
+      name: 'Album',
+      component: Album,
+      props: true,
+      meta: { title: [['Albums', '/albums']] }
     },
 
     {
@@ -117,10 +142,13 @@ export default new Router({
   ],
 
   scrollBehavior (to, from, savedPosition) {
-    if (savedPosition) { // || to.name === from.name) {
+    if (savedPosition || to.name === 'Garden') {
       return savedPosition
     } else {
-      return { x: 0, y: 0 }
+      // to top if path or query.page changed
+      if (to.path !== from.path || to.query.page !== from.query.page) {
+        return { x: 0, y: 0 }
+      }
     }
   }
 })

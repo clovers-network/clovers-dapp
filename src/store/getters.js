@@ -1,10 +1,23 @@
 import Reversi from 'clovers-reversi'
 import utils from 'web3-utils'
-import { Clovers, CurationMarket } from 'clovers-contracts'
+import { Clovers } from 'clovers-contracts'
 import { prettyBigNumber, abbrvAddr, abbrvNum, cloverImage } from '@/utils'
 import BigNumber from 'bignumber.js'
 
 export default {
+  apiBase ({networkId}) {
+    // console.log({networkId})
+    var apiBase = process.env.VUE_APP_API_URL
+    // console.log({apiBase})
+    if (apiBase.indexOf(':4444') < 0) {
+      apiBase = 'https://' + (networkId === 4 ? 'api2' : 'api') + '.clovers.network'
+    }
+    // console.log({apiBase})
+    return apiBase
+  },
+  baseURL: (_, {apiBase}) => (path) => {
+    return apiBase + path
+  },
   user ({ account, accountData }) {
     if (!account) return { address: null, name: 'anon', clovers: [], balance: '0', image: '' }
     return accountData || {
@@ -31,6 +44,9 @@ export default {
   },
   userName: ({ nullAddress }, { cloversBankAddress, curationMarketAddress }) => (user, truncate = true) => {
     if (!user) return null
+    if (typeof user === 'string') {
+      user = { address: user }
+    }
     let { address } = user
     let name = address === cloversBankAddress ? 'Clovers'
       : address === curationMarketAddress ? 'Curation Mrkt.'
@@ -90,6 +106,9 @@ export default {
     //     return Number(b.modified) - Number(a.modified)
     //   })
   },
+  userAlbums ({ allAlbums }, { user }) {
+    return allAlbums.filter(a => a.userAddress === user.address)
+  },
   newCloversCount ({ newClovers }) {
     return newClovers.length
   },
@@ -109,10 +128,10 @@ export default {
   wrongNetwork: state => state.networkId !== state.correctNetwork,
 
   curationMarketAddress ({ correctNetwork }) {
-    return CurationMarket.networks[correctNetwork].address.toLowerCase()
+    return null // CurationMarket.networks[correctNetwork].address.toLowerCase()
   },
-  cloversBankAddress ({ correctNetwork }) {
-    return Clovers.networks[correctNetwork].address.toLowerCase()
+  cloversBankAddress ({ networkId, correctNetwork }) {
+    return Clovers.networks[networkId || correctNetwork].address.toLowerCase()
   },
   priceInCollateral ({ orders }) {
     if (!orders.length) return new BigNumber(0)
@@ -122,8 +141,7 @@ export default {
   clubTokenInUSD ({ ethPrice }, { priceInCollateral }) {
     return priceInCollateral.times(new BigNumber(ethPrice))
   },
-  symmetries (state) {
-    // console.log('symmetries calculated')
+  symmetries () {
     // // return {Symmetricals: 0, RotSym: 0, X0Sym: 0, Y0Sym: 0, XYSym: 0, XnYSym: 0, PayMultiplier: 100}
     // let Symmetricals = 0
     // let RotSym = 0
