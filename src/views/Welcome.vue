@@ -76,6 +76,7 @@
         | Clovers is an open source project built by #[u #[a(target="_blank" href="//bin.am") Bin Studio]].<br>
         | You can find us on #[u #[a(target="_blank" href="//github.com/clovers-network") Github]],
         | our #[u #[a(target="_blank" href="//forum.clovers.network") Forum]],
+        | our #[u #[a(target="_blank" href="//discord.gg/tQkPbat") Discord]],
         | our #[u #[a(target="_blank" href="//twitter.com/cloversnetwork") Twitter]] and
         | #[u #[a(target="_blank" href="//t.me/cloversnetwork") Telegram]],
 </template>
