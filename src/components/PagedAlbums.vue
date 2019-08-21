@@ -10,7 +10,9 @@
 
       //- (empty)
       div(v-else)
-        p.center.p2.lg-mt4 No Albums
+        p.center.p2.lg-mt4
+          span(v-if="loading") Loading...
+          span(v-else) No Albums
 
 </template>
 

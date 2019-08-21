@@ -5,7 +5,8 @@
 <style>
 .clv-svg svg{
   display: block;
-  max-width: 100%
+  max-width: 100%;
+  width:100%;
 }
 </style>
 
@@ -45,11 +46,7 @@ export default {
         let radius = size / 2
 
         let svg =
-          '<?xml version="1.0" encoding="UTF-8"?><svg class="block" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="' +
-          size +
-          'px" height="' +
-          size +
-          'px" viewBox="-1 -1 ' +
+          '<?xml version="1.0" encoding="UTF-8"?><svg class="block" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="-1 -1 ' +
           (size + 2) +
           ' ' +
           (size + 2) +
