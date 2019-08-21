@@ -79,7 +79,7 @@
                 symmetry-icons(:board="clover")
           .flex-auto.relative.p2.center
             //- image
-            img(:src="cloverImage(clover, 196)" width="196" height="196")
+            img(:src="cloverImage(clover, 540)" width="196" height="196")
 
           template(v-if="currentAction === 'change'")
             edit-clover-name(@cancel="cancelAction")
@@ -135,8 +135,12 @@ export default {
     },
     meta () {
       if (lastRt || !this.board) return
-      const img = fetchCloudImage(cloverImage({ board: this.board }, 640))
-      return img && [{ p: 'og:image', c: img, id: 'og-img' }]
+      const img = fetchCloudImage(cloverImage({ board: this.board }, 540), 'w_640,h_640,c_lpad,f_png')
+      const twitterImg = fetchCloudImage(cloverImage({ board: this.board }, 560), 'w_1200,h_628,c_lpad,f_png')
+      return img && [
+        { p: 'og:image', c: img, id: 'og-img' },
+        { n: 'twitter:image', c: twitterImg, id: 'twt-img' }
+      ]
     }
   },
   data () {

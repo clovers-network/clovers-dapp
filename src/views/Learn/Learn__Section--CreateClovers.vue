@@ -4,7 +4,7 @@
       //- basket
       basket(:count="clovers.length", v-show="showBasket")
         header.flex.items-center.pr2
-          h6.mr2.right-align.h4 These clovers have beet saved to&nbsp;your&nbsp;<b>Basket</b>
+          h6.mr2.right-align.h4 These clovers have been saved to&nbsp;your&nbsp;<b>Basket</b>
           | &rarr;
       //- clovers
       row-of-clovers(ref="cloverList", :clovers="clovers", :canCreate="canCreate", @create="create", @endPlayMoves="step")
