@@ -10,7 +10,7 @@
         section.flex.flex-wrap.mxn2.mb4.md-px2
           field-item(v-for='(clover, i) in generated' :key='i' data-expand='-50' :data-appear='i % 3' :clover="clover" :in-field="true")
 
-    button.arrow-up.center.bg-green.fixed.bottom-0.right-0.mb4.mr4.block.pointer.z3(@click="scrollUp", aria-label="Jump to Top")
+    button.arrow-up.center.bg-green.fixed.bottom-0.right-0.mb4.mr4.block.pointer.z2(@click="scrollUp", aria-label="Jump to Top")
       img(:src="require('../assets/icons/arrow-up.svg')")
 
     transition(name="fade")
@@ -115,5 +115,9 @@ export default {
     height: 50px;
     padding: 8px 6px;
     border-radius: 100%;
+
+    img {
+      width: 50%;
+    }
   }
 </style>
