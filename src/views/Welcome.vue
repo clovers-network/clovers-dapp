@@ -55,7 +55,7 @@
       img.p3(src="/img/github.svg")
       .px3.py2
         | Clovers is an open source project built by #[u #[a(target="_blank" href="//bin.am") Bin Studio]].<br>
-        | You can find us on 
+        | You can find us on
         | our #[u #[a(target="_blank" href="//discord.gg/tQkPbat") Discord]],
         | our #[u #[a(target="_blank" href="//forum.clovers.network") Forum]],
         | #[u #[a(target="_blank" href="//github.com/clovers-network") Github]],
