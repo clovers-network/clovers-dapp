@@ -2,10 +2,13 @@
 const path = require('path')
 const webpack = require('webpack')
 
+const production = process.env.NODE_ENV === 'production'
+
 module.exports = {
   lintOnSave: false,
   devServer: {
-    disableHostCheck: true,
+    disableHostCheck: true
+    // https: true
   },
   configureWebpack: {
     optimization: {
@@ -14,7 +17,7 @@ module.exports = {
       }
     },
     plugins: [
-      // new BundleAnalyzerPlugin(),
+     // new BundleAnalyzerPlugin(),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
     ],
     output: {
@@ -25,6 +28,15 @@ module.exports = {
         "bn.js": path.resolve(__dirname, 'node_modules/bn.js'),
         "underscore": path.resolve(__dirname, 'node_modules/underscore')
       }
+    }
+  },
+  // (dev) force Safari not to cache
+  chainWebpack: config => {
+    if (process.env.NODE_ENV === 'development') {
+      config
+        .output
+        .filename('[name].[hash].js')
+        .end()
     }
   }
 }

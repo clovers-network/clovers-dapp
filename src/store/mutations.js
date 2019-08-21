@@ -45,8 +45,6 @@ export default {
     }
   },
   ADD_ORDER (state, order) {
-    console.log(order.market)
-    console.log(state.market)
     if (order.market === state.market) {
       state.orders.unshift(order)
     }
@@ -135,6 +133,10 @@ export default {
       updateLocal('saved_clovers', state.allSavedClovers)
     }
   },
+  REMOVE_ALL_SAVED_CLOVERS (state) {
+    state.allSavedClovers = []
+    updateLocal('saved_clovers', state.allSavedClovers)
+  },
   MOVE_ANON_CLOVERS (state) {
     if (state.account && state.allSavedClovers.anon.length) {
       state.allSavedClovers = { [state.account]: [], ...state.allSavedClovers }
@@ -152,7 +154,8 @@ export default {
   SIGN_OUT (state) {
     if (!state.account) return
     Vue.delete(state.tokens, state.account)
-    updateLocal('clover_tokens', state.tokens)
+    state.account = null
+    updateLocal('clover_tokens', null)
   },
 
   // marketplace
@@ -171,14 +174,28 @@ export default {
     state.feedFilter = filter
   },
 
+  SET_ALL_ALBUMS (state, albums) {
+    state.allAlbums = albums
+  },
+
+  SET_CURRENT_ALBUM (state, album) {
+    let index = state.allAlbums.findIndex(a => a.id === album.id)
+    if (index > 0) {
+      state.allAlbums.splice(index, 1, album)
+    }
+    state.currentAlbum = album
+  },
+
   SET_CURRENT_CLOVER (state, clover) {
     state.currentClover = formatClover(clover)
   },
 
   SET_USER (state, data) {
-    if (typeof data.name !== 'undefined') {
-      state.accountData = data
-    }
+    // shouldn't really have conditional save here...
+    // remove if doesnt break anything
+    // if (data && typeof data.name !== 'undefined') {
+    state.accountData = data
+    // }
   },
   SET_OTHER_USER (state, data) {
     state.otherUser = data
@@ -200,7 +217,6 @@ export default {
     if (!state.pagedClovers.results) return
     let inPage = state.pagedClovers.results.findIndex(c => c.board === board)
     if (inPage > -1) {
-      console.log('update in feed')
       state.pagedClovers.results.splice(inPage, 1, clover)
     }
   },
@@ -262,10 +278,20 @@ export default {
     let msgKey = state.messages.findIndex(m => m.id === msgId)
     if (msgKey < 0) return
     state.messages.splice(msgKey, 1)
+  },
+
+  // ALBUMS
+  SET_PAGED_ALBUMS (state, page) {
+    state.pagedAlbums = page
   }
 }
 
 function updateLocal (key, value) {
-  if (!window.localStorage) return
-  window.localStorage.setItem(key, JSON.stringify(value))
+  if (window.localStorage) {
+    window.localStorage.setItem(key, JSON.stringify(value))
+  } else if (localStorage) {
+    localStorage.setItem(key, JSON.stringify(value))
+  } else {
+    throw new Error('no local storage')
+  }
 }

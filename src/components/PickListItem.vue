@@ -1,11 +1,9 @@
 <template lang="pug">
-  li.px2
-    .py3.justify-between.items-center.green.relative
-      .center.relative
-        router-link(:to="to")
-          img.pointer(:src="image" width="160" height="160")
+  li.px2.green
+    router-link.block.relative(:to="to")
+      img.block.pointer(:src="image" :width="diameter" :height="diameter")
 
-      .green.absolute.top-0.right-0.m1(v-if="pick.symmetrical")
+      .green.absolute(v-if="pick.symmetrical", style="top:0;right:0;transform:translate(50%,-50%)")
         symmetry-icons.h7(:board="pick")
 
       //- .col-3.pr2.h7.font-mono {{ date }}
@@ -33,7 +31,8 @@ export default {
           board: '0'
         }
       }
-    }
+    },
+    diameter: { type: Number, default: 160 }
   },
   computed: {
     isSym () {

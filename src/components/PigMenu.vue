@@ -1,5 +1,5 @@
 <template lang="pug">
-    #pigMenu.border.green.bg-white.absolute
+    #pigMenu.border.green.bg-white.absolute.no-select
       .justify-between.items-end.border-bottom.flex.pt1.pb2.px2
         .col-3
           .h4.bold {{mined.toLocaleString()}}
@@ -10,7 +10,7 @@
         .col-6
           toggle-btn.ml-auto( :small="true" :theme="'green'" :active="mining" @click="togglePig" @swiperight="togglePig()" @swipeleft="togglePig()")
       .p2.h5.lh3.center
-        template(v-if="newSyms.length == 0") Your Pig {{mining ? 'is sniffing' : 'can sniff'}} out rare Clovers. They'll be added to your <router-link :to="{name: 'Picks'}" class="bold">Basket</router-link> automatically.
+        template(v-if="newSyms.length == 0") Your Pig {{mining ? 'is sniffing' : 'sniffs'}} out rare Clovers. They'll be added to your <router-link :to="{name: 'Picks'}" class="bold">Basket</router-link> automatically.
         template(v-else) Your Pig has found <br><b>{{newSyms.length}}</b> rare clover{{newSyms.length > 1 ? 's' : ''}}!
           .my2.mx3.rounded.white.bg-green.center
             router-link.col-12.pointer.p1.inline-block(:to="{name: 'Picks'}")
@@ -36,7 +36,6 @@ export default {
   },
   methods: {
     togglePig () {
-      console.log('mining', this.mining)
       if (!this.mining) {
         this.mine()
       } else {

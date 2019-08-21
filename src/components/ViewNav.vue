@@ -1,9 +1,10 @@
 <template lang="pug">
-  nav.relative.flex.border-bottom
-    .flex.flex-auto.pointer(v-for="(item, index) in items", @click="onClick(item, index)", :class="{'opacity-50': index !== active, 'h-header': !thick, 'p3': thick}", :style="itemStyle")
-      span.block.m-auto(v-html="item.lbl", :class="{'h6': !thick, 'font-exp': thick}")
+  nav.relative.flex
+    .flex.flex-auto.pointer.items-center.justify-center(v-for="(item, index) in items", @click="onClick(item, index)", :class="{'p2': !thick, 'p3': thick}", :style="itemStyle")
+      span.block(v-html="item.lbl", :class="{'py1 h6': !thick, 'font-exp': thick}")
     //- highlight bar
-    .absolute.left-0.trans-transform.pointer-events-none(:style="barStyle")
+    .absolute.top-0.left-0.h-100.trans-transform.pointer-events-none.flex(:style="barStyle")
+      .border.rounded-2.col-12
 </template>
 
 <script>
@@ -24,11 +25,11 @@ export default {
     },
     barStyle () {
       return {
-        bottom: '-2px',
-        height: '3px',
+        // bottom: '-2px',
+        // height: '3px',
         transform: 'translateX(' + 100 * this.active + '%)',
-        width: 'calc(100% / ' + this.items.length + ')',
-        background: 'currentColor'
+        width: 'calc(100% / ' + this.items.length + ')'
+        // background: 'currentColor'
       }
     }
   },

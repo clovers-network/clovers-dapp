@@ -1,7 +1,8 @@
-<template lang="pug">
-  <svg :width="width" :height="height" viewBox="0 0 14 17" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:text-bottom;" class="inline-block">
-    <circle cx="7" cy="10" r="6.5" stroke="0" fill="rgba(0, 180, 100, .16)"/>
-    <path d="M7.465 12.153V8.325C8.092 8.424 8.433 8.82 8.543 9.48L9.698 9.293C9.533 8.171 8.708 7.456 7.465 7.379V6.466H6.816V7.39C5.298 7.533 4.418 8.578 4.418 10.25C4.418 11.9 5.32 12.967 6.816 13.11V14.034H7.465V13.121C8.675 13.033 9.478 12.34 9.687 11.24L8.565 11.009C8.466 11.658 8.103 12.065 7.465 12.153ZM5.617 10.239C5.617 9.172 6.057 8.479 6.816 8.336V12.142C6.035 11.988 5.617 11.317 5.617 10.239Z" fill="currentColor"/>
+<template>
+  <!-- use .flex.items-center in parent - inline-block/vertical-align doesnt work consistently -->
+  <svg class="block" :width="width" :height="width" viewBox="0 0 59 59" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="29.5" cy="29.5" r="29.5" fill="currentColor" fill-opacity=".16"/>
+    <path d="M31.4519 36.9945V21.3194C33.9996 21.7248 35.3852 23.3463 35.8322 26.0489L40.5253 25.2832C39.8549 20.6888 36.5026 17.7609 31.4519 17.4456V13.707H28.8147V17.4907C22.6466 18.0762 19.0708 22.3554 19.0708 29.202C19.0708 35.9585 22.736 40.3277 28.8147 40.9133V44.6969H31.4519V40.9583C36.3685 40.598 39.6314 37.7602 40.4807 33.2559L35.9216 32.31C35.5193 34.9675 34.0443 36.6341 31.4519 36.9945ZM23.9428 29.1569C23.9428 24.7877 25.7307 21.95 28.8147 21.3644V36.9495C25.6413 36.3188 23.9428 33.5712 23.9428 29.1569Z" fill="currentColor"/>
   </svg>
 </template>
 
@@ -11,11 +12,7 @@ export default {
   props: {
     width: {
       type: Number,
-      default: 16
-    },
-    height: {
-      type: Number,
-      default: 22
+      default: 14
     }
   }
 }

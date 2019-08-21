@@ -1,6 +1,6 @@
 <template lang="pug">
   about(v-on="$listeners")
-    h3(slot="header") Add your favorites to your <b>Basket</b>
+    h3(slot="header") Save favorites to your <b>Basket</b>
     img.block(slot="graphic", src="./imgs/favorites.svg", style="height:70vh;max-height:75vw;max-width:none")
 </template>
 

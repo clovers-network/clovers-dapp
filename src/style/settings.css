@@ -6,7 +6,7 @@
 
 :root {
   --rem: 10px;
-  --body-font: "gt-amer-st-reg", -apple-system,system-ui,"San Francisco",BlinkMacSystemFont,"Helvetica Neue",Helvetica,Ubuntu,Roboto,Noto,"Segoe UI",Arial,sans-serif;
+  --body-font: "gt-amer-st-reg", Arial, sans-serif;
   --base-font-size: 16px;
   --small-font-size: 0.6em;
   /* colors */
@@ -24,6 +24,7 @@
   --yellow:  #FFDC00;
   --orange:  #FF851B;
   --red:     #FF4136;
+  --lightest-red: rgba(255, 0, 0, .1); /* #00b4641a */
   --fuchsia: #F012BE;
   --purple:  #A23FA3;
   --maroon:  #85144B;
@@ -59,23 +60,23 @@
   --space-4: 4.8rem;
 
   --width-0: 16rem;
-  --width-1: 38.4rem;
-  --width-2: 51.2rem;
-  --width-3: 76.8rem;
+  --width-1: 36rem;
+  --width-2: 46rem;
+  --width-3: 64rem;
   --width-4: 102.4rem;
 
   --height-header: 4.6rem;
   --height-bttm-bar: 8.6rem;
-  --height-select: 3.9rem;
+  --height-select: 3.6rem;
 
   --h00: 4em;
   --h0: 3em;
   --h1: 2em;
-  --h2: 1.3em;
+  --h2: 1.375em;
   --h3: 1.2em;
   --h4: 1em;
   --h5: .875em;
   --h6: .75em;
-  --h7: .6em;
+  --h7: .6.25em;
   --h8: .5em;
 }

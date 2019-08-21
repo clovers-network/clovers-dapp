@@ -1,66 +1,72 @@
 <template lang="pug">
-  .green
-    section.border.rounded.px2.md-px3.max-width-2.my4.relative(name="My profile")
-      .flex.items-center
-        .mr3
-          img(:src="userImage(user, 87)" width="87" height="87")
-        div
-          h2.h3.md-h2.mt3.mb0.font-exp
-            span.pointer(@click="signOrEdit") {{ name }}
-          small.h6(v-if="user.created") Member since block # {{ user.created.toLocaleString() }}
-          .mt2.mb3
-            span.flex.items-center
-              coin-icon
-              span.pl1.bold {{ prettyUserBalance }}
-      .absolute.top-0.right-0
-        a.p2.block.h4.pointer(@click="signOrEdit" style="transform:scale(-1, 1)") ✎
+  article
+    header
+      user-card(:user="user", :editable="true", @edit="signOrEdit")
 
-    section(name="My unregistered Clovers")
-      h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
-        router-link(:to="{ name: 'Picks' }") Basket
+    section
+      //- Basket
+      section.my4.sm-mt0(name="My unregistered Clovers")
+        h2.mx2.sm-mx3.md-mx0.h2.md-h2.mt2.md-mt3.mb1.font-exp
+          router-link(:to="{ name: 'Picks' }") Basket
+        //- (picks)
+        template(v-if="pickCount")
+          p.h5.mx2.sm-mx3.md-mx0 You have <strong>{{ pickCount }}</strong> unregistered {{ pluralize('Clover', pickCount) }}
+          .mt3.relative
+            .overflow-x-scroll.lg-overflow-x-hidden.py2.touch-scroll.invisible-scrollbar
+              ul.list-reset.m0.nowrap
+                pick-list-item.inline-block(v-for="(pick, i) in picks", :key="pick.byteBoard", :pick="pick", :data-key="pick.board", :diameter="128", v-if="i < 8")
+            .absolute.overlay.pointer-events-none(style="background:linear-gradient(to left, white 8%, rgba(255,255,255,0) 85%)")
+          nav.mt3.mx2.sm-mx3.md-mx0
+            router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(:to="{ name: 'Picks' }")
+              span View All
+        //- (empty)
+        template(v-else)
+          p.my3.rounded.bg-lightest-green.p2 Your <b>Basket</b> is where clovers picked from your <router-link to="/garden">Garden</router-link>, or symmetrical clovers found by your Clover Pig are saved.
+          nav.mt3
+            router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(to="/garden")
+              | Pick Clovers
 
-      div(v-if="pickCount")
-        div
-          p You have <strong>{{ pickCount }}</strong> unregistered {{ pluralize('Clover', pickCount) }}
-        .mxn2
-          ul.list-reset.items-center.m0.nowrap.overflow-visible
-            pick-list-item.inline-block(v-for="(pick, i) in pickList" :key="pick.byteBoard" :pick="pick" :data-key="pick.board" :style="fadeOut(i)")
+      //- Clovers
+      section.my4.sm-mt0.mx2.sm-mx3.md-mx0(name="My Clovers")
+        h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
+          router-link(to="/account/clovers") Collection
+        //- (clovers list)
+        template(v-if="cloversCount")
+          p.h5 You have <strong>{{ cloversCount }}</strong> registered {{ pluralize('Clover', cloversCount) }}
+          .mt3.px1.sm-px0
+            clover-list-cards(:clovers="clovers")
+        //- (no clovers)
+        template(v-else)
+          p.my3.rounded.bg-lightest-green.p2 Clovers registered to your wallet address will appear here.
+        nav.mt2.md-mt0.flex.justify-center.sm-block
+          .h5.inline-block.green.border.rounded-2.hover-bg-l-green
+            //- (view all)
+            router-link.px3.py2.block(v-if="cloversCount", :to="{name: 'User', params: {addr: user.address}}")
+              | View All
+            //- (sign in)
+            button.px3.py2.block.pointer(v-else-if="!signedIn", @click="signIn") Sign In...
 
-        .py3
-          p
-            router-link.bg-green.px3.py2.rounded.white(:to="{ name: 'Picks' }")
-              span View all
+      //- Albums
+      section.mx2.sm-mx3.md-mx0.my4.sm-mt0(name="My Clovers", v-if="signedIn")
+        header.mt2.md-mt3.flex.items-center.justify-between
+          .flex-auto
+            h2.h3.md-h2.mb1.font-exp
+              router-link(:to="{name: 'User/Albums', params: {addr: account}}") Albums
+            p.h5 You have <strong>{{ userAlbums.length }}</strong> {{ pluralize('Album', userAlbums.length) }}
+          //- btn: new
+          button.ml3.h5.green.border.px3.p2.rounded-2.hover-bg-l-green.flex.items-center.justify-center.pointer(@click="newAlbum = true")
+            | New
+        //- (about albums)
+        p.my3.rounded.bg-lightest-green.p2(v-if="!userAlbums.length") <b>Albums</b> are for grouping clovers together. You can add <i>any</i> clover to your albums, even ones you don't own &mdash; and, Anyone else can add to your albums, but only you can edit them.
+        //- (albums list)
+        .mt3.px1.sm-px0
+          album-list-cards(:albums="userAlbums", :limit="4", :newBtn="true")
+        nav.mt2.md-mt0.flex.justify-center.sm-block
+          .inline-block
+            router-link.h5.inline-block.green.border.px3.py2.rounded-2.hover-bg-l-green(v-if="userAlbums.length", :to="{name: 'User/Albums', params: {addr: account}}")
+              | View All
 
-      div(v-else)
-        div
-          p.max-width-1 Your basket contains unregistered Clovers that you picked from the <strong>Field</strong>, or symmetrical Clovers mined by the <strong>Clover Pig</strong>
-        .mxn2
-          ul.list-reset.items-start.m0.nowrap.overflow-hidden
-            pick-list-item.inline-block
-
-        div
-          p
-            router-link(to="/field")
-              span.underline Pick some now
-              span.font-mono.bold &nbsp;&rarr;
-
-    section(name="My Clovers")
-      h2.h3.md-h2.mt2.md-mt3.mb1.font-exp
-        router-link(to="/account/clovers") My Clovers
-      div(v-if="cloversCount")
-        p.m0 You have <strong>{{ cloversCount }}</strong> registered {{ pluralize('Clover', cloversCount) }}
-
-        .mt3
-          clover-list-cards(:clovers="clovers")
-
-        .py3
-          p
-            router-link.bg-green.px3.py2.rounded.white(to="/account/clovers")
-              span View all
-      div(v-else)
-        p.max-width-1 Clovers that are registered to your account (wallet address). Save some from your basket and they will show up here.
-
-    .py2.center
+    footer.py2.center.mb3
       p.h1(style="filter:hue-rotate(292deg)") ☘️
 
     transition(name="fade")
@@ -71,17 +77,22 @@
       div(v-if="editing")
         edit-user(@cancel="editing = false")
 
+    transition(name="fade")
+      add-album-modal(v-show="newAlbum", @close="newAlbum = false")
 </template>
 
 <script>
 import store from '@/store'
 import { mapActions, mapGetters, mapState } from 'vuex'
 import { pluralize, cloverImage } from '@/utils'
+import UserCard from '@/components/UserCard'
 import KeepClover from '@/views/KeepClover'
 import PickListItem from '@/components/PickListItem'
 import CloverListCards from '@/components/CloverList--Cards'
 import EditUser from '@/components/EditUser'
 import CoinIcon from '@/components/Icons/CoinIcon'
+import AddAlbumModal from '@/components/Modals/AddAlbumModal'
+import AlbumListCards from '@/components/AlbumList--Cards'
 
 export default {
   name: 'Account',
@@ -93,7 +104,7 @@ export default {
     return {
       loading: false,
       editing: false,
-      form: { name: null }
+      newAlbum: false
     }
   },
   computed: {
@@ -107,25 +118,18 @@ export default {
       return `/users/${this.account}`
     },
     cloversUrl () {
-      return `${process.env.VUE_APP_API_URL}/users/${this.account || 'anon'}/clovers`
-    },
-
-    pickList () {
-      return this.picks.slice(0, 8)
+      return `${this.apiBase}/users/${this.account || 'anon'}/clovers`
     },
     blankCloverImage () {
       return cloverImage('0', 160)
     },
-    results () {
-      return this.$store.state.pagedClovers
-    },
     clovers () {
-      if (!this.results || !this.results.results) return []
-      return this.results.results.slice(0, 4)
+      if (!this.pagedClovers || !this.pagedClovers.results) return []
+      return this.pagedClovers.results.slice(0, 4)
     },
     cloversCount () {
-      if (!this.results || !this.results.allResults) return 0
-      return this.results.allResults
+      if (!this.pagedClovers || !this.pagedClovers.allResults) return 0
+      return this.pagedClovers.allResults.toLocaleString()
     },
 
     showPickModal () {
@@ -143,14 +147,16 @@ export default {
       ]
     },
 
-    ...mapState(['account']),
+    ...mapState(['account', 'pagedClovers']),
     ...mapGetters([
+      'apiBase',
       'prettyUserBalance',
       'user',
       'picks',
       'pickCount',
       'userName',
-      'userImage'
+      'userImage',
+      'userAlbums'
     ])
   },
   methods: {
@@ -170,33 +176,30 @@ export default {
         this.signIn()
       }
     },
-    fadeOut (i) {
-      if (!i) return
-      const o = (100 - (i * 18)) / 100
-      return { opacity: o }
-    },
 
-    ...mapActions(['getPagedClovers', 'signIn'])
+    ...mapActions(['getPagedClovers', 'signIn', 'getAllAlbums'])
   },
   watch: {
     account () {
       this.$nextTick(() => {
         this.query()
       })
-    },
-    user (newVal) {
-      if (!newVal) return
-      this.form.name = newVal.name
     }
   },
   mounted () {
     this.query()
-    if (!this.user.address) {
-      this.$router.push({ name: 'Picks' })
-    }
-    this.form.name = this.user.name
+    this.getAllAlbums()
   },
-  components: { KeepClover, PickListItem, CloverListCards, EditUser, CoinIcon }
+  components: {
+    UserCard,
+    KeepClover,
+    PickListItem,
+    CloverListCards,
+    EditUser,
+    CoinIcon,
+    AddAlbumModal,
+    AlbumListCards
+  }
 }
 </script>
 

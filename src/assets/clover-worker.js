@@ -24,10 +24,12 @@ self.addEventListener(
           }, 0)
         }
       }
-      setInterval(() => {
+      function postHashrate () {
         self.postMessage({ hashRate })
         hashRate = 0
-      }, 1000)
+        setTimeout(postHashrate, 1000)
+      }
+      postHashrate()
     } else if (data === 'stop') {
       running = false
       self.close()

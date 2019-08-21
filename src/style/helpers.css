@@ -1,3 +1,8 @@
+.hidden{ display:none; }
+
+.visible{ visibility: visible; }
+.invisible { visibility: hidden }
+
 .top-100 { top: 100%; }
 .top-header-h { top: var(--height-header); }
 .top-header-h-2 { top: calc(var(--height-header) * 2 + 1px); }
@@ -5,6 +10,7 @@
 
 .momentum { -webkit-overflow-scrolling: touch; }
 
+.max-w-full{max-width: 100%}
 .min-width-1 { min-width: var(--width-0);}
 
 .h7 { font-size: .94rem; }
@@ -16,7 +22,7 @@
 .w-1em{width:1em;}
 .h-100{height:100%;}
 .h-nav-btn{height:2.7rem;}
-.h-select{height:3.9rem;}
+.h-select{height:var(--height-select);}
 .h-header{height:var(--height-header);}
 .h-bttm-bar{height:var(--height-bttm-bar);}
 .h-100vh{height:100vh}
@@ -24,9 +30,14 @@
 .min-h-100vh{min-height: 100vh}
 
 .o-0 { opacity: 0; }
+.opacity-75 { opacity: .75 }
 .opacity-50 { opacity:.5; }
+.opacity-40 { opacity:.4; }
 .opacity-30 { opacity: .3; }
 .opacity-25 { opacity:.25; }
+@media (hover:hover) {
+  .hover-opacity-100:hover{ opacity:1; } 
+}
 
 .lh0 { line-height: 0 }
 .lh1 { line-height: 1;}
@@ -37,6 +48,7 @@
 .strikethrough { text-decoration: line-through; }
 .capitalize{text-transform: capitalize;}
 
+.m05 { margin: 0.3rem; }
 .mtn2 { margin-top: -20%; }
 .mt3-5 { margin-top: 3.5rem; }
 .mln2-5 { margin-left: -1.5em; }
@@ -50,6 +62,7 @@
 .pb-120 { padding-bottom: 120%; }
 .pb-bttm-bar { padding-bottom: var(--height-bttm-bar); }
 .pb-full-height { padding-bottom: calc(100vh - 375px); }
+.pb-ar-card { padding-bottom: 164%; }
 
 .content-box{ box-sizing: content-box; }
 
@@ -77,6 +90,9 @@
   &.red { box-shadow: 4px 4px 4px rgba(255, 65, 54, .08); }
   &.orange { box-shadow: 4px 4px 4px rgba(255, 133, 27, .08); }
 }
+@media (hover:hover) {
+  .hover-shadow:hover { box-shadow: var(--green-shadow); }
+}
 
 .radio {
   background-color: var(--white);
@@ -97,9 +113,21 @@
   }
 }
 
+.touch-scroll {-webkit-overflow-scrolling: touch;}
 .overflow-x-scroll{overflow-x:scroll;}
 .overflow-y-scroll{overflow-y:scroll;}
-.invisible-scrollbar::-webkit-scrollbar {display: none;}
+.invisible-scrollbar{
+  &::-webkit-scrollbar {
+    display: none;
+    background-color: transparent;
+  }
+  &::-webkit-scrollbar-thumb{
+    background-color: transparent;
+  }
+  &::-webkit-scrollbar-track{
+    background-color: transparent;
+  }
+}
 
 .flex-grow{flex-grow: 1;}
 .flex-order_-1{order:-1;}
@@ -117,6 +145,7 @@
 .bg-light-green{ background-color: var(--light-green); }
 .bg-lightest-green{ background-color: var(--lightest-green); }
 .focus-light-green:focus { border-color: var(--light-green); }
+.focus-border:focus{ border-style:solid; }
 .bg-current-color{background-color: currentColor;}
 .bg-green { background-color: var(--green); }
 .bg-white { background-color: white; }
@@ -133,6 +162,18 @@
   border-color: 'black';
 }
 
+@media (hover:hover) {
+  .hover-bg-l-green {
+    transition: all var(--anim-timing-medium);
+    &:hover, &:active { background-color: var(--lightest-green); }
+  }  
+  .hover-bg-l-red{
+    transition: all var(--anim-timing-medium);
+    &:hover, &:active { background-color: var(--lightest-red); }
+  }
+}
+
+.border-transparent{ border-color: transparent; }
 .border-green { border-color: var(--green); }
 .border-dark-gray { border-color: var(--dark-gray);}
 .border-top-dotted { border-top-style: dotted; }
@@ -142,9 +183,14 @@
 .outline-none { outline: 0;}
 .outline{ outline:1px solid var(--green); }
 .border-dashed { border-style: dashed; }
-.hover-border-solid:hover { border-style:solid; }
+@media (hover:hover) {
+  .hover-border-solid:hover { border-style:solid; }
+  .hover-border-green:hover { border-color:var(--green);
+}}
 
+.rounded-full{ border-radius: 100% }
 .rounded-2 { border-radius: var(--border-radius-2); }
+/*.rounded-left{ border-top-left-radius: var(--border-radius); border-bottom-left-radius: var(--border-radius) }*/
 
 .pointer { cursor: pointer;}
 .no-pointer { cursor: default;}
@@ -162,6 +208,8 @@
 .transl-x-50{transform: translateX(50%);}
 .flip-x { transform:scaleX(-1); }
 
+.trans-fast{ transition: all 150ms; }
+.trans-quick{ transition: all 300ms; }
 .trans-transform { transition: transform var(--anim-timing-medium); }
 .trans-opacity-long { transition: opacity var(--anim-timing-long); }
 .trans-bg { transition: background var(--anim-timing-medium); }

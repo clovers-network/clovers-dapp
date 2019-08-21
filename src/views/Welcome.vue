@@ -1,58 +1,39 @@
 <template lang="pug">
-  .div.pt4.my3.overflow-hidden.border.rounded
-    h1.h1.center.green.font-exp.strong.pb3.flex
-      //- span.col-6.align-right.cloverVerb.relative
-        transition(
-          mode="out-in"
-          name="custom-classes-transition"
-          enter-active-class="animated faster fadeInDown"
-          leave-active-class="animated faster fadeOutDown"
-        )
-          span.inline-block(:key="cloversVerbIndex") {{cloversVerb}}&nbsp;
-      span.col-12.align-center Clovers <!--♣&#xFE0E;-->
+  .pt2.mt3.mb4.overflow-hidden.rounded.sm-mx2.sm-border.sm-pt4.md-mx0
+    h1.h1.center.green.font-exp.strong.pb3
+      | Clovers
     .center.my3.relative
-      .col-12.overflow-x-scroll.invisible-scrollbar.momentum(ref="wide")
-        .pb4.nowrap
-          .inline-block.mx2.no-hover(v-for="(c, i) in list", style="width:13em")
-            clv(
-              :class="cloverClass(i)"
-              :foo="i == 2"
-              :key="i"
-              :noMoves="true"
-              :autoPlay="i == 2"
-              :moveString="c")
-      .px3.py2.h2 Discover, collect & trade cryptographic icons
-      router-link.block.my3(
-        :to="{ name: 'Learn' }")
-          dot-btn.mb3(
-            label="Get Started"
-            text="white"
-            bg="green")
-      hr
-      router-link.block.mb3(
-        :to="{ name: 'Garden' }")
-        h2.h2.green.font-exp The Garden
-        img.p3(src="/img/cloud-face-animated.svg")
-        .px3.py2 This is where Clovers grow.<br>(Super-charge your search with the Clover Pig)
-      router-link.block.mb3(
-        :to="{ name: 'Garden' }")
-          dot-btn.mb3(
-            label="Pick Some Clovers!"
-            text="white"
-            bg="green")
-      hr
-      router-link.block.mb3(
-        :to="{ name: 'Feed' }")
-        h2.h2.green.font-exp The Feed
-        img.p3(src="/img/feed.svg")
-        .px3.py2 Buy, Sell & Browse other peoples Clovers
-      router-link.block.mb3(
-        :to="{ name: 'Feed' }")
-          dot-btn.mb3(
-            label="Buy, Sell & Browse "
-            text="white"
-            bg="green")
-      hr
+      section.pb4
+        .col-12.overflow-x-scroll.invisible-scrollbar.momentum(ref="wide")
+          .pb4.nowrap
+            .inline-block.mx2.no-hover(v-for="(c, i) in list", style="width:12em")
+              clv(
+                :class="cloverClass(i)"
+                :foo="i == 2"
+                :key="i"
+                :noMoves="true"
+                :autoPlay="i == 2"
+                :moveString="c")
+        p.px3.my2.h2 Discover, collect & trade cryptographic icons
+        router-link.inline-block.mt3.mb2.bg-green.white.p2.px4.rounded-2.font-ext.h3(:to="{ name: 'Learn' }") Learn More
+
+      //- Garden
+      section.border-top.pt3.pb4.px2
+        router-link.block.mt2.mb1(:to="{ name: 'Garden' }")
+          h2.h2.green.font-exp.mb2.px2 Wander in your Garden
+          figure.px3.my3
+            img.block.mx-auto.md-p2(src="/img/cloud-face-animated.svg")
+          p.px2.my2.h3 Your Garden grows new clovers as&nbsp;you&nbsp;scroll.<br class="hidden sm-inline"> Earn a <u>reward</u> for rare, symmetrical&nbsp;clovers.
+          router-link.inline-block.mt3.bg-green.white.p2.px4.rounded-2.font-ext.h3(:to="{ name: 'Garden' }") Pick Clovers
+
+      //- Feed
+      section.border-top.pt3.pb4.px2
+        router-link.block.mt2.mb1(:to="{ name: 'Feed' }")
+          h2.h2.green.font-exp.pb1 Jump in the Feed
+          figure.px2.my3
+            img.block.col-12.mx-auto(src="/img/feed.svg")
+          p.px3.mt3.mb2.pt2.h3 Browse, trade, and comment on all the clovers in the network.
+          router-link.inline-block.mt3.bg-green.white.p2.px4.rounded-2.font-ext.h3(:to="{ name: 'Feed' }") Browse Clovers
       //- router-link.block.mb3(
       //-   :to="{ name: 'Trade' }")
       //-   h2.h2.green.font-exp Coins
@@ -74,11 +55,12 @@
       img.p3(src="/img/github.svg")
       .px3.py2
         | Clovers is an open source project built by #[u #[a(target="_blank" href="//bin.am") Bin Studio]].<br>
-        | You can find us on #[u #[a(target="_blank" href="//github.com/clovers-network") Github]],
-        | our #[u #[a(target="_blank" href="//forum.clovers.network") Forum]],
+        | You can find us on 
         | our #[u #[a(target="_blank" href="//discord.gg/tQkPbat") Discord]],
-        | our #[u #[a(target="_blank" href="//twitter.com/cloversnetwork") Twitter]] and
-        | #[u #[a(target="_blank" href="//t.me/cloversnetwork") Telegram]],
+        | our #[u #[a(target="_blank" href="//forum.clovers.network") Forum]],
+        | #[u #[a(target="_blank" href="//github.com/clovers-network") Github]],
+        | #[u #[a(target="_blank" href="//t.me/cloversnetwork") Telegram]] and
+        | our #[u #[a(target="_blank" href="//twitter.com/cloversnetwork") Twitter]].
 </template>
 
 <script>
@@ -148,11 +130,6 @@ export default {
   },
   mounted () {
     this.$nextTick(() => this.scrollTo())
-    // setTimeout(() => {
-    //   this.interval = setInterval(() => {
-    //     this.swapVerb()
-    //   }, 1800)
-    // }, 2700)
   },
   destroyed () {
     clearInterval(this.interval)
@@ -203,7 +180,6 @@ function shuffle (a) {
   .cloverVerb:after {
     content: '';
     width:50px;
-    // border-bottom: 5px solid var(--green);
     position: absolute;
     right:0px;
     bottom:0px;
