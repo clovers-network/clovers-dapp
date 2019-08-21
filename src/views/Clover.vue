@@ -138,6 +138,7 @@ export default {
       const img = fetchCloudImage(cloverImage({ board: this.board }, 540), 'w_640,h_640,c_lpad,f_png')
       const twitterImg = fetchCloudImage(cloverImage({ board: this.board }, 560), 'w_1200,h_628,c_lpad,f_png')
       return img && [
+        { p: 'og:url', c: 'https://clovers.network/clovers/' + this.board, id: 'og-url' },
         { p: 'og:image', c: img, id: 'og-img' },
         { n: 'twitter:image', c: twitterImg, id: 'twt-img' }
       ]
