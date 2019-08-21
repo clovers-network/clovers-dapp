@@ -29,6 +29,9 @@
         .absolute.overlay.flex.items-center.justify-center
           .col-6
             clv(:moveString="cloverMovesString", :byteBoard="board", :isRFT="isRFT")
+            //- meta imgs
+            img.hidden(:src="metaImgs.og", alt="Clover Image")
+            img.hidden(:src="metaImgs.twt", alt="Clover Image")
 
         .absolute.top-0.right-0.flex.items-center.p2(v-if="isSymm")
           symmetry-icons(:board="clover.symmetries", style="font-size:12px")
@@ -135,12 +138,12 @@ export default {
     },
     meta () {
       if (lastRt || !this.board) return
-      const img = fetchCloudImage(cloverImage({ board: this.board }, 540), 'w_640,h_640,c_lpad,f_png')
-      const twitterImg = fetchCloudImage(cloverImage({ board: this.board }, 560), 'w_1200,h_628,c_lpad,f_png')
-      return img && [
+      return [
         { p: 'og:url', c: 'https://clovers.network/clovers/' + this.board, id: 'og-url' },
-        { p: 'og:image', c: img, id: 'og-img' },
-        { n: 'twitter:image', c: twitterImg, id: 'twt-img' }
+        { p: 'og:title', c: `Clovers | ${this.metaTitle}`, id: 'og-title' },
+        { p: 'og:description', c: `Owned by ${this.currentOwner}`, id: 'og-desc' },
+        { p: 'og:image', c: this.metaImgs.og, id: 'og-img' },
+        { n: 'twitter:image', c: this.metaImgs.twt, id: 'twt-img' }
       ]
     }
   },
@@ -249,6 +252,12 @@ export default {
     },
     sellButton () {
       return this.price > 0 ? 'Change Price' : 'Sell'
+    },
+    metaImgs () {
+      return {
+        og: fetchCloudImage(cloverImage({ board: this.board }, 540), 'w_640,h_640,c_lpad,f_png'),
+        twt: fetchCloudImage(cloverImage({ board: this.board }, 560), 'w_1200,h_628,c_lpad,f_png')
+      }
     },
 
     ...mapState(['account', 'orders', 'baseCloverFee']),
