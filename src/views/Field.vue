@@ -107,3 +107,20 @@ export default {
   components: { KeepClover, FieldItem, PageTitle, CoinIcon }
 }
 </script>
+<<<<<<< HEAD
+=======
+<style lang="css" scoped>
+  .arrow-up {
+    overflow: hidden;
+    border-radius: 100%;
+    width: 50px;
+    height: 50px;
+    padding: 8px 6px;
+    border-radius: 100%;
+
+    img {
+      width: 50%;
+    }
+  }
+</style>
+>>>>>>> f7c92b89351e5719961cb945a2308c18530960ae
