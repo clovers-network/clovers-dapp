@@ -10,8 +10,8 @@
         section.flex.flex-wrap.mxn2.mb4.md-px2
           field-item(v-for='(clover, i) in generated' :key='i' data-expand='-50' :data-appear='i % 3' :clover="clover" :in-field="true")
 
-    button.arrow-up.center.bg-green.fixed.bottom-0.right-0.mb4.mr4.block.pointer.z3(@click="scrollUp", aria-label="Jump to Top")
-      img(:src="require('../assets/icons/arrow-up.svg')")
+    button.fixed.bottom-0.right-0.block.pointer.z2.px2.py1.m4(@click="scrollUp", title="Jump to Top")
+      img.block(src="@/views/Learn/learn-icon-arrow-down.svg", style="transform: rotate(180deg)")
 
     transition(name="fade")
       div(v-if="showPickModal")
@@ -107,13 +107,3 @@ export default {
   components: { KeepClover, FieldItem, PageTitle, CoinIcon }
 }
 </script>
-<style lang="css" scoped>
-  .arrow-up {
-    overflow: hidden;
-    border-radius: 100%;
-    width: 50px;
-    height: 50px;
-    padding: 8px 6px;
-    border-radius: 100%;
-  }
-</style>
