@@ -31,8 +31,9 @@ export function cloverImage (clover = '0', size = 200) {
   return `${imgBase}/svg/${encodeURIComponent(board)}/${size}`
 }
 
-export function fetchCloudImage (src, transforms = 'f_png') {
-  return `${cloudinaryBase}/image/fetch/${transforms}/${src}`
+export function fetchCloudImage (src, transforms) {
+  src = transforms ? `${transforms}/${src}` : src
+  return `${cloudinaryBase}/image/fetch/${src}`
 }
 
 export function pluralize (word, count) {

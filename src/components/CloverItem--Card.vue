@@ -7,7 +7,8 @@
           symmetry-icons(v-if="clover", :board="clover.symmetries", style="font-size:8px")
         figure.pb-100.relative.md-mt1
           .absolute.overlay.flex.flex.items-center.justify-center
-            img.block.col-7(:src="cloverImage(clover, 128)")
+            //- img.block.col-7(:src="cloverImage(clover, 128)")
+            clv-svg.col-7(:byteBoard="clover.board", :size="128")
           .absolute.bottom-0.left-0.col-12.flex.justify-center(style="padding-bottom:.1em")
             chat-icon.block(
               :color="isRFT ? '#FF4136' : '#01B463'"
@@ -19,19 +20,20 @@
         .px2.flex.items-center.lg-pb1
           h3.h5.lh2.sm-h6.md-h4.truncate.rounded.p1.md-px2.mx-auto(:class="{border: clover.name && clover.name !== clover.board}") {{ clover.name === clover.board ? '&nbsp;' : clover.name }}
 
-        footer.px1.pb1.sm-pb2.flex.items-end.nowrap
-          .px1.flex-auto
-            h3.h5.md-h4.lg-h5.truncate {{ userName(clover.user) }}
-          .px1.col-6.sm-col-5.flex.justify-end(v-if="clover.price.toString(10) !== '0'")
-            h4.h5.md-h4.lg-h5.flex.items-center
-              coin-icon.block.mr1
+        footer.px1.pb2.flex.items-center.nowrap
+          h3.flex-auto.lh1
+            router-link.p1.h5.md-h4.lg-h5.truncate.hover-bg-l-green.rounded.trans-quick(:to="{name: 'User', params: {addr: clover.user.address}}", v-if="clover.user") {{ userName(clover.user) }}
+          h4.px1.col-6.sm-col-5.flex.justify-end.lh1(v-if="clover.price.toString(10) !== '0'")
+            .h5.md-h4.lg-h5.flex.items-center
               | {{ displayPrice }}
+              coin-icon(style="margin-left:0.3em", :width="12")
 </template>
 
 <script>
 import utils from 'web3-utils'
 import { cloverLink, cloverImage, prettyBigNumber, abbrvAddr, concatPrice } from '@/utils'
 import { mapState, mapGetters } from 'vuex'
+import ClvSvg from '@/components/Clv--SVG'
 import BigNumber from 'bignumber.js'
 import ChatIcon from '@/components/Icons/ChatIcon'
 import CoinIcon from '@/components/Icons/CoinIcon'
@@ -96,6 +98,6 @@ export default {
     ...mapGetters(['curationMarketAddress', 'userName'])
   },
   methods: { cloverLink, cloverImage, prettyBigNumber },
-  components: { ChatIcon, CoinIcon, SymmetryIcons }
+  components: { ClvSvg, ChatIcon, CoinIcon, SymmetryIcons }
 }
 </script>

@@ -15,8 +15,9 @@
           .pr1 Clover burned (invalid)
         template(v-else-if='isFromClovers(item)')
           .activity-itm__icon.mr2.sm-mr3.h2 &xodot;
-          .opacity-50 Sent to&ensp;
-          router-link.hover-underline(:to='userRt(item.data._to)') {{ getUser('_to') }}
+          .flex-auto
+            span.opacity-50 Sent to&ensp;
+            router-link.hover-underline(:to='userRt(item.data._to)') {{ getUser('_to') }}
         template(v-else-if='isBorn(item)')
           .activity-itm__icon.mr2.sm-mr3.h2 &xodot;
           span.opacity-50 Found by&ensp;
@@ -29,35 +30,39 @@
 
       //- Clover price updated
       template(v-else-if="item.name === 'SimpleCloversMarket_updatePrice'")
-        .mr2.sm-mx3.flex-none(v-if='!noImg')
+        figure.mr2.sm-mx3.flex-none(v-if='!noImg')
           router-link(:to='cloverLink(item.data._tokenId)')
             img.block(:src='cloverImage(item.data._tokenId, 50)' style='width:50px;height:50px')
-        .activity-itm__icon.mr2.sm-mr3.h2.line-height-1 &clubs;&#xFE0E;
+        .activity-itm__icon.mr2.sm-mr3
+          img.block.mx-auto(src="@/assets/icons/clover-coin.svg", style="width:18px")
         div(v-if="item.data.price === '0'")
           span.opacity-50 Removed from Market
-        .flex.items-center(v-else='')
+        div(v-else)
           span.opacity-50 Price is now&ensp;
-          | {{ newPrice }}
-          coin-icon.ml1
+          | {{ newPrice }}&nbsp;
+          img(src="@/assets/icons/clover-coin.svg", alt="Clover Coin")
 
       //- Bought Tokens
       template(v-else-if="item.name === 'ClubTokenController_Buy'")
-        .h1.mr2.sm-mx3.center.black.border.circle(v-if='!noImg' style='flex:0 0 50px;height:50px') &clubs;&#xFE0E;
+        figure.mr2.sm-mx3.flex.justify-center.items-center(style="flex:0 0 50px; height:50px")
+          img.block(src="@/assets/icons/clover-coin.svg", style="width:31px;")
         .activity-itm__icon.mr2.sm-mr3.h3.line-height-1 &nearr;
-        router-link.hover-underline(:to="'/users/' + item.data.buyer") {{ getUser('buyer') }}&ensp;
-        span.opacity-50 bought&ensp;
-        | {{ price(item.data.tokens) }}
-        coin-icon.ml1
+        div
+          router-link.hover-underline(:to="'/users/' + item.data.buyer") {{ getUser('buyer') }}&ensp;
+          span.opacity-50 bought&ensp;
+          | {{ price(item.data.tokens) }}&nbsp;
+          img(src="@/assets/icons/clover-coin.svg", alt="Clover Coin")
 
       //- Sold Tokens
       template(v-else-if="item.name === 'ClubTokenController_Sell'")
-        .h1.mr2.sm-mx3.center.black.border.circle(v-if='!noImg' style='width:50px;height:50px') &clubs;&#xFE0E;
+        figure.mr2.sm-mx3.flex.justify-center.items-center(style="flex:0 0 50px; height:50px")
+          img.block(src="@/assets/icons/clover-coin.svg", style="width:31px;")
         .activity-itm__icon.mr2.sm-mr3.h3.line-height-1 &searr;
-        router-link.hover-underline(:to="userRt(getUser('seller'))" ) {{ getUser('seller') }}&ensp;
-        //- .pl1.flex.items-center
-        span.opacity-50 sold&ensp;
-        | {{ price(item.data.tokens) }}
-        coin-icon.ml1
+        div
+          router-link.hover-underline(:to="'/users/' + item.data.seller" ) {{ getUser('seller') }}&ensp;
+          span.opacity-50 sold&ensp;
+          | {{ price(item.data.tokens) }}&nbsp;
+          img(src="@/assets/icons/clover-coin.svg", alt="Clover Coin")
 
       //- New Comment
       template(v-else-if="item.name === 'Comment_Added'")
@@ -82,8 +87,9 @@
           router-link(:to='cloverLink(item.data.board)')
             img.block(:src='cloverImage(item.data.board, 50)' style='width:50px;height:50px')
         .activity-itm__icon.mr2.sm-mr3.h3 &#x270E;
-        span.opacity-50 Updated Album&ensp;
-        router-link.hover-underline(:to="{name: 'Album', params: {id: item.data.id} }") {{ item.data.name }}
+        div
+          span.opacity-50 Updated Album&ensp;
+          router-link.hover-underline(:to="{name: 'Album', params: {id: item.data.id} }") {{ item.data.name }}
       template(v-else-if="item.name === 'Album_Created'")
         .mr2.sm-mx3.flex-none(v-if='!noImg')
           router-link(:to='cloverLink(item.data.board)')
@@ -135,6 +141,7 @@ export default {
   methods: {
     cloverImage,
     cloverLink,
+
     getUser (key) {
       if (!this.item.userAddresses) return 'NO USER'
       let i = this.item.userAddresses && this.item.userAddresses.findIndex(i => i.id === key)
@@ -148,7 +155,7 @@ export default {
       return name === 'Clovers_Transfer' && data._to.startsWith('0x000000000')
     },
     isBorn ({ name, data }) {
-      console.log({name, data})
+      // console.log({name, data})
       return name === 'Clovers_Transfer' && data._from.startsWith('0x000000000')
     },
     isFromClovers ({ name, data }) {
@@ -173,5 +180,9 @@ export default {
 .activity-itm__icon{
   width:2.2rem;
   text-align: center;
+}
+img[alt="Clover Coin"]{
+  vertical-align: bottom;
+  transform:translateY(-.1em);
 }
 </style>
