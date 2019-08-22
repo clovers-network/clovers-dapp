@@ -229,9 +229,9 @@ export default {
               : this.userName(this.owner)
     },
     cloverMovesString () {
-        if (this.clover && this.clover.moves && this.clovers.moves.length === 1) {
-          this.clovers.moves = this.clovers.moves[0]
-        }
+      if (this.clover && this.clover.moves && this.clovers.moves.length === 1) {
+        this.clovers.moves = this.clovers.moves[0]
+      }
       const mvs = this.clover && this.clover.moves
       return mvs && reversi.byteMovesToStringMoves(...mvs)
     },
