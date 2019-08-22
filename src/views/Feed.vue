@@ -48,6 +48,7 @@ import PageTitle from '@/components/PageTitle'
 import PageNav from '@/components/PageNav'
 import svgX from '@/components/Icons/SVG-X'
 import FiltersNav from '@/components/FiltersNav'
+import BigNumber from 'bignumber.js'
 
 export default {
   name: 'Feed',
@@ -79,7 +80,12 @@ export default {
     },
     clovers () {
       if (!this.results.results) return []
-      return this.results.results
+      return this.results.results.map(c => {
+        if (typeof c.price === 'string') {
+          c.price = new BigNumber(c.price)
+        }
+        return c
+      })
     },
     prevPossible () {
       return this.results.prevPage
