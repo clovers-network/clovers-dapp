@@ -59,7 +59,7 @@
           img.block(src="@/assets/icons/clover-coin.svg", style="width:31px;")
         .activity-itm__icon.mr2.sm-mr3.h3.line-height-1 &searr;
         div
-          router-link.hover-underline(:to="userRt(getUser('seller'))" ) {{ getUser('seller') }}&ensp;
+          router-link.hover-underline(:to="'/users/' + item.data.seller" ) {{ getUser('seller') }}&ensp;
           span.opacity-50 sold&ensp;
           | {{ price(item.data.tokens) }}&nbsp;
           img(src="@/assets/icons/clover-coin.svg", alt="Clover Coin")
@@ -141,6 +141,7 @@ export default {
   methods: {
     cloverImage,
     cloverLink,
+
     getUser (key) {
       if (!this.item.userAddresses) return 'NO USER'
       let i = this.item.userAddresses && this.item.userAddresses.findIndex(i => i.id === key)
@@ -154,7 +155,7 @@ export default {
       return name === 'Clovers_Transfer' && data._to.startsWith('0x000000000')
     },
     isBorn ({ name, data }) {
-      console.log({name, data})
+      // console.log({name, data})
       return name === 'Clovers_Transfer' && data._from.startsWith('0x000000000')
     },
     isFromClovers ({ name, data }) {
