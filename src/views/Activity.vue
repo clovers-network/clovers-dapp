@@ -69,7 +69,8 @@ export default {
         CloverName_Changed: 'Clover name changes',
         Clovers_Transfer: 'Clover transfers',
         SimpleCloversMarket_updatePrice: 'Clover price changes',
-        'ClubTokenController_Buy,ClubTokenController_Sell': 'Coin activity'
+        Coin_Activity: 'Coin Activity'
+        // 'ClubTokenController_Buy,ClubTokenController_Sell': 'Coin activity',
         // 'CurationMarket_Buy,CurationMarket_Sell': 'Curation Market activity'
       },
 
