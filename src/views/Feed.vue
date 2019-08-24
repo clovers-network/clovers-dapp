@@ -37,14 +37,12 @@
 
       page-nav(:canPrev="prevPossible", :canNext="nextPossible", :hasResults="hasResults", @prev="back", @next="forward")
 
-      //- .sticky.bottom-0.bg-green.white.p2.center.h-bttm-bar.flex.pointer(v-if='newCloversCount' @click='addNew')
-        span.block.m-auto.font-exp Show {{ newCloversCount }} new {{ pluralize(&apos;Clover&apos;, newCloversCount) }}
 </template>
 
 <script>
 import store from '@/store'
 import { mapState, mapGetters } from 'vuex'
-import { pluralize, cleanObj } from '@/utils'
+import { cleanObj, concatPrice } from '@/utils'
 import CloverListCards from '@/components/CloverList--Cards'
 import PageTitle from '@/components/PageTitle'
 import PageNav from '@/components/PageNav'
@@ -97,7 +95,8 @@ export default {
     },
     maxPage () {
       if (!this.results.allResults) return 0
-      return Math.ceil(this.results.allResults / 12)
+      const perPage = this.results.perPage || 12
+      return concatPrice(Math.ceil(this.results.allResults / perPage))
     },
     hasResults () {
       return this.results.results && !!this.results.results.length
@@ -165,8 +164,6 @@ export default {
     this.$store.dispatch('getClubTokenPrice')
   },
   methods: {
-    pluralize,
-
     toggleFilters () {
       this.filtersVisible = !this.filtersVisible
     },

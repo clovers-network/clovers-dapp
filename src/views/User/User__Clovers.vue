@@ -25,8 +25,9 @@
 import CloverListCards from '@/components/CloverList--Cards'
 import FiltersNav from '@/components/FiltersNav'
 import PageNav from '@/components/PageNav'
-import { cleanObj } from '@/utils'
+import { cleanObj, concatPrice } from '@/utils'
 import {mapGetters} from 'vuex'
+
 export default {
   name: 'User__Clovers',
   props: ['user'],
@@ -61,7 +62,8 @@ export default {
     },
     maxPage () {
       if (!this.results.allResults) return 0
-      return Math.ceil(this.results.allResults / 12)
+      const perPage = this.results.perPage || 12
+      return concatPrice(Math.ceil(this.results.allResults / 12))
     },
     apiUrl () {
       return `${this.apiBase}/users/${this.user.address}/clovers`

@@ -47,7 +47,7 @@ import PageNav from '@/components/PageNav'
 import svgX from '@/components/Icons/SVG-X'
 import xss from 'xss'
 import axios from 'axios'
-import { cleanObj } from '@/utils'
+import { cleanObj, concatPrice } from '@/utils'
 
 export default {
   name: 'Activity',
@@ -93,7 +93,8 @@ export default {
     },
     maxPage () {
       if (!this.logs.allResults) return 0
-      return Math.ceil(this.logs.allResults / 24)
+      const perPage = this.logs.perPage || 24
+      return concatPrice(Math.ceil(this.logs.allResults / perPage))
     },
     hasResults () {
       return this.logs.results && !!this.logs.results.length
