@@ -39,7 +39,6 @@
         .absolute.bottom-0.right-0.flex.items-center.p2(@click="copyMoves")
           copy-icon.pointer
 
-
     header.center.mt4.mb2.md-mb3
       h1.flex.justify-center
         .ws-pl.relative(@click="openNameEditor", :class="{'pointer': isMyClover}")
@@ -128,7 +127,7 @@ import TransferClover from '@/components/TransferClover'
 import SellClover from '@/components/SellClover'
 import BuyClover from '@/components/BuyClover'
 import NotFound from '@/views/404'
-import copy from 'copy-to-clipboard';
+import copy from 'copy-to-clipboard'
 
 const reversi = new Reversi()
 let lastRt = null
