@@ -36,6 +36,10 @@
         .absolute.top-0.right-0.flex.items-center.p2(v-if="isSymm")
           symmetry-icons(:board="clover.symmetries", style="font-size:12px")
 
+        .absolute.bottom-0.right-0.flex.items-center.p2(@click="copyMoves")
+          copy-icon.pointer
+
+
     header.center.mt4.mb2.md-mb3
       h1.flex.justify-center
         .ws-pl.relative(@click="openNameEditor", :class="{'pointer': isMyClover}")
@@ -114,6 +118,7 @@ import {
 } from '@/utils'
 import Reversi from 'clovers-reversi'
 
+import CopyIcon from '@/components/Icons/CopyIcon'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 import Clv from '@/components/Clv'
 import Comments from '@/components/Comments/Comments'
@@ -123,6 +128,7 @@ import TransferClover from '@/components/TransferClover'
 import SellClover from '@/components/SellClover'
 import BuyClover from '@/components/BuyClover'
 import NotFound from '@/views/404'
+import copy from 'copy-to-clipboard';
 
 const reversi = new Reversi()
 let lastRt = null
@@ -277,7 +283,10 @@ export default {
   methods: {
     cloverImage,
     prettyBigNumber,
-
+    copyMoves () {
+      copy(this.cloverMovesString)
+      this.selfDestructMsg({msg: 'Clover moves copies', type: 'success'})
+    },
     async makeRFT () {
       if (this.loading) return
       try {
@@ -341,6 +350,6 @@ export default {
       this.canGetComments = true
     }, 500)
   },
-  components: { SymmetryIcons, Clv, Comments, CoinIcon, EditCloverName, TransferClover, SellClover, BuyClover, NotFound }
+  components: { CopyIcon, SymmetryIcons, Clv, Comments, CoinIcon, EditCloverName, TransferClover, SellClover, BuyClover, NotFound }
 }
 </script>
