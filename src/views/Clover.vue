@@ -273,7 +273,10 @@ export default {
   methods: {
     cloverImage,
     prettyBigNumber,
-
+    copyMoves () {
+      copy(this.cloverMovesString)
+      this.selfDestructMsg({msg: 'Clover moves copied', type: 'success'})
+    },
     async makeRFT () {
       if (this.loading) return
       try {
