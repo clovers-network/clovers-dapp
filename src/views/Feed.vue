@@ -18,9 +18,11 @@
           option(value="Y0Sym") Sym. Horizontal
           option(value="XYSym") Sym. Diagonal Up
           option(value="XnYSym") Sym. Diagonal Down
+          option(value="NonSym") Non-Symmetrical Clovers
           option(value="public") Human owned
           option(value="contract") Contract owned
           option(value="commented") With Comments
+          option(value="pending") Unverified Clovers
           //- option(value="rft") RFT
         //- sort
         select(slot="sort", v-model='filters.sort')
