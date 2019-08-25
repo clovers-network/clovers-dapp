@@ -40,18 +40,18 @@
             span(v-if="mode === 'keep'") To register this clover on the network,<br>a base fee of <span class="nowrap">{{ baseCloverFee }}&nbsp;<coin-icon :width="10" class="inline-block"/></span> is charged
             span(v-else) Claim a reward for this rare clover.<br>This requires a verification before payout and can take a few minutes
 
-        //- confirm
-        footer.flex.justify-center(v-if="!submitted")
-          .m3.rounded.white.trans-bg(:class="cancelled ? 'bg-red' : 'bg-green'")
-            button.pointer.py2.px3(@click="btnClick", :class="{'pointer-events-none': submitting}")
-              span.block.m-auto(v-show="!submitting") {{ buttonText }}
-              span.block.m-auto(v-if="submitting") Submitting . . .
+        //- confirm / view
+        footer.flex.justify-center
+          template(v-if="!submitted")
+            .my3.rounded.white.trans-bg(:class="cancelled ? 'bg-red' : 'bg-green'")
+              button.pointer.py2.px3(@click="btnClick", :class="{'pointer-events-none': submitting}")
+                span(v-show="!submitting") {{ buttonText }}
+                span(v-if="submitting") Submitting . . .
 
-        //- submitted
-        footer(v-else)
-          .m3.rounded.white.bg-green.center
-            router-link.col-12.pointer.p2.inline-block(:to="cloverLink")
-              p.m0.m-auto View Clover
+      footer.my3.center(v-if="cloverLink && (unavailable || submitted)")
+        router-link.px3.py2.inline-block.rounded.white.bg-green.center(:to="cloverLink")
+          | View Clover
+
 </template>
 
 <script>
