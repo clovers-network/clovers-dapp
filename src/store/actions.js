@@ -1139,6 +1139,13 @@ async function claimClover ({ keep, account, clover }) {
   let stakeAmount = await contracts.CloversController.instance.methods
     .stakeAmount()
     .call()
+
+  let currentGasPrice = await contracts.CloversController.instance.methods
+    .fastGasPrice()
+    .call()
+  
+  stakeAmount = stakeAmount.mul(currentGasPrice)
+
   value = new BigNumber(value)
 
   value = value.plus(stakeAmount)
