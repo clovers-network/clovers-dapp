@@ -23,9 +23,16 @@ export default {
   methods: {
     close () {
       this.$emit('close')
-      // let current = { name: this.$route.name }
-      // this.$router.push(current)
+    },
+    onKeydown (e) {
+      return e.keyCode === 27 && this.close() // ESC > close
     }
+  },
+  mounted () {
+    window.addEventListener('keydown', this.onKeydown)
+  },
+  destroyed () {
+    window.removeEventListener('keydown', this.onKeydown)
   },
   components: { svgX }
 }
