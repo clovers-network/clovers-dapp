@@ -1,5 +1,5 @@
 <template lang="pug">
-  router-link.block.clover-item-border.rounded(:to="cloverLink(clover)", :class="{'red': isRFT}")
+  router-link.block.clover-item-border.rounded(:to="link", :class="{'red': isRFT, 'opacity-50': isBurned}")
     article.relative.pb-ar-card(v-if="clover.board")
       .absolute.overlay.flex.flex-column.justify-between.pt1.sm-pt2
         //- symm icons
@@ -92,6 +92,14 @@ export default {
     },
     displayPrice () {
       return concatPrice(this.cloverPrice)
+    },
+    isBurned () {
+      if (!this.clover.user) return
+      return this.clover.user === this.$store.state.nullAddress
+    },
+    link () {
+      if (this.isBurned) return ''
+      return this.cloverLink(this.clover)
     },
 
     ...mapState(['ethPrice', 'clubTokenPrice']),

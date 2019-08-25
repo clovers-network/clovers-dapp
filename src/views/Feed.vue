@@ -18,9 +18,11 @@
           option(value="Y0Sym") Sym. Horizontal
           option(value="XYSym") Sym. Diagonal Up
           option(value="XnYSym") Sym. Diagonal Down
+          option(value="NonSym") Non-Symmetrical Clovers
           option(value="public") Human owned
           option(value="contract") Contract owned
           option(value="commented") With Comments
+          option(value="pending") Unverified Clovers
           //- option(value="rft") RFT
         //- sort
         select(slot="sort", v-model='filters.sort')
@@ -35,19 +37,18 @@
 
       page-nav(:canPrev="prevPossible", :canNext="nextPossible", :hasResults="hasResults", @prev="back", @next="forward")
 
-      //- .sticky.bottom-0.bg-green.white.p2.center.h-bttm-bar.flex.pointer(v-if='newCloversCount' @click='addNew')
-        span.block.m-auto.font-exp Show {{ newCloversCount }} new {{ pluralize(&apos;Clover&apos;, newCloversCount) }}
 </template>
 
 <script>
 import store from '@/store'
 import { mapState, mapGetters } from 'vuex'
-import { pluralize, cleanObj } from '@/utils'
+import { cleanObj, concatPrice } from '@/utils'
 import CloverListCards from '@/components/CloverList--Cards'
 import PageTitle from '@/components/PageTitle'
 import PageNav from '@/components/PageNav'
 import svgX from '@/components/Icons/SVG-X'
 import FiltersNav from '@/components/FiltersNav'
+import BigNumber from 'bignumber.js'
 
 export default {
   name: 'Feed',
@@ -79,7 +80,12 @@ export default {
     },
     clovers () {
       if (!this.results.results) return []
-      return this.results.results
+      return this.results.results.map(c => {
+        if (typeof c.price === 'string') {
+          c.price = new BigNumber(c.price)
+        }
+        return c
+      })
     },
     prevPossible () {
       return this.results.prevPage
@@ -89,7 +95,8 @@ export default {
     },
     maxPage () {
       if (!this.results.allResults) return 0
-      return Math.ceil(this.results.allResults / 12)
+      const perPage = this.results.perPage || 12
+      return concatPrice(Math.ceil(this.results.allResults / perPage))
     },
     hasResults () {
       return this.results.results && !!this.results.results.length
@@ -157,8 +164,6 @@ export default {
     this.$store.dispatch('getClubTokenPrice')
   },
   methods: {
-    pluralize,
-
     toggleFilters () {
       this.filtersVisible = !this.filtersVisible
     },
