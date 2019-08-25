@@ -22,7 +22,7 @@
           option(value="public") Human owned
           option(value="contract") Contract owned
           option(value="commented") With Comments
-          option(value="pending") Unverified Clovers
+          option(value="pending") Pending Clovers
           //- option(value="rft") RFT
         //- sort
         select(slot="sort", v-model='filters.sort')
