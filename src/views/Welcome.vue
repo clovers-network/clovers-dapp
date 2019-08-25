@@ -46,23 +46,21 @@
       //-       text="white"
       //-       bg="green")
       //- hr
-      section.border-top.pt3.pb4
-        h2.h2.green.font-exp.mt2.pb1 Stay Updated
-        figure.px2.my3
-          img.block.col-12.mx-auto(src="/img/letter.svg")
-        p.px3.my2.h3 Sign up for our newsletter, #[br]or say hi at #[u #[a(target="_blank" href="mailto:hello@clovers.network") hello@clovers.network]].
-        newsletter-signup
-      section.border-top.py3
-        h2.h2.green.font-exp.mt2.px3 Join the Community
-        figure.px3.my3
-          img.block.col-12.mx-auto(src="/img/github.svg")
-        p.px3.h3.mt2.mb0
-          | You can find us on #[u #[a(target="_blank" href="//twitter.com/cloversnetwork") Twitter]],
-          | #[u #[a(target="_blank" href="//t.me/cloversnetwork") Telegram]],
-          | our&nbsp;#[u #[a(target="_blank" href="//forum.clovers.network") Forum]],
-          | and on&nbsp;#[u #[a(target="_blank" href="//github.com/clovers-network") Github]]
-        p.mt1.h3.px3 Clovers is an open source project built by&nbsp;#[u #[a(target="_blank" href="//bin.am") Bin&nbsp;Studio]].
-
+      h2.h2.green.font-exp Newsletter
+      img.p3(src="/img/letter.svg")
+      .px3.py2 Sign up for our newsletter or email us at #[u #[a(target="_blank" href="mailto:hello@clovers.network") hello@clovers.network]].
+      newsletter-signup
+      hr
+      h2.h2.green.font-exp Community
+      img.p3(src="/img/github.svg")
+      .px3.py2
+        | Clovers is an open source project built by #[u #[a(target="_blank" href="//bin.am") Bin Studio]].<br>
+        | You can find us on
+        | our #[u #[a(target="_blank" href="//discord.gg/tQkPbat") Discord]],
+        | our #[u #[a(target="_blank" href="//forum.clovers.network") Forum]],
+        | #[u #[a(target="_blank" href="//github.com/clovers-network") Github]],
+        | #[u #[a(target="_blank" href="//t.me/cloversnetwork") Telegram]] and
+        | our #[u #[a(target="_blank" href="//twitter.com/cloversnetwork") Twitter]].
 </template>
 
 <script>

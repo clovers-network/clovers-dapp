@@ -139,6 +139,7 @@ export default {
     meta () {
       if (lastRt || !this.board) return
       return [
+        { p: 'og:url', c: 'https://clovers.network/clovers/' + this.board, id: 'og-url' },
         { p: 'og:title', c: `Clovers | ${this.metaTitle}`, id: 'og-title' },
         { p: 'og:description', c: `Owned by ${this.currentOwner}`, id: 'og-desc' },
         { p: 'og:image', c: this.metaImgs.og, id: 'og-img' },

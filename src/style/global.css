@@ -18,7 +18,7 @@ body {
   overflow-x: hidden;
   background-color: white;
   color: var(--green);
-  font-family: var(--body-font);
+  font-family: var(--body-font), sans-serif;
   font-size: var(--base-font-size);
   line-height: 1.4;
   margin: 0;
