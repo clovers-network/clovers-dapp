@@ -322,7 +322,7 @@ export default {
   async getReward ({ dispatch }, _symmetries) {
     await dispatch('getNetwork')
     let val = await contracts.CloversController.instance.methods
-      .calculateReward(_symmetries.toString(16))
+      .calculateReward('0x' + _symmetries.toString(16))
       .call()
     return val
   },
