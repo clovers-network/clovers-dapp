@@ -9,7 +9,7 @@
     .pt1
       //- image
       figure.flex-auto.px2.mt1
-        img.block.mx-auto(:src="cloverImage(clover, 196)" width="196" height="196")
+        clv-svg.block.mx-auto.col-7(:byteBoard="clover.board", :size="196", :key="movesString")
         //- symm icons ?
         .green.mt3.h6(v-if="clover.symmetrical")
           symmetry-icons(:board="clover")
@@ -74,6 +74,7 @@ import CoinIcon from '@/components/Icons/CoinIcon'
 import MoreInformation from '@/components/MoreInformation'
 import HeartIcon from '@/components/Icons/HeartIcon'
 import svgX from '@/components/Icons/SVG-X'
+import ClvSvg from '@/components/Clv--SVG'
 
 const reversi = new Reversi()
 let lastRt = null
@@ -97,7 +98,6 @@ export default {
   },
   data () {
     return {
-      id: null,
       unavailable: false,
       action: 'keep',
       mode: 'keep', // || 'sell'
@@ -110,6 +110,9 @@ export default {
     }
   },
   watch: {
+    movesString (val) {
+      console.log(val)
+    },
     _reversi () {
       this.checkClover()
     },
@@ -124,6 +127,9 @@ export default {
   computed: {
     _reversi () {
       return reversi.playGameMovesString(this.movesString)
+    },
+    id () {
+      return this._reversi && pad0x(this._reversi.byteBoard)
     },
     clover () {
       const saved = this.picks.find(b => b.board === this.id)
@@ -200,6 +206,10 @@ export default {
       } else {
         this.sellToBank()
       }
+    },
+    onKeyDown (e) {
+      if (e.keyCode === 39) this.$emit('next')
+      if (e.keyCode === 37) this.$emit('prev')
     },
     async keep () {
       this.submitting = true
@@ -281,10 +291,13 @@ export default {
     next()
   },
   mounted () {
-    this.id = pad0x(this._reversi.byteBoard)
     this.checkClover()
     this.getClubTokenPrice()
+    window.addEventListener('keydown', this.onKeyDown)
   },
-  components: { Modal, SymmetryIcons, CoinIcon, MoreInformation, HeartIcon, svgX }
+  destroyed () {
+    window.removeEventListener('keydown', this.onKeyDown)
+  },
+  components: { Modal, SymmetryIcons, CoinIcon, MoreInformation, HeartIcon, svgX, ClvSvg }
 }
 </script>

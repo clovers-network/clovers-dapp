@@ -19,7 +19,7 @@
     //- modal: keep
     transition(name="fade")
       div(v-if="showPickModal")
-        keep-clover(:movesString="showPickModal")
+        keep-clover(:movesString="showPickModal", @next="nextPick(1)", @prev="nextPick(-1)")
 
 </template>
 
@@ -92,10 +92,15 @@ export default {
       this.entryRt = null // clear, so always use BACK now
       this.$router.push({ name: 'Picks' })
     },
-
     discardAll () {
       const confirm = window.confirm('Are you sure you want to discard ALL the clovers in your Basket? This action cannot be undone...')
       if (confirm) this.$store.commit('REMOVE_ALL_SAVED_CLOVERS')
+    },
+    nextPick (dir = 1) {
+      let i = this.picks.findIndex(pick => pick.movesString === this.showPickModal)
+      i = i + dir === this.picks.length ? 0 : i + dir < 0 ? this.picks.length - 1 : i + dir
+      const nextMvs = this.picks[i] && this.picks[i].movesString
+      return nextMvs && this.$router.push({query: {pick: nextMvs}})
     },
 
     ...mapActions(['formatFoundClover']),
