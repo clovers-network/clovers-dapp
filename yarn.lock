@@ -3812,10 +3812,10 @@ clovers-contracts@1.0.20:
   resolved "https://registry.yarnpkg.com/clovers-contracts/-/clovers-contracts-1.0.20.tgz#d53146dc4038c75a53f773264dda637240054b5c"
   integrity sha512-OlV1yJn3+A6BJpw8lnVQgJLbn7jh0VeuijPg9WKRqn3Cynm0cJoQDhO+84YwLdo3FQasx2NspvRtuovE0XfaCA==
 
-clovers-reversi@1.0.19:
-  version "1.0.19"
-  resolved "https://registry.yarnpkg.com/clovers-reversi/-/clovers-reversi-1.0.19.tgz#3485b640b444d3656e7869f8047fda79fea8ed54"
-  integrity sha512-jJujN/rIocv+65IbRaqcvcWiqm+LO2nH/yO4IjrsGJ4QIQI/9LAQm/B0oTui8jZR2VJRihfzav8zZx0l0MxNiQ==
+clovers-reversi@1.0.21:
+  version "1.0.21"
+  resolved "https://registry.yarnpkg.com/clovers-reversi/-/clovers-reversi-1.0.21.tgz#549f13e6ca0f38f244265d4443c1c29a9d5e1a4a"
+  integrity sha512-e2DtUrBxCYVPwfxKJH9pz+hDyNEcUfdlqWsSH3+fBfeOjB4X7LvgmM4gaSk2IRASluIawb9HpqRVGr/LWfrw9g==
   dependencies:
     bn.js "^4.11.8"
 
