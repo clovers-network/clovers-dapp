@@ -19,6 +19,8 @@
         h3.my3.font-exp.center.nowrap.red.opacity-50
           span(v-if="invalidClover") Invalid Clover :(
           span(v-else-if="unavailable") Already registered :(
+        h3.my3.font-exp.center.nowrap(v-if="unavailable")
+          router-link(:to="{name: 'Clover', params: {board: id}}") See Clover
 
       //- actions
       template(v-else)
@@ -246,11 +248,14 @@ export default {
     checkClover () {
       if (!this.clover) return null
       this.cloverExists(this.id).then((exists) => {
+        console.log({exists})
         if (!exists) {
+          console.log('doesnt exist')
           this.unavailable = false
           this.action = this._reversi.symmetrical ? 'sell' : 'keep'
           return
         }
+        console.log('does exist')
         this.unavailable = true
         this.action = 'view'
       })

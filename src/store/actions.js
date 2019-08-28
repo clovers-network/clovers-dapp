@@ -1139,9 +1139,29 @@ async function claimClover ({ keep, account, clover }) {
   let stakeAmount = await contracts.CloversController.instance.methods
     .stakeAmount()
     .call()
-  value = new BigNumber(value)
 
-  value = value.plus(stakeAmount)
+  let currentGasPrice
+  console.log('here?)')
+  try {
+    currentGasPrice = await contracts.CloversController.instance.methods
+      .getGasPriceForApp()
+      .call()
+  } catch (_) {
+    currentGasPrice = '1' // gas is already added in the early version contract
+  }
+
+  console.log('and??')
+  console.log({currentGasPrice})
+  console.log({stakeAmount})
+
+  stakeAmount = new BigNumber(stakeAmount)
+  let stakeWithGas = stakeAmount.mul(currentGasPrice)
+  console.log({stakeWithGas})
+
+  value = new BigNumber(value)
+  value = value.plus(stakeWithGas)
+  console.log({value})
+
   return contracts.CloversController.instance.methods
     .claimClover(moves, _tokenId, _symmetries.toString(10), _keep)
     .send({ from, value: value.toFixed() })
