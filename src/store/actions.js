@@ -1141,7 +1141,7 @@ async function claimClover ({ keep, account, clover }) {
     .call()
 
   let currentGasPrice
-  console.log("here?)")
+  console.log('here?)')
   try {
     currentGasPrice = await contracts.CloversController.instance.methods
       .getGasPriceForApp()
