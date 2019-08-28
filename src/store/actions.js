@@ -1141,7 +1141,7 @@ async function claimClover ({ keep, account, clover }) {
     .call()
 
   let currentGasPrice = await contracts.CloversController.instance.methods
-    .fastGasPrice()
+    .getGasPriceForApp()
     .call()
 
   stakeAmount = stakeAmount.mul(currentGasPrice)
