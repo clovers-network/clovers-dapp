@@ -1139,7 +1139,7 @@ async function claimClover ({ keep, account, clover }) {
   let stakeAmount = await contracts.CloversController.instance.methods
     .stakeAmount()
     .call()
-  
+
   let currentGasPrice
   try {
     currentGasPrice = await contracts.CloversController.instance.methods
