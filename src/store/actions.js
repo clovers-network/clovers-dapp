@@ -1139,10 +1139,15 @@ async function claimClover ({ keep, account, clover }) {
   let stakeAmount = await contracts.CloversController.instance.methods
     .stakeAmount()
     .call()
-
-  let currentGasPrice = await contracts.CloversController.instance.methods
-    .getGasPriceForApp()
-    .call()
+  
+  let currentGasPrice
+  try {
+    currentGasPrice = await contracts.CloversController.instance.methods
+      .getGasPriceForApp()
+      .call()
+  } catch (_) {
+    currentGasPrice = utils.toWei('10')
+  }
 
   stakeAmount = stakeAmount.mul(currentGasPrice)
 
