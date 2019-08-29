@@ -67,15 +67,19 @@ router.beforeEach((to, from, next) => {
   // }
 })
 
-if (ga) {
-  ga('set', 'page', router.currentRoute.path)
-  ga('send', 'pageview')
-}
+try {
+  if (ga) {
+    ga('set', 'page', router.currentRoute.path)
+    ga('send', 'pageview')
+  }
+} catch (_) {}
 
 router.afterEach((to, from) => {
   if (ga) {
-    ga('set', 'page', to.path)
-    ga('send', 'pageview')
+    try {
+      ga('set', 'page', to.path)
+      ga('send', 'pageview')
+    } catch(_) {}
   }
 })
 
