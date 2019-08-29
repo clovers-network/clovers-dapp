@@ -1332,6 +1332,11 @@
     "@ethersproject/constants" ">5.0.0-beta.0"
     "@ethersproject/errors" ">5.0.0-beta.0"
 
+"@gnosis.pm/util-contracts@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/util-contracts/-/util-contracts-2.0.1.tgz#20ba5dcfaf4a7456ad22c720f8c9b464b85e8b59"
+  integrity sha512-Z1R15atpbTr/+ac4o9qW3kbNHSPnCaWsPxn62xsr9aRAjif1qbGkT8jFghBYtEN14lmJXOw0vfMsNj2UDOHrTA==
+
 "@intervolga/optimize-cssnano-plugin@^1.0.5":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@intervolga/optimize-cssnano-plugin/-/optimize-cssnano-plugin-1.0.6.tgz#be7c7846128b88f6a9b1d1261a0ad06eb5c0fdf8"
@@ -3807,10 +3812,12 @@ cloneable-readable@^1.0.0:
     process-nextick-args "^2.0.0"
     readable-stream "^2.3.5"
 
-clovers-contracts@1.0.20:
-  version "1.0.20"
-  resolved "https://registry.yarnpkg.com/clovers-contracts/-/clovers-contracts-1.0.20.tgz#d53146dc4038c75a53f773264dda637240054b5c"
-  integrity sha512-OlV1yJn3+A6BJpw8lnVQgJLbn7jh0VeuijPg9WKRqn3Cynm0cJoQDhO+84YwLdo3FQasx2NspvRtuovE0XfaCA==
+clovers-contracts@1.0.21:
+  version "1.0.21"
+  resolved "https://registry.yarnpkg.com/clovers-contracts/-/clovers-contracts-1.0.21.tgz#ca794be52feea461bcc4b5226010fa9faf916045"
+  integrity sha512-Pp9tZU0jlP1qK+242/WWPZatpSnJyDuME6Whyr/d0Jso7wJRCE5dP0BBZvU1kSk+CBEG5HzTxX+Z3HKYUYJw+w==
+  dependencies:
+    "@gnosis.pm/util-contracts" "^2.0.1"
 
 clovers-reversi@1.0.21:
   version "1.0.21"
