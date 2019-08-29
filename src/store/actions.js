@@ -1147,7 +1147,11 @@ async function claimClover ({ keep, account, clover }) {
       .getGasPriceForApp()
       .call()
   } catch (_) {
-    currentGasPrice = '1' // gas is already added in the early version contract
+    if( (new BigNumber(stakeAmount)).eq('190621') ) {
+      currentGasPrice = '10000000000' // 10Gwei
+    } else {
+      currentGasPrice =  '1' // gas is already added in the early version contract
+    }
   }
 
   console.log('and??')
