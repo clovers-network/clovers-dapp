@@ -79,7 +79,7 @@ router.afterEach((to, from) => {
     try {
       ga('set', 'page', to.path)
       ga('send', 'pageview')
-    } catch(_) {}
+    } catch (_) {}
   }
 })
 
