@@ -16,27 +16,27 @@ import MoreInformation from '@/components/MoreInformation'
 import {mapState} from 'vuex'
 export default {
   name: 'GasStation',
-  data() {
-      return {
-          showPrice: false,
-          info: false
-      }
+  data () {
+    return {
+      showPrice: false,
+      info: false
+    }
   },
   components: { GasIcon, MoreInformation },
   computed: {
-      ...mapState(['gasPrice']),
-      relatively () {
-          return this.gasPrice < 5 ? 'low' : this.gasPrice < 10 ? 'medium' : 'high'
-      },
-      gasClass() {
-          console.log(this.gasPrice)
-          return {
-              "bg-black": !this.gasPrice,
-              "bg-green": this.gasPrice && this.gasPrice < 5,
-              "bg-yellow": this.gasPrice && this.gasPrice < 10,
-              "bg-red": this.gasPrice && this.gasPrice > 10
-          }
+    ...mapState(['gasPrice']),
+    relatively () {
+      return this.gasPrice < 5 ? 'low' : this.gasPrice < 10 ? 'medium' : 'high'
+    },
+    gasClass () {
+      console.log(this.gasPrice)
+      return {
+        'bg-black': !this.gasPrice,
+        'bg-green': this.gasPrice && this.gasPrice < 5,
+        'bg-yellow': this.gasPrice && this.gasPrice < 10,
+        'bg-red': this.gasPrice && this.gasPrice > 10
       }
+    }
   }
 }
 </script>
