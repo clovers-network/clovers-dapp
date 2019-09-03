@@ -40,7 +40,7 @@ export default {
     if (orders.length && orders[0].market === 'ClubToken') {
       state.clubTokenPrice = new BigNumber(orders[0].value)
         .div(new BigNumber(orders[0].tokens))
-        .round()
+        .floor()
         .toString(10)
     }
   },
@@ -51,7 +51,7 @@ export default {
     if (order.market === 'ClubToken') {
       state.clubTokenPrice = new BigNumber(order.value)
         .div(new BigNumber(order.tokens))
-        .round()
+        .floor()
         .toString(10)
     }
   },

@@ -60,20 +60,20 @@
           //- dropdown: pig
           pig-menu.left-0(v-if="pigMenu", @closePigMenu="closePigMenu", style="transform:translateX(calc(-100% + 66px))", v-click-outside="closePigMenu")
           //- dropdown: account
-          account-menu.mr2.md-mr3(v-if="accountMenu", @close-account-menu="closeAccountMenu", v-click-outside="closeAccountMenu")
+          account-menu.mr2.md-mr3(v-if="accountMenu", @closeAccountMenu="closeAccountMenu", v-click-outside="closeAccountMenu")
 
     //- nav overlay
     nav.fixed.z3.col-12.bg-green.top-0.left-0.h-100vh(:class="showMenu ? 'visible md-invisible' : 'invisible'")
       .flex.flex-column.justify-between.center(:style="{height: winH + 'px'}")
         section.flex-auto.mx2.mt4.pt2.flex.flex-column
           header.h5.font-exp.left-align.mb1.lh3
-            router-link.h1(to="/") Clovers
+            router-link.h1(to="/", @click.native="showMenu = false") Clovers
           nav.flex-auto.flex.flex-column
             ul.h2.list-reset.m0.flex-auto.flex.flex-column.font-ext
-              router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center(:to="{ name: 'Feed' }") Feed
-              router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center(:to="{ name: 'Garden' }") Garden
-              router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center(:to="{name: 'Albums'}") Albums
-              router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center.relative(:to="{ name: 'Activity' }")
+              router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center(:to="{ name: 'Feed' }", @click.native="showMenu = false") Feed
+              router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center(:to="{ name: 'Garden' }", @click.native="showMenu = false") Garden
+              router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center(:to="{name: 'Albums'}", @click.native="showMenu = false") Albums
+              router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center.relative(:to="{ name: 'Activity' }", @click.native="showMenu = false")
                   span Activity <sup v-if="showLogCount">{{newLogs}}</sup>
                   //- span.circle.bg-orange.absolute(v-if="newLogs" style="width:8px;height:8px")
               //- li
@@ -166,6 +166,7 @@ export default {
       this.showMenu = !this.showMenu
     },
     closeAccountMenu () {
+      console.log('close Account menu in big menu')
       if (this.accountMenu) this.accountMenu = false
     },
     closePigMenu () {

@@ -23,7 +23,8 @@ export default {
   data () {
     return {
       query: '',
-      select: null
+      select: null,
+      submitting: false
     }
   },
   props: ['board'],
@@ -63,6 +64,7 @@ export default {
       return album.clovers.indexOf(this.board) > -1
     },
     async addToAlbum () {
+      if (this.submitting) return
       if (this.select === null && !this.couldCreate) return
       let album
       if (this.couldCreate && this.select == null) {
@@ -72,11 +74,14 @@ export default {
       }
       album.clovers.unshift(this.board)
       try {
+        this.submitting = true
         this.couldCreate ? await this.createAlbum(album) : await this.updateAlbum(album)
+        this.submitting = false
         this.select = null
         this.query = ''
         this.$emit('close')
       } catch (err) {
+        this.submitting = false
         console.error(err)
       }
     }

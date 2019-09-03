@@ -28,7 +28,39 @@ export default {
   },
   data () {
     return {
-      options: {
+      // options: {
+      //   responsive: true,
+      //   maintainAspectRatio: false,
+      //   responsiveAnimationDuration: 300,
+      //   legend: { display: false },
+      //   title: { display: false },
+      //   scales: {
+      //     yAxes: [
+      //       {
+      //         display: false,
+      //         ticks: {
+      //           suggestedMin: 0.0015,
+      //           max: 0.0024
+      //         }
+      //       }
+      //     ],
+      //     xAxes: [
+      //       {
+      //         // type: 'time',
+      //         display: false,
+      //         ticks: {
+      //           suggestedMin: this.orders.length && this.orders[this.orders.length - 1].created,
+      //           max: this.orders.length && this.orders[0].created,
+      //         }
+      //       }
+      //     ]
+      //   }
+      // }
+    }
+  },
+  computed: {
+    options () {
+      return {
         responsive: true,
         maintainAspectRatio: false,
         responsiveAnimationDuration: 300,
@@ -37,7 +69,11 @@ export default {
         scales: {
           yAxes: [
             {
-              display: false
+              display: false,
+              ticks: {
+                suggestedMin: 0.0015,
+                max: 0.0024
+              }
             }
           ],
           xAxes: [
@@ -48,27 +84,26 @@ export default {
           ]
         }
       }
-    }
-  },
-  computed: {
+    },
     chartData () {
       return {
         datasets: [
           {
-            label: 'Clovers',
+            label: 'Price',
             backgroundColor: 'white',
             borderColor: '#00b464',
             fill: 'end',
             borderWidth: 1,
-            pointRadius: 0,
+            pointRadius: 1,
             lineTension: 0,
             data: this.orders.map((p, i) => {
               return {
-                y: new BigNumber(p.value)
+                y: parseFloat(new BigNumber(p.value)
                   .div(new BigNumber(p.tokens))
-                  .toNumber(0),
-                // x: parseInt(p.created)
-                x: this.orders.length - i
+                  .toFixed(6)),
+                x: new Date((((parseInt(p.created) - 8363701) * 15) + 1565944718) * 1000)
+                // x: this.orders.length - i
+                // x: p.created
               }
             })
           }

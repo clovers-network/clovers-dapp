@@ -174,8 +174,7 @@ export default {
       }
     },
     postComment () {
-      if (!this.newComment || !this.newComment.length) return
-
+      if (this.posting || !this.newComment || !this.newComment.length) return
       this.posting = true
       this.scrollAter = true
       this.addComment({
@@ -184,6 +183,9 @@ export default {
       }).then(() => {
         this.newComment = ''
         this.posting = false
+      }).catch((err) => {
+        this.posting = false
+        console.error(err)
       })
     },
     loadComments () {
