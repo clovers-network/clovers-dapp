@@ -73,7 +73,7 @@ export default {
     },
     totalSupply () {
       return new BigNumber(
-        utils.fromWei(this.totalSupplyWei.round().toString(10))
+        utils.fromWei(this.totalSupplyWei.floor().toString(10))
       )
     },
     marketCapInCollateralWei () {
@@ -81,7 +81,7 @@ export default {
     },
     marketCapInCollateral () {
       return new BigNumber(
-        utils.fromWei(this.marketCapInCollateralWei.round().toString(10))
+        utils.fromWei(this.marketCapInCollateralWei.floor().toString(10))
       )
     },
     marketCapInUSD () {

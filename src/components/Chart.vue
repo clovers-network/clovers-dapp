@@ -60,7 +60,7 @@ export default {
   },
   computed: {
     options () {
-       return {
+      return {
         responsive: true,
         maintainAspectRatio: false,
         responsiveAnimationDuration: 300,
@@ -79,7 +79,7 @@ export default {
           xAxes: [
             {
               type: 'time',
-              display: false,
+              display: false
             }
           ]
         }
@@ -101,7 +101,7 @@ export default {
                 y: parseFloat(new BigNumber(p.value)
                   .div(new BigNumber(p.tokens))
                   .toFixed(6)),
-                x: new Date((((parseInt(p.created) - 8363701) * 15) + 1565944718)*1000)
+                x: new Date((((parseInt(p.created) - 8363701) * 15) + 1565944718) * 1000)
                 // x: this.orders.length - i
                 // x: p.created
               }
