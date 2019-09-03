@@ -96,7 +96,7 @@ export default {
   },
   data () {
     return {
-      max: 100,
+      max: 10000,
       view: 'buy',
       buy: '1',
       clubReceive: '1',
