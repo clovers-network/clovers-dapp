@@ -33,7 +33,7 @@ export default {
       return {
         'bg-black': !this.gasPrice,
         'bg-green': this.gasPrice && this.gasPrice < 5,
-        'bg-yellow': this.gasPrice && this.gasPrice <= 10,
+        'bg-orange': this.gasPrice && this.gasPrice <= 10,
         'bg-red': this.gasPrice && this.gasPrice > 10
       }
     }
