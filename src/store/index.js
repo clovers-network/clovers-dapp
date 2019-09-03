@@ -60,6 +60,7 @@ const state = {
   allSavedClovers: getSavedClovers(),
 
   // orders
+  gasPrice: null,
   ethPrice: '0',
   clubTokenPrice: '0',
   market: null,

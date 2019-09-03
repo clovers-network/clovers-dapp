@@ -129,6 +129,12 @@ export default {
     if (priceResp.status === 200) {
       commit('SET_ETH_PRICE', priceResp.data.USD)
     }
+    let priceGasResp = await axios.get(
+      'https://ethgasstation.info/json/ethgasAPI.json'
+    )
+    if (priceGasResp.status === 200) {
+      commit('SET_GAS_PRICE', priceGasResp.data.fast / 10)
+    }
     setTimeout(() => {
       dispatch('pollEthPrice')
     }, 60 * 1000 * 5)

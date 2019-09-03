@@ -26,6 +26,9 @@ export default {
   SET_ENABLED (state, enabled) {
     state.enabled = enabled
   },
+  SET_GAS_PRICE (state, price) {
+    state.gasPrice = price
+  },
   SET_ETH_PRICE (state, price) {
     state.ethPrice = price
   },
