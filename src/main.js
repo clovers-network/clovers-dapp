@@ -40,7 +40,7 @@ global.web3Connect = new Web3Connect.Core({
       infuraId: process.env.VUE_APP_INFURA_API_KEY
     },
     portis: !global.web3.currentProvider.isPortis && {
-      id: process.env.VUE_APP_PORTIS_DAPP, // required
+      id: process.env.VUE_APP_PORTIS_DAPP // required
     },
     fortmatic: {
       key: store.state.correctNetwork === 1 ? process.env.VUE_APP_FORTMATIC_MAIN : process.env.VUE_APP_FORTMATIC_TEST // required
