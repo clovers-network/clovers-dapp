@@ -20,7 +20,7 @@ Never made an open source contribution before? Wondering how contributions work 
 
 1. Find an issue that you are interested in addressing or a feature that you would like to add.
 2. Fork the repository associated with the issue to your local GitHub organization. This means that you will have a copy of the repository under your-GitHub-username/repository-name.
-3. Clone the repository to your local machine using git clone https://github.com/clovers-network/clovers-dapp.git.
+3. Clone the repository to your local machine using `git clone https://github.com/clovers-network/clovers-dapp.git`.
 4. Create a new branch for your fix using `git checkout -b branch-name-here`.
 5. Make the appropriate changes for the issue you are trying to address or the feature that you want to add.
 6. Use `git add insert-paths-of-changed-files-here` to add the file contents of the changed files to the "snapshot" git uses to manage the state of the project, also known as the index.
