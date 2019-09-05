@@ -5488,9 +5488,10 @@ ethereum-common@0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/ethereum-common/-/ethereum-common-0.2.0.tgz#13bf966131cce1eeade62a1b434249bb4cb120ca"
 
-ethereum-ens@clovers-network/ensjs:
-  version "0.7.6"
-  resolved "https://codeload.github.com/clovers-network/ensjs/tar.gz/9b91534dbef8ee48758caf8d9ddf8ddb89221cd6"
+ethereum-ens@^0.7.8:
+  version "0.7.8"
+  resolved "https://registry.yarnpkg.com/ethereum-ens/-/ethereum-ens-0.7.8.tgz#102874541801507774fef21c9a626fabb1ed0630"
+  integrity sha512-HJBDmF5/abP/IIM6N7rGHmmlQ4yCKIVK4kzT/Mu05+eZn0i5ZlR25LTAE47SVZ7oyTBvOkNJhxhSkWRvjh7srg==
   dependencies:
     bluebird "^3.4.7"
     eth-ens-namehash "^2.0.0"
