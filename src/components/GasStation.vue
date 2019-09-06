@@ -1,16 +1,16 @@
 <template lang="pug">
-.fixed.bottom-0.left-0.m4.flex.items-end
-    a.pointer.white.flex.items-center.rounded.p1.border.opacity-75.hover-opacity-100(
-        href="https://ethgasstation.info"
-        target="_blank"
-        id="gasLink"
-        :class="gasClass"
-        )
-        gas-icon(:width="30" :height="30")
-        span.display-none &nbsp; {{gasPrice || 'N/A'}} Gwei &nbsp;
+.fixed.bottom-0.left-0.m2.md-m3.lg-m4.flex.items-end
+  a.pointer.white.flex.items-center.rounded.p1.border.opacity-75.hover-opacity-100(
+    href="https://ethgasstation.info"
+    target="_blank"
+    id="gasLink"
+    :class="gasClass"
+    )
+    gas-icon(:width="30" :height="30")
+    span.display-none &nbsp; {{gasPrice || 'N/A'}} Gwei &nbsp;
 </template>
-<script>
 
+<script>
 import GasIcon from '@/components/Icons/GasIcon'
 import MoreInformation from '@/components/MoreInformation'
 import {mapState} from 'vuex'
@@ -40,8 +40,9 @@ export default {
   }
 }
 </script>
-<style lang="css">
-    #gasLink:hover span {
-        display: inline-block !important;
-    }
+
+<style>
+  #gasLink:hover span {
+    display: inline-block !important;
+  }
 </style>
