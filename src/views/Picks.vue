@@ -124,7 +124,7 @@ export default {
       try {
         await axios(this.baseURL(`/clovers/${clover.board}`))
         this.alreadyFoundClovers.push(clover.board)
-      } catch(_) {}
+      } catch (_) {}
       await this.purgeExisting(key + 1)
     },
     ...mapActions(['formatFoundClover']),
