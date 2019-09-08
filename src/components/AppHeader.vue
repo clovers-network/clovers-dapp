@@ -41,7 +41,7 @@
       #accountHeader.md-col-5.flex.justify-end
         .relative
           //- btn-group
-          .border.rounded.flex.items-center.mr2.md-mr3.overflow-hidden
+          .border.rounded.flex.items-center.mr2.lg-mr3.overflow-hidden
             //- btn: pig
             .relative.border-right.hidden.sm-block
               button.h-nav-btn.px2.flex.items-center.pointer(@click='pigMenu = !pigMenu', aria-label="View Clover Pig")
