@@ -19,8 +19,6 @@
         h3.my3.font-exp.center.nowrap.red.opacity-50
           span(v-if="invalidClover") Invalid Clover :(
           span(v-else-if="unavailable") Already registered :(
-        h3.my3.font-exp.center.nowrap(v-if="unavailable")
-          router-link(:to="{name: 'Clover', params: {board: id}}") See Clover
 
       //- actions
       template(v-else)

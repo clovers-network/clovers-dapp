@@ -8,9 +8,10 @@
     //- (picks list)
     section.sm-col-10.lg-col-12.mx-auto.pb4.mb4(v-if="picks.length")
       .flex.flex-wrap.mxn2.md-px2
-        field-item(v-for='(clover, i) in picks', :key='i' data-expand='-50', :data-appear='i % 3', :clover="clover")
-      footer.mt3.flex.justify-center(v-if="picks.length > 12")
-        button.red.border.rounded-2.p2.px3.pointer.hover-bg-l-red(@click="discardAll") Discard All
+        field-item(v-for='(clover, i) in picks', :key='i' data-expand='-50', :data-appear='i % 3', :clover="clover", :class="foundClass(clover)")
+      footer.mt3.flex.justify-center(v-if="picks.length > 12 || alreadyFoundClovers.length")
+        button.red.border.rounded-2.p2.px3.mx3.pointer.hover-bg-l-red(@click="discardAll" v-if="picks.length > 12") Discard All
+        button.red.border.rounded-2.p2.px3.mx3.pointer.hover-bg-l-red(@click="removeRegistered" v-if="alreadyFoundClovers.length") Remove Registered
     //- (no picks)
     section.center(v-else)
       p.p2.bg-lightest-green.rounded.my3 Your Basket is empty.
@@ -24,6 +25,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import { mapGetters, mapMutations, mapActions } from 'vuex'
 import { cloverImage } from '@/utils'
 import KeepClover from '@/views/KeepClover'
@@ -43,7 +45,8 @@ export default {
       viewSingle: null,
       newClover: null,
       newCloverMoves: null,
-      entryRt: this.$route.name
+      entryRt: this.$route.name,
+      alreadyFoundClovers: []
     }
   },
   watch: {
@@ -69,7 +72,7 @@ export default {
       return this.$store.state.baseCloverFee
     },
 
-    ...mapGetters(['picks', 'pickCount'])
+    ...mapGetters(['picks', 'pickCount', 'baseURL'])
   },
   methods: {
     cloverImage,
@@ -102,12 +105,36 @@ export default {
       const nextMvs = this.picks[i] && this.picks[i].movesString
       return nextMvs && this.$router.push({query: {pick: nextMvs}})
     },
-
+    foundClass (clover) {
+      let found = this.alreadyFoundClovers.indexOf(clover.board) > -1
+      return !found ? {} : ['opacity-25']
+    },
+    removeRegistered () {
+      this.alreadyFoundClovers.forEach((board) => {
+        this.removeClover({board})
+      })
+      this.alreadyFoundClovers = []
+    },
+    async purgeExisting (key = 0) {
+      if (key === 0) {
+        this.alreadyFoundClovers = []
+      }
+      if (key >= this.picks.length) return
+      let clover = this.picks[key]
+      try {
+        await axios(this.baseURL(`/clovers/${clover.board}`))
+        this.alreadyFoundClovers.push(clover.board)
+      } catch(_) {}
+      await this.purgeExisting(key + 1)
+    },
     ...mapActions(['formatFoundClover']),
     ...mapMutations({
       removeClover: 'REMOVE_SAVED_CLOVER',
       saveClover: 'SAVE_CLOVER'
     })
+  },
+  mounted () {
+    this.purgeExisting()
   },
   components: { KeepClover, FieldItem, PageTitle }
 }
