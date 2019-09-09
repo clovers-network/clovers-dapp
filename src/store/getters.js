@@ -52,7 +52,7 @@ export default {
       : address === curationMarketAddress ? 'Curation Mrkt.'
         : address === nullAddress ? 'Nobody'
           : address === '0xf077ba632304334845e3def679e2d2958b9ffe04' ? 'Token Collateral ✨'
-           : null
+            : null
     if (name) return name
     name = user.name && user.name.trim() !== '' ? user.name
       : user.ens ? user.ens : address
