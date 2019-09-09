@@ -67,6 +67,7 @@ const state = {
   orders: [],
 
   // allUsers: [],
+  pagedUsers: [],
 
   // new log items from socket
   logs: [],

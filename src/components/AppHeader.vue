@@ -8,6 +8,7 @@
         #desktopMenu.hidden.md-flex.flex-center.ml3
           router-link.pr2(:to="{name: 'Garden'}") Garden
           router-link.pr2(:to="{name: 'Feed'}") Feed
+          router-link.pr2(:to="{name: 'Users'}") Users
           router-link.pr2(:to="{name: 'Albums'}") Albums
           router-link.pr2(:to="{name: 'Activity'}")
             span Activity

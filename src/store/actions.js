@@ -291,6 +291,18 @@ export default {
   //   user.ens = ensName === undefined ? false : ensName
   //   commit('UPDATE_USER', user)
   // },
+
+  async getUsers ({ getters, commit }, { filters = {} }) {
+    return axios.get(getters.baseURL('/users'), {
+      params: { ...filters }
+    }).then(({ data }) => commit('SET_PAGED_USERS', data))
+    .catch((err) => {
+      if (err.response && err.response.data) {
+        commit('SET_PAGED_USERS', err.response.data)
+      }
+    })
+  },
+
   async changeUsername ({ commit, getters, dispatch }, { address, name, image }) {
     if (!address) return
     return axios
