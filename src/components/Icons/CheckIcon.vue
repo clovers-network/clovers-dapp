@@ -10,8 +10,8 @@ export default {
   name: 'CheckIcon',
   props: {
     active: {
-        type: Boolean,
-        default: true
+      type: Boolean,
+      default: true
     },
     width: {
       type: Number,
