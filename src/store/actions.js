@@ -292,7 +292,7 @@ export default {
   //   commit('UPDATE_USER', user)
   // },
 
-  async getUsers ({ getters, commit }, { filters = {} }) {
+  async getUsers ({ getters, commit }, filters) {
     return axios.get(getters.baseURL('/users'), {
       params: { ...filters }
     }).then(({ data }) => commit('SET_PAGED_USERS', data))
