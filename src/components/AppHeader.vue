@@ -3,9 +3,9 @@
     //- top bar
     .relative.z4.col-12.h-header.flex.items-center.justify-between(:class="{'fixed': showMenu}")
       //- left col
-      .col-4.flex.pl2.items-center
+      .col-5.flex.pl2.md-pl0.lg-pl2.flex.items-center
         //- (desktop menu)
-        #desktopMenu.hidden.md-flex.flex-center.ml3
+        #desktopMenu.hidden.md-flex.items-center.ml3
           router-link.pr2(:to="{name: 'Garden'}") Garden
           router-link.pr2(:to="{name: 'Feed'}") Feed
           router-link.pr2(:to="{name: 'Users'}") Users
@@ -13,20 +13,25 @@
           router-link.pr2(:to="{name: 'Activity'}")
             span Activity
             sup.h7.font-mono(v-if="showLogCount") {{ newLogs }}
+          //- button.block.pointer.px1(aria-label="Search (Shortcut: S)", style="padding-bottom:1px", @click="searchVisible = true", title="Search (S)")
+            img.block(src="@/assets/icons/search.svg")
         //- (menu btn - mobile)
-        button#mobileMenu.md-hidden.menu-btn.pointer.relative.py2.pr2(@click='clickMenu' aria-label='Toggle Menu')
-          wavey-btn(v-show='mining', :is-white='showMenu')
-          img.block(v-show='!mining', :src="showMenu\
-            ? require('../assets/icons/hamburger-white.svg')\
-            : require('../assets/icons/hamburger.svg')")
-          span(@click.stop='')
-            router-link(:to="{ name: 'Account' }")
-              .found-badge.border.border-green.bounceIn.animated(v-if='showBadge')
-                span.block
-                  | {{ symms }}
+        nav#mobileMenu.flex.items-center
+          button.md-hidden.menu-btn.pointer.relative.py2.pr2(@click='clickMenu' aria-label='Toggle Menu')
+            wavey-btn(v-show='mining', :is-white='showMenu')
+            img.block(v-show='!mining', :src="showMenu\
+              ? require('../assets/icons/hamburger-white.svg')\
+              : require('../assets/icons/hamburger.svg')")
+            span(@click.stop='')
+              router-link(:to="{ name: 'Account' }")
+                .found-badge.border.border-green.bounceIn.animated(v-if='showBadge')
+                  span.block
+                    | {{ symms }}
+          button.block.pointer.ml1.sm-ml2(aria-label="Search (Shortcut: S)", @click="searchVisible = true", title="Search (S)")
+            img.block(src="@/assets/icons/search.svg")
 
       //- title
-      h1.hidden.md-block.font-exp.col-4.py1.center.h5(v-show="!hideTitle")
+      h1.hidden.md-block.font-exp.col-2.flex.items-center.justify-center.py1.center.h5.nowrap(v-show="!hideTitle")
         span.h3
           router-link(to="/") Clovers
           template(v-for="item in $route.meta.title")
@@ -34,10 +39,10 @@
             router-link(v-if="item[1]", :to="item[1]") {{item[0]}}
             span(v-else) {{item[0]}}
       //- right col
-      #accountHeader.lg-col-4.flex.justify-end
+      #accountHeader.md-col-5.flex.justify-end
         .relative
           //- btn-group
-          .border.rounded.flex.items-center.mr2.md-mr3.overflow-hidden
+          .border.rounded.flex.items-center.mr2.lg-mr3.overflow-hidden
             //- btn: pig
             .relative.border-right.hidden.sm-block
               button.h-nav-btn.px2.flex.items-center.pointer(@click='pigMenu = !pigMenu', aria-label="View Clover Pig")
@@ -81,6 +86,9 @@
                 router-link.inline-block.p1(:to="{name: 'Account'}") Dashboard
         section.sm-hide.border-dashed.rounded.mt1.mx2.mb2
           pig.py3.mb1(@viewPicks="$router.push({name: 'Picks'})")
+
+    //- search overlay
+    search(v-if="searchVisible !== null", v-show="searchVisible", @close="searchVisible = false", :visible="searchVisible")
 </template>
 
 <script>
@@ -92,6 +100,7 @@ import Pig from '@/components/Pig'
 import PersonIcon from '@/components/Icons/PersonIcon'
 import CartIcon from '@/components/Icons/CartIcon'
 import CoinIcon from '@/components/Icons/CoinIcon'
+import Search from '@/components/Modals/Search'
 import { toDec, concatPrice } from '@/utils'
 import { mapActions, mapGetters, mapState } from 'vuex'
 
@@ -105,7 +114,8 @@ export default {
       showBadge: false,
       afterResize: null,
       winH: window.innerHeight,
-      lastRt: {}
+      lastRt: {},
+      searchVisible: null
     }
   },
   computed: {
@@ -155,10 +165,12 @@ export default {
     }
   },
   mounted () {
+    window.addEventListener('keyup', this.bindShortcuts)
     window.addEventListener('keyup', this.checkEsc)
     window.addEventListener('resize', this.onResize)
   },
   destroyed () {
+    window.removeEventListener('keyup', this.bindShortcuts)
     window.removeEventListener('keyup', this.checkEsc)
     window.removeEventListener('resize', this.onResize)
   },
@@ -194,10 +206,17 @@ export default {
         if (window.innerWidth < 769) return // match _settings.css (md)
         this.showMenu = false
       })
+    },
+    bindShortcuts (e) {
+      const isFormEl = ['input', 'textarea']
+      if (isFormEl.includes(document.activeElement.tagName.toLowerCase())) return
+      if (e.key === 's' || e.keyCode === 83) {
+        this.searchVisible = true
+      }
     }
   },
   directives: { ClickOutside },
-  components: { Pig, CartIcon, CoinIcon, PersonIcon, WaveyBtn, AccountMenu, PigMenu }
+  components: { Pig, CartIcon, CoinIcon, PersonIcon, WaveyBtn, AccountMenu, PigMenu, Search }
 }
 </script>
 
