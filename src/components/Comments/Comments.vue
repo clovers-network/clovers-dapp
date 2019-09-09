@@ -221,7 +221,7 @@ export default {
       })
     },
     loadAlbums () {
-      this.getAllAlbums()
+      this.getAllAlbums(this.board)
     },
     loadActivity () {
       return axios.get(`${this.apiBase}/clovers/${this.board}/activity`, {
@@ -270,7 +270,7 @@ export default {
             this.focusActivity()
             break
           case ('albums'):
-            this.getAllAlbums()
+            this.getAllAlbums(this.board)
             break
           default:
         }
@@ -298,6 +298,11 @@ export default {
       deep: true,
       handler ({ filter }) {
         this.loadActivity()
+      }
+    },
+    addToAlbum (newVal) {
+      if (!newVal) {
+        this.getAllAlbums(this.board)
       }
     }
   },

@@ -905,7 +905,15 @@ export default {
 
   // ALBUMS
 
-  getAllAlbums ({ getters, commit, dispatch }) {
+  getAllAlbums ({ getters, commit, dispatch }, clover) {
+    if (clover) {
+      return axios.get(getters.baseURL('/albums'), {
+        params: { clover }
+      }).then(({ data }) => {
+        commit('SET_ALL_ALBUMS', data)
+        return data
+      })
+    }
     return axios.get(getters.baseURL('/albums/list/all'))
       .then((results) => {
         // console.log({results})
@@ -927,6 +935,23 @@ export default {
           commit('SET_PAGED_ALBUMS', err.response.data)
         }
       })
+  },
+
+  getUserAlbums ({ getters, state }) {
+    if (!state.account) return
+    return axios.get(getters.baseURL(`/users/${state.account}/albums`))
+      .then(({ data }) => {
+        return data
+      }).catch(console.error)
+  },
+
+  searchAlbums ({ getters }, term) {
+    if (!term) return
+    return axios.get(getters.baseURL('/albums'), {
+      params: { s: term }
+    }).then(({ data }) => {
+      return data
+    })
   },
 
   async deleteAlbum ({dispatch, commit, getters}, albumId) {
