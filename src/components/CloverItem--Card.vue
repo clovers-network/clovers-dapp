@@ -23,7 +23,7 @@
         footer.px1.pb2.flex.items-center.nowrap
           h3.flex-auto.lh1
             router-link.p1.h5.md-h4.lg-h5.truncate.hover-bg-l-green.rounded.trans-quick(:to="{name: 'User', params: {addr: clover.user.address}}", v-if="clover.user") {{ userName(clover.user) }}
-          h4.px1.col-6.sm-col-5.flex.justify-end.lh1(v-if="clover.price.toString(10) !== '0'")
+          h4.px1.col-6.sm-col-5.flex.justify-end.lh1(v-if="showPrice")
             .h5.md-h4.lg-h5.flex.items-center
               | {{ displayPrice }}
               coin-icon(style="margin-left:0.3em", :width="12")
@@ -89,6 +89,9 @@ export default {
     },
     cloverPrice () {
       return prettyBigNumber(this.clover.price, 0)
+    },
+    showPrice () {
+      return this.cloverPrice !== '0'
     },
     displayPrice () {
       return concatPrice(this.cloverPrice)
