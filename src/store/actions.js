@@ -296,11 +296,11 @@ export default {
     return axios.get(getters.baseURL('/users'), {
       params: { ...filters }
     }).then(({ data }) => commit('SET_PAGED_USERS', data))
-    .catch((err) => {
-      if (err.response && err.response.data) {
-        commit('SET_PAGED_USERS', err.response.data)
-      }
-    })
+      .catch((err) => {
+        if (err.response && err.response.data) {
+          commit('SET_PAGED_USERS', err.response.data)
+        }
+      })
   },
 
   async changeUsername ({ commit, getters, dispatch }, { address, name, image }) {
