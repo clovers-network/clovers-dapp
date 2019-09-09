@@ -9,6 +9,9 @@
       heart-icon.icon.h2.absolute.top-0.left-0.mt2.ml2(v-if="inField", :active="isSaved", @click="save")
       button.icon.hidden.md-block.h6.absolute.top-0.left-0.ml2.mt2.pointer(v-else, @click.stop="remove")
         span Discard
+      //- bulk edit
+      .check-icon.icon.h2.absolute.bottom-0.right-0.mb2.mr2.pointer(v-if="!inField", @click="check")
+        check-icon
       //- symm icons
       .green.absolute.top-0.right-0.mt2.mr2(v-if="clover.symmetrical")
         symmetry-icons(:board="clover", style="font-size: 10px")
@@ -17,6 +20,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { cloverImage } from '@/utils'
+import CheckIcon from '@/components/Icons/CheckIcon'
 import HeartIcon from '@/components/Icons/HeartIcon'
 import SymmetryIcons from '@/components/Icons/SymmetryIcons'
 
@@ -39,6 +43,9 @@ export default {
   },
   methods: {
     cloverImage,
+    check () {
+      this.$emit('check', this.clover)
+    },
     save () {
       this.$store.commit('SAVE_CLOVER', this.clover)
     },
@@ -46,7 +53,7 @@ export default {
       this.$store.dispatch('confirmRemoveSavedClover', this.clover)
     }
   },
-  components: { HeartIcon, SymmetryIcons }
+  components: { HeartIcon, CheckIcon, SymmetryIcons }
 }
 </script>
 
@@ -59,6 +66,10 @@ export default {
     opacity:0;
     transition: opacity 300ms;
   }
+
+}
+.bulkIndex .pick-border .check-icon {
+    opacity: 1 !important;
 }
 
 @media (hover:hover) {
@@ -66,7 +77,7 @@ export default {
     border-color: #01B463;
     & .icon:not(.heart-icon--active) {
       opacity:0.4;
-      &:hover{
+      &:hover:not(.check-icon){
         opacity:1;
       }
     }

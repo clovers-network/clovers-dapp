@@ -8,10 +8,12 @@
     //- (picks list)
     section.sm-col-10.lg-col-12.mx-auto.pb4.mb4(v-if="picks.length")
       .flex.flex-wrap.mxn2.md-px2
-        field-item(v-for='(clover, i) in picks', :key='i' data-expand='-50', :data-appear='i % 3', :clover="clover", :class="foundClass(clover)")
-      footer.mt3.flex.justify-center(v-if="picks.length > 12 || alreadyFoundClovers.length")
-        button.red.border.rounded-2.p2.px3.mx3.pointer.hover-bg-l-red(@click="discardAll" v-if="picks.length > 12") Discard All
+        field-item(v-for='(clover, i) in picks', :key='i' data-expand='-50', :data-appear='i % 3', :clover="clover", :class="foundBulkClass(clover)", @check="check")
+      footer.mt3.flex.justify-center(v-if="picks.length > 12 || alreadyFoundClovers.length || bulkEdit.length")
         button.red.border.rounded-2.p2.px3.mx3.pointer.hover-bg-l-red(@click="removeRegistered" v-if="alreadyFoundClovers.length") Remove Registered
+        button.red.border.rounded-2.p2.px3.mx3.pointer.hover-bg-l-red(@click="discardChecked" v-if="bulkEdit.length") Discard Selected
+        button.red.border.rounded-2.p2.px3.mx3.pointer.hover-bg-l-red(@click="removeChecked" v-if="bulkEdit.length") Deselect All
+        button.red.border.rounded-2.p2.px3.mx3.pointer.hover-bg-l-red(@click="checkAll" v-if="picks.length > 12 && bulkEdit.length !== picks.length") Select All
     //- (no picks)
     section.center(v-else)
       p.p2.bg-lightest-green.rounded.my3 Your Basket is empty.
@@ -46,7 +48,8 @@ export default {
       newClover: null,
       newCloverMoves: null,
       entryRt: this.$route.name,
-      alreadyFoundClovers: []
+      alreadyFoundClovers: [],
+      bulkEdit: []
     }
   },
   watch: {
@@ -76,7 +79,32 @@ export default {
   },
   methods: {
     cloverImage,
-
+    discardChecked () {
+      const confirm = window.confirm('Are you sure you want to discard ALL the selected clovers in your Basket? This action cannot be undone...')
+      if (confirm) {
+        this.bulkEdit.forEach(board => {
+          this.removeClover({board})
+        })
+      }
+      this.removeChecked()
+    },
+    removeChecked () {
+      this.bulkEdit = []
+    },
+    checkAll () {
+      this.bulkEdit = this.picks.map((p) => p.board)
+    },
+    bulkIndex (board) {
+      return this.bulkEdit.indexOf(board)
+    },
+    check (clover) {
+      let cloverIndex = this.bulkIndex(clover.board)
+      if (cloverIndex > -1) {
+        this.bulkEdit.splice(cloverIndex, 1)
+      } else {
+        this.bulkEdit.push(clover.board)
+      }
+    },
     addNewClover () {
       if (!this.newClover) return
       this.saveClover(this.newClover)
@@ -105,9 +133,15 @@ export default {
       const nextMvs = this.picks[i] && this.picks[i].movesString
       return nextMvs && this.$router.push({query: {pick: nextMvs}})
     },
-    foundClass (clover) {
+    foundBulkClass (clover) {
       let found = this.alreadyFoundClovers.indexOf(clover.board) > -1
-      return !found ? {} : ['opacity-25']
+      let classes = !found ? [] : ['opacity-25']
+
+      let bulkIndex = this.bulkIndex(clover.board)
+      if (bulkIndex > -1) {
+        classes.push('bulkIndex')
+      }
+      return classes
     },
     removeRegistered () {
       this.alreadyFoundClovers.forEach((board) => {
