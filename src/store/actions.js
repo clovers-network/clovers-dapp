@@ -990,12 +990,12 @@ export default {
     }
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
     return axios.post(getters.baseURL('/albums'), {
-        albumName: album.name, clovers: album.clovers
-      }, {
-        headers: {
-          Authorization: getters.authHeader
-        }
-      })
+      albumName: album.name, clovers: album.clovers
+    }, {
+      headers: {
+        Authorization: getters.authHeader
+      }
+    })
       .then(({data}) => {
         if (!data) throw new Error('404')
         dispatch('selfDestructMsg', {
