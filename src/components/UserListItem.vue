@@ -18,7 +18,7 @@
       span.block.h2
         span {{ albumCount }}
         span.sm-hide.md-hide.lg-hide.h6.pl1.inline-block.light-green albums
-    .flex.items-center(v-else)
+    .flex.items-center(v-else-if="filter === 'balance'")
       coin-icon.mr1(:width="16")
       span.block.h2 {{ prettyUserBalance }}
 </template>

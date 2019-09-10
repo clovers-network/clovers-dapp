@@ -28,16 +28,16 @@ export default {
   data () {
     return {
       query: '',
-      initial: null,
+      initial: 'clovers',
       loading: true,
       filters: {
         page: 1,
-        filter: null
+        filter: 'clovers'
       },
       searchResults: null,
       tabItems: [
-        { lbl: 'Balance', value: null },
         { lbl: 'Clovers', value: 'clovers' },
+        { lbl: 'Balance', value: 'balance' },
         { lbl: 'Albums', value: 'albums' }
       ]
     }
@@ -50,7 +50,7 @@ export default {
   methods: {
     setFilters () {
       const { query } = this.$route
-      this.filters.filter = query.filter || undefined
+      this.filters.filter = query.filter || 'clovers'
       this.filters.page = query.page || 1
     },
     getUsers () {
