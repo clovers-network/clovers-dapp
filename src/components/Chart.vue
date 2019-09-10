@@ -94,7 +94,7 @@ export default {
             borderColor: '#00b464',
             fill: 'end',
             borderWidth: 1,
-            pointRadius: 1,
+            pointRadius: 5,
             lineTension: 0,
             data: this.orders.map((p, i) => {
               return {
