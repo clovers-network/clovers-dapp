@@ -27,7 +27,7 @@
                 .found-badge.border.border-green.bounceIn.animated(v-if='showBadge')
                   span.block
                     | {{ symms }}
-          button.block.pointer.ml1.sm-ml2(aria-label="Search (Shortcut: S)", @click="searchVisible = true", title="Search (S)")
+          //- button.block.pointer.ml1.sm-ml2(aria-label="Search (Shortcut: S)", @click="searchVisible = true", title="Search (S)")
             img.block(src="@/assets/icons/search.svg")
 
       //- title
