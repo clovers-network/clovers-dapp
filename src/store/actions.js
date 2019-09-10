@@ -1070,6 +1070,17 @@ export default {
         if (!data) throw new Error('404')
         commit('SET_CURRENT_ALBUM', data)
       }).catch(console.error)
+  },
+
+  // SEARCH
+
+  search ({ getters }, term) {
+    if (!term) return
+    return axios.get(getters.baseURL('/search'), {
+      params: { s: term }
+    }).then(({ data }) => {
+      return data
+    })
   }
 }
 
