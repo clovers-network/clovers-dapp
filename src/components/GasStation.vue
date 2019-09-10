@@ -1,5 +1,5 @@
 <template lang="pug">
-.fixed.bottom-0.left-0.m2.md-m3.lg-m4.flex.items-end
+.fixed.bottom-0.left-0.m2.md-m3.lg-m4.flex.items-end.xs-hide
   a.pointer.white.flex.items-center.rounded.p1.border.opacity-75.hover-opacity-100(
     href="https://ethgasstation.info"
     target="_blank"
