@@ -193,6 +193,10 @@ export default {
     state.currentClover = formatClover(clover)
   },
 
+  SET_PAGED_USERS (state, users) {
+    state.pagedUsers = users
+  },
+
   SET_USER (state, data) {
     // shouldn't really have conditional save here...
     // remove if doesnt break anything

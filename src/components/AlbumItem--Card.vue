@@ -20,6 +20,7 @@
 import { cloverImage } from '@/utils'
 import { mapGetters } from 'vuex'
 import ClvSvg from '@/components/Clv--SVG'
+
 export default {
   name: 'AlbumItem--Card',
   props: ['album'],

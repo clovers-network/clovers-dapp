@@ -2,7 +2,7 @@
   //- fullscreen overlay
   .fixed.z5.flex.modal.touch-scroll(@click.self="close")
     //- card
-    .relative.pt3.m-auto.bg-white.border.border-dashed.rounded(@click.stop)
+    .relative.pt3.m-auto.bg-white.border.border-dashed.rounded(@click.stop, :style="top")
       //- header
       nav.absolute.z2.top-0.left-0.col-12.h-header.flex.justify-between.items-center.px2
         //- btn: close
@@ -17,9 +17,15 @@
 
 <script>
 import svgX from '@/components/Icons/SVG-X'
+
 export default {
   name: 'Modal',
-  props: ['cancel'],
+  props: ['cancel', 'alwaysTop'],
+  computed: {
+    top () {
+      return this.alwaysTop ? { marginTop: '5rem' } : {}
+    }
+  },
   methods: {
     close () {
       this.$emit('close')
@@ -37,6 +43,3 @@ export default {
   components: { svgX }
 }
 </script>
-
-<style>
-</style>
