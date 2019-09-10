@@ -79,6 +79,7 @@
               router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center(:to="{ name: 'Feed' }", @click.native="showMenu = false") Feed
               router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center(:to="{ name: 'Garden' }", @click.native="showMenu = false") Garden
               router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center(:to="{name: 'Albums'}", @click.native="showMenu = false") Albums
+              router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center(:to="{name: 'Users'}", @click.native="showMenu = false") Users
               router-link.flex-auto.border.rounded.mb1.flex.items-center.justify-center.relative(:to="{ name: 'Activity' }", @click.native="showMenu = false")
                   span Activity <sup v-if="showLogCount">{{newLogs}}</sup>
                   //- span.circle.bg-orange.absolute(v-if="newLogs" style="width:8px;height:8px")
