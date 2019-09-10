@@ -1,5 +1,5 @@
 <template lang="pug">
-  .sm-flex.items-end.mb3.lg-pb2
+  .sm-flex.items-end.mb3.lg-pb2.pointer(is="router-link", tag="div", :to="{name: 'User', params: {addr: user.address}}")
     .mr2.relative.xs-hide
       .absolute.right-0.bottom-0.font-mono.h1.light-green {{ index }}
 
@@ -7,7 +7,7 @@
       .font-mono.h2.light-green {{ index }}
     figure.pr2.xs-hide
       img.block(:src="userImage(user, 80)" width="50" height="50", alt="User Avatar")
-    .pointer(is="router-link", tag="div", :to="{name: 'User', params: {addr: user.address}}")
+    div
       .h2.font-exp.truncate {{ userName(user) }}
       .light-green.font-mono.truncate {{ user.address }}
     .separate.flex-auto.mx2.xs-hide
