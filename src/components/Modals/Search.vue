@@ -9,7 +9,7 @@
 
         //- matches go here
         template(v-if="query.toLowerCase() === 'me' && account")
-          li.p3.bg-lightest-green.sticky.top-0 Links &crarr;
+          li.p3.bg-lightest-green.sticky.top-0(@click.stop) Links &crarr;
           li.p3.truncate.hover-bg-l-green(is="router-link", tag="li", to="/account") Your Account
           li.p3.truncate.hover-bg-l-green(is="router-link", tag="li", :to="profileLink") Your Profile
           li.p3.truncate.hover-bg-l-green(is="router-link", tag="li", to="/account/basket") Your Basket
@@ -18,7 +18,7 @@
         li.p3.bg-lightest-green.center.light-green(v-if="searching") Searching...
 
         template(v-if="hasClovers")
-          li.p3.bg-lightest-green.sticky.top-0 Found {{ hasClovers }} {{ pluralize('Clover', hasClovers) }} &crarr;
+          li.p3.bg-lightest-green.sticky.top-0(@click.stop) Found {{ hasClovers }} {{ pluralize('Clover', hasClovers) }} &crarr;
           li.p3.truncate.hover-bg-l-green(v-for="clover in results.clovers", :key="clover.board", is="router-link", tag="li", :to="cloverLink(clover)")
             .flex.items-center
               figure.pr2.flex-none
@@ -29,7 +29,7 @@
 
         li.p3.bg-lightest-green.center.light-green(v-if="hasQuery && !hasResults && !searching") {{ query.length === 1 ? 'Keep typing...' : 'Nothing found :(' }}
         template(v-if="hasUsers")
-          li.p3.bg-lightest-green.sticky.top-0 Found {{ hasUsers }} {{ pluralize('User', hasUsers) }} &crarr;
+          li.p3.bg-lightest-green.sticky.top-0(@click.stop) Found {{ hasUsers }} {{ pluralize('User', hasUsers) }} &crarr;
           li.p3.truncate.hover-bg-l-green(v-for="user in results.users", :key="user.address", is="router-link", tag="li", :to="userLink(user)")
             .flex.items-center
               figure.pr2.flex-none
@@ -39,7 +39,7 @@
                 .font-mono.light-green.truncate {{ user.cloverCount }} Clovers, {{ user.albumCount }} Albums
 
         template(v-if="hasAlbums")
-          li.p3.bg-lightest-green.sticky.top-0 Found {{ hasAlbums }} {{ pluralize('Album', hasAlbums) }} &crarr;
+          li.p3.bg-lightest-green.sticky.top-0(@click.stop) Found {{ hasAlbums }} {{ pluralize('Album', hasAlbums) }} &crarr;
           li.p3.truncate.hover-bg-l-green(v-for="album in results.albums", :key="album.id", is="router-link", tag="li", :to="albumLink(album)")
             .flex.items-center
               figure.pr2.flex-none
