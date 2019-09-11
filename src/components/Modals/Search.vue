@@ -8,7 +8,15 @@
       ul.list-reset.m0.h3.pointer.overflow-y-scroll.touch-scroll(v-if="query.length", style="max-height:calc(100vh - 20rem)", @click="close")
 
         //- matches go here
+        template(v-if="query.toLowerCase() === 'me' && account")
+          li.p3.bg-lightest-green Links &crarr;
+          li.p3.truncate.hover-bg-l-green(is="router-link", tag="li", to="/account") Your Account
+          li.p3.truncate.hover-bg-l-green(is="router-link", tag="li", :to="profileLink") Your Profile
+          li.p3.truncate.hover-bg-l-green(is="router-link", tag="li", to="/account/basket") Your Basket
+          li.p3.truncate.hover-bg-l-green(is="router-link", tag="li", :to="profileLink + '/albums'") Your Albums
+
         li.p3.bg-lightest-green.center.light-green(v-if="searching") Searching...
+
         li.p3.bg-lightest-green.center.light-green(v-if="hasQuery && !hasResults && !searching") Nothing found :(
         template(v-if="hasUsers")
           li.p3.bg-lightest-green Found {{ hasUsers }} {{ pluralize('User', hasUsers) }} &crarr;
@@ -18,32 +26,30 @@
                 img.block(:src="userImage(user, 80)" width="50" height="50", alt="User Avatar")
               .flex-auto.ml1
                 .h3 {{ userName(user) }}
-                .font-mono.light-green.truncate {{ user.address }}
+                .font-mono.light-green.truncate {{ user.cloverCount }} Clovers, {{ user.albumCount }} Albums
+                //- .font-mono.light-green.truncate {{ user.address }}
 
         template(v-if="hasAlbums")
           li.p3.bg-lightest-green Found {{ hasAlbums }} {{ pluralize('Album', hasAlbums) }} &crarr;
           li.p3.truncate.hover-bg-l-green(v-for="album in results.albums", :key="album.id", is="router-link", tag="li", :to="albumLink(album)")
-            .h3 {{ album.name }}
-              sup.h6.font-mono {{ album.clovers.length }}
-            .font-mono.light-green.truncate {{ album.id }}
+            .flex.items-center
+              figure.pr2.flex-none
+                img.block(:src="cloverImage(album.clovers[0], 80)" width="50" height="50", alt="Album image")
+              .flex-auto.ml1
+                .h3 {{ album.name }}
+                  sup.h6.font-mono {{ album.clovers.length }}
+                .font-mono.light-green.truncate by {{ userName(album.user) }}
 
         //- li.p3.truncate.hover-bg-l-green.bg-lightest-green
           span.opacity-50.mr1 Clovers named
           | "{{query}}" &crarr;
-
-        template(v-if="query.toLowerCase() === 'me' && !searching")
-          li.p3.truncate.hover-bg-l-green Your Profile
-          li.p3.truncate.hover-bg-l-green Your Account
-          li.p3.truncate.hover-bg-l-green Your Clovers
-          li.p3.truncate.hover-bg-l-green Your Basket
-          li.p3.truncate.hover-bg-l-green Your Albums
 
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import debounce from 'debounce'
-import { pluralize } from '@/utils'
+import { pluralize, cloverImage } from '@/utils'
 
 export default {
   name: 'Search',
@@ -69,11 +75,18 @@ export default {
     hasResults () {
       return this.results && this.results.queryResults
     },
+    account () {
+      return this.$store.state.account
+    },
+    profileLink () {
+      return `/users/${this.account}`
+    },
 
     ...mapGetters(['userName', 'userImage'])
   },
   methods: {
     pluralize,
+    cloverImage,
 
     search: debounce(function () {
       this.$store.dispatch('search', this.query).then((res) => {

@@ -39,7 +39,6 @@ export default {
   },
   methods: {
     closeAccountMenu () {
-      console.log('closeAccountMenu in menu')
       this.$emit('closeAccountMenu')
     },
     signClick () {
