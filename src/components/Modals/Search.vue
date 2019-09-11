@@ -17,7 +17,7 @@
 
         li.p3.bg-lightest-green.center.light-green(v-if="searching") Searching...
 
-        li.p3.bg-lightest-green.center.light-green(v-if="hasQuery && !hasResults && !searching") Nothing found :(
+        li.p3.bg-lightest-green.center.light-green(v-if="hasQuery && !hasResults && !searching") {{ query.length === 1 ? 'Keep typing...' : 'Nothing found :(' }}
         template(v-if="hasUsers")
           li.p3.bg-lightest-green Found {{ hasUsers }} {{ pluralize('User', hasUsers) }} &crarr;
           li.p3.truncate.hover-bg-l-green(v-for="user in results.users", :key="user.address", is="router-link", tag="li", :to="userLink(user)")
@@ -129,10 +129,12 @@ export default {
       this.query = ''
     },
     query () {
-      if (this.query !== '') {
+      if (this.query !== '' && this.query.length > 1) {
         this.searching = true
         this.results = null
         this.search()
+      } else if (this.query && this.query.length === 1) {
+        this.results = null
       }
     }
   }
