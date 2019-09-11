@@ -17,7 +17,8 @@
   --green: rgb(0, 180, 100); /* #01B463 */
   --light-green: rgba(0, 180, 100, .4); /* #01B463 */
   --lighter-green: rgba(0, 180, 100, .16); /* #01B463 */
-  --lightest-green: rgba(0, 180, 100, .1); /* #00b4641a */
+  /*--lightest-green: rgba(0, 180, 100, .1); /* #00b4641a */
+  --lightest-green: rgb(229, 247, 240); /* #00b4641a */
   --olive: #3D9970;
   --lime:  #01FF70;
 

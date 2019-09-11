@@ -17,9 +17,19 @@
 
         li.p3.bg-lightest-green.center.light-green(v-if="searching") Searching...
 
+        template(v-if="hasClovers")
+          li.p3.bg-lightest-green.sticky.top-0 Found {{ hasClovers }} {{ pluralize('Clover', hasClovers) }} &crarr;
+          li.p3.truncate.hover-bg-l-green(v-for="clover in results.clovers", :key="clover.board", is="router-link", tag="li", :to="cloverLink(clover)")
+            .flex.items-center
+              figure.pr2.flex-none
+                img.block(:src="cloverImage(clover.board, 80)", width="50" height="50" alt="Clover image")
+              .flex-auto.ml1
+                .h3 {{ clover.name }}
+                .font-mono.light-green.truncate {{ userName(clover.user) }}
+
         li.p3.bg-lightest-green.center.light-green(v-if="hasQuery && !hasResults && !searching") {{ query.length === 1 ? 'Keep typing...' : 'Nothing found :(' }}
         template(v-if="hasUsers")
-          li.p3.bg-lightest-green Found {{ hasUsers }} {{ pluralize('User', hasUsers) }} &crarr;
+          li.p3.bg-lightest-green.sticky.top-0 Found {{ hasUsers }} {{ pluralize('User', hasUsers) }} &crarr;
           li.p3.truncate.hover-bg-l-green(v-for="user in results.users", :key="user.address", is="router-link", tag="li", :to="userLink(user)")
             .flex.items-center
               figure.pr2.flex-none
@@ -27,10 +37,9 @@
               .flex-auto.ml1
                 .h3 {{ userName(user) }}
                 .font-mono.light-green.truncate {{ user.cloverCount }} Clovers, {{ user.albumCount }} Albums
-                //- .font-mono.light-green.truncate {{ user.address }}
 
         template(v-if="hasAlbums")
-          li.p3.bg-lightest-green Found {{ hasAlbums }} {{ pluralize('Album', hasAlbums) }} &crarr;
+          li.p3.bg-lightest-green.sticky.top-0 Found {{ hasAlbums }} {{ pluralize('Album', hasAlbums) }} &crarr;
           li.p3.truncate.hover-bg-l-green(v-for="album in results.albums", :key="album.id", is="router-link", tag="li", :to="albumLink(album)")
             .flex.items-center
               figure.pr2.flex-none
@@ -49,7 +58,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import debounce from 'debounce'
-import { pluralize, cloverImage } from '@/utils'
+import { pluralize, cloverImage, cloverLink } from '@/utils'
 
 export default {
   name: 'Search',
@@ -65,6 +74,9 @@ export default {
   computed: {
     hasQuery () {
       return this.query !== '' && this.query !== null
+    },
+    hasClovers () {
+      return this.results && this.results.cloverCount
     },
     hasUsers () {
       return this.results && this.results.userCount
@@ -87,6 +99,7 @@ export default {
   methods: {
     pluralize,
     cloverImage,
+    cloverLink,
 
     search: debounce(function () {
       this.$store.dispatch('search', this.query).then((res) => {
