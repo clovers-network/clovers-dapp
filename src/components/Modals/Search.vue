@@ -9,7 +9,7 @@
 
         //- matches go here
         template(v-if="query.toLowerCase() === 'me' && account")
-          li.p3.bg-lightest-green Links &crarr;
+          li.p3.bg-lightest-green.sticky.top-0 Links &crarr;
           li.p3.truncate.hover-bg-l-green(is="router-link", tag="li", to="/account") Your Account
           li.p3.truncate.hover-bg-l-green(is="router-link", tag="li", :to="profileLink") Your Profile
           li.p3.truncate.hover-bg-l-green(is="router-link", tag="li", to="/account/basket") Your Basket
