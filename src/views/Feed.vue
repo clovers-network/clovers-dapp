@@ -18,6 +18,9 @@
           option(value="Y0Sym") Sym. Horizontal
           option(value="XYSym") Sym. Diagonal Up
           option(value="XnYSym") Sym. Diagonal Down
+          option(value="multi-1") 1x Symmetries
+          option(value="multi-3") 3x Symmetries
+          option(value="multi-5") 5x Symmetries
           option(value="NonSym") Non-Symmetrical Clovers
           option(value="public") Human owned
           option(value="contract") Contract owned
@@ -145,8 +148,15 @@ export default {
       handler ({ filter }) {
         let q = { ...this.filters }
         cleanObj(q)
+        // handle multis
+        if (filter && filter.includes('multi')) {
+          let [f, x] = q.filter.split('-')
+          q.filter = f
+          q.x = x
+        }
         const cf = this.$route.query.filter
-        if (cf !== filter) {
+        const cx = this.$route.query.x
+        if (cf !== q.filter || cx !== q.x) {
           delete q.page
         }
         this.$router.push({ name: 'Feed', query: { ...q } })
@@ -174,7 +184,12 @@ export default {
     setFilters () {
       this.$store.commit('CLEAR_NEW_CLOVERS')
       const { query } = this.$route
-      this.filters.filter = query.filter || undefined
+      // handle multis
+      if (query.filter === 'multi') {
+        this.filters.filter = query.filter + '-' + (query.x || 1)
+      } else {
+        this.filters.filter = query.filter || undefined
+      }
       this.filters.sort = query.sort || undefined
       this.filters.page = query.page || 1
       this.filters.asc = query.asc || false
@@ -183,9 +198,15 @@ export default {
       if (this.loading) return
       this.filtersVisible = false
       this.loading = true
+      let q = { ...this.filters }
+      if (q.filter && q.filter.includes('multi')) {
+        let [f, x] = q.filter.split('-')
+        q.filter = f
+        q.x = x
+      }
       this.$store.dispatch('getPagedClovers', {
-        url: this.apiBase + '/clovers',
-        filters: this.filters
+        filters: q,
+        url: this.apiBase + '/clovers'
       }).then(() => {
         this.loading = false
       }).catch((error) => {
