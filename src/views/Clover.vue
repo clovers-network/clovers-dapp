@@ -341,6 +341,11 @@ export default {
     const { board } = to.params
     store.dispatch('getClover', board.toLowerCase()).then(next)
   },
+  beforeRouteUpdate (to, from, next) {
+    lastRt = from && from.name
+    const { board } = to.params
+    store.dispatch('getClover', board.toLowerCase()).then(next)
+  },
   created () {
     if (this.clover) return this.updateMetaTitle(this.clover.name)
   },
