@@ -180,7 +180,7 @@ export default {
 
 <style lang="css" scoped>
   @import '../style/settings.css';
- 
+
   div.sym-badge {
     background: var(--green);
     color: white;
