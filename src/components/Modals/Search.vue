@@ -136,6 +136,9 @@ export default {
       this.$emit('close')
     }
   },
+  mounted () {
+    this.focusInput()
+  },
   watch: {
     visible (vis) {
       if (vis) return this.focusInput()

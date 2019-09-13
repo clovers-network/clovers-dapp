@@ -9,11 +9,14 @@
     section.sm-col-10.lg-col-12.mx-auto.pb4.mb4(v-if="picks.length")
       .flex.flex-wrap.mxn2.md-px2
         field-item(v-for='(clover, i) in picks', :key='i' data-expand='-50', :data-appear='i % 3', :clover="clover", :class="foundBulkClass(clover)", @check="check")
-      footer.mt3.flex.justify-center(v-if="picks.length > 12 || alreadyFoundClovers.length || bulkEdit.length")
-        button.red.border.rounded-2.p2.px3.mx3.pointer.hover-bg-l-red(@click="removeRegistered" v-if="alreadyFoundClovers.length") Remove Registered
-        button.red.border.rounded-2.p2.px3.mx3.pointer.hover-bg-l-red(@click="discardChecked" v-if="bulkEdit.length") Discard Selected
-        button.red.border.rounded-2.p2.px3.mx3.pointer.hover-bg-l-red(@click="removeChecked" v-if="bulkEdit.length") Deselect All
-        button.red.border.rounded-2.p2.px3.mx3.pointer.hover-bg-l-red(@click="checkAll" v-if="picks.length > 12 && bulkEdit.length !== picks.length") Select All
+      footer.sticky.p3.z2.bottom-0.left-0.right-0.md-flex.justify-center(v-if="picks.length > 12 || alreadyFoundClovers.length || bulkEdit.length")
+        button.col-12.mt2 .bg-white.green.border.rounded-2.p2.px3.md-mx3.pointer.hover-bg-l-green(@click="showActions = !showActions") {{showActions ? 'Close' : 'Show Actions'}}
+        template(v-if="showActions")
+          button.col-12.mt2 .bg-white.green.border.rounded-2.p2.px3.md-mx3.pointer.hover-bg-l-green(@click="purgeExisting") {{processing ? 'Verifying...' : 'Verify'}}
+          button.col-12.mt2 .bg-white.green.border.rounded-2.p2.px3.md-mx3.pointer.hover-bg-l-green(@click="removeRegistered" v-if="alreadyFoundClovers.length") Remove Registered
+          button.col-12.mt2 .bg-white.green.border.rounded-2.p2.px3.md-mx3.pointer.hover-bg-l-green(@click="removeChecked" v-if="bulkEdit.length") Deselect All
+          button.col-12.mt2 .bg-white.green.border.rounded-2.p2.px3.md-mx3.pointer.hover-bg-l-green(@click="checkAll" v-if="picks.length > 12 && bulkEdit.length !== picks.length") Select All
+          button.col-12.mt2 .bg-white.red.border.rounded-2.p2.px3.md-mx3.pointer.hover-bg-l-red(@click="discardChecked" v-if="bulkEdit.length") Discard Selected
     //- (no picks)
     section.center(v-else)
       p.p2.bg-lightest-green.rounded.my3 Your Basket is empty.
@@ -49,7 +52,9 @@ export default {
       newCloverMoves: null,
       entryRt: this.$route.name,
       alreadyFoundClovers: [],
-      bulkEdit: []
+      bulkEdit: [],
+      showActions: false,
+      processing: false
     }
   },
   watch: {
@@ -149,7 +154,8 @@ export default {
       })
       this.alreadyFoundClovers = []
     },
-    async purgeExisting (key = 0) {
+    async purgeExisting (event, key = 0) {
+      this.processing = true
       if (key === 0) {
         this.alreadyFoundClovers = []
       }
@@ -159,7 +165,8 @@ export default {
         await axios(this.baseURL(`/clovers/${clover.board}`))
         this.alreadyFoundClovers.push(clover.board)
       } catch (_) {}
-      await this.purgeExisting(key + 1)
+      await this.purgeExisting(event, key + 1)
+      this.processing = false
     },
     ...mapActions(['formatFoundClover']),
     ...mapMutations({
@@ -167,14 +174,13 @@ export default {
       saveClover: 'SAVE_CLOVER'
     })
   },
-  mounted () {
-    this.purgeExisting()
-  },
   components: { KeepClover, FieldItem, PageTitle }
 }
 </script>
 
 <style lang="css" scoped>
+  @import '../style/settings.css';
+ 
   div.sym-badge {
     background: var(--green);
     color: white;
@@ -184,5 +190,10 @@ export default {
   }
   #manual-clover:invalid {
     border-color: var(--red);
+  }
+  @media (--breakpoint-md) {
+    footer button {
+      width: auto;
+    }
   }
 </style>

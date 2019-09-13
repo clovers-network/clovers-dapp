@@ -25,7 +25,7 @@
   --yellow:  #FFDC00;
   --orange:  #FF851B;
   --red:     #FF4136;
-  --lightest-red: rgba(255, 0, 0, .1); /* #00b4641a */
+  --lightest-red: #FFE7E6; /* rgba(255, 0, 0, .1); /* #00b4641a */
   --fuchsia: #F012BE;
   --purple:  #A23FA3;
   --maroon:  #85144B;
