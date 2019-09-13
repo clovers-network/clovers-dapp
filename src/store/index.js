@@ -54,7 +54,6 @@ const state = {
   currentPage: {},
   currentClover: {},
   otherUser: null,
-  baseCloverFee: '2',
 
   // use getter 'picks' in views
   allSavedClovers: getSavedClovers(),
@@ -74,7 +73,7 @@ const state = {
 
   messages: [],
   submittingBoards: [],
-  basePrice: utils.toWei('0.001'),
+  basePrice: utils.toWei('3'),
   stakeAmount: new BigNumber(96842)
     .mul(1000000000)
     .mul(40)
