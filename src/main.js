@@ -5,7 +5,6 @@ import router from './router'
 import store from './store'
 import Web3 from 'web3'
 import ENS from 'ethereum-ens'
-import Portis from '@portis/web3'
 import VueHead from 'vue-head'
 import VueTouch from 'vue-touch'
 import VueScrollTo from 'vue-scrollto'
@@ -17,6 +16,9 @@ import Clv from '@/components/Clv'
 // import CloverGridItem from '@/components/CloverGridItem'
 
 import Web3Connect from 'web3connect'
+import WalletConnectProvider from '@walletconnect/web3-provider'
+import Portis from '@portis/web3'
+import Fortmatic from 'fortmatic'
 
 const networks = {
   4: 'rinkeby',
@@ -33,17 +35,27 @@ if (global.ethereum) {
   global.web3 = new Web3(portis.provider)
 }
 global.ens = new ENS(global.web3.currentProvider)
+console.log(process.env.VUE_APP_INFURA_API_KEY)
 global.web3Connect = new Web3Connect.Core({
   network: networks[store.state.correctNetwork],
   providerOptions: {
     walletconnect: {
-      infuraId: process.env.VUE_APP_INFURA_API_KEY
+      package: WalletConnectProvider, // required
+      options: {
+        infuraId: process.env.VUE_APP_INFURA_API_KEY
+      }
     },
     portis: !global.web3.currentProvider.isPortis && {
-      id: process.env.VUE_APP_PORTIS_DAPP // required
+      package: Portis,
+      options: {
+        id: process.env.VUE_APP_PORTIS_DAPP // required
+      }
     },
     fortmatic: {
-      key: store.state.correctNetwork === 1 ? process.env.VUE_APP_FORTMATIC_MAIN : process.env.VUE_APP_FORTMATIC_TEST // required
+      package: Fortmatic,
+      options: {
+        key: store.state.correctNetwork === 1 ? process.env.VUE_APP_FORTMATIC_MAIN : process.env.VUE_APP_FORTMATIC_TEST // required
+      }
     }
   }
 })
