@@ -196,7 +196,7 @@ export default {
     },
     originalPrice () {
       if (!this.clover || !this.clover.reward) return '1'
-      let r = makeBn(this.clover.reward).add(toWei(this.baseCloverFee))
+      let r = makeBn(this.clover.reward).add(this.basePrice)
       return parseFloat(prettyBigNumber(r, 2))
     },
     balanceAfterBn () {
@@ -268,7 +268,7 @@ export default {
       }
     },
 
-    ...mapState(['account', 'orders', 'baseCloverFee']),
+    ...mapState(['account', 'orders', 'basePrice']),
     ...mapGetters([
       'user',
       'userName',
@@ -337,6 +337,11 @@ export default {
     ])
   },
   beforeRouteEnter (to, from, next) {
+    lastRt = from && from.name
+    const { board } = to.params
+    store.dispatch('getClover', board.toLowerCase()).then(next)
+  },
+  beforeRouteUpdate (to, from, next) {
     lastRt = from && from.name
     const { board } = to.params
     store.dispatch('getClover', board.toLowerCase()).then(next)

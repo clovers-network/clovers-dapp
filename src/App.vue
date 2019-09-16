@@ -3,6 +3,7 @@
     app-header(v-if="$route.name !== 'Soon'")
     main.mx-auto.md-col-10.lg-col-8(:class="{'min-height-app': !$route.meta.isOverlay}")
       router-view
+    gas-station
     foot
     messages
 </template>
@@ -12,6 +13,7 @@ import AppHeader from '@/components/AppHeader'
 import Foot from '@/components/Foot'
 import Messages from '@/components/Messages'
 import { mapActions } from 'vuex'
+import GasStation from '@/components/GasStation'
 
 export default {
   name: 'App',
@@ -38,7 +40,7 @@ export default {
     this.pollEthPrice()
     this.poll()
   },
-  components: { AppHeader, Foot, Messages }
+  components: { AppHeader, Foot, Messages, GasStation }
 }
 </script>
 

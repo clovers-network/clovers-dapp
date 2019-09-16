@@ -174,8 +174,7 @@ export default {
       }
     },
     postComment () {
-      if (!this.newComment || !this.newComment.length) return
-
+      if (this.posting || !this.newComment || !this.newComment.length) return
       this.posting = true
       this.scrollAter = true
       this.addComment({
@@ -184,6 +183,9 @@ export default {
       }).then(() => {
         this.newComment = ''
         this.posting = false
+      }).catch((err) => {
+        this.posting = false
+        console.error(err)
       })
     },
     loadComments () {
@@ -219,7 +221,7 @@ export default {
       })
     },
     loadAlbums () {
-      this.getAllAlbums()
+      this.getAllAlbums(this.board)
     },
     loadActivity () {
       return axios.get(`${this.apiBase}/clovers/${this.board}/activity`, {
@@ -268,7 +270,7 @@ export default {
             this.focusActivity()
             break
           case ('albums'):
-            this.getAllAlbums()
+            this.getAllAlbums(this.board)
             break
           default:
         }
@@ -296,6 +298,11 @@ export default {
       deep: true,
       handler ({ filter }) {
         this.loadActivity()
+      }
+    },
+    addToAlbum (newVal) {
+      if (!newVal) {
+        this.getAllAlbums(this.board)
       }
     }
   },

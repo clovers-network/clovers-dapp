@@ -22,6 +22,8 @@ const Activity = () => import(/* webpackChunkName: 'activity' */ '@/views/Activi
 const Albums = () => import(/* webpackChunkName: 'albums' */ '@/views/Albums')
 const Album = () => import(/* webpackChunkName: 'albums' */ '@/views/Album')
 
+const Users = () => import(/* webpackChunkName: 'users' */ '@/views/Users')
+
 Vue.use(Router)
 
 export default new Router({
@@ -132,6 +134,13 @@ export default new Router({
       component: Album,
       props: true,
       meta: { title: [['Albums', '/albums']] }
+    },
+
+    {
+      path: '/users',
+      name: 'Users',
+      component: Users,
+      meta: { title: [['Users']] }
     },
 
     {

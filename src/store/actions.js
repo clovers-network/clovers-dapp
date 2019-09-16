@@ -129,6 +129,12 @@ export default {
     if (priceResp.status === 200) {
       commit('SET_ETH_PRICE', priceResp.data.USD)
     }
+    let priceGasResp = await axios.get(
+      'https://ethgasstation.info/json/ethgasAPI.json'
+    )
+    if (priceGasResp.status === 200) {
+      commit('SET_GAS_PRICE', priceGasResp.data.fast / 10)
+    }
     setTimeout(() => {
       dispatch('pollEthPrice')
     }, 60 * 1000 * 5)
@@ -285,6 +291,18 @@ export default {
   //   user.ens = ensName === undefined ? false : ensName
   //   commit('UPDATE_USER', user)
   // },
+
+  async getUsers ({ getters, commit }, filters) {
+    return axios.get(getters.baseURL('/users'), {
+      params: { ...filters }
+    }).then(({ data }) => commit('SET_PAGED_USERS', data))
+      .catch((err) => {
+        if (err.response && err.response.data) {
+          commit('SET_PAGED_USERS', err.response.data)
+        }
+      })
+  },
+
   async changeUsername ({ commit, getters, dispatch }, { address, name, image }) {
     if (!address) return
     return axios
@@ -887,7 +905,15 @@ export default {
 
   // ALBUMS
 
-  getAllAlbums ({ getters, commit, dispatch }) {
+  getAllAlbums ({ getters, commit, dispatch }, clover) {
+    if (clover) {
+      return axios.get(getters.baseURL('/albums'), {
+        params: { clover }
+      }).then(({ data }) => {
+        commit('SET_ALL_ALBUMS', data)
+        return data
+      })
+    }
     return axios.get(getters.baseURL('/albums/list/all'))
       .then((results) => {
         // console.log({results})
@@ -909,6 +935,23 @@ export default {
           commit('SET_PAGED_ALBUMS', err.response.data)
         }
       })
+  },
+
+  getUserAlbums ({ getters, state }) {
+    if (!state.account) return
+    return axios.get(getters.baseURL(`/users/${state.account}/albums`))
+      .then(({ data }) => {
+        return data
+      }).catch(console.error)
+  },
+
+  searchAlbums ({ getters }, term) {
+    if (!term) return
+    return axios.get(getters.baseURL('/albums'), {
+      params: { s: term }
+    }).then(({ data }) => {
+      return data
+    })
   },
 
   async deleteAlbum ({dispatch, commit, getters}, albumId) {
@@ -946,7 +989,9 @@ export default {
       return Promise.reject(new Error('Missing album'))
     }
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
-    return axios.post(getters.baseURL('/albums'), {albumName: album.name, clovers: album.clovers}, {
+    return axios.post(getters.baseURL('/albums'), {
+      albumName: album.name, clovers: album.clovers
+    }, {
       headers: {
         Authorization: getters.authHeader
       }
@@ -959,16 +1004,17 @@ export default {
         })
         dispatch('getAllAlbums')
       })
-      .catch(err => {
-        dispatch('selfDestructMsg', {
-          type: 'error',
-          msg: err.message
-        })
+      .catch((err) => {
+        // dispatch('selfDestructMsg', {
+        //   type: 'error',
+        //   msg: err.message
+        // })
         if ('response' in err) {
           if (err.response.status === 401) {
             commit('SIGN_OUT')
           }
         }
+        throw err
       })
   },
 
@@ -1024,6 +1070,17 @@ export default {
         if (!data) throw new Error('404')
         commit('SET_CURRENT_ALBUM', data)
       }).catch(console.error)
+  },
+
+  // SEARCH
+
+  search ({ getters }, term) {
+    if (!term) return
+    return axios.get(getters.baseURL('/search'), {
+      params: { s: term }
+    }).then(({ data }) => {
+      return data
+    })
   }
 }
 

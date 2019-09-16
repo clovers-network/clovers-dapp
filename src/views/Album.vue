@@ -16,7 +16,7 @@
     //- clovers
     section.px1.flex.flex-wrap
       //- item
-      .col-4.sm-col-4.md-col-3.lg-w-20.sm-px1.sm-my1(v-for="clover in album.clovers")
+      .col-4.sm-col-4.md-col-3.lg-w-20.sm-px1.sm-my1(v-for="clover in album.clovers", :key="clover")
         //- border
         article.album__clover.block.pb-100.relative.border-transparent.border-dashed.hover-border-green.hover-shadow.trans-quick.rounded
           router-link.absolute.overlay.flex.items-center.justify-center(:to="{name: 'Clover', params: {board: clover}}")
@@ -74,6 +74,10 @@ export default {
     }
   },
   beforeRouteEnter (to, from, next) {
+    const { id } = to.params
+    store.dispatch('getAlbum', id).then(next)
+  },
+  beforeRouteUpdate (to, from, next) {
     const { id } = to.params
     store.dispatch('getAlbum', id).then(next)
   },

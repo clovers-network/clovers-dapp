@@ -31,6 +31,7 @@
 import { mapGetters } from 'vuex'
 import { concatPrice, prettyBigNumber } from '@/utils'
 import CoinIcon from '@/components/Icons/CoinIcon'
+
 export default {
   name: 'UserCard',
   props: ['user', 'editable'],
