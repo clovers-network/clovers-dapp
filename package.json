@@ -14,7 +14,7 @@
     "@portis/web3": "^2.0.0-beta.40",
     "@walletconnect/web3-provider": "^1.0.0-beta.35",
     "animate.css": "^3.7.0",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "basscss": "^8.1.0",
     "basscss-addons": "https://github.com/n-kort/addons.git",
     "basscss-responsive-states": "^1.0.6",
