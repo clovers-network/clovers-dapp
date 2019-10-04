@@ -268,10 +268,10 @@ export default {
     commit('SET_BASE_PRICE', basePrice)
   },
   async updateStakeAmount ({ commit }) {
-    let stakeAmount = await contracts.CloversController.instance.methods
-      .stakeAmount()
-      .call()
-    commit('SET_STAKE_AMOUNT', stakeAmount)
+    // let stakeAmount = await contracts.CloversController.instance.methods
+    //   .stakeAmount()
+    //   .call()
+    // commit('SET_STAKE_AMOUNT', stakeAmount)
   },
   clearOrders ({ commit }) {
     commit('SET_ORDERS', [])
@@ -764,7 +764,7 @@ export default {
         from: state.account
       })
   },
-  async buy ({ dispatch, state, commit }, clover) {
+  async buy ({ getters, dispatch, state, commit }, clover) {
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
 
     // if clover exists it must be in SimpleCloversMarket
@@ -803,10 +803,10 @@ export default {
         })
     } else {
       // claim clover w option _keep = true
-      return claimClover({ keep: true, clover, account: state.account })
+      return claimClover({ getters, keep: true, clover, account: state.account })
     }
   },
-  async sell ({ state, dispatch, commit }, { clover, price }) {
+  async sell ({ getters, state, dispatch, commit }, { clover, price }) {
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
 
     // if clover exists it must be in SimpleCloversMarket
@@ -840,7 +840,7 @@ export default {
       }
     } else {
       // claim clover w option _keep = false
-      return claimClover({ keep: false, clover, account: state.account })
+      return claimClover({ getters, keep: false, clover, account: state.account })
     }
   },
   async makeCloverRFT ({ state, dispatch }, { board, investmentInWei = 0 }) {
@@ -1170,17 +1170,17 @@ function getBuy (spendAmount, supply, balance, rr) {
   return result
 }
 
-async function claimClover ({ keep, account, clover }) {
+async function claimClover ({ getters, keep, account, clover }) {
   let reversi = new Reversi()
   reversi.playGameMovesString(clover.movesString)
   let moves = reversi.returnByteMoves().map(m => '0x' + padRight(m, 56))
-  let _tokenId = clover.board
-  let _symmetries = reversi.returnSymmetriesAsBN()
-  let _keep = keep
+  let tokenId = clover.board
+  let symmetries = reversi.returnSymmetriesAsBN().toString(10)
   let from = account
   let value = new BigNumber('0')
+
   if (keep) {
-    let mintPrice = await getMintPrice({ _symmetries })
+    let mintPrice = await getMintPrice({ symmetries })
     let balance = await contracts.ClubToken.instance.methods
       .balanceOf(account)
       .call()
@@ -1193,48 +1193,35 @@ async function claimClover ({ keep, account, clover }) {
       )
     }
   }
-  let stakeAmount = await contracts.CloversController.instance.methods
-    .stakeAmount()
-    .call()
-
-  let currentGasPrice
-  console.log('here?)')
+  let signature
   try {
-    currentGasPrice = await contracts.CloversController.instance.methods
-      .getGasPriceForApp()
-      .call()
-  } catch (_) {
-    if ((new BigNumber(stakeAmount)).eq('190621')) {
-      currentGasPrice = '10000000000' // 10Gwei
-    } else {
-      currentGasPrice = '1' // gas is already added in the early version contract
-    }
+    let {data} = await axios.post(getters.baseURL(`/clovers/verify`), {
+      moves, tokenId, symmetries, keep, recepient: from
+    })
+    signature = data
+  } catch (error) {
+    console.error(error)
   }
-
-  console.log('and??')
-  console.log({currentGasPrice})
-  console.log({stakeAmount})
-
-  stakeAmount = new BigNumber(stakeAmount)
-  let stakeWithGas = stakeAmount.mul(currentGasPrice)
-  console.log({stakeWithGas})
-
-  value = new BigNumber(value)
-  value = value.plus(stakeWithGas)
-  console.log({value})
-
-  return contracts.CloversController.instance.methods
-    .claimClover(moves, _tokenId, _symmetries.toString(10), _keep)
-    .send({ from, value: value.toFixed() })
+  try {
+    value = new BigNumber(value)
+    return contracts.CloversController.instance.methods
+      .claimCloverWithSignature(tokenId, moves, symmetries.toString(10), keep, signature)
+      .send({ from, value: value.toFixed() })
+  } catch (error) {
+    console.error(error)
+  }
 }
 
-async function getMintPrice ({ _symmetries }) {
+async function getMintPrice ({ symmetries }) {
+  if (typeof symmetries === 'string') {
+    symmetries = new BigNumber(symmetries)
+  }
   let reward
-  if (_symmetries.eq(0)) {
+  if (symmetries.eq(0)) {
     reward = '0'
   } else {
     reward = await contracts.CloversController.instance.methods
-      .calculateReward(_symmetries.toString(10))
+      .calculateReward(symmetries.toString(10))
       .call()
   }
 

@@ -221,6 +221,8 @@ export default {
           this.clover
         )
       } catch (err) {
+        console.log('error')
+        console.error(err)
         // probably cancelled...
         // this.handleError(err)
         this.submitting = false
