@@ -22,7 +22,7 @@
     "bottleneck": "^2.6.0",
     "canvas-confetti": "^0.3.0",
     "chart.js": "^2.7.2",
-    "clovers-contracts": "1.0.21",
+    "clovers-contracts": "2.0.0",
     "clovers-reversi": "1.0.21",
     "copy-to-clipboard": "^3.2.0",
     "debounce": "^1.2.0",

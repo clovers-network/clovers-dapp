@@ -1200,7 +1200,7 @@ async function claimClover ({ getters, keep, account, clover }) {
     })
     signature = data
   } catch (error) {
-    console.error(error)
+    throw error
   }
   try {
     value = new BigNumber(value)
@@ -1208,7 +1208,7 @@ async function claimClover ({ getters, keep, account, clover }) {
       .claimCloverWithSignature(tokenId, moves, symmetries.toString(10), keep, signature)
       .send({ from, value: value.toFixed() })
   } catch (error) {
-    console.error(error)
+    throw error
   }
 }
 
