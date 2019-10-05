@@ -46,7 +46,7 @@
       //-       text="white"
       //-       bg="green")
       //- hr
-      section.border-top.pt3.pb4.px2
+      section.border-top.pt3.pb4.px2#newsletter
         h2.h2.green.font-exp.mt2 Newsletter
         img.p3(src="/img/letter.svg")
         .px3.py2 Sign up for our newsletter or email us at #[u #[a(target="_blank" href="mailto:hello@clovers.network") hello@clovers.network]].
