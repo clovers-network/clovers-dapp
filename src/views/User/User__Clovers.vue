@@ -1,7 +1,7 @@
 <template lang="pug">
   section.mx3.md-mx0
     //- filters
-    filters-nav(v-if="hasResults", :page="filters.page", :maxPages="maxPage", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
+    filters-nav(:page="filters.page", :maxPages="maxPage", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
       select(slot="filter", v-model="filters.filter")
         option(:value="undefined") All Clovers
         option(value="forsale") Clovers for Sale
@@ -9,7 +9,6 @@
       select(slot="sort", v-model='filters.sort')
         option(:value='undefined') Sort by Date
         option(value='price') Sort by Price
-    header.hidden.md-block.h-select.py1.mb2.content-box(v-else)
     section
       //- (list)
       .fade-enter-active(v-if="hasResults", :class="{'opacity-50':loading}")
