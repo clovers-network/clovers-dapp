@@ -24,16 +24,16 @@
           option(value="multi-5") 5x Symmetries
       //- list
       .flex.flex-wrap.mxn2.md-px2
-        field-item(v-for='(clover, i) in picksFiltered', :key='i' data-expand='-50', :data-appear='i % 3', :clover="clover", :class="foundBulkClass(clover)", @check="check")
+        field-item(v-for='(clover, i) in picksFiltered', :key='i' data-expand='-50', :data-appear='i % 3', :clover="clover", :class="foundBulkClass(clover)", @check="selectClover")
       //- actions
       footer.sticky.p3.z2.bottom-0.left-0.right-0.md-flex.justify-center(v-if="picks.length > 4 || alreadyFoundClovers.length || bulkEdit.length")
         button.col-12.mt2.bg-white.green.border.border-dashed.rounded-2.p2.px3.md-mx2.pointer.hover-bg-l-green.hover-border-solid(@click="showActions = !showActions", v-show="!bulkEdit.length") {{showActions ? 'Close' : 'Edit'}}
         template(v-if="showActions || bulkEdit.length")
           button.col-12.mt2.bg-white.green.border.rounded-2.p2.px3.md-mx2.pointer.hover-bg-l-green(@click="purgeExisting") {{processing ? 'Verifying...' : 'Verify All'}}
           button.col-12.mt2.bg-white.green.border.rounded-2.p2.px3.md-mx2.pointer.hover-bg-l-green(@click="removeRegistered" v-if="alreadyFoundClovers.length") Remove Registered
-          button.col-12.mt2.bg-white.green.border.rounded-2.p2.px3.md-mx2.pointer.hover-bg-l-green(@click="removeChecked" v-if="bulkEdit.length") Deselect All
-          button.col-12.mt2.bg-white.green.border.rounded-2.p2.px3.md-mx2.pointer.hover-bg-l-green(@click="checkAll" v-if="bulkEdit.length !== picks.length") Select All
-          button.col-12.mt2.bg-white.red.border.rounded-2.p2.px3.md-mx2.pointer.hover-bg-l-red(@click="discardChecked" v-if="bulkEdit.length") Discard Selected
+          button.col-12.mt2.bg-white.green.border.rounded-2.p2.px3.md-mx2.pointer.hover-bg-l-green(@click="deselectAll" v-if="bulkEdit.length") Deselect All
+          button.col-12.mt2.bg-white.green.border.rounded-2.p2.px3.md-mx2.pointer.hover-bg-l-green(@click="selectAll" v-if="bulkEdit.length !== picks.length") Select All
+          button.col-12.mt2.bg-white.red.border.rounded-2.p2.px3.md-mx2.pointer.hover-bg-l-red(@click="discardSelected" v-if="bulkEdit.length") Discard Selected
     //- (no picks)
     section.center(v-else)
       p.p2.bg-lightest-green.rounded.my3 Your Basket is empty.
@@ -93,6 +93,7 @@ export default {
     },
     filter () {
       this.bulkEdit = []
+      this.showActions = false
     }
   },
   computed: {
@@ -126,25 +127,25 @@ export default {
   methods: {
     fromWei,
     cloverImage,
-    discardChecked () {
+    discardSelected () {
       const confirm = window.confirm('Are you sure you want to discard ALL the selected clovers in your Basket? This action cannot be undone...')
       if (confirm) {
         this.bulkEdit.forEach(board => {
           this.removeClover({board})
         })
       }
-      this.removeChecked()
+      this.deselectAll()
     },
-    removeChecked () {
+    deselectAll () {
       this.bulkEdit = []
     },
-    checkAll () {
-      this.bulkEdit = this.picks.map((p) => p.board)
+    selectAll () {
+      this.bulkEdit = this.picksFiltered.map((p) => p.board)
     },
     bulkIndex (board) {
       return this.bulkEdit.indexOf(board)
     },
-    check (clover) {
+    selectClover (clover) {
       let cloverIndex = this.bulkIndex(clover.board)
       if (cloverIndex > -1) {
         this.bulkEdit.splice(cloverIndex, 1)
