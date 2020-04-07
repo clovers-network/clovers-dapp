@@ -198,6 +198,10 @@ export default {
       this.alreadyFoundClovers = []
     },
     async purgeExisting (event, key = 0) {
+      if (!this.processing) {
+        const confirm = window.confirm('Verification removes any Clovers that have already been registered from your Basket. Continue?')
+        if (!confirm) return
+      }
       this.processing = true
       if (key === 0) {
         this.alreadyFoundClovers = []
