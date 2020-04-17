@@ -7,7 +7,7 @@
         .absolute.overlay.flex.items-end.justify-center(style="padding-bottom:24%")
           .col-7
             .relative.z1.pb-100
-              clv-svg.block.col-12.absolute.h-100.bottom-0.flex.items-center.justify-center(v-for="(clover, i) in clvrs", v-if="i < 4", :byteBoard="clover", :size="196", :style="{left: i * 22 + '%', zIndex: -1 * i, borderRadius: '100%', boxShadow: '0px 0px 2px rgba(255,255,255,0.75)'}", :key="clover")
+              clv-svg.block.col-12.absolute.h-100.bottom-0.flex.items-center.justify-center(v-for="(clover, i) in clvrs", v-if="i === 0", :byteBoard="clover", :size="196", :style="{left: i * 22 + '%', zIndex: -1 * i, borderRadius: '100%', boxShadow: '0px 0px 2px rgba(255,255,255,0.75)'}", :key="clover")
               //- clv-svg.block.col-12.absolute.h-100.bottom-0.flex.items-center.justify-center(v-for="(clover, i) in album.clovers", v-if="i > 0 && i < 4", :byteBoard="clover", :size="196", :style="{left: i * 22 + '%', zIndex: -1 * i, borderRadius: '100%', boxShadow: '0px 0px 2px rgba(255,255,255,0.75)'}", :key="clover")
       footer.absolute.bottom-0.left-0.col-12.px1.pb1.flex.justify-between.items-center
         h6.col-9.truncate.h5
