@@ -5,7 +5,6 @@ import utils from 'web3-utils'
 import actions from './actions'
 import getters from './getters'
 import mutations from './mutations'
-import demoAlbums from '@/demo-albums'
 
 import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
@@ -18,9 +17,6 @@ Vue.use(Vuex)
 const debug = false
 
 const state = {
-  // demo !!
-  albums: demoAlbums,
-
   web3Enabled: false,
   // stored signin tokens
   tokens: getTokens(),
@@ -32,6 +28,7 @@ const state = {
   allAlbums: [],
   pagedAlbums: [],
   currentAlbum: {},
+  featuredAlbums: [],
 
   // web3 stuff
   enabled: false,

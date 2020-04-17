@@ -8,22 +8,26 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import AlbumListCards from '@/components/AlbumList--Cards'
 import AlbumItemCard from '@/components/AlbumItem--Card'
 export default {
   name: 'Featured',
   data () {
     return {
-      ftAlbums: process.env.VUE_APP_FEATURED_ALBUMS || '',
-      albums: []
+      ftAlbums: process.env.VUE_APP_FEATURED_ALBUMS || ''
     }
+  },
+  computed: {
+    ...mapState({albums: 'featuredAlbums'})
   },
   methods: {
     fetchAlbums () {
+      if (this.albums.length) return
       const albms = this.ftAlbums.split(',')
       albms.forEach(id => {
         this.$store.dispatch('getAlbum', id).then(album => {
-          this.albums.push(album)
+          this.$store.commit('ADD_FT_ALBUM', album)
         })
       })
     }

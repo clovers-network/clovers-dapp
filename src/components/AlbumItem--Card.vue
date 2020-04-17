@@ -4,7 +4,7 @@
       header.col-12.pt2.pb1.sm-py2.px2
         h3.font-exp.h5.lh2 {{album.name}}
       figure.col-12.flex.flex-wrap.justify-end(style="flex:1 0 auto; align-content:flex-start; padding:0 .8rem 0; transform:scale(-1);")
-        .col-4.flex.items-center.justify-center(v-for="(clover, i) in album.clovers", v-if="i < 12", style="padding:0.25vw 0.3vw")
+        .col-4.flex.items-center.justify-center(v-for="(clover, i) in clvrs", v-if="i < 12", style="padding:0.25vw 0.3vw")
           clv-svg.block(:byteBoard="clover", :size="196", :key="clover", style="transform:scale(-1)")
       footer.col-12.px1.pt1.pb1.flex.justify-between.items-center
         h6.col-9.truncate.h5
@@ -18,7 +18,6 @@
 import { cloverImage } from '@/utils'
 import { mapGetters } from 'vuex'
 import ClvSvg from '@/components/Clv--SVG'
-
 export default {
   name: 'AlbumItem--Card',
   props: ['album'],
@@ -31,16 +30,10 @@ export default {
     ...mapGetters(['userName']),
     _userName () {
       return this.userName(this.album.user)
-    },
-    clovers () {
-      console.log('compute clovers')
-      // show most recent first
-      const clvrs = JSON.parse(JSON.stringify(this.album.clovers))
-      return clvrs.reverse()
     }
   },
   created () {
-    this.clvrs = this.album.clovers
+    this.clvrs = JSON.parse(JSON.stringify(this.album.clovers))
     this.clvrs.reverse()
   },
   methods: {
