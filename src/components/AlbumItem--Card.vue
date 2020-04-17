@@ -58,7 +58,7 @@ export default {
           this.clvrs = [this.clvrs.pop(), ...this.clvrs] // .push(this.clvrs.shift()) // push removed first to end of array
           this.animate()
         })
-      }, 600)
+      }, 800)
     },
     pause () {
       clearTimeout(this.anim)
