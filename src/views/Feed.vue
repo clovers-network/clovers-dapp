@@ -1,5 +1,8 @@
 <template lang="pug">
   article.mx3.md-mx0.green
+
+    featured(v-if="!filters.page || filters.page === 1")
+
     header
       page-title
         h1 Feed
@@ -49,6 +52,7 @@ import { cleanObj, concatPrice } from '@/utils'
 import CloverListCards from '@/components/CloverList--Cards'
 import PageTitle from '@/components/PageTitle'
 import PageNav from '@/components/PageNav'
+import Featured from '@/components/Featured'
 import svgX from '@/components/Icons/SVG-X'
 import FiltersNav from '@/components/FiltersNav'
 import BigNumber from 'bignumber.js'
@@ -231,6 +235,6 @@ export default {
       this.filters.page = this.results.nextPage
     }
   },
-  components: { CloverListCards, svgX, PageTitle, PageNav, FiltersNav }
+  components: { CloverListCards, svgX, PageTitle, PageNav, FiltersNav, Featured }
 }
 </script>

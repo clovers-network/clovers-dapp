@@ -75,11 +75,11 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     const { id } = to.params
-    store.dispatch('getAlbum', id).then(next)
+    store.dispatch('getAlbum', id).then(() => next())
   },
   beforeRouteUpdate (to, from, next) {
     const { id } = to.params
-    store.dispatch('getAlbum', id).then(next)
+    store.dispatch('getAlbum', id).then(() => next())
   },
   methods: {
     ...mapActions(['updateAlbum', 'deleteAlbum']),

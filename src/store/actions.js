@@ -1069,6 +1069,7 @@ export default {
       .then(({data}) => {
         if (!data) throw new Error('404')
         commit('SET_CURRENT_ALBUM', data)
+        return data
       }).catch(console.error)
   },
 
