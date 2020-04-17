@@ -14,19 +14,15 @@ export default {
   name: 'Featured',
   data () {
     return {
-      ftAlbums: [
-        '38dcb59a-2bbc-4685-b1ea-267a09b6cf6d', // faces
-        '247e93af-8213-4662-891b-12336956a8ae', // flowers
-        'a2bf1419-71f7-4a04-8e2e-123e37939840' // send nudes
-      ],
+      ftAlbums: process.env.VUE_APP_FEATURED_ALBUMS || '',
       albums: []
     }
   },
   methods: {
     fetchAlbums () {
-      this.ftAlbums.forEach(id => {
+      const albms = this.ftAlbums.split(',')
+      albms.forEach(id => {
         this.$store.dispatch('getAlbum', id).then(album => {
-          console.log(album)
           this.albums.push(album)
         })
       })
