@@ -1,7 +1,9 @@
 <template lang="pug">
   section
+    featured.mb2.md-my3(v-if="showFeatured && filters.page === 1")
     //- pagination
     filters-nav(:page="filters.page", :maxPages="maxPage", :canPrev="prevPossible", :canNext="nextPossible", @prev="back", @next="forward")
+
     section
       //- (list)
       .fade-enter-active(v-if="hasResults", :class="{'opacity-50':loading}")
@@ -20,13 +22,15 @@
 import AlbumListCards from '@/components/AlbumList--Cards'
 import FiltersNav from '@/components/FiltersNav'
 import PageNav from '@/components/PageNav'
+import Featured from '@/components/Featured'
 import { cleanObj } from '@/utils'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
   name: 'PagedAlbums',
   props: {
-    apiPath: { type: String, default: '/albums' }
+    apiPath: { type: String, default: '/albums' },
+    showFeatured: { type: Boolean, default: false }
   },
   data () {
     return {
@@ -117,6 +121,6 @@ export default {
       this.query()
     }
   },
-  components: { AlbumListCards, FiltersNav, PageNav }
+  components: { AlbumListCards, FiltersNav, PageNav, Featured }
 }
 </script>

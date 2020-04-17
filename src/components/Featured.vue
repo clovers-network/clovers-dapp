@@ -1,26 +1,10 @@
 <template lang="pug">
-  //- aside.mt4
-    h3.h3.font-exp Spotlight
-    album-list-cards.mt3(v-if="albums.length", :albums="albums")
-  //- aside.flex.justify-center.mt2.pb2
-    .relative.bg-lightest-green(style="min-width:100vw; max-height:34rem; overflow: hidden;")
-      .mx-auto.md-col-10.lg-col-8.py3.px2.md-px0
-        h3.h3.font-exp Spotlight
-        album-list-cards.mt2(v-if="albums.length", :albums="albums")
-      .absolute.bottom-0.col-12.z1(style="height:3rem; background:linear-gradient(to top, white, transparent)")
-  //- aside.flex.justify-center.mt3
-    .px3(style="min-width:100vw")
-      .mx-auto.md-col-10.border.border-dashed.shadow.rounded.p1.flex.items-center
-        .col-6.px3
-          h3.h3.font-exp Spotlight
-        .col-6
-          album-list-cards.mt2(v-if="albums.length", :albums="albums")
-  aside.border-dashed.flex.rounded.py3.px2.mt3(style="margin-bottom:-1rem")
-    .col-3.px2
-      h3.h3.font-exp Spotlight
+  aside.mxn3.md-mt3.py3.px2.md-border.md-shadow.flex.flex-wrap.justify-between.rounded(style="margin-bottom:-1rem")
+    header.col-12.md-col-3.px1.md-px2.pb2
+      h3.h2.md-h3.font-exp Today ✨
       //- album-list-cards.mt2(v-if="albums.length", :albums="albums")
-    router-link.block.col-3.px2(v-for="albm in albums", :to="{name: 'Album', params: {id: albm.id}}")
-      album-item-card(:album="albm")
+    router-link.block.my1.col-6.sm-col-4.md-col-3.px1.sm-px2(v-for="(albm, i) in albums", :to="{name: 'Album', params: {id: albm.id}}", :class="{'hidden sm-block': i > 1}")
+      album-item-card.border(:album="albm")
 </template>
 
 <script>

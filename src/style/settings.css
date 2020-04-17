@@ -2,7 +2,7 @@
 @custom-media --breakpoint-sm (min-width: 560px);
 @custom-media --breakpoint-sm-only (max-width: 768px);
 @custom-media --breakpoint-md (min-width: 769px);
-@custom-media --breakpoint-lg (min-width: 1024px);
+@custom-media --breakpoint-lg (min-width: 1025px);
 
 :root {
   --rem: 10px;
