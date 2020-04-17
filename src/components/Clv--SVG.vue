@@ -1,5 +1,5 @@
 <template lang="pug">
-  .clv-svg(v-if="svg", v-html="svg", role="img")
+  .clv-svg(v-if="svg", v-html="svg", role="img", aria-label="Clover Image")
 </template>
 
 <style>
@@ -54,7 +54,7 @@ export default {
           size +
           ' ' +
           size +
-          '" xml:space="preserve"><title>Clover Image</title>'
+          '" xml:space="preserve">'
 
         if (r.whiteScore < r.blackScore) {
           fill = black

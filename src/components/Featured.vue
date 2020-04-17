@@ -20,7 +20,7 @@
       h3.h3.font-exp Spotlight
       //- album-list-cards.mt2(v-if="albums.length", :albums="albums")
     router-link.block.col-3.px2(v-for="albm in albums", :to="{name: 'Album', params: {id: albm.id}}")
-      album-item-card(:album="albm")
+      album-item-card(:album="albm", :animation="true")
 </template>
 
 <script>
