@@ -14,7 +14,7 @@
         //- edit btn
         button.absolute.top-0.right-0.p2.block.h4.pointer(v-if="isEditor", @click="showEdit" style="transform:scale(-1, 1)", aria-label="Edit Album") ✎
     //- clovers
-    draggable.px1.flex.flex-wrap(v-model="clvrs", :disabled="!editMode || updating", handle=".album__clover__svg", @change="onOrderChange", :class="{'opacity-50': updating}")
+    draggable.px1.flex.flex-wrap(v-model="clvrs", :disabled="!editMode || updating", handle=".album__clover__svg", @change="onOrderChange", :class="{'opacity-50': updating}", tag="section")
       //- item
       .col-4.sm-col-4.md-col-3.lg-w-20.sm-px1.sm-my1(v-for="clover in clvrs", :key="clover")
         //- card
@@ -65,7 +65,8 @@ export default {
       editMode: false,
       editName: false,
       newName: '',
-      updating: false
+      updating: false,
+      orderChanged: false
     }
   },
   computed: {
@@ -95,6 +96,13 @@ export default {
   },
   created () {
     this.clvrs = this.album.clovers
+  },
+  watch: {
+    editMode () {
+      if (!this.editMode) {
+        this.updateAlbumOrder()
+      }
+    }
   },
   methods: {
     ...mapActions(['updateAlbum', 'deleteAlbum']),
@@ -139,12 +147,17 @@ export default {
       }
     },
     onOrderChange () {
+      this.orderChanged = true
+    },
+    updateAlbumOrder () {
+      if (!this.orderChanged) return
       this.updating = true
       const album = clone(this.album)
       album.clovers = clone(this.clvrs)
       this.updateAlbum(album).then(() => {
         this.clvrs = this.album.clovers // update list
         this.updating = false
+        this.orderChanged = false
       })
     }
   },
