@@ -1,5 +1,5 @@
 <template lang="pug">
-  article.mt3.md-my4.pb4
+  article.album-view.mt3.md-my4.pb4
     header.col-12.px1.sm-px2.md-px1.mb2.flex
       //- title card
       .relative.mx1.px2.pt2.pb2.col-12.clover-item-border.rounded.flex.flex-column.justify-between
@@ -14,15 +14,17 @@
         //- edit btn
         button.absolute.top-0.right-0.p2.block.h4.pointer(v-if="isEditor", @click="showEdit" style="transform:scale(-1, 1)", aria-label="Edit Album") ✎
     //- clovers
-    section.px1.flex.flex-wrap
+    draggable.px1.flex.flex-wrap(v-model="clvrs", :disabled="false || isEditor", handle=".album__clover__handle")
       //- item
-      .col-4.sm-col-4.md-col-3.lg-w-20.sm-px1.sm-my1(v-for="clover in album.clovers", :key="clover")
+      .col-4.sm-col-4.md-col-3.lg-w-20.sm-px1.sm-my1(v-for="clover in clvrs", :key="clover")
         //- border
-        article.album__clover.block.pb-100.relative.border-transparent.border-dashed.hover-border-green.hover-shadow.trans-quick.rounded
+        article.album__clover.block.pb-100.relative.border-transparent.border-dashed.hover-border-green.active-border-green.hover-shadow.trans-quick.rounded
           router-link.absolute.overlay.flex.items-center.justify-center(:to="{name: 'Clover', params: {board: clover}}")
             clv-svg.col-8.sm-col-9(:byteBoard="clover", :size="196")
-          //- TODO show for owner !!
-          button.absolute.top-0.right-0.m1.border.rounded-full.bg-lightest-green.pointer.trans-quick.opacity-50(style="padding:0.4rem", v-if="isEditor" @click="removeClover(clover)")
+          //- move-handle
+          .album__clover__btn.album__clover__handle.absolute.bottom-0.left-0.px1 : :
+          //- rmv btn
+          button.album__clover__btn.absolute.top-0.right-0.m1.border.rounded-full.bg-lightest-green.pointer.trans-quick.opacity-50(style="padding:0.4rem", v-if="isEditor" @click="removeClover(clover)")
             svg-x(style="width:0.6rem;height:0.6rem")
 
     //- modal: edit album
@@ -51,13 +53,15 @@ import Modal from '@/components/Modals/Modal'
 import ClvSvg from '@/components/Clv--SVG'
 import svgX from '@/components/Icons/SVG-X'
 import {mapState, mapGetters, mapActions} from 'vuex'
+import draggable from 'vuedraggable'
 export default {
   name: 'Album',
   props: ['id'],
   data () {
     return {
       edit: false,
-      newName: ''
+      newName: '',
+      clvrs: []
     }
   },
   computed: {
@@ -80,6 +84,9 @@ export default {
   beforeRouteUpdate (to, from, next) {
     const { id } = to.params
     store.dispatch('getAlbum', id).then(() => next())
+  },
+  created () {
+    this.clvrs = this.album.clovers
   },
   methods: {
     ...mapActions(['updateAlbum', 'deleteAlbum']),
@@ -123,17 +130,29 @@ export default {
       }
     }
   },
-  components: { svgX, Modal, ClvSvg }
+  components: { svgX, Modal, ClvSvg, draggable }
 }
 </script>
 
 <style>
+.album-view {
+  & .sortable-ghost{
+    visibility: hidden;
+  }
+  & .sortable-chosen .album__clover{
+    border-color:green;
+  }
+}
+.album__clover__handle{
+  cursor: move;
+  /*cursor: -webkit-grabbing;*/
+}
 @media (hover:hover) {
   .album__clover{
-    & button{
+    & .album__clover__btn{
       opacity:0;
     }
-    &:hover button{
+    &:hover .album__clover__btn{
       opacity:1;
     }
   }

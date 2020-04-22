@@ -190,8 +190,8 @@
 .border-dashed { border-style: dashed; }
 @media (hover:hover) {
   .hover-border-solid:hover { border-style:solid; }
-  .hover-border-green:hover { border-color:var(--green);
-}}
+  .hover-border-green:hover { border-color:var(--green) };
+}
 
 .rounded-full{ border-radius: 100% }
 .rounded-2 { border-radius: var(--border-radius-2); }
