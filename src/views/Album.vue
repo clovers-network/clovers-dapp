@@ -3,7 +3,7 @@
     header.col-12.px1.sm-px2.md-px1.mb2.flex
       //- title card
       .relative.mx1.px2.pt2.pb2.col-12.clover-item-border.rounded.flex.flex-column.justify-between
-        h1.col-12.h2.font-exp.mt1.px1.pb2(style="min-height:4.5em") {{album.name}}
+        h1.col-12.h3.sm-h2.font-exp.mt1.pl1.pr3.pb2(style="min-height:4.5em") {{album.name}}
         small.block.col-12.flex.items-center.sm-items-end.justify-between.sm-p1.pr1
           h6
             router-link.h5.mr2.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-border-green(:to="{name: 'User', params: {addr: album.userAddress}}") {{_userName}}
@@ -14,22 +14,23 @@
         //- edit btn
         button.absolute.top-0.right-0.p2.block.h4.pointer(v-if="isEditor", @click="showEdit" style="transform:scale(-1, 1)", aria-label="Edit Album") ✎
     //- clovers
-    draggable.px1.flex.flex-wrap(v-model="clvrs", :disabled="false || isEditor", handle=".album__clover__handle")
+    draggable.px1.flex.flex-wrap(v-model="clvrs", :disabled="!editMode || updating", handle=".album__clover__svg", @change="onOrderChange", :class="{'opacity-50': updating}")
       //- item
       .col-4.sm-col-4.md-col-3.lg-w-20.sm-px1.sm-my1(v-for="clover in clvrs", :key="clover")
-        //- border
-        article.album__clover.block.pb-100.relative.border-transparent.border-dashed.hover-border-green.active-border-green.hover-shadow.trans-quick.rounded
-          router-link.absolute.overlay.flex.items-center.justify-center(:to="{name: 'Clover', params: {board: clover}}")
-            clv-svg.col-8.sm-col-9(:byteBoard="clover", :size="196")
-          //- move-handle
-          .album__clover__btn.album__clover__handle.absolute.bottom-0.left-0.px1 : :
-          //- rmv btn
-          button.album__clover__btn.absolute.top-0.right-0.m1.border.rounded-full.bg-lightest-green.pointer.trans-quick.opacity-50(style="padding:0.4rem", v-if="isEditor" @click="removeClover(clover)")
+        //- card
+        article.album__clover.block.pb-100.relative.border-transparent.border-dashed.trans-quick.rounded.bg-white(:class="{'hover-border-green hover-shadow': !editMode}")
+          router-link.absolute.overlay.flex.items-center.justify-center(:to="{name: 'Clover', params: {board: clover}}", :class="{'no-pointer': editMode}")
+            clv-svg.album__clover__svg.col-8.sm-col-9(:byteBoard="clover", :size="196", :class="{'cursor-move': editMode}")
+          //- (rmv btn)
+          button.absolute.top-0.right-0.m1.border.rounded-full.bg-lightest-green.pointer.trans-quick.opacity-50(style="padding:0.4rem", v-if="editMode" @click="removeClover(clover)")
             svg-x(style="width:0.6rem;height:0.6rem")
+    //- actions
+    footer.sticky.p3.z2.bottom-0.left-0.right-0.center(v-if="isEditor && clvrs.length > 1")
+      button.inline-block.mt2.bg-white.green.border.border-dashed.rounded-2.p2.px3.md-mx2.pointer.hover-bg-l-green.hover-border-solid(@click="editMode = !editMode") {{editMode ? 'Done' : 'Edit'}}
 
     //- modal: edit album
     transition(name="fade")
-      modal.green(v-show="edit", @close="edit = false", :cancel="true")
+      modal.green(v-show="editName", @close="editName = false", :cancel="true")
         .pt4.px3.pb3
           h3.hide Edit Album
           //- edit name
@@ -54,14 +55,17 @@ import ClvSvg from '@/components/Clv--SVG'
 import svgX from '@/components/Icons/SVG-X'
 import {mapState, mapGetters, mapActions} from 'vuex'
 import draggable from 'vuedraggable'
+const clone = json => JSON.parse(JSON.stringify(json))
 export default {
   name: 'Album',
   props: ['id'],
   data () {
     return {
-      edit: false,
+      clvrs: [],
+      editMode: false,
+      editName: false,
       newName: '',
-      clvrs: []
+      updating: false
     }
   },
   computed: {
@@ -85,6 +89,10 @@ export default {
     const { id } = to.params
     store.dispatch('getAlbum', id).then(() => next())
   },
+  beforeRouteLeave (to, from, next) {
+    const editing = this.editMode && to.name === 'Clover'
+    if (!editing) return next()
+  },
   created () {
     this.clvrs = this.album.clovers
   },
@@ -93,13 +101,13 @@ export default {
     cloverImage,
     showEdit () {
       this.newName = this.album.name
-      this.edit = true
+      this.editName = true
     },
     async submitNewName () {
       let albumCopy = JSON.parse(JSON.stringify(this.album))
       albumCopy.name = this.newName
       await this.updateAlbum(albumCopy)
-      this.edit = false
+      this.editName = false
     },
     async _deleteAlbum () {
       let yes = window.confirm('Are you sure you want to delete this Album? This action cannot be undone...')
@@ -115,19 +123,29 @@ export default {
     removeClover (clover) {
       let yes = window.confirm('Are you sure you want to remove this Clover? This action cannot be undone...')
       if (yes) {
-        console.log(`DELETE ${clover}`)
-        let album = JSON.parse(JSON.stringify(this.album))
-        console.log(album.clovers)
+        // console.log(`DELETE ${clover}`)
+        let album = clone(this.album)
+        // console.log(album.clovers)
         let cloverIndex = album.clovers.indexOf(clover)
-        console.log({cloverIndex})
+        // console.log({cloverIndex})
         if (cloverIndex > -1) {
+          this.updating = true
           album.clovers.splice(cloverIndex, 1)
-          this.updateAlbum(album)
+          this.updateAlbum(album).then(() => { this.updating = false })
         } else {
           console.error(`couldn't find clover ${clover} in album`)
           console.log(album.clovers)
         }
       }
+    },
+    onOrderChange () {
+      this.updating = true
+      const album = clone(this.album)
+      album.clovers = clone(this.clvrs)
+      this.updateAlbum(album).then(() => {
+        this.clvrs = this.album.clovers // update list
+        this.updating = false
+      })
     }
   },
   components: { svgX, Modal, ClvSvg, draggable }
@@ -141,20 +159,6 @@ export default {
   }
   & .sortable-chosen .album__clover{
     border-color:green;
-  }
-}
-.album__clover__handle{
-  cursor: move;
-  /*cursor: -webkit-grabbing;*/
-}
-@media (hover:hover) {
-  .album__clover{
-    & .album__clover__btn{
-      opacity:0;
-    }
-    &:hover .album__clover__btn{
-      opacity:1;
-    }
   }
 }
 </style>
