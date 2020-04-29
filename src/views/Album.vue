@@ -10,7 +10,7 @@
             //- owner
             router-link.h5.mr1.mt1.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-bg-m-green(:to="{name: 'User', params: {addr: album.userAddress}}") {{_userName}}
             //- editors
-            router-link.h5.mr1.mt1.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-bg-m-green(v-for="addr in album.editors", :to="{name: 'User', params: {addr: addr}}") {{editorName(addr)}}
+            router-link.h5.mr1.mt1.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-bg-m-green(v-for="addr in editors", :to="{name: 'User', params: {addr: addr}}") {{editorName(addr)}}
           h6.h5.sm-h4.flex.items-center.pt1
             | {{album.clovers && album.clovers.length}}
             img.block.ml1(src="@/assets/icons/clover-icon-1.svg", style="width:0.875em;")
@@ -42,7 +42,7 @@
           .mb3.px2.pb1
             h4.h4.font-exp.lh1.mb3 Editors
             ul.list-reset.m0
-              li.my1.relative.rounded(v-for="addr in album.editors")
+              li.my1.relative.rounded(v-for="addr in editors")
                 router-link.block.py2.bg-lightest-green.rounded.truncate.lh2.hover-bg-m-green(:to="{name: 'User', params: {addr: addr}}")
                   | {{editorName(addr)}}
                 //- rmv editor btn
@@ -170,7 +170,7 @@ export default {
       }
     },
     editorName (addr) {
-      const data = this.album.editorsData.find(ed => addr === ed.address)
+      const data = (this.album.editorsData || []).find(ed => addr === ed.address)
       return (data && data.name) || abbrvAddr(addr)
     }
   },
