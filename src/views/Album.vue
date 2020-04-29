@@ -10,7 +10,7 @@
             //- owner
             router-link.h5.mr1.mt1.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-bg-m-green(:to="{name: 'User', params: {addr: album.userAddress}}") {{_userName}}
             //- editors
-            router-link.h5.mr1.mt1.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-bg-m-green(v-for="editor in album.editorsData", :to="{name: 'User', params: {addr: editor.address}}") {{editor.name}}
+            router-link.h5.mr1.mt1.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-bg-m-green(v-for="addr in album.editors", :to="{name: 'User', params: {addr: addr}}") {{editorName(addr)}}
           h6.h5.sm-h4.flex.items-center.pt1
             | {{album.clovers && album.clovers.length}}
             img.block.ml1(src="@/assets/icons/clover-icon-1.svg", style="width:0.875em;")
@@ -24,8 +24,8 @@
         article.album__clover.block.pb-100.relative.border-transparent.border-dashed.hover-border-green.hover-shadow.trans-quick.rounded
           router-link.absolute.overlay.flex.items-center.justify-center(:to="{name: 'Clover', params: {board: clover}}")
             clv-svg.col-8.sm-col-9(:byteBoard="clover", :size="196")
-          //- rmv btn
-          button.absolute.top-0.right-0.m1.border.rounded-full.bg-lightest-green.pointer.trans-quick.opacity-50(style="padding:0.4rem", v-if="isOwner" @click="removeClover(clover)")
+          //- rmv clover btn
+          button.absolute.top-0.right-0.m1.border.rounded-full.bg-lightest-green.pointer.trans-quick.opacity-50(style="padding:0.4rem", v-if="isEditor" @click="removeClover(clover)")
             svg-x(style="width:0.6rem;height:0.6rem")
 
     //- modal: edit album
@@ -41,13 +41,12 @@
           //- edit editors
           .mb3.px2.pb1
             h4.h4.font-exp.lh1.mb3 Editors
-            //- list
             ul.list-reset.m0
-              li.my1.relative.rounded(v-for="editor in album.editorsData")
-                router-link.block.py2.bg-lightest-green.rounded.truncate.lh2.hover-bg-m-green(:to="{name: 'User', params: {addr: editor.address}}")
-                  | {{editor.name}}
-                //- rmv btn
-                button.absolute.top-0.right-0.h-100.px2.flex.items-center.justify-center.pointer(aria-label="Remove Editor", @click="removeEditor(editor)")
+              li.my1.relative.rounded(v-for="addr in album.editors")
+                router-link.block.py2.bg-lightest-green.rounded.truncate.lh2.hover-bg-m-green(:to="{name: 'User', params: {addr: addr}}")
+                  | {{editorName(addr)}}
+                //- rmv editor btn
+                button.absolute.top-0.right-0.h-100.px2.flex.items-center.justify-center.pointer(aria-label="Remove Editor", @click="removeEditor(addr)")
                   svg-x(style="width:1rem;height:1rem")
             //- add
             form.my1(v-if="isOwner && editors.length < 4", @submit.prevent="addEditor")
@@ -79,8 +78,8 @@ export default {
     return {
       edit: false,
       newName: '',
-      // editors: ['0xfa398d672936dcf428116f687244034961545d91', '0x0932b1b3bf422f406753324f424af7103525625f'],
       newEditor: ''
+      // testers: ['0xfa398d672936dcf428116f687244034961545d91', '0x0932b1b3bf422f406753324f424af7103525625f', '0x84ecb387395a1be65e133c75ff9e5fcc6f756db3', '0x45e25795a72881a4d80c59b5c60120655215a053', '0x2f261a227480b7d1802433d05a92a27bab645032'],
     }
   },
   computed: {
@@ -96,7 +95,7 @@ export default {
       return this.album.editors || []
     },
     isEditor () {
-      return this.isOwner || this.editors.includes(this.account)
+      return this.isOwner || this.editors.map(ed => ed.toLowerCase()).includes(this.account)
     },
     _userName () {
       return this.album && this.userName(this.album.user)
@@ -148,6 +147,7 @@ export default {
         console.log({cloverIndex})
         if (cloverIndex > -1) {
           album.clovers.splice(cloverIndex, 1)
+          console.log(album)
           this.updateAlbum(album)
         } else {
           console.error(`couldn't find clover ${clover} in album`)
@@ -162,12 +162,16 @@ export default {
       album.editors.push(this.newEditor)
       this.updateAlbum(album).then(() => { this.newEditor = '' })
     },
-    removeEditor (editor) {
-      if (editor && confirm(`Are you sure you want to remove "${editor.name}" from editors?`)) {
+    removeEditor (addr) {
+      if (addr && confirm(`Are you sure you want to remove "${this.editorName(addr)}" from editors?`)) {
         const album = clone(this.album)
-        album.editors = album.editors.filter(ed => ed !== editor.address)
+        album.editors = album.editors.filter(ed => ed !== addr)
         this.updateAlbum(album)
       }
+    },
+    editorName (addr) {
+      const data = this.album.editorsData.find(ed => addr === ed.address)
+      return (data && data.name) || abbrvAddr(addr)
     }
   },
   components: { svgX, Modal, ClvSvg }
