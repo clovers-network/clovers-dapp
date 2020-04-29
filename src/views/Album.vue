@@ -46,7 +46,8 @@
               li.my1.relative.rounded(v-for="editor in album.editorsData")
                 router-link.block.py2.bg-lightest-green.rounded.truncate.lh2.hover-bg-m-green(:to="{name: 'User', params: {addr: editor.address}}")
                   | {{editor.name}}
-                button.absolute.top-0.right-0.h-100.px2.flex.items-center.justify-center.pointer(aria-label="Remove Editor")
+                //- rmv btn
+                button.absolute.top-0.right-0.h-100.px2.flex.items-center.justify-center.pointer(aria-label="Remove Editor", @click="removeEditor(editor)")
                   svg-x(style="width:1rem;height:1rem")
             //- add
             form.my1(v-if="isOwner && editors.length < 4", @submit.prevent="addEditor")
@@ -70,6 +71,7 @@ import ClvSvg from '@/components/Clv--SVG'
 import svgX from '@/components/Icons/SVG-X'
 import {mapState, mapGetters, mapActions} from 'vuex'
 import utils from 'web3-utils'
+const clone = d => JSON.parse(JSON.stringify(d))
 export default {
   name: 'Album',
   props: ['id'],
@@ -120,7 +122,7 @@ export default {
       this.edit = true
     },
     async submitNewName () {
-      let albumCopy = JSON.parse(JSON.stringify(this.album))
+      let albumCopy = clone(this.album)
       albumCopy.name = this.newName
       await this.updateAlbum(albumCopy)
       this.edit = false
@@ -140,7 +142,7 @@ export default {
       let yes = window.confirm('Are you sure you want to remove this Clover? This action cannot be undone...')
       if (yes) {
         console.log(`DELETE ${clover}`)
-        let album = JSON.parse(JSON.stringify(this.album))
+        let album = clone(this.album)
         console.log(album.clovers)
         let cloverIndex = album.clovers.indexOf(clover)
         console.log({cloverIndex})
@@ -155,10 +157,17 @@ export default {
     },
     addEditor () {
       if (this.editors.includes(this.newEditor)) return alert('Editor already added.')
-      const album = JSON.parse(JSON.stringify(this.album))
+      const album = clone(this.album)
       album.editors = album.editors || []
       album.editors.push(this.newEditor)
       this.updateAlbum(album).then(() => { this.newEditor = '' })
+    },
+    removeEditor (editor) {
+      if (editor && confirm(`Are you sure you want to remove "${editor.name}" from editors?`)) {
+        const album = clone(this.album)
+        album.editors = album.editors.filter(ed => ed !== editor.address)
+        this.updateAlbum(album)
+      }
     }
   },
   components: { svgX, Modal, ClvSvg }
