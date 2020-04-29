@@ -1043,7 +1043,7 @@ export default {
         console.log(err)
         dispatch('selfDestructMsg', {
           type: 'error',
-          msg: err.message
+          msg: err.response.data || err.message
         })
         if ('response' in err) {
           if (err.response.status === 401) {
