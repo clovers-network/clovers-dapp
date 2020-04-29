@@ -4,13 +4,13 @@
       //- title card
       .relative.mx1.px2.pt2.pb2.col-12.clover-item-border.rounded.flex.flex-column.justify-between
         h1.col-12.h2.font-exp.mt1.px1.pb2(style="min-height:4.5em") {{album.name}}
-        small.block.col-12.flex.items-center.sm-items-end.justify-between.sm-p1.pr1
-          h6
+        small.block.col-12.flex.items-end.sm-items-end.justify-between.sm-p1.pr1
+          h6.col-9
             //- span.h6.sm-h5.mr2 Editor &nbsp;&rarr;
             //- owner
-            router-link.h5.mr1.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-border-green(:to="{name: 'User', params: {addr: album.userAddress}}") {{_userName}}
+            router-link.h5.mr1.mt1.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-bg-m-green(:to="{name: 'User', params: {addr: album.userAddress}}") {{_userName}}
             //- editors
-            router-link.h5.mr1.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-border-green(v-for="editor in editors", :to="{name: 'User', params: {addr: editor}}") {{abbrvAddr(editor)}}
+            router-link.h5.mr1.mt1.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-bg-m-green(v-for="editor in album.editorsData", :to="{name: 'User', params: {addr: editor.address}}") {{editor.name}}
           h6.h5.sm-h4.flex.items-center.pt1
             | {{album.clovers && album.clovers.length}}
             img.block.ml1(src="@/assets/icons/clover-icon-1.svg", style="width:0.875em;")
@@ -43,17 +43,16 @@
             h4.h4.font-exp.lh1.mb3 Editors
             //- list
             ul.list-reset.m0
-              li.my1.relative.rounded(v-for="editor in editors")
-                router-link.block.py2.bg-lightest-green.rounded.truncate.lh2(:to="{name: 'User', params: {addr: editor}}")
-                  | {{abbrvAddr(editor)}}
+              li.my1.relative.rounded(v-for="editor in album.editorsData")
+                router-link.block.py2.bg-lightest-green.rounded.truncate.lh2.hover-bg-m-green(:to="{name: 'User', params: {addr: editor.address}}")
+                  | {{editor.name}}
                 button.absolute.top-0.right-0.h-100.px2.flex.items-center.justify-center.pointer(aria-label="Remove Editor")
                   svg-x(style="width:1rem;height:1rem")
             //- add
-            form.my1(v-if="isOwner")
+            form.my1(v-if="isOwner && editors.length < 4", @submit.prevent="addEditor")
               label.hide Add Editor
-              input.border-dashed.focus-border.py2.rounded.col-12.input.center(v-model="addEditor", name="clover-album-editor", type="text", autocomplete="off", placeholder="Add Editor")
-              button.mt3.inline-block.h4.pointer.py2.px3.rounded.bg-green.white(type="submit", :disabled="!validEditor", v-show="addEditor.length") Add
-            //- form.px2.pb3(@submit.prevent="edit")
+              input.border-dashed.focus-border.py2.rounded.col-12.input.center(v-model="newEditor", name="clover-album-editor", type="text", autocomplete="off", placeholder="Add Editor")
+              button.mt3.inline-block.h4.pointer.py2.px3.rounded.bg-green.white(type="submit", :disabled="!validEditor", v-show="newEditor.length") Add
           //- delete
           .mt4.relative.rounded.red.px2.py3(v-if="isOwner")
             .absolute.bg-red.opacity-25.overlay.rounded
@@ -78,9 +77,8 @@ export default {
     return {
       edit: false,
       newName: '',
-      editors: ['0xfa398d672936dcf428116f687244034961545d91', '0x0932b1b3bf422f406753324f424af7103525625f'],
-      editorsFull: [],
-      addEditor: ''
+      // editors: ['0xfa398d672936dcf428116f687244034961545d91', '0x0932b1b3bf422f406753324f424af7103525625f'],
+      newEditor: ''
     }
   },
   computed: {
@@ -92,6 +90,9 @@ export default {
     isOwner () {
       return this.account && this.account === this.album.userAddress
     },
+    editors () {
+      return this.album.editors || []
+    },
     isEditor () {
       return this.isOwner || this.editors.includes(this.account)
     },
@@ -99,7 +100,7 @@ export default {
       return this.album && this.userName(this.album.user)
     },
     validEditor () {
-      return utils.isAddress(this.addEditor)
+      return utils.isAddress(this.newEditor)
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -151,6 +152,13 @@ export default {
           console.log(album.clovers)
         }
       }
+    },
+    addEditor () {
+      if (this.editors.includes(this.newEditor)) return alert('Editor already added.')
+      const album = JSON.parse(JSON.stringify(this.album))
+      album.editors = album.editors || []
+      album.editors.push(this.newEditor)
+      this.updateAlbum(album).then(() => { this.newEditor = '' })
     }
   },
   components: { svgX, Modal, ClvSvg }
