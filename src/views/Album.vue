@@ -15,7 +15,7 @@
             | {{album.clovers && album.clovers.length}}
             img.block.ml1(src="@/assets/icons/clover-icon-1.svg", style="width:0.875em;")
         //- edit btn
-        button.absolute.top-0.right-0.p2.block.h4.pointer(v-if="isEditor", @click="showEdit" style="transform:scale(-1, 1)", aria-label="Edit Album") ✎
+        button.absolute.top-0.right-0.p2.block.h4.pointer(v-if="isOwner", @click="showEdit" style="transform:scale(-1, 1)", aria-label="Edit Album") ✎
     //- clovers
     section.px1.flex.flex-wrap
       //- item
