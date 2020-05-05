@@ -8,7 +8,7 @@
           h6.col-9
             //- span.h6.sm-h5.mr2 Editor &nbsp;&rarr;
             //- owner
-            router-link.h5.mr1.mt1.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-bg-m-green(:to="{name: 'User', params: {addr: album.userAddress}}") {{_userName}}
+            router-link.h5.mr1.mt1.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-bg-m-green(:to="{name: 'User', params: {addr: album.userAddress}}") {{userName(album.user)}}
             //- editors
             router-link.h5.mr1.mt1.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-bg-m-green(v-for="addr in editors", :to="{name: 'User', params: {addr: addr}}") {{editorName(addr)}}
           h6.h5.sm-h4.flex.items-center.pt1
@@ -39,7 +39,7 @@
             input.border.py2.px2.rounded.col-12.input.center(v-model="newName", name="clover-album-name", type="text", autocomplete="off", placeholder="Album Name", v-autofocus="true", required)
             button.mt3.inline-block.h4.pointer.py2.px3.rounded.bg-green.white(type="submit", :disabled="newName === album.name") Update
           //- edit editors
-          .mb3.px2.pb1
+          .mb3.px2.pb1(v-if="editorsEnabled")
             h4.h4.font-exp.lh1.mb3 Editors
             ul.list-reset.m0
               li.my1.relative.rounded(v-for="addr in editors")
@@ -52,7 +52,7 @@
             form.my1(v-if="isOwner && editors.length < 4", @submit.prevent="addEditor")
               label.hide Add Editor
               input.border-dashed.focus-border.py2.rounded.col-12.input.center(v-model="newEditor", name="clover-album-editor", type="text", autocomplete="off", placeholder="Add Editor")
-              button.mt3.inline-block.h4.pointer.py2.px3.rounded.bg-green.white(type="submit", :disabled="!validEditor", v-show="newEditor.length") Add
+              button.mt3.inline-block.h4.pointer.py2.px3.rounded.bg-green.white(type="submit", :disabled="!newEditorIsValid", v-show="newEditor.length") Add
           //- delete
           .mt4.relative.rounded.red.px2.py3(v-if="isOwner")
             .absolute.bg-red.opacity-25.overlay.rounded
@@ -97,11 +97,11 @@ export default {
     isEditor () {
       return this.isOwner || this.editors.map(ed => ed.toLowerCase()).includes(this.account)
     },
-    _userName () {
-      return this.album && this.userName(this.album.user)
-    },
-    validEditor () {
+    newEditorIsValid () {
       return utils.isAddress(this.newEditor)
+    },
+    editorsEnabled () {
+      return this.album.editorsData
     }
   },
   beforeRouteEnter (to, from, next) {
