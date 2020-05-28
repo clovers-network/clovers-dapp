@@ -2,7 +2,7 @@
   section.flex.flex-wrap.my0.mxn2
     .px1.mb2.sm-px2.sm-mb3.col-6.sm-col-4.lg-col-3(v-for="(album, i) in albums", v-if="!limit || (limit && i < limit)")
       router-link.block(:to="{name: 'Album', params: {id: album.id}}")
-        album-item-card(:album="album")
+        album-item-card(:album="album", :key="album.id")
     //- new album card-btn
     .px1.mb2.sm-px2.sm-mb3.col-6.sm-col-4.lg-col-3.flex(v-if="newBtn && (!limit || (limit && albums.length < limit))")
       button.block.pointer.col-12.rounded.bg-lightest-green.border.border-transparent.hover-border-green(@click="newAlbum = true", aria-label="Create New Album")

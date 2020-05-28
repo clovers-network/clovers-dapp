@@ -189,6 +189,10 @@ export default {
     state.currentAlbum = album
   },
 
+  ADD_FT_ALBUM (state, album) {
+    state.featuredAlbums.push(album)
+  },
+
   SET_CURRENT_CLOVER (state, clover) {
     state.currentClover = formatClover(clover)
   },

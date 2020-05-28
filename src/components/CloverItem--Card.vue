@@ -18,7 +18,7 @@
               :blank="true"
               :invert="false")
         .px2.flex.items-center.lg-pb1
-          h3.h5.lh2.sm-h6.md-h4.truncate.rounded.p1.md-px2.mx-auto(:class="{border: clover.name && clover.name !== clover.board}") {{ clover.name === clover.board ? '&nbsp;' : clover.name }}
+          h3.h5.lh2.sm-h6.md-h5.truncate.rounded.p1.md-px2.mx-auto(:class="{border: clover.name && clover.name !== clover.board}") {{ clover.name === clover.board ? '&nbsp;' : clover.name }}
 
         footer.px1.pb2.flex.items-center.nowrap
           h3.flex-auto.lh1

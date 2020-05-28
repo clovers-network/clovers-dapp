@@ -143,6 +143,7 @@
 .bg-transparent { background-color: transparent;}
 .bg-dark-gray { background-color: var(--dark-gray);}
 .bg-light-green{ background-color: var(--light-green); }
+.bg-lighter-green{ background-color: var(--lighter-green); }
 .bg-lightest-green{ background-color: var(--lightest-green); }
 .focus-light-green:focus { border-color: var(--light-green); }
 .focus-border:focus{ border-style:solid; }
@@ -171,6 +172,9 @@
   .hover-bg-l-red{
     transition: all var(--anim-timing-medium);
     &:hover, &:active { background-color: var(--lightest-red); }
+  }
+  .hover-bg-white {
+    &:hover{ background:white; }
   }
 }
 
