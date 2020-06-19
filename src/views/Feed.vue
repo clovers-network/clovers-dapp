@@ -1,5 +1,8 @@
 <template lang="pug">
   article.mx3.md-mx0.green
+
+    featured(v-if="!filters.page || filters.page === 1")
+
     header
       page-title
         h1 Feed
@@ -18,11 +21,14 @@
           option(value="Y0Sym") Sym. Horizontal
           option(value="XYSym") Sym. Diagonal Up
           option(value="XnYSym") Sym. Diagonal Down
+          option(value="multi-1") 1x Symmetries
+          option(value="multi-3") 3x Symmetries
+          option(value="multi-5") 5x Symmetries
           option(value="NonSym") Non-Symmetrical Clovers
           option(value="public") Human owned
           option(value="contract") Contract owned
           option(value="commented") With Comments
-          option(value="pending") Unverified Clovers
+          option(value="pending") Pending Clovers
           //- option(value="rft") RFT
         //- sort
         select(slot="sort", v-model='filters.sort')
@@ -46,6 +52,7 @@ import { cleanObj, concatPrice } from '@/utils'
 import CloverListCards from '@/components/CloverList--Cards'
 import PageTitle from '@/components/PageTitle'
 import PageNav from '@/components/PageNav'
+import Featured from '@/components/Featured'
 import svgX from '@/components/Icons/SVG-X'
 import FiltersNav from '@/components/FiltersNav'
 import BigNumber from 'bignumber.js'
@@ -145,8 +152,15 @@ export default {
       handler ({ filter }) {
         let q = { ...this.filters }
         cleanObj(q)
+        // handle multis
+        if (filter && filter.includes('multi')) {
+          let [f, x] = q.filter.split('-')
+          q.filter = f
+          q.x = x
+        }
         const cf = this.$route.query.filter
-        if (cf !== filter) {
+        const cx = this.$route.query.x
+        if (cf !== q.filter || cx !== q.x) {
           delete q.page
         }
         this.$router.push({ name: 'Feed', query: { ...q } })
@@ -174,7 +188,12 @@ export default {
     setFilters () {
       this.$store.commit('CLEAR_NEW_CLOVERS')
       const { query } = this.$route
-      this.filters.filter = query.filter || undefined
+      // handle multis
+      if (query.filter === 'multi') {
+        this.filters.filter = query.filter + '-' + (query.x || 1)
+      } else {
+        this.filters.filter = query.filter || undefined
+      }
       this.filters.sort = query.sort || undefined
       this.filters.page = query.page || 1
       this.filters.asc = query.asc || false
@@ -183,9 +202,15 @@ export default {
       if (this.loading) return
       this.filtersVisible = false
       this.loading = true
+      let q = { ...this.filters }
+      if (q.filter && q.filter.includes('multi')) {
+        let [f, x] = q.filter.split('-')
+        q.filter = f
+        q.x = x
+      }
       this.$store.dispatch('getPagedClovers', {
-        url: this.apiBase + '/clovers',
-        filters: this.filters
+        filters: q,
+        url: this.apiBase + '/clovers'
       }).then(() => {
         this.loading = false
       }).catch((error) => {
@@ -210,6 +235,6 @@ export default {
       this.filters.page = this.results.nextPage
     }
   },
-  components: { CloverListCards, svgX, PageTitle, PageNav, FiltersNav }
+  components: { CloverListCards, svgX, PageTitle, PageNav, FiltersNav, Featured }
 }
 </script>

@@ -26,6 +26,9 @@ export default {
   SET_ENABLED (state, enabled) {
     state.enabled = enabled
   },
+  SET_GAS_PRICE (state, price) {
+    state.gasPrice = price
+  },
   SET_ETH_PRICE (state, price) {
     state.ethPrice = price
   },
@@ -40,7 +43,7 @@ export default {
     if (orders.length && orders[0].market === 'ClubToken') {
       state.clubTokenPrice = new BigNumber(orders[0].value)
         .div(new BigNumber(orders[0].tokens))
-        .round()
+        .floor()
         .toString(10)
     }
   },
@@ -51,7 +54,7 @@ export default {
     if (order.market === 'ClubToken') {
       state.clubTokenPrice = new BigNumber(order.value)
         .div(new BigNumber(order.tokens))
-        .round()
+        .floor()
         .toString(10)
     }
   },
@@ -186,8 +189,16 @@ export default {
     state.currentAlbum = album
   },
 
+  ADD_FT_ALBUM (state, album) {
+    state.featuredAlbums.push(album)
+  },
+
   SET_CURRENT_CLOVER (state, clover) {
     state.currentClover = formatClover(clover)
+  },
+
+  SET_PAGED_USERS (state, users) {
+    state.pagedUsers = users
   },
 
   SET_USER (state, data) {

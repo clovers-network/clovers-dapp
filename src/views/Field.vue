@@ -107,8 +107,6 @@ export default {
   components: { KeepClover, FieldItem, PageTitle, CoinIcon }
 }
 </script>
-<<<<<<< HEAD
-=======
 <style lang="css" scoped>
   .arrow-up {
     overflow: hidden;
@@ -123,4 +121,3 @@ export default {
     }
   }
 </style>
->>>>>>> f7c92b89351e5719961cb945a2308c18530960ae

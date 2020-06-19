@@ -46,21 +46,22 @@
       //-       text="white"
       //-       bg="green")
       //- hr
-      h2.h2.green.font-exp Newsletter
-      img.p3(src="/img/letter.svg")
-      .px3.py2 Sign up for our newsletter or email us at #[u #[a(target="_blank" href="mailto:hello@clovers.network") hello@clovers.network]].
-      newsletter-signup
-      hr
-      h2.h2.green.font-exp Community
-      img.p3(src="/img/github.svg")
-      .px3.py2
-        | Clovers is an open source project built by #[u #[a(target="_blank" href="//bin.am") Bin Studio]].<br>
-        | You can find us on
-        | our #[u #[a(target="_blank" href="//discord.gg/tQkPbat") Discord]],
-        | our #[u #[a(target="_blank" href="//forum.clovers.network") Forum]],
-        | #[u #[a(target="_blank" href="//github.com/clovers-network") Github]],
-        | #[u #[a(target="_blank" href="//t.me/cloversnetwork") Telegram]] and
-        | our #[u #[a(target="_blank" href="//twitter.com/cloversnetwork") Twitter]].
+      section.border-top.pt3.pb4.px2#newsletter
+        h2.h2.green.font-exp.mt2 Newsletter
+        img.p3(src="/img/letter.svg")
+        .px3.py2 Sign up for our newsletter or email us at #[u #[a(target="_blank" href="mailto:hello@clovers.network") hello@clovers.network]].
+        newsletter-signup
+      section.border-top.pt3.pb4.px2
+        h2.h2.green.font-exp.mt2 Community
+        img.p3(src="/img/github.svg")
+        .px3.py2
+          | Clovers is an open source project built by #[u #[a(target="_blank" href="//bin.am") Bin Studio]].<br>
+          | You can find us on
+          | our #[u #[a(target="_blank" href="//discord.gg/tQkPbat") Discord]],
+          | our #[u #[a(target="_blank" href="//forum.clovers.network") Forum]],
+          | #[u #[a(target="_blank" href="//github.com/clovers-network") Github]],
+          | #[u #[a(target="_blank" href="//t.me/cloversnetwork") Telegram]] and
+          | our #[u #[a(target="_blank" href="//twitter.com/cloversnetwork") Twitter]].
 </template>
 
 <script>

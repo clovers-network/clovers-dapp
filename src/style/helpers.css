@@ -143,12 +143,14 @@
 .bg-transparent { background-color: transparent;}
 .bg-dark-gray { background-color: var(--dark-gray);}
 .bg-light-green{ background-color: var(--light-green); }
+.bg-lighter-green{ background-color: var(--lighter-green); }
 .bg-lightest-green{ background-color: var(--lightest-green); }
 .focus-light-green:focus { border-color: var(--light-green); }
 .focus-border:focus{ border-style:solid; }
 .bg-current-color{background-color: currentColor;}
 .bg-green { background-color: var(--green); }
 .bg-white { background-color: white; }
+.bg-white-a70{ background-color: rgba(255, 255, 255, .7); }
 .bg-dots-white{
   background-image: url("data:image/svg+xml,%3Csvg width='8' height='8' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'%3E%3Ccircle cx='4' cy='4' r='3'/%3E%3Ccircle cx='14' cy='14' r='3'/%3E%3C/g%3E%3C/svg%3E");
   border-color: 'white';
@@ -170,6 +172,9 @@
   .hover-bg-l-red{
     transition: all var(--anim-timing-medium);
     &:hover, &:active { background-color: var(--lightest-red); }
+  }
+  .hover-bg-white {
+    &:hover{ background:white; }
   }
 }
 

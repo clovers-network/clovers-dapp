@@ -129,6 +129,12 @@ export default {
     if (priceResp.status === 200) {
       commit('SET_ETH_PRICE', priceResp.data.USD)
     }
+    let priceGasResp = await axios.get(
+      'https://ethgasstation.info/json/ethgasAPI.json'
+    )
+    if (priceGasResp.status === 200) {
+      commit('SET_GAS_PRICE', priceGasResp.data.fast / 10)
+    }
     setTimeout(() => {
       dispatch('pollEthPrice')
     }, 60 * 1000 * 5)
@@ -262,10 +268,10 @@ export default {
     commit('SET_BASE_PRICE', basePrice)
   },
   async updateStakeAmount ({ commit }) {
-    let stakeAmount = await contracts.CloversController.instance.methods
-      .stakeAmount()
-      .call()
-    commit('SET_STAKE_AMOUNT', stakeAmount)
+    // let stakeAmount = await contracts.CloversController.instance.methods
+    //   .stakeAmount()
+    //   .call()
+    // commit('SET_STAKE_AMOUNT', stakeAmount)
   },
   clearOrders ({ commit }) {
     commit('SET_ORDERS', [])
@@ -285,6 +291,18 @@ export default {
   //   user.ens = ensName === undefined ? false : ensName
   //   commit('UPDATE_USER', user)
   // },
+
+  async getUsers ({ getters, commit }, filters) {
+    return axios.get(getters.baseURL('/users'), {
+      params: { ...filters }
+    }).then(({ data }) => commit('SET_PAGED_USERS', data))
+      .catch((err) => {
+        if (err.response && err.response.data) {
+          commit('SET_PAGED_USERS', err.response.data)
+        }
+      })
+  },
+
   async changeUsername ({ commit, getters, dispatch }, { address, name, image }) {
     if (!address) return
     return axios
@@ -322,7 +340,7 @@ export default {
   async getReward ({ dispatch }, _symmetries) {
     await dispatch('getNetwork')
     let val = await contracts.CloversController.instance.methods
-      .calculateReward(_symmetries.toString(16))
+      .calculateReward('0x' + _symmetries.toString(16))
       .call()
     return val
   },
@@ -746,7 +764,7 @@ export default {
         from: state.account
       })
   },
-  async buy ({ dispatch, state, commit }, clover) {
+  async buy ({ getters, dispatch, state, commit }, clover) {
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
 
     // if clover exists it must be in SimpleCloversMarket
@@ -785,10 +803,10 @@ export default {
         })
     } else {
       // claim clover w option _keep = true
-      return claimClover({ keep: true, clover, account: state.account })
+      return claimClover({ getters, keep: true, clover, account: state.account })
     }
   },
-  async sell ({ state, dispatch, commit }, { clover, price }) {
+  async sell ({ getters, state, dispatch, commit }, { clover, price }) {
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
 
     // if clover exists it must be in SimpleCloversMarket
@@ -822,7 +840,7 @@ export default {
       }
     } else {
       // claim clover w option _keep = false
-      return claimClover({ keep: false, clover, account: state.account })
+      return claimClover({ getters, keep: false, clover, account: state.account })
     }
   },
   async makeCloverRFT ({ state, dispatch }, { board, investmentInWei = 0 }) {
@@ -887,7 +905,15 @@ export default {
 
   // ALBUMS
 
-  getAllAlbums ({ getters, commit, dispatch }) {
+  getAllAlbums ({ getters, commit, dispatch }, clover) {
+    if (clover) {
+      return axios.get(getters.baseURL('/albums'), {
+        params: { clover }
+      }).then(({ data }) => {
+        commit('SET_ALL_ALBUMS', data)
+        return data
+      })
+    }
     return axios.get(getters.baseURL('/albums/list/all'))
       .then((results) => {
         // console.log({results})
@@ -909,6 +935,23 @@ export default {
           commit('SET_PAGED_ALBUMS', err.response.data)
         }
       })
+  },
+
+  getUserAlbums ({ getters, state }) {
+    if (!state.account) return
+    return axios.get(getters.baseURL(`/users/${state.account}/albums`))
+      .then(({ data }) => {
+        return data
+      }).catch(console.error)
+  },
+
+  searchAlbums ({ getters }, term) {
+    if (!term) return
+    return axios.get(getters.baseURL('/albums'), {
+      params: { s: term }
+    }).then(({ data }) => {
+      return data
+    })
   },
 
   async deleteAlbum ({dispatch, commit, getters}, albumId) {
@@ -946,7 +989,9 @@ export default {
       return Promise.reject(new Error('Missing album'))
     }
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
-    return axios.post(getters.baseURL('/albums'), {albumName: album.name, clovers: album.clovers}, {
+    return axios.post(getters.baseURL('/albums'), {
+      albumName: album.name, clovers: album.clovers
+    }, {
       headers: {
         Authorization: getters.authHeader
       }
@@ -959,16 +1004,17 @@ export default {
         })
         dispatch('getAllAlbums')
       })
-      .catch(err => {
-        dispatch('selfDestructMsg', {
-          type: 'error',
-          msg: err.message
-        })
+      .catch((err) => {
+        // dispatch('selfDestructMsg', {
+        //   type: 'error',
+        //   msg: err.message
+        // })
         if ('response' in err) {
           if (err.response.status === 401) {
             commit('SIGN_OUT')
           }
         }
+        throw err
       })
   },
 
@@ -1023,7 +1069,19 @@ export default {
       .then(({data}) => {
         if (!data) throw new Error('404')
         commit('SET_CURRENT_ALBUM', data)
+        return data
       }).catch(console.error)
+  },
+
+  // SEARCH
+
+  search ({ getters }, term) {
+    if (!term) return
+    return axios.get(getters.baseURL('/search'), {
+      params: { s: term }
+    }).then(({ data }) => {
+      return data
+    })
   }
 }
 
@@ -1113,17 +1171,17 @@ function getBuy (spendAmount, supply, balance, rr) {
   return result
 }
 
-async function claimClover ({ keep, account, clover }) {
+async function claimClover ({ getters, keep, account, clover }) {
   let reversi = new Reversi()
   reversi.playGameMovesString(clover.movesString)
   let moves = reversi.returnByteMoves().map(m => '0x' + padRight(m, 56))
-  let _tokenId = clover.board
-  let _symmetries = reversi.returnSymmetriesAsBN()
-  let _keep = keep
+  let tokenId = clover.board
+  let symmetries = reversi.returnSymmetriesAsBN().toString(10)
   let from = account
   let value = new BigNumber('0')
+
   if (keep) {
-    let mintPrice = await getMintPrice({ _symmetries })
+    let mintPrice = await getMintPrice({ symmetries })
     let balance = await contracts.ClubToken.instance.methods
       .balanceOf(account)
       .call()
@@ -1136,24 +1194,35 @@ async function claimClover ({ keep, account, clover }) {
       )
     }
   }
-  let stakeAmount = await contracts.CloversController.instance.methods
-    .stakeAmount()
-    .call()
-  value = new BigNumber(value)
-
-  value = value.plus(stakeAmount)
-  return contracts.CloversController.instance.methods
-    .claimClover(moves, _tokenId, _symmetries.toString(10), _keep)
-    .send({ from, value: value.toFixed() })
+  let signature
+  try {
+    let {data} = await axios.post(getters.baseURL(`/clovers/verify`), {
+      moves, tokenId, symmetries, keep, recepient: from
+    })
+    signature = data
+  } catch (error) {
+    throw error
+  }
+  try {
+    value = new BigNumber(value)
+    return contracts.CloversController.instance.methods
+      .claimCloverWithSignature(tokenId, moves, symmetries.toString(10), keep, signature)
+      .send({ from, value: value.toFixed() })
+  } catch (error) {
+    throw error
+  }
 }
 
-async function getMintPrice ({ _symmetries }) {
+async function getMintPrice ({ symmetries }) {
+  if (typeof symmetries === 'string') {
+    symmetries = new BigNumber(symmetries)
+  }
   let reward
-  if (_symmetries.eq(0)) {
+  if (symmetries.eq(0)) {
     reward = '0'
   } else {
     reward = await contracts.CloversController.instance.methods
-      .calculateReward(_symmetries.toString(10))
+      .calculateReward(symmetries.toString(10))
       .call()
   }
 

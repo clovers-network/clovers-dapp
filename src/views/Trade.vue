@@ -15,9 +15,9 @@
     section
       .flex.flex-column
         //- chart
-        .col-12.relative
+        .col-12.relative(@click="switchMax")
           //- span.block.absolute.left-0.top-0.p2.h6 Price Graph in {{collateral}} per <span v-html="currentToken" />
-          //- span.block.absolute.right-0.top-0.p2.h6.pointer(@click="switchMax") Last {{paddedOrders.length}} trades
+          span.block.absolute.right-0.top-0.p2.h6.pointer Last {{paddedOrders.length}} trades
           chart.border-bottom(:market="market", :orders="paddedOrders")
         //- details
         .col-12.md-p2.rounded-bottom.border-left.border-right.border-bottom.flex.flex-wrap.justify-around.green.center.pointer(@click="swapCurrency", :class="{'flex-order_-1': isRFT}")
@@ -96,7 +96,7 @@ export default {
   },
   data () {
     return {
-      max: 250,
+      max: 10000,
       view: 'buy',
       buy: '1',
       clubReceive: '1',
@@ -172,7 +172,7 @@ export default {
     },
     totalSupply () {
       return new BigNumber(
-        utils.fromWei(this.totalSupplyWei.round().toString(10))
+        utils.fromWei(this.totalSupplyWei.floor().toString(10))
       )
     },
     marketCapInCollateralWei () {
@@ -180,7 +180,7 @@ export default {
     },
     marketCapInCollateral () {
       return new BigNumber(
-        utils.fromWei(this.marketCapInCollateralWei.round().toString(10))
+        utils.fromWei(this.marketCapInCollateralWei.floor().toString(10))
       )
     },
     marketCapInUSD () {
@@ -201,7 +201,9 @@ export default {
       let len = this.orders.length
       if (len <= 10) return false
       else if (this.max === 10 && len >= 10) this.max = 100
-      else if (this.max === 100 && len >= 100) this.max = 1000
+      else if (this.max === 100 && len >= 100) this.max = 500
+      else if (this.max === 500 && len >= 500) this.max = 1000
+      else if (this.max === 1000 && len >= 1000) this.max = 10000
       else this.max = 10
     },
     checkPrice (amount = '1') {

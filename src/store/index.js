@@ -5,7 +5,6 @@ import utils from 'web3-utils'
 import actions from './actions'
 import getters from './getters'
 import mutations from './mutations'
-import demoAlbums from '@/demo-albums'
 
 import Reversi from 'clovers-reversi'
 import BigNumber from 'bignumber.js'
@@ -18,9 +17,6 @@ Vue.use(Vuex)
 const debug = false
 
 const state = {
-  // demo !!
-  albums: demoAlbums,
-
   web3Enabled: false,
   // stored signin tokens
   tokens: getTokens(),
@@ -32,6 +28,7 @@ const state = {
   allAlbums: [],
   pagedAlbums: [],
   currentAlbum: {},
+  featuredAlbums: [],
 
   // web3 stuff
   enabled: false,
@@ -54,25 +51,26 @@ const state = {
   currentPage: {},
   currentClover: {},
   otherUser: null,
-  baseCloverFee: '2',
 
   // use getter 'picks' in views
   allSavedClovers: getSavedClovers(),
 
   // orders
+  gasPrice: null,
   ethPrice: '0',
   clubTokenPrice: '0',
   market: null,
   orders: [],
 
   // allUsers: [],
+  pagedUsers: [],
 
   // new log items from socket
   logs: [],
 
   messages: [],
   submittingBoards: [],
-  basePrice: utils.toWei('0.001'),
+  basePrice: utils.toWei('3'),
   stakeAmount: new BigNumber(96842)
     .mul(1000000000)
     .mul(40)

@@ -1,5 +1,5 @@
 <template lang="pug">
-  .h5.sm-h4.p2(:class='isMyLog')
+  .h5.sm-h4.p2.rounded(:class='isMyLog')
     .flex.justify-start.items-center(:class="{'opacity-50': isBurned(item)}")
       //- Block No.
       .font-mono.opacity-50.h6.xs-hide(:class='{mr3: noImg}') \#{{ item.blockNumber }}
@@ -123,7 +123,7 @@ export default {
   computed: {
     isMyLog () {
       const me = this.$store.state.account
-      const u = this.item.data.userAddress || this.item.userAddress
+      const u = this.item.data.userAddress || this.item.data._to || this.item.data.owner || this.item.data.buyer || this.item.userAddress
       const isMine = me && u && (me.toLowerCase() === u.toLowerCase())
       return !isMine ? '' : 'bg-lightest-green'
     },
