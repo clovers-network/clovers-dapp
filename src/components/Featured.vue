@@ -3,7 +3,7 @@
     header.col-12.md-col-3.px1.md-px2.pb2
       h3.h2.md-h3.font-exp Spotlight&nbsp;✨
       //- album-list-cards.mt2(v-if="albums.length", :albums="albums")
-    router-link.block.my1.col-6.sm-col-4.md-col-3.px1.sm-px2(v-for="(albm, i) in albums", :to="{name: 'Album', params: {id: albm.id}}", :class="{'hidden sm-block': i > 1}")
+    router-link.block.my1.col-6.sm-col-4.md-col-3.px1.sm-px2(v-for="(albm, i) in albums", :to="{name: 'Album', params: {id: albm.id}}", :key="albm", :class="{'hidden sm-block': i > 1}")
       album-item-card(:album="albm")
 </template>
 
@@ -33,7 +33,7 @@ export default {
     }
   },
   created () {
-    this.fetchAlbums()
+    // this.fetchAlbums()
   },
   components: { AlbumListCards, AlbumItemCard }
 }
