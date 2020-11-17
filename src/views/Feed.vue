@@ -6,7 +6,7 @@
     header
       page-title
         h1 Feed
-        p(slot="info") <b>The Feed</b> is where all registerd clovers can be found.<br> You can filter by symmetry, clovers for sale or with comments, as well as sort by price or date.
+        p(slot="info") <b>The Feed</b> is where all registered clovers can be found.<br> You can filter by symmetry, clovers for sale or with comments, as well as sort by price or date.
 
     section
       //- filters
