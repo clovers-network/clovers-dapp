@@ -1044,7 +1044,7 @@ export default {
         }
         dispatch('selfDestructMsg', {
           type: 'success',
-          msg: 'Album details updated'
+          msg: 'Album updated'
         })
       })
       .catch(err => {
