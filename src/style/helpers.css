@@ -168,7 +168,11 @@
   .hover-bg-l-green {
     transition: all var(--anim-timing-medium);
     &:hover, &:active { background-color: var(--lightest-green); }
-  }  
+  }
+  .hover-bg-m-green {
+    transition: all var(--anim-timing-medium);
+    &:hover, &:active { background-color: var(--lighter-green); }
+  }
   .hover-bg-l-red{
     transition: all var(--anim-timing-medium);
     &:hover, &:active { background-color: var(--lightest-red); }

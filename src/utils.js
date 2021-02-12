@@ -80,7 +80,7 @@ export function cloverIsMonochrome (clover) {
 }
 
 export function abbrvAddr (addr) {
-  return addr.substr(0, 6) + '..' + addr.slice(-4)
+  return addr.substr(0, 6) + '...' + addr.slice(-4)
 }
 
 export function cleanObj (o) {

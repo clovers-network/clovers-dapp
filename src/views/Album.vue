@@ -4,15 +4,18 @@
       //- title card
       .relative.mx1.px2.pt2.pb2.col-12.clover-item-border.rounded.flex.flex-column.justify-between
         h1.col-12.h2.font-exp.mt1.px1.pb2(style="min-height:4.5em") {{album.name}}
-        small.block.col-12.flex.items-center.sm-items-end.justify-between.sm-p1.pr1
-          h6
-            router-link.h5.mr2.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-border-green(:to="{name: 'User', params: {addr: album.userAddress}}") {{_userName}}
-            span.h6.sm-h5 &larr;&nbsp; Editor
+        small.block.col-12.flex.items-end.sm-items-end.justify-between.sm-p1.pr1
+          h6.col-9
+            //- span.h6.sm-h5.mr2 Editor &nbsp;&rarr;
+            //- owner
+            router-link.h5.mr1.mt1.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-bg-m-green(:to="{name: 'User', params: {addr: album.userAddress}}") {{userName(album.user)}}
+            //- editors
+            router-link.h5.mr1.mt1.inline-block.px2.py1.bg-lightest-green.rounded.border.border-transparent.hover-bg-m-green(v-for="addr in editors", :to="{name: 'User', params: {addr: addr}}") {{editorName(addr)}}
           h6.h5.sm-h4.flex.items-center.pt1
             | {{album.clovers && album.clovers.length}}
             img.block.ml1(src="@/assets/icons/clover-icon-1.svg", style="width:0.875em;")
         //- edit btn
-        button.absolute.top-0.right-0.p2.block.h4.pointer(v-if="isEditor", @click="showEdit" style="transform:scale(-1, 1)", aria-label="Edit Album") ✎
+        button.absolute.top-0.right-0.p2.block.h4.pointer(v-if="isOwner", @click="showEdit" style="transform:scale(-1, 1)", aria-label="Edit Album") ✎
     //- clovers
     section.px1.flex.flex-wrap
       //- item
@@ -21,43 +24,62 @@
         article.album__clover.block.pb-100.relative.border-transparent.border-dashed.hover-border-green.hover-shadow.trans-quick.rounded
           router-link.absolute.overlay.flex.items-center.justify-center(:to="{name: 'Clover', params: {board: clover}}")
             clv-svg.col-8.sm-col-9(:byteBoard="clover", :size="196")
-          //- TODO show for owner !!
+          //- rmv clover btn
           button.absolute.top-0.right-0.m1.border.rounded-full.bg-lightest-green.pointer.trans-quick.opacity-50(style="padding:0.4rem", v-if="isEditor" @click="removeClover(clover)")
             svg-x(style="width:0.6rem;height:0.6rem")
 
     //- modal: edit album
     transition(name="fade")
       modal.green(v-show="edit", @close="edit = false", :cancel="true")
-        .pt4.px3.pb3
+        .pt4.px3.pb3.center
           h3.hide Edit Album
           //- edit name
-          form.px2.pb3.center(@submit.prevent="submitNewName")
-            label.block.mb3.h4.font-exp.lh1 Edit Name
-            input.center.border.py2.px2.rounded.col-12.input(v-model="newName", name="clover-album-name", type="text", autocomplete="off", placeholder="Album Name", v-autofocus="true", required)
-            button.mt3.inline-block.font-ext.pointer.py2.px3.rounded.bg-green.white(type="submit", :disabled="newName === album.name") Update
+          form.px2.mb4(@submit.prevent="submitNewName")
+            label.block.mb3.h4.font-exp.lh1 Album Name
+            input.border.py2.px2.rounded.col-12.input.center(v-model="newName", name="clover-album-name", type="text", autocomplete="off", placeholder="Album Name", v-autofocus="true", required)
+            button.mt3.inline-block.h4.pointer.py2.px3.rounded.bg-green.white(type="submit", :disabled="newName === album.name") Update
+          //- edit editors
+          .mb3.px2.pb1(v-if="editorsEnabled")
+            h4.h4.font-exp.lh1.mb3 Editors
+            ul.list-reset.m0
+              li.my1.relative.rounded(v-for="addr in editors")
+                router-link.block.py2.bg-lightest-green.rounded.truncate.lh2.hover-bg-m-green(:to="{name: 'User', params: {addr: addr}}")
+                  | {{editorName(addr)}}
+                //- rmv editor btn
+                button.absolute.top-0.right-0.h-100.px2.flex.items-center.justify-center.pointer(aria-label="Remove Editor", @click="removeEditor(addr)")
+                  svg-x(style="width:1rem;height:1rem")
+            //- add
+            form.my1(v-if="isOwner && editors.length < 4", @submit.prevent="addEditor")
+              label.hide Add Editor
+              input.border-dashed.focus-border.py2.rounded.col-12.input.center(v-model="newEditor", name="clover-album-editor", type="text", autocomplete="off", placeholder="Add Editor")
+              button.mt3.inline-block.h4.pointer.py2.px3.rounded.bg-green.white(type="submit", :disabled="!newEditorIsValid", v-show="newEditor.length") Add
           //- delete
-          .mt4.relative.rounded.red.px2.py3.center
+          .mt4.relative.rounded.red.px2.py3(v-if="isOwner")
             .absolute.bg-red.opacity-25.overlay.rounded
-            .relative.z1.center
+            .relative.z1
               //- .h4.h4.mb2.font-exp Delete Album
-              button.inline-block.font-ext.pointer.py2.px3.rounded.bg-red.white(@click="_deleteAlbum") Delete Album
+              button.inline-block.h4.pointer.py2.px3.rounded.bg-red.white(@click="_deleteAlbum") Delete Album
 
 </template>
 
 <script>
 import store from '@/store'
-import { cloverImage } from '@/utils'
+import { cloverImage, abbrvAddr } from '@/utils'
 import Modal from '@/components/Modals/Modal'
 import ClvSvg from '@/components/Clv--SVG'
 import svgX from '@/components/Icons/SVG-X'
 import {mapState, mapGetters, mapActions} from 'vuex'
+import utils from 'web3-utils'
+const clone = d => JSON.parse(JSON.stringify(d))
 export default {
   name: 'Album',
   props: ['id'],
   data () {
     return {
       edit: false,
-      newName: ''
+      newName: '',
+      newEditor: ''
+      // testers: ['0xfa398d672936dcf428116f687244034961545d91', '0x0932b1b3bf422f406753324f424af7103525625f', '0x84ecb387395a1be65e133c75ff9e5fcc6f756db3', '0x45e25795a72881a4d80c59b5c60120655215a053', '0x2f261a227480b7d1802433d05a92a27bab645032'],
     }
   },
   computed: {
@@ -66,11 +88,20 @@ export default {
     album () {
       return this.$store.state.currentAlbum
     },
-    isEditor () {
+    isOwner () {
       return this.account && this.account === this.album.userAddress
     },
-    _userName () {
-      return this.album && this.userName(this.album.user)
+    editors () {
+      return this.album.editors || []
+    },
+    isEditor () {
+      return this.isOwner || this.editors.map(ed => ed.toLowerCase()).includes(this.account)
+    },
+    newEditorIsValid () {
+      return utils.isAddress(this.newEditor)
+    },
+    editorsEnabled () {
+      return this.album.editorsData
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -84,12 +115,13 @@ export default {
   methods: {
     ...mapActions(['updateAlbum', 'deleteAlbum']),
     cloverImage,
+    abbrvAddr,
     showEdit () {
       this.newName = this.album.name
       this.edit = true
     },
     async submitNewName () {
-      let albumCopy = JSON.parse(JSON.stringify(this.album))
+      let albumCopy = clone(this.album)
       albumCopy.name = this.newName
       await this.updateAlbum(albumCopy)
       this.edit = false
@@ -109,18 +141,37 @@ export default {
       let yes = window.confirm('Are you sure you want to remove this Clover? This action cannot be undone...')
       if (yes) {
         console.log(`DELETE ${clover}`)
-        let album = JSON.parse(JSON.stringify(this.album))
+        let album = clone(this.album)
         console.log(album.clovers)
         let cloverIndex = album.clovers.indexOf(clover)
         console.log({cloverIndex})
         if (cloverIndex > -1) {
           album.clovers.splice(cloverIndex, 1)
+          console.log(album)
           this.updateAlbum(album)
         } else {
           console.error(`couldn't find clover ${clover} in album`)
           console.log(album.clovers)
         }
       }
+    },
+    addEditor () {
+      if (this.editors.includes(this.newEditor)) return alert('Editor already added.')
+      const album = clone(this.album)
+      album.editors = album.editors || []
+      album.editors.push(this.newEditor)
+      this.updateAlbum(album).then(() => { this.newEditor = '' })
+    },
+    removeEditor (addr) {
+      if (addr && confirm(`Are you sure you want to remove "${this.editorName(addr)}" from editors?`)) {
+        const album = clone(this.album)
+        album.editors = album.editors.filter(ed => ed !== addr)
+        this.updateAlbum(album)
+      }
+    },
+    editorName (addr) {
+      const data = (this.album.editorsData || []).find(ed => addr === ed.address)
+      return (data && data.name) || abbrvAddr(addr)
     }
   },
   components: { svgX, Modal, ClvSvg }

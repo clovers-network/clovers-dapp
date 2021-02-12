@@ -1023,35 +1023,27 @@ export default {
       return Promise.reject(new Error('Missing album'))
     }
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
-    return axios.put(getters.baseURL('/albums/' + album.id), {albumName: album.name, clovers: album.clovers}, {
+    return axios.put(getters.baseURL('/albums/' + album.id), {albumName: album.name, ...album}, {
       headers: {
         Authorization: getters.authHeader
       }
     })
       .then(({data}) => {
         if (!data) throw new Error('404')
-        let setAlbum
+        // update current ?
         if (state.currentAlbum && state.currentAlbum.id === album.id) {
-          setAlbum = JSON.parse(JSON.stringify(state.currentAlbum))
-        } else {
-          setAlbum = state.allAlbums.find(a => a.id === album.id)
-        }
-        if (setAlbum) {
-          setAlbum.name = data.name
-          setAlbum.clovers = data.clovers
-          setAlbum.modified = data.modified
-          commit('SET_CURRENT_ALBUM', setAlbum)
+          commit('SET_CURRENT_ALBUM', data)
         }
         dispatch('selfDestructMsg', {
           type: 'success',
-          msg: 'Album details updated'
+          msg: 'Album updated'
         })
       })
       .catch(err => {
         console.log(err)
         dispatch('selfDestructMsg', {
           type: 'error',
-          msg: err.message
+          msg: err.response.data || err.message
         })
         if ('response' in err) {
           if (err.response.status === 401) {
