@@ -15,7 +15,7 @@ import BN from 'bignumber.js'
 import Clv from '@/components/Clv'
 // import CloverGridItem from '@/components/CloverGridItem'
 
-import Web3Connect from 'web3connect'
+import Web3Modal from 'web3modal'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import Portis from '@portis/web3'
 import Fortmatic from 'fortmatic'
@@ -36,7 +36,7 @@ if (global.ethereum) {
 }
 global.ens = new ENS(global.web3.currentProvider)
 console.log(process.env.VUE_APP_INFURA_API_KEY)
-global.web3Connect = new Web3Connect.Core({
+global.web3Modal = new Web3Modal({
   network: networks[store.state.correctNetwork],
   providerOptions: {
     walletconnect: {
@@ -59,9 +59,11 @@ global.web3Connect = new Web3Connect.Core({
     }
   }
 })
+global.web3Modal.clearCachedProvider()
 
 // subscibe to connect
-global.web3Connect.on('connect', (provider) => {
+global.web3Modal.on('connect', (provider) => {
+  console.log('modal connected')
   global.web3 = new Web3(provider) // add provider to web3
   store.commit('UPDATE_WEB3', true)
   global.ens = new ENS(global.web3.currentProvider)
@@ -69,7 +71,7 @@ global.web3Connect.on('connect', (provider) => {
 })
 
 // subscibe to close
-// global.web3Connect.on('close', () => {})
+// global.web3Modal.on('close', () => {})
 
 router.beforeEach((to, from, next) => {
   to.meta.fromName = from.name

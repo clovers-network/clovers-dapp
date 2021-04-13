@@ -17,9 +17,9 @@
       div
         router-link.block.md-inline.p2.md-p0.border-bottom.md-border-none(:to="{name: 'Learn'}", @click.native="closeAccountMenu") Tutorial
       div
-        a.block.md-inline.p2.md-p0.border-bottom.md-border-none(href="//forum.clovers.network/t/frequently-asked-questions-faq/", @click.native="closeAccountMenu") FAQ
+        a.block.md-inline.p2.md-p0.border-bottom.md-border-none(href="//forum.clovers.network/t/frequently-asked-questions-faq/", @click="closeAccountMenu") FAQ
       div
-        a.block.md-inline.p2.md-p0(href="mailto:hello@clovers.network", target="_blank" @click.native="closeAccountMenu") Contact
+        a.block.md-inline.p2.md-p0(href="mailto:hello@clovers.network", target="_blank" @click="closeAccountMenu") Contact
     .md-hidden.border-top(v-if="authHeader")
       button.block.col-12.p2.center.bg-lightest-green(@click="signClick") Sign Out
 </template>
@@ -27,7 +27,7 @@
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex'
 export default {
-  name: 'AcountMenu',
+  name: 'AccountMenu',
   props: ['visible'],
   data () {
     return {

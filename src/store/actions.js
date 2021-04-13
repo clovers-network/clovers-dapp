@@ -495,7 +495,7 @@ export default {
   },
   async experimentalSignIn ({ state, commit, dispatch }) {
     if (!state.web3Enabled) {
-      global.web3Connect.toggleModal() // open modal on button click
+      global.web3Modal.toggleModal() // open modal on button click
     } else {
       if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
       const { account } = state
@@ -539,8 +539,10 @@ export default {
     }
   },
   async signIn ({state, dispatch, commit}, account) {
+    console.log('signIn')
     if (!state.web3Enabled) {
-      global.web3Connect.toggleModal() // open modal on button click
+      console.log('toggleModal')
+      global.web3Modal.toggleModal() // open modal on button click
     } else {
       return new Promise(async (resolve, reject) => {
         if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')

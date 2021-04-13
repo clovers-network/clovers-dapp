@@ -60,7 +60,7 @@
               span.h6.sm-h5.lh1.block {{prettyUserBalance}}
             //- bnt: account
             .relative
-              button#personToggle.h-nav-btn.h6.sm-h5.pl2.pr1.flex.items-center.pointer.border-left(@click="accountMenuToggle", aria-label="View Account Menu")
+              button#personToggle.h-nav-btn.h6.sm-h5.pl2.pr1.flex.items-center.pointer.border-left(@click.stop="accountMenuToggle", aria-label="View Account Menu")
                 person-icon(:class="!authHeader && 'red'")
                 .chevron
           //- dropdown: pig
@@ -180,7 +180,6 @@ export default {
       this.showMenu = !this.showMenu
     },
     closeAccountMenu () {
-      console.log('close Account menu in big menu')
       if (this.accountMenu) this.accountMenu = false
     },
     closePigMenu () {
