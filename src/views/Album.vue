@@ -50,7 +50,7 @@ import { cloverImage } from '@/utils'
 import Modal from '@/components/Modals/Modal'
 import ClvSvg from '@/components/Clv--SVG'
 import svgX from '@/components/Icons/SVG-X'
-import {mapState, mapGetters, mapActions} from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 export default {
   name: 'Album',
   props: ['id'],
@@ -112,7 +112,7 @@ export default {
         let album = JSON.parse(JSON.stringify(this.album))
         console.log(album.clovers)
         let cloverIndex = album.clovers.indexOf(clover)
-        console.log({cloverIndex})
+        console.log({ cloverIndex })
         if (cloverIndex > -1) {
           album.clovers.splice(cloverIndex, 1)
           this.updateAlbum(album)

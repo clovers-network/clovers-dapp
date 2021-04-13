@@ -23,7 +23,7 @@
 
 <script>
 import Modal from './Modal'
-import {mapState, mapActions} from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import debounce from 'debounce'
 
 export default {
@@ -88,7 +88,7 @@ export default {
       if (this.select === null && !this.couldCreate) return
       let album
       if (this.couldCreate && this.select == null) {
-        album = {name: this.query, clovers: []}
+        album = { name: this.query, clovers: [] }
       } else {
         if (this.hasQuery) {
           album = JSON.parse(JSON.stringify(this.albums[this.select]))

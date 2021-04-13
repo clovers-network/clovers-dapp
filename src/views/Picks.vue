@@ -131,7 +131,7 @@ export default {
       const confirm = window.confirm('Are you sure you want to discard ALL the selected clovers in your Basket? This action cannot be undone...')
       if (confirm) {
         this.bulkEdit.forEach(board => {
-          this.removeClover({board})
+          this.removeClover({ board })
         })
       }
       this.deselectAll()
@@ -179,7 +179,7 @@ export default {
       let i = this.picks.findIndex(pick => pick.movesString === this.showPickModal)
       i = i + dir === this.picks.length ? 0 : i + dir < 0 ? this.picks.length - 1 : i + dir
       const nextMvs = this.picks[i] && this.picks[i].movesString
-      return nextMvs && this.$router.push({query: {pick: nextMvs}})
+      return nextMvs && this.$router.push({ query: { pick: nextMvs } })
     },
     foundBulkClass (clover) {
       let found = this.alreadyFoundClovers.indexOf(clover.board) > -1
@@ -193,7 +193,7 @@ export default {
     },
     removeRegistered () {
       this.alreadyFoundClovers.forEach((board) => {
-        this.removeClover({board})
+        this.removeClover({ board })
       })
       this.alreadyFoundClovers = []
     },

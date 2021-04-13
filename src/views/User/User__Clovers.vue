@@ -25,7 +25,7 @@ import CloverListCards from '@/components/CloverList--Cards'
 import FiltersNav from '@/components/FiltersNav'
 import PageNav from '@/components/PageNav'
 import { cleanObj, concatPrice } from '@/utils'
-import {mapGetters} from 'vuex'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'User__Clovers',

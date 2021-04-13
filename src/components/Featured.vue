@@ -19,7 +19,7 @@ export default {
     }
   },
   computed: {
-    ...mapState({albums: 'featuredAlbums'})
+    ...mapState({ albums: 'featuredAlbums' })
   },
   methods: {
     fetchAlbums () {

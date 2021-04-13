@@ -284,7 +284,7 @@ export default {
     prettyBigNumber,
     copyMoves () {
       copy(this.cloverMovesString)
-      this.selfDestructMsg({msg: 'Clover moves copies', type: 'success'})
+      this.selfDestructMsg({ msg: 'Clover moves copies', type: 'success' })
     },
     async makeRFT () {
       if (this.loading) return

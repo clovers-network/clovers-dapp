@@ -13,7 +13,7 @@
 <script>
 import GasIcon from '@/components/Icons/GasIcon'
 import MoreInformation from '@/components/MoreInformation'
-import {mapState} from 'vuex'
+import { mapState } from 'vuex'
 export default {
   name: 'GasStation',
   data () {
