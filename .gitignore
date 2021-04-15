@@ -2,8 +2,8 @@
 node_modules
 /dist
 
-yarn-lock.json
-# package-lock.json
+# yarn-lock.json
+package-lock.json
 
 /tests/e2e/videos/
 /tests/e2e/screenshots/
