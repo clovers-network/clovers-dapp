@@ -328,7 +328,7 @@ export default {
           msg: err.message
         })
         if ('response' in err) {
-          console.log({err})
+          console.log({ err })
           if (err.response && err.response.status === 401) {
             commit('SIGN_OUT')
           } else {
@@ -401,7 +401,7 @@ export default {
     }
     return msg.id
   },
-  async cloverExists ({getters}, byteBoard) {
+  async cloverExists ({ getters }, byteBoard) {
     // let exists = await contracts.Clovers.instance.methods.exists(byteBoard).call()
     return axios.get(getters.baseURL(`/clovers/${byteBoard}`)).then(() => true).catch(() => false)
   },
@@ -440,7 +440,7 @@ export default {
       }).catch(console.error)
   },
 
-  getComments ({getters}, { board, params }) {
+  getComments ({ getters }, { board, params }) {
     if (!board) {
       return Promise.reject(new Error('Missing parameter: `board` (address)'))
     }
@@ -538,7 +538,7 @@ export default {
       )
     }
   },
-  async signIn ({state, dispatch, commit}, account) {
+  async signIn ({ state, dispatch, commit }, account) {
     if (!state.web3Enabled) {
       global.web3Connect.toggleModal() // open modal on button click
     } else {
@@ -733,7 +733,7 @@ export default {
         })
     }
   },
-  syncClover ({getters}, clover) {
+  syncClover ({ getters }, clover) {
     axios.get(getters.baseURL(`/clovers/sync/${clover.board}`)).catch(error => {
       console.error(error)
     })
@@ -954,7 +954,7 @@ export default {
     })
   },
 
-  async deleteAlbum ({dispatch, commit, getters}, albumId) {
+  async deleteAlbum ({ dispatch, commit, getters }, albumId) {
     if (!albumId) {
       return Promise.reject(new Error('Misisng album id'))
     }
@@ -984,7 +984,7 @@ export default {
       })
   },
 
-  async createAlbum ({getters, dispatch, commit}, album) {
+  async createAlbum ({ getters, dispatch, commit }, album) {
     if (!album.name || !album.clovers) {
       return Promise.reject(new Error('Missing album'))
     }
@@ -996,7 +996,7 @@ export default {
         Authorization: getters.authHeader
       }
     })
-      .then(({data}) => {
+      .then(({ data }) => {
         if (!data) throw new Error('404')
         dispatch('selfDestructMsg', {
           type: 'success',
@@ -1018,17 +1018,17 @@ export default {
       })
   },
 
-  async updateAlbum ({getters, dispatch, commit, state}, album) {
+  async updateAlbum ({ getters, dispatch, commit, state }, album) {
     if (!album) {
       return Promise.reject(new Error('Missing album'))
     }
     if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
-    return axios.put(getters.baseURL('/albums/' + album.id), {albumName: album.name, clovers: album.clovers}, {
+    return axios.put(getters.baseURL('/albums/' + album.id), { albumName: album.name, clovers: album.clovers }, {
       headers: {
         Authorization: getters.authHeader
       }
     })
-      .then(({data}) => {
+      .then(({ data }) => {
         if (!data) throw new Error('404')
         let setAlbum
         if (state.currentAlbum && state.currentAlbum.id === album.id) {
@@ -1066,7 +1066,7 @@ export default {
       return Promise.reject(new Error('Missing parameter: `id`'))
     }
     return axios.get(getters.baseURL('/albums/' + albumId))
-      .then(({data}) => {
+      .then(({ data }) => {
         if (!data) throw new Error('404')
         commit('SET_CURRENT_ALBUM', data)
         return data
@@ -1196,7 +1196,7 @@ async function claimClover ({ getters, keep, account, clover }) {
   }
   let signature
   try {
-    let {data} = await axios.post(getters.baseURL(`/clovers/verify`), {
+    let { data } = await axios.post(getters.baseURL(`/clovers/verify`), {
       moves, tokenId, symmetries, keep, recepient: from
     })
     signature = data

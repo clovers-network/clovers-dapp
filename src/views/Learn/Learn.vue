@@ -74,7 +74,7 @@ export default {
       this.$store.commit('SAVE_CLOVER', clvr)
     },
     skip () {
-      this.$router.push({name: 'Feed'})
+      this.$router.push({ name: 'Feed' })
     },
     onResize () {
       clearTimeout(this.afterResize)

@@ -5,7 +5,7 @@ import { prettyBigNumber, abbrvAddr, abbrvNum, cloverImage } from '@/utils'
 import BigNumber from 'bignumber.js'
 
 export default {
-  apiBase ({networkId}) {
+  apiBase ({ networkId }) {
     // console.log({networkId})
     var apiBase = process.env.VUE_APP_API_URL
     // console.log({apiBase})
@@ -15,7 +15,7 @@ export default {
     // console.log({apiBase})
     return apiBase
   },
-  baseURL: (_, {apiBase}) => (path) => {
+  baseURL: (_, { apiBase }) => (path) => {
     return apiBase + path
   },
   user ({ account, accountData }) {

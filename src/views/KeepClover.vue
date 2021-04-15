@@ -248,7 +248,7 @@ export default {
     checkClover () {
       if (!this.clover) return null
       this.cloverExists(this.id).then((exists) => {
-        console.log({exists})
+        console.log({ exists })
         if (!exists) {
           console.log('doesnt exist')
           this.unavailable = false
