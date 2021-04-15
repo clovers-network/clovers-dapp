@@ -11,7 +11,6 @@
     "lint"
   ],
   "dependencies": {
-    "@ensdomains/ensjs": "^2.0.1",
     "@portis/web3": "3.0.10",
     "@walletconnect/web3-provider": "^1.4.1",
     "animate.css": "^3.7.0",
