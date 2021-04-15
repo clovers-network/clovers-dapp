@@ -11,6 +11,7 @@
     "lint"
   ],
   "dependencies": {
+    "@ensdomains/ensjs": "^2.0.1",
     "@portis/web3": "3.0.10",
     "@walletconnect/web3-provider": "^1.4.1",
     "animate.css": "^3.7.0",
@@ -27,7 +28,7 @@
     "copy-to-clipboard": "^3.2.0",
     "debounce": "^1.2.0",
     "decimal.js": "^10.2.0",
-    "ethereum-ens": "^0.7.8",
+    "ethereum-ens": "^0.8.0",
     "ethjs": "^0.2.9",
     "fortmatic": "^0.8.2",
     "fs": "0.0.1-security",
@@ -39,6 +40,7 @@
     "pug-loader": "^2.4.0",
     "pug-plain-loader": "^1.0.0",
     "register-service-worker": "^1.6.2",
+    "sha3": "^2.1.4",
     "shelljs": "^0.7.8",
     "socket.io": "^2.2.0",
     "stylus": "^0.54.5",
