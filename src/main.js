@@ -15,7 +15,7 @@ import BN from 'bignumber.js'
 import Clv from '@/components/Clv'
 // import CloverGridItem from '@/components/CloverGridItem'
 
-import Web3Connect from 'web3connect'
+import Web3Connect from 'web3modal'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import Portis from '@portis/web3'
 import Fortmatic from 'fortmatic'
@@ -36,7 +36,7 @@ if (global.ethereum) {
 }
 global.ens = new ENS(global.web3.currentProvider)
 console.log(process.env.VUE_APP_INFURA_API_KEY)
-global.web3Connect = new Web3Connect.Core({
+global.web3Connect = new Web3Connect({
   network: networks[store.state.correctNetwork],
   providerOptions: {
     walletconnect: {
