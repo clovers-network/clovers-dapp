@@ -17,7 +17,7 @@
             img.block(src="@/assets/icons/search.svg")
         //- (menu btn - mobile)
         nav#mobileMenu.flex.items-center
-          button.md-hidden.menu-btn.pointer.relative.py2.pr2(@click='clickMenu' aria-label='Toggle Menu')
+          button.md-hidden.menu-btn.pointer.relative.py2.pr2(@click.stop='clickMenu' aria-label='Toggle Menu')
             wavey-btn(v-show='mining', :is-white='showMenu')
             img.block(v-show='!mining', :src="showMenu\
               ? require('../assets/icons/hamburger-white.svg')\
@@ -45,7 +45,7 @@
           .border.rounded.flex.items-center.mr2.lg-mr3.overflow-hidden
             //- btn: pig
             .relative.border-right.hidden.sm-block
-              button.h-nav-btn.px2.flex.items-center.pointer(@click='pigMenu = !pigMenu', aria-label="View Clover Pig")
+              button.h-nav-btn.px2.flex.items-center.pointer(@click='togglePig', aria-label="View Clover Pig")
                 span.border.mr1.inline-block(style='border-radius:100%; width:13px; height:13px;')
                   span.block(:class="mining && 'bg-currentColor throb'" style='border-radius:100%; width: 13px; height: 13px; margin-top: -1px; margin-left: -1px;')
                 span.h6.sm-h5.lh1.block PIG
@@ -60,7 +60,7 @@
               span.h6.sm-h5.lh1.block {{prettyUserBalance}}
             //- bnt: account
             .relative
-              button#personToggle.h-nav-btn.h6.sm-h5.pl2.pr1.flex.items-center.pointer.border-left(@click="accountMenuToggle", aria-label="View Account Menu")
+              button#personToggle.h-nav-btn.h6.sm-h5.pl2.pr1.flex.items-center.pointer.border-left(@click.stop="accountMenuToggle", aria-label="View Account Menu")
                 person-icon(:class="!authHeader && 'red'")
                 .chevron
           //- dropdown: pig
@@ -180,14 +180,21 @@ export default {
       this.showMenu = !this.showMenu
     },
     closeAccountMenu () {
-      console.log('close Account menu in big menu')
+      // console.log('close Account menu in big menu')
       if (this.accountMenu) this.accountMenu = false
+    },
+    togglePig (e) {
+      if (!this.pigMenu) e.stopPropagation()
+      this.pigMenu = !this.pigMenu
+      this.accountMenu = false
     },
     closePigMenu () {
       if (this.pigMenu) this.pigMenu = false
     },
-    accountMenuToggle () {
+    accountMenuToggle (e) {
+      if (!this.accountMenu) e.stopPropagation()
       this.accountMenu = !this.accountMenu
+      this.pigMenu = false
     },
     toggleMenu () {
       this.showMenu = !this.showMenu

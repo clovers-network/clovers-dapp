@@ -144,7 +144,7 @@ export default {
     },
     addNew () {
       if (this.isFiltered) {
-        this.$router.push({ name: 'Activity' })
+        this.$router.push({ name: 'Activity' }).catch(_ => {})
       } else {
         this.logs.results.unshift(...this.liveLogs)
         this.$store.commit('CLEAR_LOG')
@@ -176,7 +176,7 @@ export default {
         if (cf !== filter) {
           delete q.page
         }
-        this.$router.push({ name: 'Activity', query: { ...q } })
+        this.$router.push({ name: 'Activity', query: { ...q } }).catch(_ => {})
       }
     },
     $route () {
