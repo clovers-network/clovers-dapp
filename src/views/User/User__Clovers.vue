@@ -113,7 +113,7 @@ export default {
         if (cf !== filter) {
           delete q.page
         }
-        this.$router.push({ query: { ...q } })
+        this.$router.push({ query: { ...q } }).catch(_ => {})
       }
     },
     $route () {
