@@ -42,12 +42,19 @@ export default {
       return this.$store.state.otherUser
     },
     cloverCount () {
-      const c = (this.user && this.user.cloverCount) || 0
+      let c = (this.user && this.user.cloverCount) || 0
+      if (this.resCount !== c) {
+        c = this.resCount
+      }
       return concatPrice(c)
     },
     albumCount () {
       const c = (this.user && this.user.albumCount) || 0
       return concatPrice(c)
+    },
+    resCount () {
+      const res = store.state.pagedClovers
+      return res ? res.allResults : 0
     }
   },
   beforeRouteEnter (to, from, next) {
