@@ -46,7 +46,7 @@ export default {
       if (this.resCount !== c) {
         c = this.resCount
       }
-      return concatPrice(c)
+      return concatPrice(c || 0)
     },
     albumCount () {
       const c = (this.user && this.user.albumCount) || 0
