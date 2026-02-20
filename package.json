@@ -2,6 +2,9 @@
   "name": "clovers-dapp",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "serve": "vue-cli-service serve --open",
     "build": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build",
