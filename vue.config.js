@@ -6,6 +6,8 @@ const production = process.env.NODE_ENV === 'production'
 
 module.exports = {
   lintOnSave: false,
+  // Transpile @walletconnect/* and unstorage (use modern JS syntax unsupported by webpack 4's acorn)
+  transpileDependencies: [/@walletconnect\//, 'unstorage'],
   devServer: {
     disableHostCheck: true
     // https: true
@@ -24,6 +26,9 @@ module.exports = {
       globalObject: 'this'
     },
     resolve: {
+      // Force webpack 4 to prefer the CJS 'main' field over the ESM 'module'
+      // field, to avoid parse errors from bundled ESM in non-transpiled packages
+      mainFields: ['browser', 'main'],
       alias: {
         "bn.js": path.resolve(__dirname, 'node_modules/bn.js'),
         "underscore": path.resolve(__dirname, 'node_modules/underscore')
@@ -32,6 +37,9 @@ module.exports = {
   },
   // (dev) force Safari not to cache
   chainWebpack: config => {
+    // Extend the JS rule to also match .cjs files so babel-loader processes them
+    config.module.rule('js').test(/\.m?jsx?$|\.cjs$/)
+
     if (process.env.NODE_ENV === 'development') {
       config
         .output

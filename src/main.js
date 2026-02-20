@@ -15,72 +15,90 @@ import BN from 'bignumber.js'
 import Clv from '@/components/Clv'
 // import CloverGridItem from '@/components/CloverGridItem'
 
-import Web3Connect from 'web3modal'
-import WalletConnectProvider from '@walletconnect/web3-provider'
-import Portis from '@portis/web3'
-import Fortmatic from 'fortmatic'
+import { EthereumProvider } from '@walletconnect/ethereum-provider'
 
-const networks = {
-  4: 'rinkeby',
-  5777: 'ganache',
-  1: 'mainnet'
-}
+const CHAIN_ID = store.state.correctNetwork || 1
 
 if (global.ethereum) {
   global.web3 = new Web3(global.ethereum)
 } else if (global.web3) {
   global.web3 = new Web3(global.web3.currentProvider)
 } else {
-  const portis = new Portis(process.env.VUE_APP_PORTIS_DAPP, networks[store.state.correctNetwork])
-  global.web3 = new Web3(portis.provider)
+  global.web3 = new Web3(
+    new Web3.providers.HttpProvider(
+      `https://mainnet.infura.io/v3/${process.env.VUE_APP_INFURA_API_KEY}`
+    )
+  )
 }
 global.ens = new ENS(global.web3.currentProvider)
-console.log(process.env.VUE_APP_INFURA_API_KEY)
-global.web3Connect = new Web3Connect({
-  network: networks[store.state.correctNetwork],
-  cacheProvider: true,
-  providerOptions: {
-    walletconnect: {
-      package: WalletConnectProvider, // required
-      options: {
-        infuraId: process.env.VUE_APP_INFURA_API_KEY,
-        qrcodeModalOptions: {
-          mobileLinks: [
-            'rainbow',
-            'metamask',
-            'argent',
-            'trust',
-            'imtoken',
-            'pillar'
-          ]
-        }
-      }
-    },
-    portis: !global.web3.currentProvider.isPortis && {
-      package: Portis,
-      options: {
-        id: process.env.VUE_APP_PORTIS_DAPP // required
-      }
-    },
-    fortmatic: {
-      package: Fortmatic,
-      options: {
-        key: store.state.correctNetwork === 1 ? process.env.VUE_APP_FORTMATIC_MAIN : process.env.VUE_APP_FORTMATIC_TEST // required
-      }
-    }
+
+// Initialise WalletConnect v2 (Reown) provider
+EthereumProvider.init({
+  projectId: process.env.VUE_APP_WALLETCONNECT_PROJECT_ID,
+  chains: [CHAIN_ID],
+  showQrModal: true,
+  qrModalOptions: {
+    themeMode: 'light',
+    explorerRecommendedWalletIds: [
+      'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // MetaMask
+      '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0', // Trust
+      '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369', // Rainbow
+      'fd20dc426fb37566d803205b19bbc1d4096b248ac04548e3cfb6b3a38bd033aa' // Coinbase
+    ]
+  },
+  metadata: {
+    name: 'Clovers',
+    description: 'Clovers Network',
+    url: 'https://clovers.network',
+    icons: ['https://clovers.network/favicon.ico']
   }
+}).then((wcProvider) => {
+  global.wcProvider = wcProvider
+
+  // If a session is cached, reconnect automatically
+  if (wcProvider.session) {
+    global.web3 = new Web3(wcProvider)
+    store.commit('UPDATE_WEB3', true)
+    global.ens = new ENS(global.web3.currentProvider)
+    store.dispatch('signIn')
+  }
+
+  wcProvider.on('connect', () => {
+    global.web3 = new Web3(wcProvider)
+    store.commit('UPDATE_WEB3', true)
+    global.ens = new ENS(global.web3.currentProvider)
+    store.dispatch('signIn')
+  })
+
+  wcProvider.on('disconnect', () => {
+    store.commit('UPDATE_WEB3', false)
+  })
+
+  wcProvider.on('accountsChanged', (accounts) => {
+    if (accounts.length === 0) {
+      store.commit('UPDATE_WEB3', false)
+    }
+  })
+
+  global.web3Connect = {
+    open: () => wcProvider.connect(),
+    disconnect: () => wcProvider.disconnect()
+  }
+}).catch((err) => {
+  console.error('WalletConnect init failed:', err)
 })
 
-// subscibe to connect
-global.web3Connect.on('connect', (provider) => {
-  global.web3 = new Web3(provider) // add provider to web3
-  store.commit('UPDATE_WEB3', true)
-  global.ens = new ENS(global.web3.currentProvider)
-  store.dispatch('signIn')
-})
-
-// subscibe to close
-// global.web3Connect.on('close', () => {})
+// Also handle injected wallet (MetaMask/browser wallet) connections
+if (global.ethereum) {
+  global.ethereum.on('accountsChanged', (accounts) => {
+    if (accounts.length > 0 && !store.state.web3Enabled) {
+      store.commit('UPDATE_WEB3', true)
+      store.dispatch('signIn')
+    } else if (accounts.length === 0) {
+      store.commit('UPDATE_WEB3', false)
+    }
+  })
+}
 
 router.beforeEach((to, from, next) => {
   to.meta.fromName = from.name

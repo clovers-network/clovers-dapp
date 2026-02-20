@@ -11,10 +11,8 @@
     "lint"
   ],
   "dependencies": {
-    "@portis/web3": "3.0.10",
-    "@reown/appkit": "1.8.18",
-    "@reown/appkit-adapter-ethers": "1.8.18",
-    "@walletconnect/web3-provider": "^1.4.1",
+    "@walletconnect/ethereum-provider": "2.17.0",
+    "@walletconnect/modal": "^2.7.0",
     "animate.css": "^3.7.0",
     "axios": "^0.21.1",
     "basscss": "^8.1.0",
@@ -30,9 +28,7 @@
     "debounce": "^1.2.0",
     "decimal.js": "^10.2.0",
     "ethereum-ens": "^0.8.0",
-    "ethers": "^6.16.0",
     "ethjs": "^0.2.9",
-    "fortmatic": "^0.8.2",
     "fs": "0.0.1-security",
     "lazysizes": "^5.2.1",
     "moment": "^2.24.0",
@@ -57,10 +53,11 @@
     "vue-touch": "^2.0.0-beta.4",
     "vuex": "^3.1.1",
     "web3": "^1.2.0",
-    "web3modal": "^1.9.3",
     "xss": "^0.3.7"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.18.6",
+    "@babel/plugin-proposal-optional-chaining": "^7.21.0",
     "@vue/cli-plugin-babel": "^3.0.0-beta.6",
     "@vue/cli-plugin-eslint": "^3.0.0-beta.6",
     "@vue/cli-plugin-pwa": "^3.0.0-beta.6",
