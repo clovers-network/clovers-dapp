@@ -26,9 +26,6 @@ module.exports = {
       globalObject: 'this'
     },
     resolve: {
-      // Force webpack 4 to prefer the CJS 'main' field over the ESM 'module'
-      // field, to avoid parse errors from bundled ESM in non-transpiled packages
-      mainFields: ['browser', 'main'],
       alias: {
         "bn.js": path.resolve(__dirname, 'node_modules/bn.js'),
         "underscore": path.resolve(__dirname, 'node_modules/underscore')
