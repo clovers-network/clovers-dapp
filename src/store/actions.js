@@ -488,9 +488,12 @@ export default {
   signOut ({ commit, dispatch }) {
     commit('SIGN_OUT')
     commit('UPDATE_WEB3', false)
+    if (global.web3Connect) {
+      global.web3Connect.clearCachedProvider()
+    }
     dispatch('selfDestructMsg', {
       type: 'success',
-      msg: 'Succesfully signed out'
+      msg: 'Successfully signed out'
     })
   },
   async experimentalSignIn ({ state, commit, dispatch }) {

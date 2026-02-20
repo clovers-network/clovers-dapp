@@ -38,11 +38,22 @@ global.ens = new ENS(global.web3.currentProvider)
 console.log(process.env.VUE_APP_INFURA_API_KEY)
 global.web3Connect = new Web3Connect({
   network: networks[store.state.correctNetwork],
+  cacheProvider: true,
   providerOptions: {
     walletconnect: {
       package: WalletConnectProvider, // required
       options: {
-        infuraId: process.env.VUE_APP_INFURA_API_KEY
+        infuraId: process.env.VUE_APP_INFURA_API_KEY,
+        qrcodeModalOptions: {
+          mobileLinks: [
+            'rainbow',
+            'metamask',
+            'argent',
+            'trust',
+            'imtoken',
+            'pillar'
+          ]
+        }
       }
     },
     portis: !global.web3.currentProvider.isPortis && {
