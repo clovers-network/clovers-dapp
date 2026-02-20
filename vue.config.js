@@ -6,6 +6,8 @@ const production = process.env.NODE_ENV === 'production'
 
 module.exports = {
   lintOnSave: false,
+  // Transpile @walletconnect/* and unstorage (use modern JS syntax unsupported by webpack 4's acorn)
+  transpileDependencies: [/@walletconnect\//, 'unstorage'],
   devServer: {
     disableHostCheck: true
     // https: true
@@ -32,6 +34,18 @@ module.exports = {
   },
   // (dev) force Safari not to cache
   chainWebpack: config => {
+    // Extend the JS rule to also match .cjs files so babel-loader processes them
+    config.module.rule('js').test(/\.m?jsx?$|\.cjs$/)
+
+    // Webpack 4 forces .mjs files to use strict ES module semantics (no `require`).
+    // Setting type 'javascript/auto' disables that enforcement so babel-loader's
+    // plugin-transform-modules-commonjs output (which uses require()) works correctly.
+    config.module
+      .rule('mjs-auto')
+      .test(/\.mjs$/)
+      .type('javascript/auto')
+      .end()
+
     if (process.env.NODE_ENV === 'development') {
       config
         .output

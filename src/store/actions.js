@@ -488,14 +488,19 @@ export default {
   signOut ({ commit, dispatch }) {
     commit('SIGN_OUT')
     commit('UPDATE_WEB3', false)
+    if (global.web3Connect) {
+      global.web3Connect.disconnect()
+    }
     dispatch('selfDestructMsg', {
       type: 'success',
-      msg: 'Succesfully signed out'
+      msg: 'Successfully signed out'
     })
   },
   async experimentalSignIn ({ state, commit, dispatch }) {
     if (!state.web3Enabled) {
-      global.web3Connect.toggleModal() // open modal on button click
+      if (global.web3Connect) {
+        global.web3Connect.open() // open modal on button click
+      }
     } else {
       if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
       const { account } = state
@@ -540,7 +545,18 @@ export default {
   },
   async signIn ({ state, dispatch, commit }, account) {
     if (!state.web3Enabled) {
-      global.web3Connect.toggleModal() // open modal on button click
+      if (global.ethereum) {
+        // Injected wallet available (MetaMask / browser wallet) — request account access
+        try {
+          await global.ethereum.request({ method: 'eth_requestAccounts' })
+          commit('UPDATE_WEB3', true)
+          dispatch('signIn')
+        } catch (err) {
+          console.error(err)
+        }
+      } else if (global.web3Connect) {
+        global.web3Connect.open() // open WalletConnect modal on button click
+      }
     } else {
       return new Promise(async (resolve, reject) => {
         if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
