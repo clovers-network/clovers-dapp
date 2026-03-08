@@ -6,7 +6,6 @@ const production = process.env.NODE_ENV === 'production'
 
 module.exports = {
   lintOnSave: false,
-  // Transpile @walletconnect/* and unstorage (use modern JS syntax unsupported by webpack 4's acorn)
   transpileDependencies: [/@walletconnect\//, 'unstorage'],
   devServer: {
     disableHostCheck: true

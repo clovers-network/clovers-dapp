@@ -555,20 +555,7 @@ export default {
   },
   async signIn ({ state, dispatch, commit }, account) {
     if (!state.web3Enabled) {
-      if (global.ethereum) {
-        // Injected wallet (MetaMask in-app browser, etc.) — request account access
-        try {
-          await global.ethereum.request({ method: 'eth_requestAccounts' })
-          commit('UPDATE_WEB3', true)
-          dispatch('signIn')
-        } catch (err) {
-          console.error(err)
-        }
-      } else if (global.web3Connect) {
-        // Opens WalletConnect modal — on mobile this shows wallet deep links
-        // (tap to open MetaMask/Rainbow/Trust/etc), on desktop shows QR code
-        global.web3Connect.open()
-      }
+      if (global.web3Connect) global.web3Connect.open()
     } else {
       if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
       const { account } = state
