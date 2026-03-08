@@ -6,20 +6,18 @@ const production = process.env.NODE_ENV === 'production'
 
 module.exports = {
   lintOnSave: false,
-  transpileDependencies: [/@walletconnect\//, 'unstorage'],
   devServer: {
-    disableHostCheck: true
+    allowedHosts: 'all'
     // https: true
   },
   configureWebpack: {
-    optimization: {
-      splitChunks: {
-        maxSize: 1000000
-      }
-    },
     plugins: [
      // new BundleAnalyzerPlugin(),
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+      new webpack.IgnorePlugin({ resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ }),
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+        process: 'process/browser'
+      })
     ],
     output: {
       globalObject: 'this'
@@ -28,27 +26,25 @@ module.exports = {
       alias: {
         "bn.js": path.resolve(__dirname, 'node_modules/bn.js'),
         "underscore": path.resolve(__dirname, 'node_modules/underscore')
+      },
+      fallback: {
+        "stream": require.resolve("stream-browserify"),
+        "crypto": require.resolve("crypto-browserify"),
+        "http": require.resolve("stream-http"),
+        "https": require.resolve("https-browserify"),
+        "os": require.resolve("os-browserify/browser"),
+        "url": require.resolve("url/"),
+        "assert": require.resolve("assert/"),
+        "buffer": require.resolve("buffer/")
       }
     }
   },
   // (dev) force Safari not to cache
   chainWebpack: config => {
-    // Extend the JS rule to also match .cjs files so babel-loader processes them
-    config.module.rule('js').test(/\.m?jsx?$|\.cjs$/)
-
-    // Webpack 4 forces .mjs files to use strict ES module semantics (no `require`).
-    // Setting type 'javascript/auto' disables that enforcement so babel-loader's
-    // plugin-transform-modules-commonjs output (which uses require()) works correctly.
-    config.module
-      .rule('mjs-auto')
-      .test(/\.mjs$/)
-      .type('javascript/auto')
-      .end()
-
     if (process.env.NODE_ENV === 'development') {
       config
         .output
-        .filename('[name].[hash].js')
+        .filename('[name].[fullhash].js')
         .end()
     }
   }
