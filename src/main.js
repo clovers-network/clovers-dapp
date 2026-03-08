@@ -18,27 +18,25 @@ import Clv from '@/components/Clv'
 import { EthereumProvider } from '@walletconnect/ethereum-provider'
 
 const CHAIN_ID = store.state.correctNetwork || 1
+const INFURA_RPC = `https://mainnet.infura.io/v3/${process.env.VUE_APP_INFURA_API_KEY}`
 
-if (global.ethereum) {
+// Detect mobile browser (not an in-app wallet browser)
+const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+// In-app wallet browsers inject window.ethereum
+const hasInjectedWallet = !!global.ethereum
+
+if (hasInjectedWallet) {
   global.web3 = new Web3(global.ethereum)
 } else if (global.web3) {
   global.web3 = new Web3(global.web3.currentProvider)
 } else {
-  global.web3 = new Web3(
-    new Web3.providers.HttpProvider(
-      `https://mainnet.infura.io/v3/${process.env.VUE_APP_INFURA_API_KEY}`
-    )
-  )
+  global.web3 = new Web3(new Web3.providers.HttpProvider(INFURA_RPC))
 }
 global.ens = new ENS(global.web3.currentProvider)
 
 // Helper: reset web3 to read-only Infura provider
 function resetToReadOnly () {
-  global.web3 = new Web3(
-    new Web3.providers.HttpProvider(
-      `https://mainnet.infura.io/v3/${process.env.VUE_APP_INFURA_API_KEY}`
-    )
-  )
+  global.web3 = new Web3(new Web3.providers.HttpProvider(INFURA_RPC))
   global.ens = new ENS(global.web3.currentProvider)
 }
 
@@ -50,12 +48,24 @@ function activateProvider (provider) {
 }
 
 // Initialise WalletConnect v2 (Reown) provider
+// On mobile browsers the WC modal shows wallet deep links instead of QR codes,
+// allowing the user to tap to open MetaMask/Rainbow/etc directly.
 EthereumProvider.init({
   projectId: process.env.VUE_APP_WALLETCONNECT_PROJECT_ID,
   chains: [CHAIN_ID],
+  optionalChains: [CHAIN_ID],
+  rpcMap: {
+    [CHAIN_ID]: INFURA_RPC
+  },
+  // Required methods/events for the WC session
+  methods: ['eth_sendTransaction', 'personal_sign', 'eth_signTypedData_v3', 'eth_signTypedData_v4'],
+  optionalMethods: ['eth_accounts', 'eth_requestAccounts', 'eth_chainId'],
+  events: ['chainChanged', 'accountsChanged'],
   showQrModal: true,
   qrModalOptions: {
     themeMode: 'light',
+    // On mobile the modal auto-detects and shows deep links to wallet apps.
+    // explorerRecommendedWalletIds highlights these wallets at the top of the list.
     explorerRecommendedWalletIds: [
       'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // MetaMask
       '4622a2b2d6af1c9844944291e5e7351a6aa24cd7b23099efac1b2fd875da31a0', // Trust
@@ -93,13 +103,11 @@ EthereumProvider.init({
       store.commit('UPDATE_WEB3', false)
       resetToReadOnly()
     } else {
-      // Account switched — refresh sign-in state
       store.dispatch('signIn')
     }
   })
 
   wcProvider.on('chainChanged', () => {
-    // Re-fetch network and contracts when chain changes
     store.dispatch('getNetwork')
   })
 
@@ -111,8 +119,8 @@ EthereumProvider.init({
   console.error('WalletConnect init failed:', err)
 })
 
-// Also handle injected wallet (MetaMask/browser wallet) connections
-if (global.ethereum) {
+// Handle injected wallet (MetaMask in-app browser, etc.) connections
+if (hasInjectedWallet) {
   global.ethereum.on('accountsChanged', (accounts) => {
     if (accounts.length > 0 && !store.state.web3Enabled) {
       store.commit('UPDATE_WEB3', true)
