@@ -19,9 +19,6 @@ module.exports = {
         process: 'process/browser'
       })
     ],
-    output: {
-      globalObject: 'this'
-    },
     resolve: {
       alias: {
         "bn.js": path.resolve(__dirname, 'node_modules/bn.js'),

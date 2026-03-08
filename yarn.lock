@@ -281,7 +281,7 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@babel/parser@^7.28.0", "@babel/parser@^7.28.6", "@babel/parser@^7.29.0":
+"@babel/parser@^7.28.0", "@babel/parser@^7.28.6", "@babel/parser@^7.29.0", "@babel/parser@^7.7.0":
   version "7.29.0"
   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.29.0.tgz#669ef345add7d057e92b7ed15f0bac07611831b6"
   integrity sha512-IyDgFV5GeDUVX4YdF/3CPULtVGSXXMLh1xVIgdCgxApktqnQV0r7/8Nqthg+8YLGaAtdyIlo2qIdZrbCv4+7ww==
@@ -912,7 +912,7 @@
     "@babel/parser" "^7.28.6"
     "@babel/types" "^7.28.6"
 
-"@babel/traverse@^7.27.1", "@babel/traverse@^7.28.0", "@babel/traverse@^7.28.5", "@babel/traverse@^7.28.6", "@babel/traverse@^7.29.0":
+"@babel/traverse@^7.27.1", "@babel/traverse@^7.28.0", "@babel/traverse@^7.28.5", "@babel/traverse@^7.28.6", "@babel/traverse@^7.29.0", "@babel/traverse@^7.7.0":
   version "7.29.0"
   resolved "https://registry.yarnpkg.com/@babel/traverse/-/traverse-7.29.0.tgz#f323d05001440253eead3c9c858adbe00b90310a"
   integrity sha512-4HPiQr0X7+waHfyXPZpWPfWL/J7dcN1mx9gL6WdQVMbPnF3+ZhSMs8tCxN7oHddJE9fhNE7+lxdnlyemKfJRuA==
@@ -934,7 +934,7 @@
     lodash "^4.17.19"
     to-fast-properties "^2.0.0"
 
-"@babel/types@^7.27.1", "@babel/types@^7.27.3", "@babel/types@^7.28.2", "@babel/types@^7.28.5", "@babel/types@^7.28.6", "@babel/types@^7.29.0", "@babel/types@^7.4.4":
+"@babel/types@^7.27.1", "@babel/types@^7.27.3", "@babel/types@^7.28.2", "@babel/types@^7.28.5", "@babel/types@^7.28.6", "@babel/types@^7.29.0", "@babel/types@^7.4.4", "@babel/types@^7.7.0":
   version "7.29.0"
   resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.29.0.tgz#9f5b1e838c446e72cf3cd4b918152b8c605e37c7"
   integrity sha512-LwdZHpScM4Qz8Xw2iKSzS+cfglZzJGvofQICy7W7v4caru4EaAmyUuO6BGrbyQ2mYV11W0U8j5mBhd14dd3B0A==
@@ -3801,7 +3801,7 @@ acorn-import-phases@^1.0.3:
   resolved "https://registry.yarnpkg.com/acorn-import-phases/-/acorn-import-phases-1.0.4.tgz#16eb850ba99a056cb7cbfe872ffb8972e18c8bd7"
   integrity sha512-wKmbr/DDiIXzEOiWrTTUcDm24kQ2vGfZQvM2fwg2vXqR5uW6aapr7ObPtj1th32b9u90/Pf4AItvdTh42fBmVQ==
 
-acorn-jsx@^5.3.1:
+acorn-jsx@^5.2.0, acorn-jsx@^5.3.1:
   version "5.3.2"
   resolved "https://registry.yarnpkg.com/acorn-jsx/-/acorn-jsx-5.3.2.tgz#7ed5bb55908b3b2f1bc55c6af1653bada7f07937"
   integrity sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==
@@ -4208,6 +4208,18 @@ axios@^1.12.2:
     follow-redirects "^1.15.11"
     form-data "^4.0.5"
     proxy-from-env "^1.1.0"
+
+babel-eslint@^10.1.0:
+  version "10.1.0"
+  resolved "https://registry.yarnpkg.com/babel-eslint/-/babel-eslint-10.1.0.tgz#6968e568a910b78fb3779cdd8b6ac2f479943232"
+  integrity sha512-ifWaTHQ0ce+448CYop8AdrQiBsGrnC+bMgfyKFdi6EsPLTAWG+QfyDeM6OH+FmWnKvEq5NnBMLvlBUPKQZoDSg==
+  dependencies:
+    "@babel/code-frame" "^7.0.0"
+    "@babel/parser" "^7.7.0"
+    "@babel/traverse" "^7.7.0"
+    "@babel/types" "^7.7.0"
+    eslint-visitor-keys "^1.0.0"
+    resolve "^1.12.0"
 
 babel-loader@^8.2.2:
   version "8.4.1"
@@ -6603,6 +6615,16 @@ eslint-plugin-standard@^3.1.0:
   resolved "https://registry.yarnpkg.com/eslint-plugin-standard/-/eslint-plugin-standard-3.1.0.tgz#2a9e21259ba4c47c02d53b2d0c9135d4b1022d47"
   integrity sha512-fVcdyuKRr0EZ4fjWl3c+gp1BANFJD1+RaWa2UPYfMZ6jCtp5RG00kSaXnK/dE5sYzt4kaWJ9qdxqUfc0d9kX0w==
 
+eslint-plugin-vue@^7.0.0:
+  version "7.20.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-7.20.0.tgz#98c21885a6bfdf0713c3a92957a5afeaaeed9253"
+  integrity sha512-oVNDqzBC9h3GO+NTgWeLMhhGigy6/bQaQbHS+0z7C4YEu/qK/yxHvca/2PTZtGNPsCrHwOTgKMrwu02A9iPBmw==
+  dependencies:
+    eslint-utils "^2.1.0"
+    natural-compare "^1.4.0"
+    semver "^6.3.0"
+    vue-eslint-parser "^7.10.0"
+
 eslint-scope@5.1.1, eslint-scope@^5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/eslint-scope/-/eslint-scope-5.1.1.tgz#e786e59a66cb92b3f6c1fb0d508aab174848f48c"
@@ -6618,7 +6640,7 @@ eslint-utils@^2.1.0:
   dependencies:
     eslint-visitor-keys "^1.1.0"
 
-eslint-visitor-keys@^1.1.0, eslint-visitor-keys@^1.3.0:
+eslint-visitor-keys@^1.0.0, eslint-visitor-keys@^1.1.0, eslint-visitor-keys@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-1.3.0.tgz#30ebd1ef7c2fdff01c3a4f151044af25fab0523e"
   integrity sha512-6J72N8UNa462wa/KFODt/PJ3IU60SDpC3QXC1Hjc1BXXpfL2C9R5+AU7jhe0F6GREqVMh4Juu+NY7xn+6dipUQ==
@@ -6684,6 +6706,15 @@ eslint@^7.0.0:
     table "^6.0.9"
     text-table "^0.2.0"
     v8-compile-cache "^2.0.3"
+
+espree@^6.2.1:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/espree/-/espree-6.2.1.tgz#77fc72e1fd744a2052c20f38a5b575832e82734a"
+  integrity sha512-ysCxRQY3WaXJz9tdbWOwuWr5Y/XrPTGX9Kiz3yoUXwW0VZ4w30HTkQLaGx/+ttFjF8i+ACbArnB4ce68a9m5hw==
+  dependencies:
+    acorn "^7.1.1"
+    acorn-jsx "^5.2.0"
+    eslint-visitor-keys "^1.1.0"
 
 espree@^7.3.0, espree@^7.3.1:
   version "7.3.1"
@@ -11995,7 +12026,7 @@ resolve@^1.1.6, resolve@^1.1.7, resolve@^1.10.0, resolve@^1.13.1, resolve@^1.15.
     is-core-module "^2.2.0"
     path-parse "^1.0.6"
 
-resolve@^1.19.0, resolve@^1.22.11:
+resolve@^1.12.0, resolve@^1.19.0, resolve@^1.22.11:
   version "1.22.11"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.22.11.tgz#aad857ce1ffb8bfa9b0b1ac29f1156383f68c262"
   integrity sha512-RfqAvLnMl313r7c9oclB1HhUEAezcpLjz95wFH4LVuhk9JF/r22qmVP9AMmOU4vMX7Q8pN8jwNg/CSpdFnMjTQ==
@@ -12279,7 +12310,7 @@ semver@^6.0.0:
   resolved "https://registry.yarnpkg.com/semver/-/semver-6.3.0.tgz#ee0a64c8af5e8ceea67687b133761e1becbd1d3d"
   integrity sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw==
 
-semver@^6.3.1:
+semver@^6.3.0, semver@^6.3.1:
   version "6.3.1"
   resolved "https://registry.yarnpkg.com/semver/-/semver-6.3.1.tgz#556d2ef8689146e46dcea4bfdd095f3434dffcb4"
   integrity sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==
@@ -13812,6 +13843,19 @@ vue-click-outside@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/vue-click-outside/-/vue-click-outside-1.1.0.tgz#48b7680b518923e701643cccb3e165854aad99eb"
   integrity sha512-pNyvAA9mRXJwPHlHJyjMb4IONSc7khS5lxGcMyE2EIKgNMAO279PWM9Hyq0d5J4FkiSRdmFLwnbjDd5UtPizHQ==
+
+vue-eslint-parser@^7.10.0:
+  version "7.11.0"
+  resolved "https://registry.yarnpkg.com/vue-eslint-parser/-/vue-eslint-parser-7.11.0.tgz#214b5dea961007fcffb2ee65b8912307628d0daf"
+  integrity sha512-qh3VhDLeh773wjgNTl7ss0VejY9bMMa0GoDG2fQVyDzRFdiU3L7fw74tWZDHNQXdZqxO3EveQroa9ct39D2nqg==
+  dependencies:
+    debug "^4.1.1"
+    eslint-scope "^5.1.1"
+    eslint-visitor-keys "^1.1.0"
+    espree "^6.2.1"
+    esquery "^1.4.0"
+    lodash "^4.17.21"
+    semver "^6.3.0"
 
 vue-head@^2.1.0:
   version "2.2.0"
