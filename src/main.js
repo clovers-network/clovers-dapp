@@ -32,6 +32,23 @@ if (global.ethereum) {
 }
 global.ens = new ENS(global.web3.currentProvider)
 
+// Helper: reset web3 to read-only Infura provider
+function resetToReadOnly () {
+  global.web3 = new Web3(
+    new Web3.providers.HttpProvider(
+      `https://mainnet.infura.io/v3/${process.env.VUE_APP_INFURA_API_KEY}`
+    )
+  )
+  global.ens = new ENS(global.web3.currentProvider)
+}
+
+// Helper: switch web3 to use the given provider
+function activateProvider (provider) {
+  global.web3 = new Web3(provider)
+  global.ens = new ENS(global.web3.currentProvider)
+  store.commit('UPDATE_WEB3', true)
+}
+
 // Initialise WalletConnect v2 (Reown) provider
 EthereumProvider.init({
   projectId: process.env.VUE_APP_WALLETCONNECT_PROJECT_ID,
@@ -57,27 +74,33 @@ EthereumProvider.init({
 
   // If a session is cached, reconnect automatically
   if (wcProvider.session) {
-    global.web3 = new Web3(wcProvider)
-    store.commit('UPDATE_WEB3', true)
-    global.ens = new ENS(global.web3.currentProvider)
+    activateProvider(wcProvider)
     store.dispatch('signIn')
   }
 
   wcProvider.on('connect', () => {
-    global.web3 = new Web3(wcProvider)
-    store.commit('UPDATE_WEB3', true)
-    global.ens = new ENS(global.web3.currentProvider)
+    activateProvider(wcProvider)
     store.dispatch('signIn')
   })
 
   wcProvider.on('disconnect', () => {
     store.commit('UPDATE_WEB3', false)
+    resetToReadOnly()
   })
 
   wcProvider.on('accountsChanged', (accounts) => {
     if (accounts.length === 0) {
       store.commit('UPDATE_WEB3', false)
+      resetToReadOnly()
+    } else {
+      // Account switched — refresh sign-in state
+      store.dispatch('signIn')
     }
+  })
+
+  wcProvider.on('chainChanged', () => {
+    // Re-fetch network and contracts when chain changes
+    store.dispatch('getNetwork')
   })
 
   global.web3Connect = {
