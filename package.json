@@ -14,8 +14,8 @@
     "lint"
   ],
   "dependencies": {
-    "@walletconnect/ethereum-provider": "2.17.0",
-    "@walletconnect/modal": "^2.7.0",
+    "@reown/appkit": "^1.8.19",
+    "@reown/appkit-adapter-ethers5": "^1.8.19",
     "animate.css": "^3.7.0",
     "axios": "^0.21.1",
     "basscss": "^8.1.0",
@@ -31,6 +31,7 @@
     "debounce": "^1.2.0",
     "decimal.js": "^10.2.0",
     "ethereum-ens": "^0.8.0",
+    "ethers": "5.7.2",
     "ethjs": "^0.2.9",
     "fs": "0.0.1-security",
     "lazysizes": "^5.2.1",
