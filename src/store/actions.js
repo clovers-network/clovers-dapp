@@ -122,19 +122,37 @@ export default {
       }, 5000)
     }
   },
+  // Both sources this used are gone, and the way it called them meant one dead
+  // endpoint took out the other and stopped the poll loop permanently:
+  //
+  //   * min-api.cryptocompare.com now returns 401 -- it requires an API key.
+  //     axios rejects on 401, and there was no catch, so this threw on the
+  //     first line of every page load (an uncaught "Error: Network Error"),
+  //     never reached the gas request, and never reached the setTimeout. One
+  //     failure and prices stayed frozen for the life of the tab.
+  //   * ethgasstation.info returns 403; the service shut down.
+  //
+  // Each source is now independently guarded and the reschedule always runs.
   async pollEthPrice ({ commit, dispatch }) {
-    let priceResp = await axios.get(
-      'https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD'
-    )
-    if (priceResp.status === 200) {
-      commit('SET_ETH_PRICE', priceResp.data.USD)
+    // Coinbase's spot endpoint: keyless, CORS-open, and stable.
+    try {
+      const { data } = await axios.get('https://api.coinbase.com/v2/prices/ETH-USD/spot')
+      const amount = data && data.data && data.data.amount
+      if (amount) commit('SET_ETH_PRICE', amount)
+    } catch (err) {
+      console.warn('ETH price unavailable:', err.message)
     }
-    let priceGasResp = await axios.get(
-      'https://ethgasstation.info/json/ethgasAPI.json'
-    )
-    if (priceGasResp.status === 200) {
-      commit('SET_GAS_PRICE', priceGasResp.data.fast / 10)
+
+    // Gas comes from the Infura provider the app already has, rather than
+    // another third party that can disappear. ethgasstation reported
+    // deci-gwei and this divided by 10, so gwei is the unit the UI expects.
+    try {
+      const wei = await global.web3.eth.getGasPrice()
+      commit('SET_GAS_PRICE', Number(global.web3.utils.fromWei(String(wei), 'gwei')).toFixed(1))
+    } catch (err) {
+      console.warn('gas price unavailable:', err.message)
     }
+
     setTimeout(() => {
       dispatch('pollEthPrice')
     }, 60 * 1000 * 5)
