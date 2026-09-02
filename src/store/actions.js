@@ -122,19 +122,37 @@ export default {
       }, 5000)
     }
   },
+  // Both sources this used are gone, and the way it called them meant one dead
+  // endpoint took out the other and stopped the poll loop permanently:
+  //
+  //   * min-api.cryptocompare.com now returns 401 -- it requires an API key.
+  //     axios rejects on 401, and there was no catch, so this threw on the
+  //     first line of every page load (an uncaught "Error: Network Error"),
+  //     never reached the gas request, and never reached the setTimeout. One
+  //     failure and prices stayed frozen for the life of the tab.
+  //   * ethgasstation.info returns 403; the service shut down.
+  //
+  // Each source is now independently guarded and the reschedule always runs.
   async pollEthPrice ({ commit, dispatch }) {
-    let priceResp = await axios.get(
-      'https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD'
-    )
-    if (priceResp.status === 200) {
-      commit('SET_ETH_PRICE', priceResp.data.USD)
+    // Coinbase's spot endpoint: keyless, CORS-open, and stable.
+    try {
+      const { data } = await axios.get('https://api.coinbase.com/v2/prices/ETH-USD/spot')
+      const amount = data && data.data && data.data.amount
+      if (amount) commit('SET_ETH_PRICE', amount)
+    } catch (err) {
+      console.warn('ETH price unavailable:', err.message)
     }
-    let priceGasResp = await axios.get(
-      'https://ethgasstation.info/json/ethgasAPI.json'
-    )
-    if (priceGasResp.status === 200) {
-      commit('SET_GAS_PRICE', priceGasResp.data.fast / 10)
+
+    // Gas comes from the Infura provider the app already has, rather than
+    // another third party that can disappear. ethgasstation reported
+    // deci-gwei and this divided by 10, so gwei is the unit the UI expects.
+    try {
+      const wei = await global.web3.eth.getGasPrice()
+      commit('SET_GAS_PRICE', Number(global.web3.utils.fromWei(String(wei), 'gwei')).toFixed(1))
+    } catch (err) {
+      console.warn('gas price unavailable:', err.message)
     }
+
     setTimeout(() => {
       dispatch('pollEthPrice')
     }, 60 * 1000 * 5)
@@ -174,11 +192,11 @@ export default {
       case 'User denied transaction signature.':
         title = 'Error Connecting To The Network'
         body = `Looks like you aren't connected to the Ethereum Network.
-          The popup you just dismissed is a free wallet service called
-          <a target='_blank' href='https://portis.io/'>Portis</a> that
-          will pop up unless you have a wallet like <u><a target='_blank' href='https://metamask.io/'>
-          Metamask</a></u>, <u><a target="_blank" href="https://status.im/">Status</a></u>, <u><a href="https://wallet.coinbase.com/" target="_blank">Coinbase Wallet</a></u> or  <u><a target='_blank' href='https://www.uport.me/'>
-          uPort</a></u> already installed.`
+          Please connect using a wallet like <u><a target='_blank' href='https://metamask.io/'>
+          MetaMask</a></u>, <u><a href="https://wallet.coinbase.com/" target="_blank">Coinbase Wallet</a></u>,
+          <u><a target="_blank" href="https://rainbow.me/">Rainbow</a></u>, or
+          <u><a target="_blank" href="https://trustwallet.com/">Trust Wallet</a></u>.
+          On mobile, you can also connect via WalletConnect.`
         break
       case 'account-locked':
         title = 'Wallet is Locked'
@@ -488,14 +506,19 @@ export default {
   signOut ({ commit, dispatch }) {
     commit('SIGN_OUT')
     commit('UPDATE_WEB3', false)
+    if (global.web3Connect) {
+      global.web3Connect.disconnect()
+    }
     dispatch('selfDestructMsg', {
       type: 'success',
-      msg: 'Succesfully signed out'
+      msg: 'Successfully signed out'
     })
   },
   async experimentalSignIn ({ state, commit, dispatch }) {
     if (!state.web3Enabled) {
-      global.web3Connect.toggleModal() // open modal on button click
+      if (global.web3Connect) {
+        global.web3Connect.open() // open modal on button click
+      }
     } else {
       if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
       const { account } = state
@@ -518,88 +541,98 @@ export default {
       var thisMonth = (now.getMonth() + 1) + '/' + now.getFullYear()
       signingParams[0].value += thisMonth
 
-      global.web3.currentProvider.sendAsync(
-        {
-          method: 'eth_signTypedData_v3',
-          params: [account, JSON.stringify(signingParams)],
-          from: account
-        },
-        (err, { error, result }) => {
-          if (error || err) {
-            return dispatch('oldSignIn', account)
-          } else {
-            dispatch('selfDestructMsg', {
-              type: 'success',
-              msg: 'Successfully signed in'
+      try {
+        var provider = global.web3.currentProvider
+        var result
+        if (provider.request) {
+          result = await provider.request({
+            method: 'eth_signTypedData_v3',
+            params: [account, JSON.stringify(signingParams)]
+          })
+        } else if (provider.sendAsync) {
+          result = await new Promise((resolve, reject) => {
+            provider.sendAsync({
+              method: 'eth_signTypedData_v3',
+              params: [account, JSON.stringify(signingParams)],
+              from: account
+            }, (err, response) => {
+              if (err || response.error) reject(err || response.error)
+              else resolve(response.result)
             })
-            commit('SIGN_IN', { account, signature: result })
-          }
+          })
         }
-      )
+        dispatch('selfDestructMsg', {
+          type: 'success',
+          msg: 'Successfully signed in'
+        })
+        commit('SIGN_IN', { account, signature: result })
+      } catch (err) {
+        return dispatch('oldSignIn', account)
+      }
     }
   },
   async signIn ({ state, dispatch, commit }, account) {
     if (!state.web3Enabled) {
-      global.web3Connect.toggleModal() // open modal on button click
+      if (global.web3Connect) global.web3Connect.open()
     } else {
-      return new Promise(async (resolve, reject) => {
-        if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
-        const { account } = state
-        if (!account) {
-          dispatch('selfDestructMsg', {
-            type: 'error',
-            msg: 'No ETH account to sign in with'
-          })
-          commit('UPDATE_WEB3', false)
-          return
-        }
+      if (!(await dispatch('checkWeb3'))) throw new Error('Transaction Failed')
+      const { account } = state
+      if (!account) {
+        dispatch('selfDestructMsg', {
+          type: 'error',
+          msg: 'No ETH account to sign in with'
+        })
+        commit('UPDATE_WEB3', false)
+        return
+      }
 
-        if (state.tokens && account in state.tokens && state.tokens[account]) {
-          console.log('already have token')
-          return
-        }
+      if (state.tokens && account in state.tokens && state.tokens[account]) {
+        console.log('already have token')
+        return
+      }
 
-        var now = new Date()
-        var signingParams = JSON.parse(JSON.stringify(msgParams))
-        var thisMonth = (now.getMonth() + 1) + '/' + now.getFullYear()
-        signingParams[0].value += thisMonth
+      var now = new Date()
+      var signingParams = JSON.parse(JSON.stringify(msgParams))
+      var thisMonth = (now.getMonth() + 1) + '/' + now.getFullYear()
+      signingParams[0].value += thisMonth
 
-        var msg = global.web3.utils.utf8ToHex(signingParams[0].value)
-        var params = [msg, account]
-        try {
-          global.web3.currentProvider.sendAsync({
-            jsonrpc: '2.0',
-            id: state.networkId || 1,
-            method: 'personal_sign',
-            params
-          }, (err, signature) => {
-            if (err) {
-              console.log(err)
-              commit('UPDATE_WEB3', false)
-              dispatch('selfDestructMsg', {
-                type: 'error',
-                msg: `Could not sign in`
-              })
-              reject(err)
-            } else {
-              dispatch('selfDestructMsg', {
-                type: 'success',
-                msg: `Successfully signed in`
-              })
-              commit('SIGN_IN', { account, signature: signature.result })
-              resolve()
-            }
+      var msg = global.web3.utils.utf8ToHex(signingParams[0].value)
+      var params = [msg, account]
+      try {
+        // Use EIP-1193 request() API (works with both injected wallets and WalletConnect v2)
+        var provider = global.web3.currentProvider
+        var result
+        if (provider.request) {
+          result = await provider.request({ method: 'personal_sign', params })
+        } else if (provider.sendAsync) {
+          // Legacy fallback for older providers
+          result = await new Promise((resolve, reject) => {
+            provider.sendAsync({
+              jsonrpc: '2.0',
+              id: state.networkId || 1,
+              method: 'personal_sign',
+              params
+            }, (err, response) => {
+              if (err) reject(err)
+              else resolve(response.result)
+            })
           })
-        } catch (error) {
-          console.log(error)
-          commit('UPDATE_WEB3', false)
-          dispatch('selfDestructMsg', {
-            type: 'error',
-            msg: `Could not sign in`
-          })
-          reject(error)
+        } else {
+          throw new Error('Provider does not support request() or sendAsync()')
         }
-      })
+        dispatch('selfDestructMsg', {
+          type: 'success',
+          msg: 'Successfully signed in'
+        })
+        commit('SIGN_IN', { account, signature: result })
+      } catch (error) {
+        console.log(error)
+        commit('UPDATE_WEB3', false)
+        dispatch('selfDestructMsg', {
+          type: 'error',
+          msg: 'Could not sign in'
+        })
+      }
     }
   },
   updateCloverName ({ getters, commit, dispatch }, clover) {

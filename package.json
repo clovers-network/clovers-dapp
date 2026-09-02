@@ -2,6 +2,9 @@
   "name": "clovers-dapp",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build",
@@ -11,8 +14,8 @@
     "lint"
   ],
   "dependencies": {
-    "@portis/web3": "3.0.10",
-    "@walletconnect/web3-provider": "^1.4.1",
+    "@reown/appkit": "^1.8.19",
+    "@reown/appkit-adapter-ethers5": "^1.8.19",
     "animate.css": "^3.7.0",
     "axios": "^0.21.1",
     "basscss": "^8.1.0",
@@ -28,8 +31,8 @@
     "debounce": "^1.2.0",
     "decimal.js": "^10.2.0",
     "ethereum-ens": "^0.8.0",
+    "ethers": "5.7.2",
     "ethjs": "^0.2.9",
-    "fortmatic": "^0.8.2",
     "fs": "0.0.1-security",
     "lazysizes": "^5.2.1",
     "moment": "^2.24.0",
@@ -54,33 +57,38 @@
     "vue-touch": "^2.0.0-beta.4",
     "vuex": "^3.1.1",
     "web3": "^1.2.0",
-    "web3modal": "^1.9.3",
     "xss": "^0.3.7"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.0.0-beta.6",
-    "@vue/cli-plugin-eslint": "^3.0.0-beta.6",
-    "@vue/cli-plugin-pwa": "^3.0.0-beta.6",
-    "@vue/cli-service": "^3.0.0-beta.6",
+    "@babel/eslint-parser": "^7.28.6",
+    "@vue/cli-plugin-babel": "^5.0.0",
+    "@vue/cli-plugin-eslint": "^5.0.0",
+    "@vue/cli-plugin-pwa": "^5.0.0",
+    "@vue/cli-service": "^5.0.0",
     "@vue/eslint-config-standard": "^3.0.0-beta.6",
     "@vue/test-utils": "^1.0.0-beta.10",
+    "assert": "^2.1.0",
+    "babel-eslint": "^10.1.0",
+    "buffer": "^6.0.3",
     "chai": "^4.1.2",
+    "crypto-browserify": "^3.12.1",
+    "eslint": "^7.0.0",
+    "eslint-plugin-vue": "^7.0.0",
+    "https-browserify": "^1.0.0",
+    "os-browserify": "^0.3.0",
     "postcss-color-function": "^4.0.1",
     "postcss-import": "^11.1.0",
     "postcss-preset-env": "^6.7.0",
     "postcss-reporter": "^5.0.0",
     "pre-commit": "^1.2.2",
     "precss": "^3.1.2",
+    "process": "^0.11.10",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
+    "url": "^0.11.4",
     "vue-template-compiler": "^2.5.13",
-    "webpack-bundle-analyzer": "^3.3.2",
-    "webpack-cli": "^3.1.0",
-    "webpack-command": "^0.4.1",
-    "worker-loader": "^2.0.0"
-  },
-  "babel": {
-    "presets": [
-      "@vue/app"
-    ]
+    "webpack-bundle-analyzer": "^4.0.0",
+    "worker-loader": "^3.0.0"
   },
   "eslintConfig": {
     "rules": {
@@ -91,7 +99,7 @@
       "no-mixed-operators": 0,
       "no-new": 0
     },
-    "root": false,
+    "root": true,
     "parserOptions": {
       "parser": "babel-eslint"
     },

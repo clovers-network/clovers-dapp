@@ -7,26 +7,32 @@ const production = process.env.NODE_ENV === 'production'
 module.exports = {
   lintOnSave: false,
   devServer: {
-    disableHostCheck: true
+    allowedHosts: 'all'
     // https: true
   },
   configureWebpack: {
-    optimization: {
-      splitChunks: {
-        maxSize: 1000000
-      }
-    },
     plugins: [
      // new BundleAnalyzerPlugin(),
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
+      new webpack.IgnorePlugin({ resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ }),
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+        process: 'process/browser'
+      })
     ],
-    output: {
-      globalObject: 'this'
-    },
     resolve: {
       alias: {
         "bn.js": path.resolve(__dirname, 'node_modules/bn.js'),
         "underscore": path.resolve(__dirname, 'node_modules/underscore')
+      },
+      fallback: {
+        "stream": require.resolve("stream-browserify"),
+        "crypto": require.resolve("crypto-browserify"),
+        "http": require.resolve("stream-http"),
+        "https": require.resolve("https-browserify"),
+        "os": require.resolve("os-browserify/browser"),
+        "url": require.resolve("url/"),
+        "assert": require.resolve("assert/"),
+        "buffer": require.resolve("buffer/")
       }
     }
   },
@@ -35,7 +41,7 @@ module.exports = {
     if (process.env.NODE_ENV === 'development') {
       config
         .output
-        .filename('[name].[hash].js')
+        .filename('[name].[fullhash].js')
         .end()
     }
   }
