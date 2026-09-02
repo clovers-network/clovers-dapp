@@ -35,14 +35,37 @@ if (global.ethereum) {
   global.web3 = new Web3(portis.provider)
 }
 global.ens = new ENS(global.web3.currentProvider)
-console.log(process.env.VUE_APP_INFURA_API_KEY)
+
+// Keyless public RPC, replacing Infura. Nothing here needs an account: these
+// are the same endpoints the API's chain listener already runs on, and the
+// backend has had no Infura dependency for a while.
+//
+// The key it replaced was not a secret that leaked -- any VUE_APP_* value is
+// compiled into the browser bundle by design, so it was public the moment it
+// shipped, and it was additionally being printed to the console on the line
+// this comment replaces. It was also unrestricted, so anyone reading the public
+// repo could spend the quota. Removing it is simpler than scoping it.
+const PUBLIC_RPC = {
+  1: 'https://ethereum-rpc.publicnode.com',
+  4: 'https://ethereum-rpc.publicnode.com'
+}
+
 global.web3Connect = new Web3Connect({
   network: networks[store.state.correctNetwork],
   providerOptions: {
     walletconnect: {
       package: WalletConnectProvider, // required
       options: {
-        infuraId: process.env.VUE_APP_INFURA_API_KEY
+        // `rpc` instead of `infuraId`. WalletConnect v1 accepts either.
+        //
+        // This path cannot currently succeed regardless: v1's bridge is gone --
+        // bridge.walletconnect.org is NXDOMAIN -- as are Portis
+        // (widget.portis.io, NXDOMAIN) and Fortmatic below. Injected wallets
+        // are the only working option on this build. Kept configured rather
+        // than removed because deleting the entries changes what the modal
+        // offers, which is a UI decision and not this one; see
+        // feature/vue-upgrade-appkit for the actual replacement.
+        rpc: PUBLIC_RPC
       }
     },
     portis: !global.web3.currentProvider.isPortis && {
