@@ -1,0 +1,62 @@
+# Build the dapp and deploy it to Cloudflare Pages.
+#
+# Before this, every deploy was someone running `wrangler pages deploy dist`
+# from a laptop. That works until you need to know what produced the live
+# build, or until the person with the working node version is unavailable.
+#
+# Required repo secrets:
+#   CLOUDFLARE_API_TOKEN   the same token the folia repos use ("Edit Cloudflare
+#                          Workers" template, which also covers Pages)
+#   CLOUDFLARE_ACCOUNT_ID  e0dafa2382193a270bd2a7fd40f0c623
+name: deploy
+
+on:
+  push:
+    branches: [master]
+    paths-ignore: ['**.md']
+  workflow_dispatch:
+
+concurrency:
+  group: pages-clovers-dapp
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+          CI: ''
+        run: yarn build
+
+      # Installed globally rather than via npx: npx resolves against this
+      # repo's package.json, and an old vue-cli tree is exactly the kind that
+      # npm refuses to resolve. Deploying a built artifact has nothing to do
+      # with the app's dependency graph.
+      - name: Install wrangler
+        run: npm install -g wrangler@4
+
+      - name: Deploy to Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: wrangler pages deploy dist --project-name clovers-dapp --branch master
+
+      # A green deploy is not a working deploy. Check the body, not the status.
+      - name: Verify
+        run: |
+          for i in $(seq 1 20); do
+            CT=$(curl -fsS -o /dev/null -w '%{content_type}' -m 20 https://clovers.network/) || CT=""
+            case "$CT" in text/html*) echo "serving html ($CT)"; exit 0 ;; esac
+            sleep 6
+          done
+          echo "never served html (last: $CT)" >&2; exit 1

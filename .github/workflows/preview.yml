@@ -1,0 +1,101 @@
+# A deploy preview for every pull request, and a comment saying where it is.
+#
+# Pages does this differently from Workers: `wrangler pages deploy --branch`
+# creates a preview deployment on a branch-scoped url, and only the production
+# branch updates production. So a preview here cannot affect clovers.network
+# regardless of what it contains.
+#
+# A preview talks to the PRODUCTION API. VUE_APP_API_URL is baked in at build
+# time and .env.production points at https://api.clovers.network; there is no
+# staging backend. That is the same exposure Netlify's previews had, and for a
+# read-mostly dapp it is fine, but it is not a sandbox and should not be
+# treated as one:
+#
+#   POST/PUT/DELETE /chats, /albums  write real comments and albums. They are
+#     behind basicAuth, which verifies an EIP-712 signature against the claimed
+#     address, so a preview cannot write AS someone else -- but it can write as
+#     whoever connects a wallet to it, into data that exists nowhere else.
+#
+#   POST /clovers/verify  is unauthenticated and signs with the real oracle
+#     key. A preview build will produce contract-valid minting signatures.
+#     Nothing is stolen by that -- the signature is bound to tokenId, moves,
+#     symmetries, keep and recipient, so it only lets the requester mint a
+#     clover they legitimately solved -- but it is real mainnet activity from
+#     an unmerged branch.
+#
+# If isolation is wanted later, the clean answer is a second Fly app restored
+# from a nightly backup with ORACLE_PRIVATE_KEY unset; the app announces at
+# boot that it is using the test key, so a staging box identifies itself.
+name: preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths-ignore: ['**.md']
+
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+          CI: ''
+        run: yarn build
+
+      - name: Install wrangler
+        run: npm install -g wrangler@4
+
+      - name: Deploy preview
+        id: preview
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          set -o pipefail
+          wrangler pages deploy dist \
+            --project-name clovers-dapp \
+            --branch "pr-${{ github.event.pull_request.number }}" \
+            --commit-dirty=true 2>&1 | tee /tmp/out
+          url=$(grep -oE 'https://[a-z0-9.-]+\.pages\.dev' /tmp/out | tail -1)
+          [ -n "$url" ] || { echo "no preview url in wrangler output"; exit 1; }
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      - name: Check it serves
+        run: |
+          for i in $(seq 1 20); do
+            code=$(curl -fsS -o /dev/null -w '%{http_code}' -m 20 "${{ steps.preview.outputs.url }}/") && \
+              { echo "preview serving ($code)"; exit 0; }
+            sleep 6
+          done
+          echo "preview never served" >&2; exit 1
+
+      - uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: pages-preview
+          message: |
+            **Preview:** ${{ steps.preview.outputs.url }}
+
+            Built from `${{ github.event.pull_request.head.sha }}`. A Pages
+            preview deployment — it has its own url and does not touch what
+            `clovers.network` is serving.
+
+            Note it talks to the **production** API at `api.clovers.network`,
+            because there is only one. Fine for reading; be deliberate about
+            anything that writes.
