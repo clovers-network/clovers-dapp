@@ -56,9 +56,8 @@ if (global.ethereum) {
 }
 global.ens = new ENS(global.web3.currentProvider)
 
-
 global.web3Connect = new Web3Connect({
-  network: networks[store.state.correctNetwork],
+  network: networks[store.state.correctNetwork]
   // No providerOptions: web3modal falls back to injected wallets, which is the
   // only thing here that still works.
   //
