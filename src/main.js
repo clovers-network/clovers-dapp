@@ -16,25 +16,6 @@ import Clv from '@/components/Clv'
 // import CloverGridItem from '@/components/CloverGridItem'
 
 import Web3Connect from 'web3modal'
-import WalletConnectProvider from '@walletconnect/web3-provider'
-import Portis from '@portis/web3'
-import Fortmatic from 'fortmatic'
-
-const networks = {
-  4: 'rinkeby',
-  5777: 'ganache',
-  1: 'mainnet'
-}
-
-if (global.ethereum) {
-  global.web3 = new Web3(global.ethereum)
-} else if (global.web3) {
-  global.web3 = new Web3(global.web3.currentProvider)
-} else {
-  const portis = new Portis(process.env.VUE_APP_PORTIS_DAPP, networks[store.state.correctNetwork])
-  global.web3 = new Web3(portis.provider)
-}
-global.ens = new ENS(global.web3.currentProvider)
 
 // Keyless public RPC, replacing Infura. Nothing here needs an account: these
 // are the same endpoints the API's chain listener already runs on, and the
@@ -50,37 +31,47 @@ const PUBLIC_RPC = {
   4: 'https://ethereum-rpc.publicnode.com'
 }
 
+const networks = {
+  4: 'rinkeby',
+  5777: 'ganache',
+  1: 'mainnet'
+}
+
+// A visitor with no wallet extension previously fell through to Portis, whose
+// widget host is NXDOMAIN -- so global.web3, and the ENS instance built from it
+// on the next line, were backed by a provider that could never connect. Clover
+// data comes from the API and kept working, which is why this was not obvious,
+// but every chain read for a visitor without a wallet failed silently.
+//
+// A plain public RPC is the right fallback: reads work for everyone, and
+// connecting a wallet still replaces the provider as before.
+if (global.ethereum) {
+  global.web3 = new Web3(global.ethereum)
+} else if (global.web3) {
+  global.web3 = new Web3(global.web3.currentProvider)
+} else {
+  global.web3 = new Web3(new Web3.providers.HttpProvider(
+    PUBLIC_RPC[store.state.correctNetwork] || PUBLIC_RPC[1]
+  ))
+}
+global.ens = new ENS(global.web3.currentProvider)
+
+
 global.web3Connect = new Web3Connect({
   network: networks[store.state.correctNetwork],
-  providerOptions: {
-    walletconnect: {
-      package: WalletConnectProvider, // required
-      options: {
-        // `rpc` instead of `infuraId`. WalletConnect v1 accepts either.
-        //
-        // This path cannot currently succeed regardless: v1's bridge is gone --
-        // bridge.walletconnect.org is NXDOMAIN -- as are Portis
-        // (widget.portis.io, NXDOMAIN) and Fortmatic below. Injected wallets
-        // are the only working option on this build. Kept configured rather
-        // than removed because deleting the entries changes what the modal
-        // offers, which is a UI decision and not this one; see
-        // feature/vue-upgrade-appkit for the actual replacement.
-        rpc: PUBLIC_RPC
-      }
-    },
-    portis: !global.web3.currentProvider.isPortis && {
-      package: Portis,
-      options: {
-        id: process.env.VUE_APP_PORTIS_DAPP // required
-      }
-    },
-    fortmatic: {
-      package: Fortmatic,
-      options: {
-        key: store.state.correctNetwork === 1 ? process.env.VUE_APP_FORTMATIC_MAIN : process.env.VUE_APP_FORTMATIC_TEST // required
-      }
-    }
-  }
+  // No providerOptions: web3modal falls back to injected wallets, which is the
+  // only thing here that still works.
+  //
+  // The three that were configured are dead ends rather than merely deprecated
+  // -- WalletConnect v1's bridge (bridge.walletconnect.org) and Portis
+  // (widget.portis.io) are both NXDOMAIN, and Fortmatic's API answers 404. The
+  // modal offered four choices of which three could only hang, which is worse
+  // than offering one that works: a user who picks a dead one cannot tell
+  // whether the fault is theirs.
+  //
+  // Removing them needs no account and no key. Restoring WalletConnect properly
+  // means v2, which requires a Reown projectId -- that work is on
+  // feature/vue-upgrade-appkit.
 })
 
 // subscibe to connect
